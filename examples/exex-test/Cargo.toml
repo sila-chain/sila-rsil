@@ -1,0 +1,19 @@
+[package]
+name = "example-exex-test"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# rsil
+rsil-sila = { workspace = true, features = ["full", "node"] }
+rsil-e2e-test-utils.workspace = true
+
+# async utilities
+futures-util.workspace = true
+tokio = { workspace = true, features = ["full"] }
+
+# other dependencies
+eyre.workspace = true
+serde_json.workspace = true

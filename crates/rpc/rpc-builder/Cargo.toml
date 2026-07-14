@@ -1,0 +1,80 @@
+[package]
+name = "rsil-rpc-builder"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Helpers for configuring RPC"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits.workspace = true
+rsil-ipc.workspace = true
+rsil-chainspec.workspace = true
+rsil-consensus.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-rpc-engine-api.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-network-api.workspace = true
+rsil-node-core.workspace = true
+rsil-rpc.workspace = true
+rsil-rpc-api.workspace = true
+rsil-rpc-sil-api.workspace = true
+rsil-rpc-layer.workspace = true
+rsil-rpc-sil-types.workspace = true
+rsil-rpc-server-types.workspace = true
+rsil-tasks = { workspace = true, features = ["rayon"] }
+rsil-tokio-util.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-storage-api.workspace = true
+rsil-chain-state.workspace = true
+rsil-savm.workspace = true
+
+# rpc/net
+jsonrpsee = { workspace = true, features = ["server"] }
+tower-http = { workspace = true, features = ["full"] }
+tower = { workspace = true, features = ["full"] }
+http.workspace = true
+pin-project.workspace = true
+
+# metrics
+rsil-metrics = { workspace = true, features = ["common"] }
+metrics.workspace = true
+
+# misc
+dyn-clone.workspace = true
+serde = { workspace = true, features = ["derive"] }
+thiserror.workspace = true
+tracing.workspace = true
+tokio-util = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread"] }
+alloy-provider = { workspace = true, features = ["ws", "ipc"] }
+alloy-network.workspace = true
+
+[dev-dependencies]
+rsil-sila-primitives.workspace = true
+rsil-network-peers.workspace = true
+rsil-savm-sila.workspace = true
+rsil-sila-engine-primitives.workspace = true
+rsil-payload-builder = { workspace = true, features = ["test-utils"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-rpc-api = { workspace = true, features = ["client"] }
+rsil-tracing.workspace = true
+rsil-transaction-pool = { workspace = true, features = ["test-utils"] }
+rsil-node-sila.workspace = true
+rsil-tasks = { workspace = true, features = ["test-utils"] }
+
+alloy-primitives.workspace = true
+alloy-rpc-types-sil.workspace = true
+alloy-rpc-types-trace.workspace = true
+alloy-sips.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+serde_json.workspace = true
+clap = { workspace = true, features = ["derive"] }
+reqwest.workspace = true

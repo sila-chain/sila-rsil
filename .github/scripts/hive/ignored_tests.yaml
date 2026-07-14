@@ -1,0 +1,32 @@
+# Ignored Tests Configuration
+#
+# This file contains tests that should be ignored for various reasons (flaky, known issues, etc).
+# These tests will be IGNORED in the CI results - they won't cause the build to fail
+# regardless of whether they pass or fail.
+#
+# Format
+# test_suite:
+#   - "test name 1"
+#   - "test name 2"
+#
+# When a test should no longer be ignored, remove it from this list.
+
+engine-cancun:
+  - Transaction Re-Org, New Payload on Revert Back (SilaCancun) (rsil)
+  - Transaction Re-Org, Re-Org to Different Block (SilaCancun) (rsil)
+  - Transaction Re-Org, Re-Org Out (SilaCancun) (rsil)
+  - Invalid Missing Ancestor ReOrg, StateRoot, EmptyTxs=False, Invalid P9 (SilaCancun) (rsil)
+  # Hive test infra bug: geth sidecar switched to PathScheme for state storage, which has
+  # strict trie integrity requirements incompatible with inserting intentionally invalid blocks.
+  # Affects all clients, not just rsil. Tracked: https://github.com/sila-chain/hive/issues/1382
+  - Invalid Missing Ancestor Syncing ReOrg, Timestamp, EmptyTxs=False, CanonicalReOrg=False, Invalid P8 (SilaCancun) (rsil)
+  - Invalid Missing Ancestor Syncing ReOrg, Timestamp, EmptyTxs=False, CanonicalReOrg=True, Invalid P8 (SilaCancun) (rsil)
+engine-api:
+  - Transaction Re-Org, Re-Org Out (SilaParis) (rsil)
+  - Transaction Re-Org, Re-Org to Different Block (SilaParis) (rsil)
+  - Transaction Re-Org, New Payload on Revert Back (SilaParis) (rsil)
+  - Transaction Re-Org, Re-Org to Different Block (SilaParis) (rsil)
+  - Invalid Missing Ancestor Syncing ReOrg, Transaction Nonce, EmptyTxs=False, CanonicalReOrg=False, Invalid P9 (SilaParis) (rsil)
+  - Invalid Missing Ancestor Syncing ReOrg, Transaction Signature, EmptyTxs=False, CanonicalReOrg=True, Invalid P9 (SilaParis) (rsil)
+  - Invalid Missing Ancestor Syncing ReOrg, Transaction Signature, EmptyTxs=False, CanonicalReOrg=False, Invalid P9 (SilaParis) (rsil)
+  - Invalid Missing Ancestor ReOrg, StateRoot, EmptyTxs=True, Invalid P10 (SilaParis) (rsil)

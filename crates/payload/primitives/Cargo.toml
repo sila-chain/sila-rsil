@@ -1,0 +1,58 @@
+[package]
+name = "rsil-payload-primitives"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+exclude.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits.workspace = true
+rsil-chainspec.workspace = true
+rsil-errors.workspace = true
+rsil-execution-types.workspace = true
+rsil-trie-common.workspace = true
+
+# alloy
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-types-engine = { workspace = true, features = ["serde"] }
+
+# misc
+auto_impl.workspace = true
+either.workspace = true
+serde.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, default-features = false, features = ["sync"] }
+
+[dev-dependencies]
+assert_matches.workspace = true
+serde_json.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "rsil-chainspec/std",
+    "rsil-execution-types/std",
+    "rsil-trie-common/std",
+    "alloy-sips/std",
+    "alloy-primitives/std",
+    "alloy-rpc-types-engine/std",
+    "serde/std",
+    "thiserror/std",
+    "rsil-primitives-traits/std",
+    "either/std",
+    "alloy-consensus/std",
+    "alloy-rlp/std",
+    "serde_json/std",
+    "sha2/std",
+]

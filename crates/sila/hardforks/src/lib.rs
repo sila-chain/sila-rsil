@@ -1,0 +1,32 @@
+//! Sila fork types used in rsil.
+//!
+//! This crate contains Sila fork types and helper functions.
+//!
+//! ## Feature Flags
+//!
+//! - `arbitrary`: Adds `arbitrary` support for primitive types.
+
+#![doc(
+    html_logo_url = "https://raw.githubusercontent.com/sila-chain/sila-rsil/main/assets/rsil-docs.png",
+    html_favicon_url = "https://avatars0.githubusercontent.com/u/97369466?s=256",
+    issue_tracker_base_url = "https://github.com/sila-chain/sila-rsil/issues/"
+)]
+#![cfg_attr(not(test), warn(unused_crate_dependencies))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(not(feature = "std"), no_std)]
+
+extern crate alloc;
+
+/// Re-exported [SIP-2124](https://sips.sila.org/SIPS/sip-2124) forkid types.
+pub use alloy_eip2124::*;
+
+mod display;
+mod hardforks;
+
+pub use alloy_hardforks::*;
+
+pub use display::DisplayHardforks;
+pub use hardforks::*;
+
+#[cfg(any(test, feature = "arbitrary"))]
+pub use arbitrary;

@@ -1,0 +1,80 @@
+[package]
+name = "rsil-db-models"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Database models used in storage module."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-codecs = { workspace = true, optional = true }
+rsil-primitives-traits.workspace = true
+
+# sila
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+
+# codecs
+modular-bitfield = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+
+# misc
+bytes = { workspace = true, optional = true }
+
+# arbitrary utils
+arbitrary = { workspace = true, features = ["derive"], optional = true }
+
+[dev-dependencies]
+# rsil
+rsil-primitives-traits = { workspace = true, features = ["arbitrary", "rsil-codec"] }
+rsil-codecs.workspace = true
+
+bytes.workspace = true
+arbitrary = { workspace = true, features = ["derive"] }
+
+proptest.workspace = true
+proptest-arbitrary-interop.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "alloy-sips/std",
+    "alloy-primitives/std",
+    "rsil-primitives-traits/std",
+    "bytes?/std",
+    "serde?/std",
+    "rsil-codecs?/std",
+]
+serde = [
+    "dep:serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "bytes?/serde",
+    "rsil-codecs?/serde",
+    "rsil-primitives-traits/serde",
+]
+test-utils = [
+    "rsil-primitives-traits/test-utils",
+    "arbitrary",
+    "rsil-codecs?/test-utils",
+]
+arbitrary = [
+    "std",
+    "rsil-primitives-traits/arbitrary",
+    "dep:arbitrary",
+    "alloy-primitives/arbitrary",
+    "alloy-sips/arbitrary",
+    "rsil-codecs?/arbitrary",
+]
+rsil-codec = [
+    "dep:rsil-codecs",
+    "dep:modular-bitfield",
+    "dep:bytes",
+    "rsil-primitives-traits/rsil-codec",
+]

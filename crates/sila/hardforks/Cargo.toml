@@ -1,0 +1,49 @@
+[package]
+name = "rsil-sila-forks"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Sila fork types used in rsil."
+
+[lints]
+workspace = true
+
+[dependencies]
+# sila
+alloy-hardforks.workspace = true
+alloy-sip2124.workspace = true
+alloy-primitives = { workspace = true, features = ["serde", "rlp"] }
+
+# misc
+once_cell.workspace = true
+rustc-hash = { workspace = true, optional = true }
+
+# arbitrary utils
+arbitrary = { workspace = true, features = ["derive"], optional = true }
+auto_impl.workspace = true
+
+[dev-dependencies]
+arbitrary = { workspace = true, features = ["derive"] }
+
+[features]
+default = ["std", "serde", "rustc-hash"]
+arbitrary = [
+    "dep:arbitrary",
+    "alloy-primitives/arbitrary",
+    "alloy-sip2124/arbitrary",
+]
+serde = [
+    "alloy-primitives/serde",
+    "alloy-sip2124/serde",
+    "alloy-hardforks/serde",
+]
+std = [
+    "alloy-primitives/std",
+    "rustc-hash/std",
+    "alloy-sip2124/std",
+    "once_cell/std",
+]
+rustc-hash = ["dep:rustc-hash"]

@@ -1,0 +1,106 @@
+[package]
+name = "rsil-provider"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil storage provider."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-execution-types.workspace = true
+rsil-sila-primitives = { workspace = true, features = ["rsil-codec"] }
+rsil-primitives-traits = { workspace = true, features = ["rsil-codec", "secp256k1", "dashmap"] }
+rsil-errors.workspace = true
+rsil-storage-errors.workspace = true
+rsil-storage-api = { workspace = true, features = ["std", "db-api"] }
+rsil-db = { workspace = true, features = ["mdbx"] }
+rsil-db-api.workspace = true
+rsil-prune-types.workspace = true
+rsil-stages-types.workspace = true
+rsil-tasks = { workspace = true, features = ["rayon"] }
+rsil-trie = { workspace = true, features = ["metrics"] }
+rsil-trie-db = { workspace = true, features = ["metrics"] }
+rsil-nippy-jar.workspace = true
+rsil-codecs.workspace = true
+rsil-chain-state.workspace = true
+rsil-node-types.workspace = true
+rsil-static-file-types = { workspace = true, features = ["std"] }
+rsil-fs-util.workspace = true
+
+# sila
+alloy-sip7928.workspace = true
+alloy-sips.workspace = true
+alloy-genesis.workspace = true
+alloy-primitives.workspace = true
+alloy-rpc-types-engine.workspace = true
+alloy-consensus.workspace = true
+revm.workspace = true
+
+# tracing
+tracing.workspace = true
+
+# metrics
+rsil-metrics.workspace = true
+metrics.workspace = true
+
+# misc
+itertools.workspace = true
+notify = { workspace = true, default-features = false, features = ["macos_fsevent"] }
+parking_lot.workspace = true
+smallvec.workspace = true
+strum.workspace = true
+eyre.workspace = true
+rsil-tokio-util.workspace = true
+tokio = { workspace = true, features = ["sync"], optional = true }
+
+# test-utils
+rsil-sila-engine-primitives = { workspace = true, optional = true }
+
+# parallel utils
+rayon.workspace = true
+
+rocksdb.workspace = true
+
+[dev-dependencies]
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-primitives-traits = { workspace = true, features = ["arbitrary", "test-utils"] }
+rsil-chain-state = { workspace = true, features = ["test-utils"] }
+rsil-trie = { workspace = true, features = ["test-utils"] }
+rsil-testing-utils.workspace = true
+rsil-sila-engine-primitives.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-tracing.workspace = true
+
+tempfile.workspace = true
+assert_matches.workspace = true
+rand.workspace = true
+
+tokio = { workspace = true, features = ["sync", "macros", "rt-multi-thread"] }
+tokio-stream = { workspace = true, features = ["sync"] }
+
+[features]
+jemalloc = ["rocksdb/jemalloc"]
+test-utils = [
+    "rsil-db/test-utils",
+    "rsil-nippy-jar/test-utils",
+    "rsil-trie/test-utils",
+    "rsil-chain-state/test-utils",
+    "rsil-sila-engine-primitives",
+    "rsil-sila-primitives/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-codecs/test-utils",
+    "rsil-db-api/test-utils",
+    "rsil-trie-db/test-utils",
+    "rsil-prune-types/test-utils",
+    "rsil-stages-types/test-utils",
+    "rsil-tasks/test-utils",
+    "dep:tokio",
+]

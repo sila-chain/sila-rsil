@@ -1,0 +1,127 @@
+[package]
+name = "rsil-bb"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil node configured for big block payload execution"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-sila-cli.workspace = true
+rsil-chainspec.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-cli-util.workspace = true
+rsil-node-core.workspace = true
+rsil-node-sila.workspace = true
+rsil-node-builder.workspace = true
+rsil-node-api.workspace = true
+rsil-sila-consensus.workspace = true
+rsil-engine-primitives = { workspace = true, features = ["std"] }
+rsil-engine-tree.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-provider.workspace = true
+rsil-rpc-api.workspace = true
+rsil-rpc-engine-api.workspace = true
+rsil-savm.workspace = true
+rsil-savm-sila.workspace = true
+rsil-sila-forks.workspace = true
+rsil-revm.workspace = true
+rsil-consensus.workspace = true
+rsil-chain-state.workspace = true
+rsil-errors.workspace = true
+rsil-storage-errors.workspace = true
+
+# alloy
+alloy-rpc-types = { workspace = true, features = ["engine"] }
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-savm.workspace = true
+
+# tracing
+tracing.workspace = true
+
+# misc
+clap = { workspace = true, features = ["derive", "env"] }
+jsonrpsee = { workspace = true, features = ["server", "macros"] }
+async-trait.workspace = true
+derive_more.workspace = true
+crossbeam-channel.workspace = true
+tokio = { workspace = true, features = ["sync"] }
+revm.workspace = true
+alloy-hardforks.workspace = true
+metrics.workspace = true
+
+# std
+eyre.workspace = true
+
+[features]
+default = [
+    "jemalloc",
+    "rsil-cli-util/jemalloc",
+    "asm-keccak",
+    "keccak-cache-global",
+    "min-trace-logs",
+    "otlp",
+    "otlp-logs",
+    "rsil-revm/portable",
+    "js-tracer",
+]
+
+otlp = [
+    "rsil-sila-cli/otlp",
+    "rsil-node-core/otlp",
+]
+otlp-logs = [
+    "rsil-sila-cli/otlp-logs",
+    "rsil-node-core/otlp-logs",
+]
+js-tracer = [
+    "rsil-node-builder/js-tracer",
+    "rsil-node-sila/js-tracer",
+]
+
+jemalloc = [
+    "rsil-cli-util/jemalloc",
+    "rsil-node-core/jemalloc",
+    "rsil-sila-cli/jemalloc",
+    "rsil-provider/jemalloc",
+]
+
+asm-keccak = [
+    "rsil-node-core/asm-keccak",
+    "rsil-sila-cli/asm-keccak",
+    "rsil-node-sila/asm-keccak",
+    "alloy-primitives/asm-keccak",
+    "alloy-savm/asm-keccak",
+    "revm/asm-keccak",
+]
+
+keccak-cache-global = [
+    "rsil-node-core/keccak-cache-global",
+    "rsil-node-sila/keccak-cache-global",
+    "alloy-primitives/keccak-cache-global",
+]
+
+min-debug-logs = [
+    "tracing/release_max_level_debug",
+    "rsil-sila-cli/min-debug-logs",
+    "rsil-node-core/min-debug-logs",
+]
+min-trace-logs = [
+    "tracing/release_max_level_trace",
+    "rsil-sila-cli/min-trace-logs",
+    "rsil-node-core/min-trace-logs",
+]
+
+[[bin]]
+name = "rsil-bb"
+path = "src/main.rs"

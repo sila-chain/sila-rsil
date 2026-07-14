@@ -1,0 +1,16 @@
+[package]
+name = "example-custom-savm"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rsil-sila = { workspace = true, features = ["test-utils", "node", "savm", "pool"] }
+rsil-tracing.workspace = true
+alloy-savm.workspace = true
+alloy-genesis.workspace = true
+alloy-primitives.workspace = true
+
+eyre.workspace = true
+tokio.workspace = true

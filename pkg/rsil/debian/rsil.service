@@ -1,0 +1,13 @@
+[Unit]
+Description=Modular, contributor-friendly and blazing-fast implementation of the Sila protocol
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=exec
+DynamicUser=yes
+StateDirectory=rsil
+ExecStart=/usr/bin/rsil node --datadir %S/rsil --log.file.max-files 0
+
+[Install]
+WantedBy=multi-user.target

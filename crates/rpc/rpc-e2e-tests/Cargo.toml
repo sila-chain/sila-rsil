@@ -1,0 +1,43 @@
+[package]
+name = "rsil-rpc-e2e-tests"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "RPC end-to-end tests including execution-apis compatibility testing"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-e2e-test-utils.workspace = true
+rsil-rpc-api = { workspace = true, features = ["client"] }
+
+# sila
+alloy-rpc-types-engine.workspace = true
+
+# async
+tokio.workspace = true
+futures-util.workspace = true
+
+# misc
+eyre.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+jsonrpsee.workspace = true
+
+# required for the Action trait
+rsil-node-api.workspace = true
+
+[dev-dependencies]
+rsil-tracing.workspace = true
+rsil-chainspec.workspace = true
+rsil-node-sila.workspace = true
+alloy-genesis.workspace = true
+
+[[test]]
+name = "e2e_testsuite"
+path = "tests/e2e-testsuite/main.rs"

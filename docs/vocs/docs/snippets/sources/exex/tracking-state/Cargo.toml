@@ -1,0 +1,14 @@
+[package]
+name = "tracking-state"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rsil = { git = "https://github.com/sila-chain/sila-rsil.git" }
+rsil-exex = { git = "https://github.com/sila-chain/sila-rsil.git", features = ["serde"] }
+rsil-node-sila = { git = "https://github.com/sila-chain/sila-rsil.git" }
+rsil-tracing = { git = "https://github.com/sila-chain/sila-rsil.git" }
+
+eyre = "0.6" # Easy error handling
+futures-util = "0.3" # Stream utilities for consuming notifications
+alloy-primitives = "0.8.20"

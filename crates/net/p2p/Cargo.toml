@@ -1,0 +1,70 @@
+[package]
+name = "rsil-network-p2p"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "traits and commonly used types for p2p and network communication"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-sila-primitives.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-sil-wire-types.workspace = true
+rsil-consensus.workspace = true
+rsil-network-peers.workspace = true
+rsil-network-types.workspace = true
+rsil-storage-errors.workspace = true
+
+# sila
+alloy-consensus.workspace = true
+alloy-sip7928.workspace = true
+alloy-sips.workspace = true
+alloy-primitives = { workspace = true, features = ["rand"] }
+
+# async
+futures.workspace = true
+tokio = { workspace = true, features = ["sync"] }
+
+# misc
+auto_impl.workspace = true
+tracing.workspace = true
+derive_more.workspace = true
+parking_lot = { workspace = true, optional = true }
+
+[dev-dependencies]
+rsil-consensus = { workspace = true, features = ["test-utils"] }
+
+parking_lot.workspace = true
+test-case.workspace = true
+tokio = { workspace = true, features = ["full"] }
+
+[features]
+default = ["std"]
+test-utils = [
+    "rsil-consensus/test-utils",
+    "parking_lot",
+    "rsil-network-types/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "alloy-sip7928/std",
+    "alloy-primitives/rand",
+]
+std = [
+    "rsil-consensus/std",
+    "rsil-sila-primitives/std",
+    "alloy-sip7928/std",
+    "alloy-sips/std",
+    "alloy-primitives/std",
+    "rsil-primitives-traits/std",
+    "alloy-consensus/std",
+    "derive_more/std",
+    "rsil-network-peers/std",
+    "rsil-storage-errors/std",
+    "tracing/std",
+]

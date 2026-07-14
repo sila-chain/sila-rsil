@@ -1,0 +1,58 @@
+[package]
+name = "example-bsc-p2p"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-discv4 = { workspace = true, features = ["test-utils"] }
+rsil-engine-primitives.workspace = true
+rsil-sila-forks = { workspace = true, features = ["serde"] }
+rsil-sil-wire.workspace = true
+rsil-sil-wire-types.workspace = true
+rsil-network = { workspace = true, features = ["test-utils"] }
+rsil-network-api.workspace = true
+rsil-network-peers.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-tasks.workspace = true
+rsil-tracing.workspace = true
+
+# alloy
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-types = { workspace = true, features = ["engine"] }
+
+# misc
+bytes.workspace = true
+futures.workspace = true
+secp256k1 = { workspace = true, features = ["global-context", "std", "recovery"] }
+serde = { workspace = true, features = ["derive"], optional = true }
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+rsil-sila-primitives.workspace = true
+rsil-node-sila.workspace = true
+
+[features]
+serde = [
+    "dep:serde",
+    "alloy-primitives/serde",
+    "rsil-sil-wire/serde",
+    "rsil-sil-wire-types/serde",
+    "rsil-sila-forks/serde",
+    "rsil-primitives-traits/serde",
+    "secp256k1/serde",
+    "bytes/serde",
+    "rsil-network/serde",
+    "rsil-network-api/serde",
+    "rsil-sila-primitives/serde",
+]

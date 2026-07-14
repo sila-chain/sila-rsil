@@ -1,0 +1,87 @@
+[package]
+name = "rsil-downloaders"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Implementations of various block downloaders"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-config.workspace = true
+rsil-consensus.workspace = true
+rsil-network-p2p.workspace = true
+rsil-network-peers.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-storage-api.workspace = true
+rsil-tasks.workspace = true
+
+# optional deps for the test-utils feature
+rsil-sila-primitives = { workspace = true, optional = true }
+rsil-provider = { workspace = true, optional = true }
+rsil-testing-utils = { workspace = true, optional = true }
+
+# sila
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp = { workspace = true, optional = true }
+
+# async
+futures.workspace = true
+futures-util.workspace = true
+pin-project.workspace = true
+tokio = { workspace = true, features = ["sync", "fs", "io-util"] }
+tokio-stream.workspace = true
+tokio-util = { workspace = true, features = ["codec"] }
+async-compression = { workspace = true, features = ["gzip", "tokio"], optional = true }
+
+# metrics
+rsil-metrics.workspace = true
+metrics.workspace = true
+
+# misc
+rayon.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+tempfile = { workspace = true, optional = true }
+itertools = { workspace = true, optional = true }
+
+[dev-dependencies]
+async-compression = { workspace = true, features = ["gzip", "tokio"] }
+rsil-sila-primitives.workspace = true
+rsil-chainspec.workspace = true
+rsil-consensus = { workspace = true, features = ["test-utils"] }
+rsil-network-p2p = { workspace = true, features = ["test-utils"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-testing-utils.workspace = true
+rsil-tracing.workspace = true
+
+assert_matches.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+rand.workspace = true
+tempfile.workspace = true
+alloy-rlp.workspace = true
+itertools.workspace = true
+
+[features]
+default = []
+file-client = ["dep:async-compression", "dep:alloy-rlp", "dep:itertools"]
+test-utils = [
+    "tempfile",
+    "rsil-consensus/test-utils",
+    "rsil-network-p2p/test-utils",
+    "rsil-testing-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "dep:rsil-sila-primitives",
+    "rsil-sila-primitives?/test-utils",
+    "rsil-tasks/test-utils",
+]

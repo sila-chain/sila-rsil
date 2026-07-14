@@ -1,0 +1,69 @@
+---
+description: Start Rsil from public modular snapshots.
+---
+
+# Snapshots
+
+Rsil publishes modular node snapshots at
+[snapshots.rsil.rs](https://snapshots.rsil.rs). The snapshot UI lets you choose
+minimal, full, or archive components and gives you the matching `rsil download`
+command.
+
+Use snapshots when you want to avoid syncing from genesis. `rsil download`
+extracts the selected components into your Rsil data directory. It also writes
+`rsil.toml` for the selected components if the file does not already exist;
+after extraction, start `rsil node` normally.
+
+## Latest minimal snapshot
+
+For the default minimal component set:
+
+```bash
+rsil download -y
+
+rsil node
+```
+
+## Snapshot sizes
+
+Snapshot download sizes are compressed and change with the selected profile,
+selected components, and latest published block. The
+[snapshots.rsil.rs](https://snapshots.rsil.rs) UI shows the estimated download
+size for the current selection.
+
+You can also list snapshot sizes from the CLI:
+
+```bash
+rsil download --list
+```
+
+## Choose a profile
+
+```bash
+# Smallest built-in profile
+rsil download --minimal
+
+# Full-node profile
+rsil download --full
+
+# Archive profile
+rsil download --archive
+```
+
+## Custom components
+
+Use the website or `rsil download` flags to include specific components, such
+as transaction files, receipts, state history, senders, or RocksDB indices:
+
+```bash
+rsil download \
+    --with-txs-distance 100000 \
+    --with-receipts-distance 100000 \
+    -y
+```
+
+## Further reading
+
+-   [Storage V2](/run/storage) - understand the default storage layout
+-   [Minimal Storage Mode](/run/storage/minimal) - run the smallest built-in profile
+-   [`rsil download` CLI reference](/cli/rsil/download) - all snapshot download flags

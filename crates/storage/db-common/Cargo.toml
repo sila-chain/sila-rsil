@@ -1,0 +1,50 @@
+[package]
+name = "rsil-db-common"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-db-api.workspace = true
+rsil-provider.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-config.workspace = true
+rsil-trie.workspace = true
+rsil-trie-db.workspace = true
+rsil-etl.workspace = true
+rsil-codecs.workspace = true
+rsil-stages-types.workspace = true
+rsil-fs-util.workspace = true
+rsil-node-types.workspace = true
+rsil-static-file-types.workspace = true
+rsil-execution-errors.workspace = true
+
+# sil
+alloy-consensus.workspace = true
+alloy-genesis.workspace = true
+alloy-primitives.workspace = true
+
+# misc
+eyre.workspace = true
+thiserror.workspace = true
+boyer-moore-magiclen.workspace = true
+
+# io
+serde.workspace = true
+serde_json.workspace = true
+
+# tracing
+tracing.workspace = true
+
+[dev-dependencies]
+rsil-db = { workspace = true, features = ["mdbx"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-tasks.workspace = true
+
+[lints]
+workspace = true

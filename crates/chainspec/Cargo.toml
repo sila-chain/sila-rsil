@@ -1,0 +1,67 @@
+[package]
+name = "rsil-chainspec"
+version.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-sila-forks.workspace = true
+rsil-network-peers.workspace = true
+alloy-trie = { workspace = true, features = ["sila"] }
+rsil-primitives-traits.workspace = true
+
+# sila
+alloy-savm.workspace = true
+alloy-chains = { workspace = true, features = ["serde", "rlp"] }
+alloy-sips = { workspace = true, features = ["serde"] }
+alloy-genesis.workspace = true
+alloy-primitives = { workspace = true, features = ["rlp"] }
+alloy-consensus.workspace = true
+
+# misc
+auto_impl.workspace = true
+serde_json.workspace = true
+derive_more.workspace = true
+
+[dev-dependencies]
+# sil
+alloy-trie = { workspace = true, features = ["arbitrary"] }
+alloy-sips = { workspace = true, features = ["arbitrary"] }
+alloy-rlp = { workspace = true, features = ["arrayvec"] }
+
+[features]
+default = ["std"]
+std = [
+    "alloy-chains/std",
+    "alloy-sips/std",
+    "alloy-genesis/std",
+    "alloy-primitives/std",
+    "alloy-trie/std",
+    "rsil-primitives-traits/std",
+    "alloy-consensus/std",
+    "alloy-rlp/std",
+    "rsil-sila-forks/std",
+    "derive_more/std",
+    "rsil-network-peers/std",
+    "serde_json/std",
+    "alloy-savm/std",
+]
+arbitrary = [
+    "alloy-chains/arbitrary",
+    "rsil-sila-forks/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "alloy-consensus/arbitrary",
+    "alloy-sips/arbitrary",
+    "alloy-primitives/arbitrary",
+    "alloy-trie/arbitrary",
+]
+test-utils = [
+    "rsil-primitives-traits/test-utils",
+]

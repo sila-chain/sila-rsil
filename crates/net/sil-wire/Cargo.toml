@@ -1,0 +1,96 @@
+[package]
+name = "rsil-sil-wire"
+description = "Implements the sil/64 and sil/65 P2P protocols"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-codecs.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-ecies.workspace = true
+alloy-rlp = { workspace = true, features = ["derive"] }
+rsil-sil-wire-types.workspace = true
+rsil-network-peers.workspace = true
+rsil-sila-forks.workspace = true
+
+# sila
+alloy-primitives.workspace = true
+alloy-chains.workspace = true
+
+# metrics
+rsil-metrics.workspace = true
+
+bytes.workspace = true
+derive_more.workspace = true
+thiserror.workspace = true
+serde = { workspace = true, optional = true }
+tokio = { workspace = true, features = ["macros", "net", "sync", "time"] }
+tokio-util = { workspace = true, features = ["io", "codec"] }
+futures.workspace = true
+tokio-stream.workspace = true
+pin-project.workspace = true
+tracing.workspace = true
+snap.workspace = true
+
+# arbitrary utils
+arbitrary = { workspace = true, features = ["derive"], optional = true }
+
+[dev-dependencies]
+rsil-primitives-traits = { workspace = true, features = ["arbitrary"] }
+rsil-sil-wire-types = { workspace = true, features = ["arbitrary"] }
+rsil-tracing.workspace = true
+
+alloy-consensus.workspace = true
+test-fuzz.workspace = true
+tokio = { workspace = true, features = ["rt", "rt-multi-thread"] }
+rand.workspace = true
+secp256k1 = { workspace = true, features = ["global-context", "std", "recovery"] }
+rand_08.workspace = true
+
+arbitrary = { workspace = true, features = ["derive"] }
+proptest.workspace = true
+proptest-arbitrary-interop.workspace = true
+async-stream.workspace = true
+serde.workspace = true
+alloy-sips.workspace = true
+
+[features]
+arbitrary = [
+    "rsil-sil-wire-types/arbitrary",
+    "dep:arbitrary",
+    "alloy-sips/arbitrary",
+    "alloy-primitives/arbitrary",
+    "rsil-codecs/arbitrary",
+    "alloy-chains/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "rsil-sila-forks/arbitrary",
+    "alloy-consensus/arbitrary",
+]
+serde = [
+    "dep:serde",
+    "rsil-sil-wire-types/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "bytes/serde",
+    "rand/serde",
+    "secp256k1/serde",
+    "rsil-codecs/serde",
+    "alloy-chains/serde",
+    "rsil-primitives-traits/serde",
+    "rsil-sila-forks/serde",
+    "alloy-consensus/serde",
+    "rand_08/serde",
+]
+
+[[test]]
+name = "fuzz_roundtrip"
+path = "tests/fuzz_roundtrip.rs"
+required-features = ["arbitrary", "serde"]

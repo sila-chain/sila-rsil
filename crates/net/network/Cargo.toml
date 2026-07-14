@@ -1,0 +1,141 @@
+[package]
+name = "rsil-network"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Sila network support"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-savm-sila = { workspace = true, optional = true }
+rsil-fs-util.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-net-banlist.workspace = true
+rsil-network-api.workspace = true
+rsil-network-p2p.workspace = true
+rsil-discv4.workspace = true
+rsil-discv5.workspace = true
+rsil-dns-discovery.workspace = true
+rsil-sila-forks.workspace = true
+rsil-sil-wire.workspace = true
+rsil-sil-wire-types.workspace = true
+rsil-ecies.workspace = true
+rsil-tasks.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-storage-api.workspace = true
+rsil-tokio-util.workspace = true
+rsil-consensus.workspace = true
+rsil-network-peers = { workspace = true, features = ["net"] }
+rsil-network-types = { workspace = true, features = ["serde"] }
+
+# sila
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+enr = { workspace = true, features = ["serde", "rust-secp256k1"] }
+discv5.workspace = true
+
+# rsil-sila
+rsil-sila-primitives.workspace = true
+
+# async/futures
+futures.workspace = true
+pin-project.workspace = true
+tokio = { workspace = true, features = ["io-util", "net", "macros", "rt-multi-thread", "time"] }
+socket2 = { workspace = true, features = ["all"] }
+tokio-stream.workspace = true
+tokio-util = { workspace = true, features = ["codec"] }
+
+# io
+serde = { workspace = true, optional = true }
+
+# metrics
+rsil-metrics = { workspace = true, features = ["common"] }
+metrics.workspace = true
+
+# misc
+auto_impl.workspace = true
+aquamarine.workspace = true
+tracing.workspace = true
+rustc-hash.workspace = true
+thiserror.workspace = true
+parking_lot.workspace = true
+rayon.workspace = true
+rand.workspace = true
+rand_08.workspace = true
+secp256k1 = { workspace = true, features = ["global-context", "std", "recovery"] }
+derive_more.workspace = true
+schnellru.workspace = true
+itertools.workspace = true
+smallvec.workspace = true
+
+[dev-dependencies]
+# rsil
+rsil-discv4 = { workspace = true, features = ["test-utils"] }
+
+# we need to enable the test-utils feature in our own crate to use utils in
+# integration tests
+rsil-network = { workspace = true, features = ["test-utils"] }
+rsil-network-p2p = { workspace = true, features = ["test-utils"] }
+rsil-network-types = { workspace = true, features = ["test-utils"] }
+
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-tracing.workspace = true
+rsil-transaction-pool = { workspace = true, features = ["test-utils"] }
+
+# alloy deps for testing against nodes
+alloy-genesis.workspace = true
+
+# misc
+url.workspace = true
+secp256k1 = { workspace = true, features = ["rand"] }
+
+[features]
+serde = [
+    "dep:serde",
+    "secp256k1/serde",
+    "enr/serde",
+    "rsil-dns-discovery/serde",
+    "rsil-sil-wire/serde",
+    "rsil-sil-wire-types/serde",
+    "alloy-consensus/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "discv5/serde",
+    "parking_lot/serde",
+    "rand/serde",
+    "smallvec/serde",
+    "url/serde",
+    "rsil-primitives-traits/serde",
+    "rsil-sila-forks/serde",
+    "rsil-network/serde",
+    "rsil-transaction-pool/serde",
+    "rsil-sila-primitives/serde",
+    "rsil-network-api/serde",
+    "rand_08/serde",
+    "rsil-storage-api/serde",
+    "rsil-network-types/serde",
+]
+test-utils = [
+    "rsil-transaction-pool/test-utils",
+    "rsil-network-types/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-consensus/test-utils",
+    "rsil-discv4/test-utils",
+    "rsil-network/test-utils",
+    "rsil-network-p2p/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "dep:rsil-savm-sila",
+    "rsil-savm-sila?/test-utils",
+    "rsil-tasks/test-utils",
+]

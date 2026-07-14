@@ -1,0 +1,44 @@
+[package]
+name = "rsil-sila-engine-primitives"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-sila-primitives.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-payload-primitives.workspace = true
+
+# alloy
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+# misc
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "rsil-sila-primitives/std",
+    "alloy-primitives/std",
+    "alloy-sips/std",
+    "alloy-rpc-types-engine/std",
+    "serde/std",
+    "serde_json/std",
+    "thiserror/std",
+    "rsil-engine-primitives/std",
+    "rsil-primitives-traits/std",
+]

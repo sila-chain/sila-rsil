@@ -1,0 +1,524 @@
+@import "tailwindcss" important;
+
+@custom-variant dark (&:where(.dark, .dark *, [data-vocs-theme="dark"], [data-vocs-theme="dark"] *));
+
+[data-v-content]:has(.rsil-home-page) {
+  max-width: min(940px, calc(100vw - 48px));
+  width: 100%;
+  padding-top: 32px;
+  padding-bottom: 88px;
+}
+
+.rsil-home-page,
+.rsil-home-page * {
+  box-sizing: border-box;
+  letter-spacing: 0;
+}
+
+.rsil-home-page {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  color: var(--vocs-text-color-primary);
+}
+
+.rsil-home-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rsil-home-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.rsil-home-hero-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.95fr);
+  gap: 28px;
+  align-items: end;
+}
+
+.rsil-home-hero-heading {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.rsil-home-hero-media {
+  overflow: hidden;
+  border: 1px solid var(--vocs-border-color-primary);
+  border-radius: 10px;
+  background: #0b0b0d;
+}
+
+.rsil-home-hero-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+}
+
+.rsil-home-hero-body {
+  max-width: 760px;
+  min-width: 0;
+}
+
+.rsil-home-hero-heading .rsil-home-kicker {
+  margin-bottom: 12px;
+}
+
+.rsil-home-kicker {
+  margin: 0 0 10px;
+  color: var(--vocs-text-color-muted);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+.rsil-home-hero h1 {
+  margin: 0;
+  color: var(--vocs-text-color-heading);
+  font-size: clamp(68px, 8vw, 92px);
+  font-weight: 650;
+  line-height: 0.94;
+}
+
+.rsil-home-lede,
+.rsil-home-detail,
+.rsil-home-section-copy {
+  margin-top: 14px;
+  color: var(--vocs-text-color-secondary);
+  font-size: 17px;
+  line-height: 1.58;
+}
+
+.rsil-home-lede {
+  max-width: 760px;
+  color: var(--vocs-text-color-primary);
+  font-size: clamp(19px, 1.6vw, 22px);
+  line-height: 1.38;
+}
+
+.rsil-home-detail {
+  max-width: 760px;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.rsil-home-hero-body .rsil-home-lede {
+  margin-top: 0;
+}
+
+.rsil-home-actions,
+.rsil-home-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rsil-home-actions {
+  margin-top: 18px;
+}
+
+.rsil-home-button {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--vocs-border-color-primary);
+  border-radius: 8px;
+  padding: 0 16px;
+  background: var(--vocs-background-color-surface);
+  color: var(--vocs-text-color-heading);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1;
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.rsil-home-button:hover,
+.rsil-home-metrics a:hover,
+.rsil-home-feature-grid a:hover,
+.rsil-sdk-card:hover,
+.rsil-trusted-card:hover,
+.rsil-home-supporter-grid a:hover {
+  transform: translateY(-1px);
+  border-color: var(--vocs-text-color-muted);
+  background: var(--vocs-background-color-surfaceTint);
+}
+
+.rsil-home-button-primary {
+  border-color: #111111;
+  background: #111111;
+  color: #ffffff !important;
+}
+
+.rsil-home-button-primary:hover {
+  background: #2a2a2a;
+}
+
+[data-vocs-theme="dark"] .rsil-home-button-primary {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #111111 !important;
+}
+
+[data-vocs-theme="dark"] .rsil-home-button-primary:hover {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.rsil-home-quickstart {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(360px, 1.22fr);
+  gap: 24px;
+  align-items: start;
+  border: 1px solid var(--vocs-border-color-primary);
+  border-radius: 10px;
+  padding: 24px;
+  background: color-mix(in srgb, var(--vocs-background-color-surface) 92%, transparent);
+}
+
+.rsil-home-section-header {
+  max-width: 760px;
+}
+
+.rsil-home-quickstart h2,
+.rsil-home-section h2 {
+  margin: 0;
+  color: var(--vocs-text-color-heading);
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+.rsil-home-quickstart h2 {
+  font-size: clamp(24px, 2.6vw, 30px);
+}
+
+.rsil-home-section h2 {
+  font-size: clamp(27px, 3vw, 34px);
+}
+
+.rsil-home-code {
+  min-width: 0;
+}
+
+#home-install .vocs_CodeGroup {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  margin: 0;
+}
+
+#home-install .vocs_Tabs_content {
+  flex: 1;
+}
+
+#home-install .vocs_Code {
+  font-size: 15px;
+}
+
+.rsil-home-metrics-section {
+  display: flex;
+  justify-content: flex-start;
+  margin: -4px 0 8px;
+}
+
+.rsil-home-metrics-section .rsil-home-metrics {
+  justify-content: flex-start;
+}
+
+.rsil-home-metrics a {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--vocs-border-color-primary);
+  border-radius: 8px;
+  padding: 5px 10px 5px 6px;
+  background: var(--vocs-background-color-surface);
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.rsil-home-metrics span {
+  display: inline-flex;
+  height: 24px;
+  align-items: center;
+  border-radius: 6px;
+  padding: 0 8px;
+  background: var(--vocs-background-color-surfaceMuted);
+  color: var(--vocs-text-color-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rsil-home-metrics strong {
+  color: var(--vocs-text-color-heading);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.rsil-home-metric-highlight {
+  border-color: color-mix(in srgb, var(--vocs-color-green) 58%, transparent) !important;
+}
+
+.rsil-home-metric-highlight strong {
+  color: var(--vocs-color-green);
+}
+
+.rsil-home-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rsil-home-feature-grid a,
+.rsil-sdk-card,
+.rsil-trusted-card,
+.rsil-home-supporter-grid a {
+  border: 1px solid var(--vocs-border-color-primary);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--vocs-background-color-surface) 90%, transparent);
+  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+}
+
+.rsil-home-feature-grid a {
+  display: flex;
+  min-height: 132px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+}
+
+.rsil-home-feature-grid span,
+.rsil-sdk-card h3 {
+  color: var(--vocs-text-color-heading);
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.18;
+}
+
+.rsil-home-feature-grid strong {
+  color: var(--vocs-text-color-secondary);
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 1.5;
+}
+
+.rsil-home-section {
+  margin-top: 36px;
+}
+
+.rsil-home-section .rsil-home-section-header {
+  margin-bottom: 20px;
+}
+
+.rsil-trusted-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rsil-trusted-card {
+  display: grid;
+  height: 138px;
+  place-items: center;
+  padding: 22px;
+}
+
+.rsil-trusted-logo {
+  display: block;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.rsil-trusted-logo-flashbots,
+.rsil-trusted-logo-succinct {
+  max-width: 76px;
+  max-height: 76px;
+}
+
+.rsil-trusted-logo-coinbase,
+.rsil-trusted-logo-alchemy {
+  max-width: 148px;
+  max-height: 52px;
+}
+
+.rsil-sdk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.rsil-sdk-card {
+  position: relative;
+  display: flex;
+  min-height: 198px;
+  flex-direction: column;
+  padding: 22px;
+}
+
+.rsil-sdk-badge {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: var(--vocs-background-color-surfaceMuted);
+  color: var(--vocs-text-color-heading);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.rsil-sdk-card h3 {
+  max-width: calc(100% - 82px);
+  margin: 0;
+}
+
+.rsil-sdk-company {
+  margin: 8px 0 0;
+  color: var(--vocs-text-color-secondary);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.rsil-sdk-description {
+  margin: 20px 0 24px;
+  color: var(--vocs-text-color-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.rsil-sdk-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  color: var(--vocs-text-color-heading);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.rsil-sdk-link:hover {
+  color: var(--vocs-color-accent7);
+}
+
+.rsil-sdk-link-icon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.rsil-home-supporter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rsil-home-supporter-grid a {
+  display: grid;
+  height: 152px;
+  place-items: center;
+  padding: 24px;
+}
+
+.rsil-home-supporter-grid img {
+  display: block;
+  max-width: min(290px, 76%);
+  max-height: 70px;
+  object-fit: contain;
+}
+
+[data-vocs-theme="dark"] .rsil-home-supporter-grid img {
+  filter: invert(1);
+}
+
+.border-accent {
+  border: 1px solid var(--vocs-color_borderAccent) !important;
+}
+
+@media (max-width: 1180px) {
+  .rsil-home-quickstart {
+    grid-template-columns: 1fr;
+  }
+
+  .rsil-home-hero-top {
+    grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.78fr);
+    gap: 24px;
+  }
+}
+
+@media (min-width: 1376px) {
+  [data-v-content]:has(.rsil-home-page) {
+    max-width: min(860px, calc(100vw - 48px));
+  }
+}
+
+@media (max-width: 900px) {
+  [data-v-content]:has(.rsil-home-page) {
+    max-width: calc(100vw - 32px);
+    padding-top: 24px;
+    padding-bottom: 64px;
+  }
+
+  .rsil-home-hero-top {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .rsil-home-hero-media img {
+    aspect-ratio: 16 / 8;
+  }
+
+  .rsil-home-hero-body {
+    max-width: 680px;
+  }
+
+  .rsil-home-feature-grid,
+  .rsil-trusted-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .rsil-home-page {
+    gap: 24px;
+  }
+
+  .rsil-home-actions,
+  .rsil-home-metrics {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rsil-home-button,
+  .rsil-home-metrics a {
+    width: 100%;
+  }
+
+  .rsil-home-quickstart {
+    padding: 18px;
+  }
+
+  .rsil-home-feature-grid,
+  .rsil-trusted-grid,
+  .rsil-sdk-grid,
+  .rsil-home-supporter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rsil-trusted-card {
+    height: 122px;
+  }
+
+  .rsil-sdk-card {
+    min-height: 0;
+    padding: 20px;
+  }
+}

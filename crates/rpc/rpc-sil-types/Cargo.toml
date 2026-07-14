@@ -1,0 +1,76 @@
+[package]
+name = "rsil-rpc-sil-types"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Types supporting implementation of 'sil' namespace RPC server API"
+
+[lints]
+workspace = true
+
+[dependencies]
+rsil-chainspec.workspace = true
+rsil-chain-state.workspace = true
+rsil-errors.workspace = true
+rsil-savm.workspace = true
+rsil-execution-types.workspace = true
+rsil-metrics.workspace = true
+rsil-sila-primitives = { workspace = true, features = ["rpc"] }
+rsil-primitives-traits = { workspace = true, features = ["rpc-compat"] }
+rsil-storage-api.workspace = true
+rsil-revm.workspace = true
+rsil-rpc-server-types.workspace = true
+rsil-rpc-convert.workspace = true
+rsil-tasks.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-trie.workspace = true
+
+# sila
+alloy-chains.workspace = true
+alloy-sip7928.workspace = true
+alloy-sips.workspace = true
+alloy-savm = { workspace = true, features = ["overrides", "call-util"] }
+alloy-primitives.workspace = true
+alloy-consensus.workspace = true
+alloy-sol-types.workspace = true
+alloy-transport.workspace = true
+alloy-rpc-client = { workspace = true, features = ["reqwest"] }
+alloy-rpc-types-sil.workspace = true
+alloy-network.workspace = true
+alloy-serde.workspace = true
+revm.workspace = true
+revm-inspectors.workspace = true
+
+# rpc
+jsonrpsee-core.workspace = true
+jsonrpsee-types.workspace = true
+
+# async
+futures.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+reqwest.workspace = true
+
+# metrics
+metrics.workspace = true
+
+# misc
+serde = { workspace = true, features = ["derive"] }
+url = { workspace = true, features = ["serde"] }
+thiserror.workspace = true
+derive_more.workspace = true
+schnellru.workspace = true
+rand.workspace = true
+tracing.workspace = true
+itertools.workspace = true
+
+[dev-dependencies]
+rsil-db-models.workspace = true
+rsil-storage-api = { workspace = true, features = ["std"] }
+serde_json.workspace = true
+
+[features]
+js-tracer = ["revm-inspectors/js-tracer"]

@@ -1,0 +1,68 @@
+[package]
+name = "rsil-stages-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-codecs.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider.workspace = true
+rsil-static-file.workspace = true
+rsil-network-p2p.workspace = true
+rsil-tokio-util.workspace = true
+rsil-consensus.workspace = true
+rsil-prune.workspace = true
+rsil-errors.workspace = true
+rsil-stages-types.workspace = true
+rsil-static-file-types.workspace = true
+
+# alloy
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+
+# metrics
+rsil-metrics.workspace = true
+metrics.workspace = true
+
+# async
+tokio = { workspace = true, features = ["sync"] }
+futures-util.workspace = true
+
+# misc
+aquamarine.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+auto_impl.workspace = true
+
+[dev-dependencies]
+assert_matches.workspace = true
+rsil-chainspec.workspace = true
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-db-api.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-tasks.workspace = true
+tokio = { workspace = true, features = ["sync", "rt-multi-thread"] }
+tokio-stream.workspace = true
+rsil-testing-utils.workspace = true
+
+[features]
+test-utils = [
+    "rsil-chainspec/test-utils",
+    "rsil-consensus/test-utils",
+    "rsil-db-api/test-utils",
+    "rsil-db/test-utils",
+    "rsil-network-p2p/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-stages-types/test-utils",
+    "rsil-tasks/test-utils",
+    "rsil-codecs/test-utils",
+]

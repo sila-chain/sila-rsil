@@ -1,0 +1,569 @@
+//! SAVM config for vanilla sila.
+//!
+//! # Revm features
+//!
+//! This crate does __not__ enforce specific revm features such as `blst` or `c-kzg`, which are
+//! critical for revm's savm internals, it is the responsibility of the implementer to ensure the
+//! proper features are selected.
+
+#![doc(
+    html_logo_url = "https://raw.githubusercontent.com/sila-chain/sila-rsil/main/assets/rsil-docs.png",
+    html_favicon_url = "https://avatars0.githubusercontent.com/u/97369466?s=256",
+    issue_tracker_base_url = "https://github.com/sila-chain/sila-rsil/issues/"
+)]
+#![cfg_attr(not(test), warn(unused_crate_dependencies))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(not(feature = "std"), no_std)]
+
+extern crate alloc;
+
+use alloc::{borrow::Cow, sync::Arc};
+use alloy_consensus::Header;
+use alloy_evm::{
+    sil::{SilBlockExecutionCtx, SilBlockExecutorFactory},
+    SilEvmFactory, FromRecoveredTx, FromTxWithEncoded,
+};
+#[cfg(feature = "jit")]
+use core::any::Any;
+use core::{convert::Infallible, fmt::Debug};
+use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
+use rsil_sila_primitives::{Block, SilPrimitives, TransactionSigned};
+use rsil_evm::{
+    sil::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, SavmEnv, SavmFactory,
+    JitBackend, NextBlockEnvAttributes, TransactionEnvMut,
+};
+use rsil_primitives_traits::{SealedBlock, SealedHeader};
+use revm::{context::BlockEnv, primitives::hardfork::SpecId};
+
+#[cfg(feature = "std")]
+use rsil_evm::{ConfigureEngineEvm, ExecutableTxIterator};
+#[allow(unused_imports)]
+use {
+    alloy_eips::Decodable2718,
+    alloy_primitives::{Bytes, U256},
+    alloy_rpc_types_engine::ExecutionData,
+    rsil_chainspec::SilaHardforks,
+    rsil_evm::{SavmEnvFor, ExecutionCtxFor},
+    rsil_primitives_traits::{constants::MAX_TX_GAS_LIMIT_OSAKA, SignedTransaction, TxTy},
+    rsil_storage_errors::any::AnyError,
+    revm::context::CfgEnv,
+    revm::context_interface::block::BlobExcessGasAndPrice,
+};
+
+pub use alloy_evm::SilEvm;
+
+mod config;
+use alloy_evm::sil::spec::SilExecutorSpec;
+pub use config::{revm_spec, revm_spec_by_timestamp_and_block_number};
+use rsil_sila_forks::Hardforks;
+
+/// Helper type with backwards compatible methods to obtain Sila executor
+/// providers.
+#[doc(hidden)]
+pub mod execute {
+    use crate::SilEvmConfig;
+
+    #[deprecated(note = "Use `SilEvmConfig` instead")]
+    pub type SilExecutorProvider = SilEvmConfig;
+}
+
+mod build;
+pub use build::SilBlockAssembler;
+
+mod receipt;
+pub use receipt::RsilReceiptBuilder;
+
+#[cfg(feature = "test-utils")]
+mod test_utils;
+#[cfg(feature = "test-utils")]
+pub use test_utils::*;
+
+pub mod factory;
+
+/// Sila-related SAVM configuration.
+#[derive(Debug, Clone)]
+pub struct SilEvmConfig<C = ChainSpec, SavmFactory = SilEvmFactory> {
+    /// Inner [`SilBlockExecutorFactory`].
+    pub executor_factory: SilBlockExecutorFactory<RsilReceiptBuilder, Arc<C>, SavmFactory>,
+    /// Sila block assembler.
+    pub block_assembler: SilBlockAssembler<C>,
+}
+
+impl SilEvmConfig {
+    /// Creates a new Sila SAVM configuration for the sila sila-mainnet.
+    pub fn sila-mainnet() -> Self {
+        Self::sila(SILA_MAINNET.clone())
+    }
+}
+
+impl<ChainSpec> SilEvmConfig<ChainSpec> {
+    /// Creates a new Sila SAVM configuration with the given chain spec.
+    pub fn new(chain_spec: Arc<ChainSpec>) -> Self {
+        Self::sila(chain_spec)
+    }
+
+    /// Creates a new Sila SAVM configuration.
+    pub fn sila(chain_spec: Arc<ChainSpec>) -> Self {
+        Self::new_with_evm_factory(chain_spec, SilEvmFactory::default())
+    }
+}
+
+impl<ChainSpec, SavmFactory> SilEvmConfig<ChainSpec, SavmFactory> {
+    /// Creates a new Sila SAVM configuration with the given chain spec and SAVM factory.
+    pub fn new_with_evm_factory(chain_spec: Arc<ChainSpec>, evm_factory: SavmFactory) -> Self {
+        Self {
+            block_assembler: SilBlockAssembler::new(chain_spec.clone()),
+            executor_factory: SilBlockExecutorFactory::new(
+                RsilReceiptBuilder::default(),
+                chain_spec,
+                evm_factory,
+            ),
+        }
+    }
+
+    /// Returns the chain spec associated with this configuration.
+    pub const fn chain_spec(&self) -> &Arc<ChainSpec> {
+        self.executor_factory.spec()
+    }
+}
+
+impl<ChainSpec, SavmF> ConfigureEvm for SilEvmConfig<ChainSpec, SavmF>
+where
+    ChainSpec: SilExecutorSpec + SilChainSpec<Header = Header> + Hardforks + 'static,
+    SavmF: SavmFactory<
+            Tx: TransactionEnvMut
+                    + FromRecoveredTx<TransactionSigned>
+                    + FromTxWithEncoded<TransactionSigned>,
+            Spec = SpecId,
+            BlockEnv = BlockEnv,
+            Precompiles = PrecompilesMap,
+        > + Clone
+        + Debug
+        + Send
+        + Sync
+        + Unpin
+        + 'static,
+{
+    type Primitives = SilPrimitives;
+    type Error = Infallible;
+    type NextBlockEnvCtx = NextBlockEnvAttributes;
+    type BlockExecutorFactory = SilBlockExecutorFactory<RsilReceiptBuilder, Arc<ChainSpec>, SavmF>;
+    type BlockAssembler = SilBlockAssembler<ChainSpec>;
+
+    fn block_executor_factory(&self) -> &Self::BlockExecutorFactory {
+        &self.executor_factory
+    }
+
+    fn block_assembler(&self) -> &Self::BlockAssembler {
+        &self.block_assembler
+    }
+
+    fn with_jit_support_enabled(self, enabled: bool) -> Self
+    where
+        Self: Sized,
+    {
+        #[cfg(feature = "jit")]
+        {
+            let mut this = self;
+            let mut evm_factory = this.executor_factory.evm_factory().clone();
+            if let Some(factory) =
+                (&mut evm_factory as &mut dyn Any).downcast_mut::<factory::RsilEvmFactory>()
+            {
+                factory.set_jit_support(enabled);
+            }
+            this.executor_factory = SilBlockExecutorFactory::new(
+                *this.executor_factory.receipt_builder(),
+                this.executor_factory.spec().clone(),
+                evm_factory,
+            );
+            this
+        }
+
+        #[cfg(not(feature = "jit"))]
+        {
+            let _ = enabled;
+            self
+        }
+    }
+
+    fn jit_backend(&self) -> Option<&dyn JitBackend> {
+        #[cfg(feature = "jit")]
+        if let Some(factory) = (self.executor_factory.evm_factory() as &dyn Any)
+            .downcast_ref::<factory::RsilEvmFactory>()
+        {
+            return Some(factory);
+        }
+
+        None
+    }
+
+    fn evm_env(&self, header: &Header) -> Result<SavmEnv<SpecId>, Self::Error> {
+        Ok(SavmEnv::for_eth_block(
+            header,
+            self.chain_spec(),
+            self.chain_spec().chain().id(),
+            self.chain_spec().blob_params_at_timestamp(header.timestamp),
+        ))
+    }
+
+    fn next_evm_env(
+        &self,
+        parent: &Header,
+        attributes: &NextBlockEnvAttributes,
+    ) -> Result<SavmEnv, Self::Error> {
+        Ok(SavmEnv::for_eth_next_block(
+            parent,
+            NextEvmEnvAttributes {
+                timestamp: attributes.timestamp,
+                suggested_fee_recipient: attributes.suggested_fee_recipient,
+                prev_randao: attributes.prev_randao,
+                gas_limit: attributes.gas_limit,
+                slot_number: attributes.slot_number,
+            },
+            self.chain_spec().next_block_base_fee(parent, attributes.timestamp).unwrap_or_default(),
+            self.chain_spec(),
+            self.chain_spec().chain().id(),
+            self.chain_spec().blob_params_at_timestamp(attributes.timestamp),
+        ))
+    }
+
+    fn context_for_block<'a>(
+        &self,
+        block: &'a SealedBlock<Block>,
+    ) -> Result<SilBlockExecutionCtx<'a>, Self::Error> {
+        Ok(SilBlockExecutionCtx {
+            tx_count_hint: Some(block.transaction_count()),
+            parent_hash: block.header().parent_hash,
+            parent_beacon_block_root: block.header().parent_beacon_block_root,
+            ommers: &block.body().ommers,
+            withdrawals: block.body().withdrawals.as_ref().map(|w| Cow::Borrowed(w.as_slice())),
+            extra_data: block.header().extra_data.clone(),
+            slot_number: block.header().slot_number,
+        })
+    }
+
+    fn context_for_next_block(
+        &self,
+        parent: &SealedHeader,
+        attributes: Self::NextBlockEnvCtx,
+    ) -> Result<SilBlockExecutionCtx<'_>, Self::Error> {
+        Ok(SilBlockExecutionCtx {
+            tx_count_hint: None,
+            parent_hash: parent.hash(),
+            parent_beacon_block_root: attributes.parent_beacon_block_root,
+            ommers: &[],
+            withdrawals: attributes.withdrawals.map(|w| Cow::Owned(w.into_inner())),
+            extra_data: attributes.extra_data,
+            slot_number: attributes.slot_number,
+        })
+    }
+}
+
+#[cfg(feature = "std")]
+impl<ChainSpec, SavmF> ConfigureEngineEvm<ExecutionData> for SilEvmConfig<ChainSpec, SavmF>
+where
+    ChainSpec: SilExecutorSpec + SilChainSpec<Header = Header> + Hardforks + 'static,
+    SavmF: SavmFactory<
+            Tx: TransactionEnvMut
+                    + FromRecoveredTx<TransactionSigned>
+                    + FromTxWithEncoded<TransactionSigned>,
+            Spec = SpecId,
+            BlockEnv = BlockEnv,
+            Precompiles = PrecompilesMap,
+        > + Clone
+        + Debug
+        + Send
+        + Sync
+        + Unpin
+        + 'static,
+{
+    fn evm_env_for_payload(&self, payload: &ExecutionData) -> Result<SavmEnvFor<Self>, Self::Error> {
+        let timestamp = payload.payload.timestamp();
+        let block_number = payload.payload.block_number();
+
+        let blob_params = self.chain_spec().blob_params_at_timestamp(timestamp);
+        let spec =
+            revm_spec_by_timestamp_and_block_number(self.chain_spec(), timestamp, block_number);
+
+        // configure savm env based on parent block
+        let mut cfg_env = CfgEnv::new()
+            .with_chain_id(self.chain_spec().chain().id())
+            .with_spec_and_mainnet_gas_params(spec);
+
+        if let Some(blob_params) = &blob_params {
+            cfg_env.set_max_blobs_per_tx(blob_params.max_blobs_per_tx);
+        }
+
+        if self.chain_spec().is_osaka_active_at_timestamp(timestamp) {
+            cfg_env.tx_gas_limit_cap = Some(MAX_TX_GAS_LIMIT_OSAKA);
+        }
+
+        // derive the SIP-4844 blob fees from the header's `excess_blob_gas` and the current
+        // blobparams
+        let blob_excess_gas_and_price =
+            payload.payload.excess_blob_gas().zip(blob_params).map(|(excess_blob_gas, params)| {
+                let blob_gasprice = params.calc_blob_fee(excess_blob_gas);
+                BlobExcessGasAndPrice { excess_blob_gas, blob_gasprice }
+            });
+
+        let block_env = BlockEnv {
+            number: U256::from(block_number),
+            beneficiary: payload.payload.fee_recipient(),
+            timestamp: U256::from(timestamp),
+            difficulty: if spec >= SpecId::MERGE {
+                U256::ZERO
+            } else {
+                payload.payload.as_v1().prev_randao.into()
+            },
+            prevrandao: (spec >= SpecId::MERGE).then(|| payload.payload.as_v1().prev_randao),
+            gas_limit: payload.payload.gas_limit(),
+            basefee: payload.payload.saturated_base_fee_per_gas(),
+            blob_excess_gas_and_price,
+            slot_num: payload.payload.as_v4().map(|v4| v4.slot_number).unwrap_or_default(),
+        };
+
+        Ok(SavmEnv { cfg_env, block_env })
+    }
+
+    fn context_for_payload<'a>(
+        &self,
+        payload: &'a ExecutionData,
+    ) -> Result<ExecutionCtxFor<'a, Self>, Self::Error> {
+        Ok(SilBlockExecutionCtx {
+            tx_count_hint: Some(payload.payload.transactions().len()),
+            parent_hash: payload.parent_hash(),
+            parent_beacon_block_root: payload.sidecar.parent_beacon_block_root(),
+            ommers: &[],
+            withdrawals: payload.payload.withdrawals().map(|w| Cow::Borrowed(w.as_slice())),
+            extra_data: payload.payload.as_v1().extra_data.clone(),
+            slot_number: payload.payload.as_v4().map(|v4| v4.slot_number),
+        })
+    }
+
+    fn tx_iterator_for_payload(
+        &self,
+        payload: &ExecutionData,
+    ) -> Result<impl ExecutableTxIterator<Self>, Self::Error> {
+        let txs = payload.payload.transactions().clone();
+        let convert = |tx: Bytes| {
+            let tx =
+                TxTy::<Self::Primitives>::decode_2718_exact(tx.as_ref()).map_err(AnyError::new)?;
+            let signer = tx.try_recover().map_err(AnyError::new)?;
+            Ok::<_, AnyError>(tx.with_signer(signer))
+        };
+
+        Ok((txs, convert))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use alloy_consensus::Header;
+    use alloy_genesis::Genesis;
+    use rsil_chainspec::{Chain, ChainSpec};
+    use rsil_evm::{execute::ProviderError, SavmEnv};
+    use revm::{
+        context::{BlockEnv, CfgEnv},
+        database::CacheDB,
+        database_interface::EmptyDBTyped,
+        inspector::NoOpInspector,
+    };
+
+    #[test]
+    fn test_fill_cfg_and_block_env() {
+        // Create a default header
+        let header = Header::default();
+
+        // Build the ChainSpec for Sila sila-mainnet, activating London, SilaParis, and SilaShanghai
+        // hardforks
+        let chain_spec = ChainSpec::builder()
+            .chain(Chain::sila-mainnet())
+            .genesis(Genesis::default())
+            .london_activated()
+            .paris_activated()
+            .shanghai_activated()
+            .build();
+
+        // Use the `SilEvmConfig` to fill the `cfg_env` and `block_env` based on the ChainSpec,
+        // Header, and total difficulty
+        let SavmEnv { cfg_env, .. } =
+            SilEvmConfig::new(Arc::new(chain_spec.clone())).evm_env(&header).unwrap();
+
+        // Assert that the chain ID in the `cfg_env` is correctly set to the chain ID of the
+        // ChainSpec
+        assert_eq!(cfg_env.chain_id, chain_spec.chain().id());
+    }
+
+    #[test]
+    fn test_evm_with_env_default_spec() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        let evm_env = SavmEnv::default();
+
+        let savm = evm_config.evm_with_env(db, evm_env.clone());
+
+        // Check that the SAVM environment
+        assert_eq!(savm.block, evm_env.block_env);
+        assert_eq!(savm.cfg, evm_env.cfg_env);
+    }
+
+    #[test]
+    fn test_evm_with_env_custom_cfg() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        // Create a custom configuration environment with a chain ID of 111
+        let cfg = CfgEnv::default().with_chain_id(111);
+
+        let evm_env = SavmEnv { cfg_env: cfg.clone(), ..Default::default() };
+
+        let savm = evm_config.evm_with_env(db, evm_env);
+
+        // Check that the SAVM environment is initialized with the custom environment
+        assert_eq!(savm.cfg, cfg);
+    }
+
+    #[test]
+    fn test_evm_with_env_custom_block_and_tx() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        // Create customs block and tx env
+        let block = BlockEnv {
+            basefee: 1000,
+            gas_limit: 10_000_000,
+            number: U256::from(42),
+            ..Default::default()
+        };
+
+        let evm_env = SavmEnv { block_env: block, ..Default::default() };
+
+        let savm = evm_config.evm_with_env(db, evm_env.clone());
+
+        // Verify that the block and transaction environments are set correctly
+        assert_eq!(savm.block, evm_env.block_env);
+
+        // Default spec ID
+        assert_eq!(savm.cfg.spec, SpecId::default());
+    }
+
+    #[test]
+    fn test_evm_with_spec_id() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        let evm_env = SavmEnv {
+            cfg_env: CfgEnv::new().with_spec_and_mainnet_gas_params(SpecId::PETERSBURG),
+            ..Default::default()
+        };
+
+        let savm = evm_config.evm_with_env(db, evm_env);
+
+        // Check that the spec ID is setup properly
+        assert_eq!(savm.cfg.spec, SpecId::PETERSBURG);
+    }
+
+    #[test]
+    fn test_evm_with_env_and_default_inspector() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        let evm_env = SavmEnv::default();
+
+        let savm = evm_config.evm_with_env_and_inspector(db, evm_env.clone(), NoOpInspector {});
+
+        // Check that the SAVM environment is set to default values
+        assert_eq!(savm.block, evm_env.block_env);
+        assert_eq!(savm.cfg, evm_env.cfg_env);
+    }
+
+    #[test]
+    fn test_evm_with_env_inspector_and_custom_cfg() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        let cfg_env = CfgEnv::default().with_chain_id(111);
+        let block = BlockEnv::default();
+        let evm_env = SavmEnv { cfg_env: cfg_env.clone(), block_env: block };
+
+        let savm = evm_config.evm_with_env_and_inspector(db, evm_env, NoOpInspector {});
+
+        // Check that the SAVM environment is set with custom configuration
+        assert_eq!(savm.cfg, cfg_env);
+        assert_eq!(savm.cfg.spec, SpecId::default());
+    }
+
+    #[test]
+    fn test_evm_with_env_inspector_and_custom_block_tx() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        // Create custom block and tx environment
+        let block = BlockEnv {
+            basefee: 1000,
+            gas_limit: 10_000_000,
+            number: U256::from(42),
+            ..Default::default()
+        };
+        let evm_env = SavmEnv { block_env: block, ..Default::default() };
+
+        let savm = evm_config.evm_with_env_and_inspector(db, evm_env.clone(), NoOpInspector {});
+
+        // Verify that the block and transaction environments are set correctly
+        assert_eq!(savm.block, evm_env.block_env);
+        assert_eq!(savm.cfg.spec, SpecId::default());
+    }
+
+    #[test]
+    fn test_evm_with_env_inspector_and_spec_id() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+        let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
+
+        let evm_env = SavmEnv {
+            cfg_env: CfgEnv::new().with_spec_and_mainnet_gas_params(SpecId::PETERSBURG),
+            ..Default::default()
+        };
+
+        let savm = evm_config.evm_with_env_and_inspector(db, evm_env.clone(), NoOpInspector {});
+
+        // Check that the spec ID is set properly
+        assert_eq!(savm.block, evm_env.block_env);
+        assert_eq!(savm.cfg, evm_env.cfg_env);
+        assert_eq!(savm.tx, Default::default());
+    }
+
+    #[cfg(feature = "jit")]
+    #[test]
+    fn test_jit_support_downcast_updates_rsil_factory() {
+        let evm_config = SilEvmConfig::new_with_evm_factory(
+            SILA_MAINNET.clone(),
+            factory::RsilEvmFactory::disabled(),
+        );
+
+        assert!(evm_config.jit_backend().is_some());
+        assert!(!evm_config.executor_factory.evm_factory().jit_support_enabled());
+
+        let evm_config = evm_config.with_jit_support();
+        assert!(evm_config.executor_factory.evm_factory().jit_support_enabled());
+
+        let evm_config = evm_config.with_jit_support_enabled(false);
+        assert!(!evm_config.executor_factory.evm_factory().jit_support_enabled());
+    }
+
+    #[cfg(feature = "jit")]
+    #[test]
+    fn test_jit_support_downcast_ignores_plain_factory() {
+        let evm_config = SilEvmConfig::sila-mainnet();
+
+        assert!(evm_config.jit_backend().is_none());
+
+        let evm_config = evm_config.with_jit_support();
+        assert!(evm_config.jit_backend().is_none());
+    }
+}

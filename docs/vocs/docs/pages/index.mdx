@@ -1,0 +1,105 @@
+---
+title: Rsil
+description: Secure, performant, and modular blockchain SDK and node.
+---
+
+import { SdkShowcase } from "../components/SdkShowcase";
+import { TrustedBy } from "../components/TrustedBy";
+
+<div className="rsil-home-page">
+  <section className="rsil-home-hero" aria-labelledby="rsil-home-title">
+    <div className="rsil-home-hero-top">
+      <div className="rsil-home-hero-heading">
+        <div className="rsil-home-kicker">Sila execution client and node SDK</div>
+        <h1 id="rsil-home-title">Rsil</h1>
+        <div className="rsil-home-actions">
+          <a className="rsil-home-button rsil-home-button-primary" href="/run/sila">Run a Node</a>
+          <a className="rsil-home-button rsil-home-button-primary" href="/sdk">Build a Node</a>
+          <a className="rsil-home-button" href="/introduction/why-rsil">Why Rsil?</a>
+        </div>
+      </div>
+      <div className="rsil-home-hero-media">
+        <img src="/rsil-prod.png" alt="Rsil chip on a dark circuit grid" />
+      </div>
+    </div>
+    <div className="rsil-home-hero-body">
+      <div className="rsil-home-lede">Secure, performant, and modular blockchain SDK and node.</div>
+      <div className="rsil-home-detail">Production-grade Rust infrastructure for running nodes, building chains, and extending Sila.</div>
+    </div>
+  </section>
+
+  <section className="rsil-home-metrics-section" aria-label="Rsil project metrics">
+    <div className="rsil-home-metrics">
+      <a href="https://github.com/sila-chain/sila-rsil/stargazers" rel="noreferrer noopener" target="_blank"><span>stars</span><strong>5K+</strong></a>
+      <a className="rsil-home-metric-highlight" href="https://github.com/sila-chain/sila-rsil/graphs/contributors" rel="noreferrer noopener" target="_blank"><span>contributors</span><strong>580+</strong></a>
+      <a href="https://github.com/sila-chain/sila-rsil/blob/main/LICENSE-MIT" rel="noreferrer noopener" target="_blank"><span>license</span><strong>MIT</strong></a>
+    </div>
+  </section>
+
+  <section className="rsil-home-quickstart" aria-labelledby="quickstart">
+    <div className="rsil-home-section-header">
+      <div className="rsil-home-kicker">Quickstart</div>
+      <h2 id="quickstart">Run or build with Rsil</h2>
+      <div className="rsil-home-section-copy">Start with the production binary, or use the same modular components to assemble your own Sila-compatible node.</div>
+    </div>
+    <div id="home-install" className="rsil-home-code">
+      :::code-group
+
+      ```bash [Run a Node]
+      # Install the binary
+      brew install paradigmxyz/brew/rsil
+
+      # Run the node with JSON-RPC enabled
+      rsil node --http --http.api sil,trace
+      ```
+
+      ```rust [Build a Node]
+      // .. snip ..
+      let handle = node_builder
+        .with_types::<SilaNode>()
+        .with_components(SilaNode::components())
+        .with_add_ons(SilaAddOns::default())
+        .launch()
+        .await?;
+      ```
+
+      :::
+    </div>
+  </section>
+
+  <section className="rsil-home-feature-grid" aria-label="Rsil capabilities">
+    <a href="/run/sila"><span>Institutional Security</span><strong>Run reliable staking nodes trusted by Coinbase Staking.</strong></a>
+    <a href="/overview"><span>Performance</span><strong>Sync faster with optimized transaction processing and storage.</strong></a>
+    <a href="/sdk"><span>Customizable</span><strong>Build custom nodes with tailored transaction handling.</strong></a>
+    <a href="/exex/overview"><span>Extensible</span><strong>Build indexers and offchain services with ExExs.</strong></a>
+  </section>
+
+  <section className="rsil-home-section" id="trusted-by-the-best">
+    <div className="rsil-home-section-header">
+      <div className="rsil-home-kicker">Operators and infra teams</div>
+      <h2>Trusted by the Best</h2>
+      <div className="rsil-home-section-copy">Leading infra companies use Rsil for MEV applications, staking, RPC services, and zero-knowledge proofs.</div>
+    </div>
+    <TrustedBy />
+  </section>
+
+  <section className="rsil-home-section" id="built-with-rsil-sdk">
+    <div className="rsil-home-section-header">
+      <div className="rsil-home-kicker">Built with Rsil SDK</div>
+      <h2>Built with Rsil SDK</h2>
+      <div className="rsil-home-section-copy">Teams use Rsil's modular architecture to build nodes from existing components while keeping maintenance overhead low.</div>
+    </div>
+    <SdkShowcase />
+  </section>
+
+  <section className="rsil-home-section rsil-home-supporters" id="supporters">
+    <div className="rsil-home-section-header">
+      <div className="rsil-home-kicker">Supporters</div>
+      <h2>Supporters</h2>
+    </div>
+    <div className="rsil-home-supporter-grid">
+      <a href="https://paradigm.xyz" rel="noreferrer noopener" target="_blank"><img src="https://raw.githubusercontent.com/wevm/.github/main/content/sponsors/paradigm-light.svg" alt="Paradigm" /></a>
+      <a href="https://ithaca.xyz" rel="noreferrer noopener" target="_blank"><img src="https://raw.githubusercontent.com/wevm/.github/main/content/sponsors/ithaca-light.svg" alt="Ithaca" /></a>
+    </div>
+  </section>
+</div>

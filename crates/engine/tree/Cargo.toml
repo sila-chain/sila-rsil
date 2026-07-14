@@ -1,0 +1,143 @@
+[package]
+name = "rsil-engine-tree"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chain-state = { workspace = true, features = ["rayon"] }
+rsil-chainspec = { workspace = true, optional = true }
+rsil-consensus.workspace = true
+rsil-db.workspace = true
+rsil-engine-primitives = { workspace = true, features = ["std"] }
+rsil-execution-cache.workspace = true
+rsil-errors.workspace = true
+rsil-execution-types.workspace = true
+rsil-savm = { workspace = true, features = ["metrics"] }
+rsil-network-p2p.workspace = true
+rsil-payload-builder.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-primitives-traits = { workspace = true, features = ["rayon", "dashmap"] }
+rsil-sila-primitives.workspace = true
+rsil-provider.workspace = true
+rsil-prune.workspace = true
+rsil-revm = { workspace = true, features = ["optional-balance-check"] }
+rsil-stages-api.workspace = true
+rsil-tasks = { workspace = true, features = ["rayon"] }
+rsil-trie-parallel.workspace = true
+rsil-trie-sparse = { workspace = true, features = ["std", "metrics"] }
+rsil-trie.workspace = true
+rsil-trie-common.workspace = true
+rsil-trie-db.workspace = true
+
+# alloy
+alloy-savm.workspace = true
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-sip7928 = { workspace = true, features = ["rlp"] }
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+revm.workspace = true
+
+# common
+futures.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "sync", "macros"] }
+moka = { workspace = true, features = ["sync"] }
+
+# metrics
+metrics.workspace = true
+rsil-metrics = { workspace = true, features = ["common"] }
+
+# misc
+indexmap.workspace = true
+schnellru.workspace = true
+rayon.workspace = true
+tracing.workspace = true
+derive_more.workspace = true
+crossbeam-channel.workspace = true
+
+# optional deps for test-utils
+rsil-prune-types = { workspace = true, optional = true }
+rsil-stages = { workspace = true, optional = true }
+rsil-static-file = { workspace = true, optional = true }
+rsil-tracing = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
+
+[dev-dependencies]
+# rsil
+rsil-savm-sila = { workspace = true, features = ["test-utils"] }
+rsil-chain-state = { workspace = true, features = ["test-utils"] }
+rsil-chainspec.workspace = true
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-db-common.workspace = true
+rsil-sila-consensus.workspace = true
+metrics-util = { workspace = true, features = ["debugging"] }
+rsil-sila-engine-primitives.workspace = true
+rsil-savm = { workspace = true, features = ["test-utils"] }
+rsil-exex-types.workspace = true
+rsil-network-p2p = { workspace = true, features = ["test-utils"] }
+rsil-prune-types.workspace = true
+rsil-stages = { workspace = true, features = ["test-utils"] }
+rsil-static-file.workspace = true
+rsil-testing-utils.workspace = true
+rsil-tracing.workspace = true
+rsil-node-sila.workspace = true
+rsil-e2e-test-utils.workspace = true
+
+assert_matches.workspace = true
+eyre.workspace = true
+serde_json.workspace = true
+proptest.workspace = true
+rand.workspace = true
+rand_08.workspace = true
+
+[features]
+test-utils = [
+    "rsil-chain-state/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-consensus/test-utils",
+    "rsil-db/test-utils",
+    "rsil-savm/test-utils",
+    "rsil-network-p2p/test-utils",
+    "rsil-payload-builder/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-prune-types",
+    "rsil-prune-types?/test-utils",
+    "rsil-revm/test-utils",
+    "rsil-stages-api/test-utils",
+    "rsil-stages/test-utils",
+    "rsil-static-file",
+    "rsil-tracing",
+    "rsil-trie/test-utils",
+    "rsil-trie-common/test-utils",
+    "rsil-trie-db/test-utils",
+    "rsil-trie-sparse/test-utils",
+    "rsil-prune-types?/test-utils",
+    "rsil-trie-parallel/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "rsil-node-sila/test-utils",
+    "rsil-tasks/test-utils",
+    "rsil-execution-cache/test-utils",
+    "rsil-savm-sila/test-utils",
+]
+trie-debug = [
+    "rsil-trie-sparse/trie-debug",
+    "rsil-trie-parallel/trie-debug",
+    "rsil-engine-primitives/trie-debug",
+    "dep:serde_json",
+]
+
+[[test]]
+name = "e2e_testsuite"
+path = "tests/e2e-testsuite/main.rs"

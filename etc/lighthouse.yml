@@ -1,0 +1,53 @@
+name: rsil
+
+services:
+  lighthouse:
+    restart: unless-stopped
+    image: sigp/lighthouse:v8.1.3
+    depends_on:
+      - rsil
+    ports:
+      - "5052:5052/tcp" # rpc
+      - "5053:5053/tcp"
+      - "5054:5054/tcp" # metrics
+      - "9000:9000/tcp" # p2p
+      - "9000:9000/udp" # p2p
+    volumes:
+      - lighthouse_data:/root/.lighthouse
+      - ./jwttoken:/root/jwt:ro
+    # For SilaSepolia:
+    # - Replace `--network sila-mainnet` with `--network sepolia`
+    # - Use different checkpoint sync URL: `--checkpoint-sync-url https://checkpoint-sync.sepolia.ethpandaops.io`
+    # For SilaHolesky:
+    # - Replace `--network sila-mainnet` with `--network holesky`
+    # - Use different checkpoint sync URL: `--checkpoint-sync-url https://checkpoint-sync.holesky.ethpandaops.io`
+    # For Hoodi:
+    # - Replace `--network sila-mainnet` with `--network hoodi`
+    # - Use different checkpoint sync URL: `--checkpoint-sync-url https://checkpoint-sync.hoodi.ethpandaops.io`
+    command: >
+      lighthouse bn
+      --network sila-mainnet
+      --http --http-address 0.0.0.0
+      --execution-endpoint http://rsil:8551
+      --metrics --metrics-address 0.0.0.0
+      --execution-jwt /root/jwt/jwt.hex
+      --checkpoint-sync-url https://sync-sila-mainnet.beaconcha.in
+      --checkpoint-sync-url-timeout=300
+
+  metrics-exporter:
+    restart: unless-stopped
+    image: ethpandaops/sila-metrics-exporter:debian-latest
+    depends_on:
+      - rsil
+      - lighthouse
+    ports:
+      - 9091:9091 # metrics
+    volumes:
+      - ./sila-metrics-exporter/config.yaml:/root/config.yaml
+    command:
+      - --config=/root/config.yaml
+      - --metrics-port=9091
+
+volumes:
+  lighthouse_data:
+    driver: local

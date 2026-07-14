@@ -1,0 +1,24 @@
+[package]
+name = "example-custom-state-root"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rsil-sila = { workspace = true, features = ["node", "test-utils"] }
+rsil-engine-tree.workspace = true
+rsil-savm.workspace = true
+rsil-chain-state.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider.workspace = true
+rsil-trie.workspace = true
+
+eyre.workspace = true
+tokio.workspace = true
+serde_json.workspace = true
+
+alloy-genesis.workspace = true
+alloy-primitives.workspace = true
+alloy-network.workspace = true
+alloy-rpc-types-engine.workspace = true

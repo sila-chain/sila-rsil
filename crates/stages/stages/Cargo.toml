@@ -1,0 +1,122 @@
+[package]
+name = "rsil-stages"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Staged syncing primitives used in rsil."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-codecs.workspace = true
+rsil-config.workspace = true
+rsil-consensus.workspace = true
+rsil-db.workspace = true
+rsil-db-api.workspace = true
+rsil-etl.workspace = true
+rsil-libmdbx.workspace = true
+rsil-savm = { workspace = true, features = ["metrics"] }
+rsil-era-downloader.workspace = true
+rsil-era-utils.workspace = true
+rsil-era.workspace = true
+rsil-exex.workspace = true
+rsil-fs-util.workspace = true
+rsil-network-p2p.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider.workspace = true
+rsil-execution-types.workspace = true
+rsil-sila-primitives = { workspace = true, optional = true }
+rsil-prune.workspace = true
+rsil-prune-types.workspace = true
+rsil-storage-api.workspace = true
+rsil-storage-errors.workspace = true
+rsil-revm.workspace = true
+rsil-stages-api.workspace = true
+rsil-static-file-types.workspace = true
+rsil-tasks.workspace = true
+rsil-trie = { workspace = true, features = ["metrics"] }
+rsil-trie-db = { workspace = true, features = ["metrics"] }
+
+rsil-testing-utils = { workspace = true, optional = true }
+
+alloy-primitives.workspace = true
+alloy-consensus.workspace = true
+alloy-rlp.workspace = true
+
+# async
+tokio = { workspace = true, features = ["sync"] }
+futures-util.workspace = true
+
+# observability
+tracing.workspace = true
+
+# misc
+thiserror.workspace = true
+itertools.workspace = true
+rayon.workspace = true
+page_size.workspace = true
+num-traits.workspace = true
+tempfile = { workspace = true, optional = true }
+reqwest.workspace = true
+eyre.workspace = true
+
+[dev-dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-db = { workspace = true, features = ["test-utils", "mdbx"] }
+rsil-sila-primitives = { workspace = true, features = ["test-utils"] }
+rsil-sila-consensus.workspace = true
+rsil-savm-sila.workspace = true
+rsil-consensus = { workspace = true, features = ["test-utils"] }
+rsil-network-p2p = { workspace = true, features = ["test-utils"] }
+rsil-downloaders = { workspace = true, features = ["file-client"] }
+rsil-static-file.workspace = true
+rsil-stages-api = { workspace = true, features = ["test-utils"] }
+rsil-storage-api.workspace = true
+rsil-testing-utils.workspace = true
+rsil-trie = { workspace = true, features = ["test-utils"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-network-peers.workspace = true
+
+alloy-genesis.workspace = true
+alloy-sips.workspace = true
+alloy-primitives = { workspace = true, features = ["getrandom", "rand"] }
+rsil-db-common.workspace = true
+rsil-tracing.workspace = true
+
+tokio = { workspace = true, features = ["rt", "sync", "macros"] }
+assert_matches.workspace = true
+rand.workspace = true
+paste.workspace = true
+tempfile.workspace = true
+
+[features]
+test-utils = [
+    "rsil-network-p2p/test-utils",
+    "rsil-db/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-stages-api/test-utils",
+    "dep:rsil-testing-utils",
+    "dep:tempfile",
+    "rsil-chainspec/test-utils",
+    "rsil-consensus/test-utils",
+    "rsil-savm/test-utils",
+    "rsil-downloaders/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-revm/test-utils",
+    "rsil-codecs/test-utils",
+    "rsil-db-api/test-utils",
+    "rsil-trie-db/test-utils",
+    "rsil-trie/test-utils",
+    "rsil-prune-types/test-utils",
+    "dep:rsil-sila-primitives",
+    "rsil-sila-primitives?/test-utils",
+    "rsil-savm-sila/test-utils",
+    "rsil-tasks/test-utils",
+]

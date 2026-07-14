@@ -1,0 +1,16 @@
+[package]
+name = "custom-hardforks"
+license.workspace = true
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# Core Rsil dependencies for chain specs and hardforks
+rsil-chainspec.workspace = true
+rsil-network-peers.workspace = true
+alloy-genesis.workspace = true
+alloy-consensus.workspace = true
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+serde = { version = "1.0", features = ["derive"] }

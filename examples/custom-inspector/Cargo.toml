@@ -1,0 +1,15 @@
+[package]
+name = "example-custom-inspector"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rsil-sila = { workspace = true, features = ["node", "savm", "pool", "cli"] }
+alloy-rpc-types-sil.workspace = true
+clap = { workspace = true, features = ["derive"] }
+futures-util.workspace = true
+alloy-savm.workspace = true
+alloy-primitives.workspace = true
+alloy-sips.workspace = true

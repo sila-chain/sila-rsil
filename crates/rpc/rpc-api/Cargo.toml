@@ -1,0 +1,53 @@
+[package]
+name = "rsil-rpc-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil RPC interfaces"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-rpc-sil-api.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-network-peers.workspace = true
+rsil-trie-common = { workspace = true, features = ["serde"] }
+rsil-chain-state.workspace = true
+
+# sila
+alloy-sips.workspace = true
+alloy-json-rpc.workspace = true
+alloy-primitives.workspace = true
+alloy-rpc-types-sil.workspace = true
+alloy-rpc-types.workspace = true
+alloy-rpc-types-debug.workspace = true
+alloy-rpc-types-trace.workspace = true
+alloy-rpc-types-anvil.workspace = true
+alloy-rpc-types-mev.workspace = true
+alloy-rpc-types-txpool.workspace = true
+alloy-rpc-types-admin.workspace = true
+alloy-serde.workspace = true
+alloy-rpc-types-beacon.workspace = true
+alloy-rpc-types-engine.workspace = true
+alloy-genesis.workspace = true
+
+# misc
+jsonrpsee = { workspace = true, features = ["server", "macros"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+
+[features]
+client = [
+    "jsonrpsee/client",
+    "jsonrpsee/async-client",
+    "rsil-rpc-sil-api/client",
+]
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+jsonrpsee = { workspace = true, features = ["client", "async-client", "http-client"] }

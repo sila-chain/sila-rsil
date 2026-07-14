@@ -1,0 +1,129 @@
+[package]
+name = "rsil-node-sila"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-sila-engine-primitives = { workspace = true, features = ["std"] }
+rsil-sila-payload-builder.workspace = true
+rsil-sila-consensus.workspace = true
+rsil-sila-primitives.workspace = true
+## ensure secp256k1 recovery with rayon support is activated
+rsil-primitives-traits = { workspace = true, features = ["secp256k1", "rayon"] }
+rsil-node-builder.workspace = true
+rsil-tracing.workspace = true
+rsil-provider.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-network.workspace = true
+rsil-savm.workspace = true
+rsil-savm-sila = { workspace = true, features = ["std"] }
+rsil-rpc.workspace = true
+rsil-rpc-engine-api.workspace = true
+rsil-rpc-api.workspace = true
+rsil-rpc-sil-api.workspace = true
+rsil-rpc-builder.workspace = true
+rsil-rpc-server-types.workspace = true
+rsil-node-api.workspace = true
+rsil-node-core.workspace = true
+rsil-chainspec.workspace = true
+rsil-revm = { workspace = true, features = ["std"] }
+rsil-rpc-sil-types.workspace = true
+rsil-engine-local.workspace = true
+rsil-engine-primitives = { workspace = true, features = ["std"] }
+rsil-payload-primitives.workspace = true
+# sila
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+jsonrpsee.workspace = true
+alloy-network.workspace = true
+alloy-rpc-types-sil.workspace = true
+alloy-rpc-types-engine = { workspace = true, features = ["ssz"] }
+
+# async
+tokio = { workspace = true, features = ["sync"] }
+
+# revm with required sila features
+# Note: this must be kept to ensure all features are properly enabled/forwarded
+revm = { workspace = true, features = ["secp256k1", "blst", "c-kzg", "memory_limit", "p256-aws-lc-rs"] }
+
+# misc
+eyre.workspace = true
+sila_ssz.workspace = true
+sila_ssz_derive.workspace = true
+http-body-util.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tower.workspace = true
+
+[dev-dependencies]
+rsil-db.workspace = true
+rsil-exex.workspace = true
+rsil-e2e-test-utils.workspace = true
+rsil-tasks.workspace = true
+rsil-testing-utils.workspace = true
+rsil-stages-types.workspace = true
+tempfile.workspace = true
+jsonrpsee-core.workspace = true
+
+alloy-primitives.workspace = true
+alloy-provider.workspace = true
+alloy-genesis.workspace = true
+alloy-signer.workspace = true
+alloy-sol-types.workspace = true
+alloy-contract.workspace = true
+alloy-rpc-types-beacon = { workspace = true, features = ["ssz"] }
+
+futures.workspace = true
+tokio.workspace = true
+serde_json.workspace = true
+rand.workspace = true
+serde.workspace = true
+enr = { workspace = true, features = ["rust-secp256k1"] }
+alloy-rpc-types-trace.workspace = true
+similar-asserts.workspace = true
+reqwest.workspace = true
+rsil-rpc-layer.workspace = true
+
+[features]
+default = []
+jit = ["rsil-savm-sila/jit"]
+gmp = ["rsil-savm-sila/gmp"]
+asm-keccak = [
+    "alloy-primitives/asm-keccak",
+    "rsil-node-core/asm-keccak",
+    "revm/asm-keccak",
+]
+keccak-cache-global = [
+    "alloy-primitives/keccak-cache-global",
+    "rsil-node-core/keccak-cache-global",
+]
+js-tracer = [
+    "rsil-node-builder/js-tracer",
+    "rsil-rpc/js-tracer",
+    "rsil-rpc-sil-api/js-tracer",
+    "rsil-rpc-sil-types/js-tracer",
+]
+test-utils = [
+    "rsil-node-builder/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-network/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "rsil-revm/test-utils",
+    "rsil-db/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-transaction-pool/test-utils",
+    "rsil-savm/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-savm-sila/test-utils",
+    "rsil-stages-types/test-utils",
+    "rsil-tasks/test-utils",
+]

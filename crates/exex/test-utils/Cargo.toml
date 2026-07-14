@@ -1,0 +1,45 @@
+[package]
+name = "rsil-exex-test-utils"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+## rsil
+rsil-chainspec.workspace = true
+rsil-config.workspace = true
+rsil-consensus = { workspace = true, features = ["test-utils"] }
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-db-common.workspace = true
+rsil-savm-sila = { workspace = true, features = ["test-utils"] }
+rsil-execution-types.workspace = true
+rsil-exex.workspace = true
+rsil-payload-builder.workspace = true
+rsil-network.workspace = true
+rsil-node-api.workspace = true
+rsil-node-core.workspace = true
+rsil-node-builder = { workspace = true, features = ["test-utils"] }
+rsil-node-sila.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-tasks.workspace = true
+rsil-transaction-pool = { workspace = true, features = ["test-utils"] }
+
+## alloy
+alloy-sips.workspace = true
+
+## async
+futures-util.workspace = true
+tokio.workspace = true
+
+## misc
+eyre.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true

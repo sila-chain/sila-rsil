@@ -1,0 +1,83 @@
+[package]
+name = "rsil-trie-db"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Database integration with merkle trie implementation"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits = { workspace = true, features = ["std"] }
+rsil-execution-errors.workspace = true
+rsil-db-api.workspace = true
+rsil-trie.workspace = true
+rsil-trie-common.workspace = true
+rsil-storage-api = { workspace = true, features = ["db-api"] }
+rsil-storage-errors.workspace = true
+rsil-metrics = { workspace = true, optional = true }
+
+# alloy
+alloy-primitives.workspace = true
+
+# misc
+parking_lot.workspace = true
+
+# metrics
+metrics = { workspace = true, optional = true }
+
+# tracing
+tracing.workspace = true
+
+[dev-dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-primitives-traits = { workspace = true, features = ["test-utils", "arbitrary"] }
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-stages-types.workspace = true
+rsil-trie-common = { workspace = true, features = ["test-utils", "arbitrary"] }
+rsil-trie = { workspace = true, features = ["test-utils"] }
+
+alloy-consensus.workspace = true
+alloy-rlp.workspace = true
+revm.workspace = true
+
+# trie
+triehash.workspace = true
+
+# misc
+proptest.workspace = true
+proptest-arbitrary-interop.workspace = true
+serde_json.workspace = true
+similar-asserts.workspace = true
+
+[features]
+metrics = ["rsil-trie/metrics", "dep:rsil-metrics", "dep:metrics"]
+serde = [
+    "similar-asserts/serde",
+    "alloy-consensus/serde",
+    "alloy-primitives/serde",
+    "parking_lot/serde",
+    "rsil-storage-api/serde",
+    "rsil-trie/serde",
+    "rsil-trie-common/serde",
+    "rsil-primitives-traits/serde",
+    "revm/serde",
+    "rsil-stages-types/serde",
+]
+test-utils = [
+    "rsil-trie-common/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-db/test-utils",
+    "rsil-db-api/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-trie/test-utils",
+    "rsil-stages-types/test-utils",
+]

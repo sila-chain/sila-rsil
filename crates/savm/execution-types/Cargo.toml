@@ -1,0 +1,74 @@
+[package]
+name = "rsil-execution-types"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+rsil-sila-primitives.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-trie-common.workspace = true
+
+revm.workspace = true
+
+# alloy
+alloy-savm.workspace = true
+alloy-consensus.workspace = true
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+alloy-rlp = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+serde_with = { workspace = true, optional = true }
+
+derive_more.workspace = true
+
+[dev-dependencies]
+rsil-primitives-traits = { workspace = true, features = ["test-utils", "arbitrary"] }
+rsil-sila-primitives = { workspace = true, features = ["arbitrary"] }
+alloy-primitives = { workspace = true, features = ["rand", "arbitrary"] }
+arbitrary.workspace = true
+bincode.workspace = true
+rand.workspace = true
+alloy-rlp.workspace = true
+
+[features]
+default = ["std"]
+serde = [
+    "dep:serde",
+    "rand/serde",
+    "revm/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "rsil-primitives-traits/serde",
+    "alloy-consensus/serde",
+    "rsil-trie-common/serde",
+    "rsil-sila-primitives/serde",
+]
+serde-bincode-compat = [
+    "serde",
+    "alloy-rlp",
+    "rsil-trie-common/serde-bincode-compat",
+    "serde_with",
+    "alloy-consensus/serde-bincode-compat",
+    "alloy-sips/serde-bincode-compat",
+]
+std = [
+    "alloy-sips/std",
+    "alloy-primitives/std",
+    "revm/std",
+    "serde?/std",
+    "rsil-primitives-traits/std",
+    "alloy-consensus/std",
+    "serde_with?/std",
+    "derive_more/std",
+    "rsil-sila-primitives/std",
+    "rsil-trie-common/std",
+    "alloy-savm/std",
+    "alloy-rlp?/std",
+]

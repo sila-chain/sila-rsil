@@ -1,0 +1,83 @@
+[package]
+name = "rsil-db-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Database abstraction used in rsil."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-codecs.workspace = true
+rsil-db-models = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-sila-primitives = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-primitives-traits = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-stages-types = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-prune-types = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-storage-errors.workspace = true
+rsil-trie-common.workspace = true
+
+# sila
+alloy-primitives.workspace = true
+alloy-consensus.workspace = true
+
+# codecs
+modular-bitfield.workspace = true
+roaring.workspace = true
+serde = { workspace = true, default-features = false }
+
+# metrics
+metrics.workspace = true
+
+# misc
+arrayvec.workspace = true
+derive_more.workspace = true
+bytes.workspace = true
+
+# arbitrary utils
+arbitrary = { workspace = true, features = ["derive"], optional = true }
+proptest = { workspace = true, optional = true }
+
+[dev-dependencies]
+# rsil libs with arbitrary
+rsil-codecs = { workspace = true, features = ["test-utils"] }
+rsil-db-models = { workspace = true, features = ["arbitrary"] }
+
+alloy-primitives = { workspace = true, features = ["rand"] }
+rand.workspace = true
+
+test-fuzz.workspace = true
+
+arbitrary = { workspace = true, features = ["derive"] }
+proptest.workspace = true
+proptest-arbitrary-interop.workspace = true
+
+[features]
+test-utils = [
+    "arbitrary",
+    "rsil-primitives-traits/test-utils",
+    "rsil-codecs/test-utils",
+    "rsil-db-models/test-utils",
+    "rsil-trie-common/test-utils",
+    "rsil-prune-types/test-utils",
+    "rsil-stages-types/test-utils",
+    "rsil-sila-primitives/test-utils",
+]
+arbitrary = [
+    "rsil-db-models/arbitrary",
+    "dep:arbitrary",
+    "dep:proptest",
+    "rsil-primitives-traits/arbitrary",
+    "rsil-trie-common/arbitrary",
+    "alloy-primitives/arbitrary",
+    "rsil-codecs/arbitrary",
+    "rsil-prune-types/arbitrary",
+    "rsil-stages-types/arbitrary",
+    "alloy-consensus/arbitrary",
+    "rsil-sila-primitives/arbitrary",
+]

@@ -1,0 +1,99 @@
+[package]
+name = "rsil-db"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Database primitives used in rsil."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-db-api.workspace = true
+rsil-fs-util.workspace = true
+rsil-storage-errors.workspace = true
+rsil-nippy-jar.workspace = true
+rsil-tracing.workspace = true
+tracing.workspace = true
+rsil-static-file-types.workspace = true
+
+# sila
+alloy-primitives.workspace = true
+
+# mdbx
+rsil-libmdbx = { workspace = true, optional = true, features = ["return-borrowed", "read-tx-timeouts"] }
+eyre = { workspace = true, optional = true }
+
+# metrics
+rsil-metrics = { workspace = true, optional = true }
+metrics = { workspace = true, optional = true }
+quanta = { workspace = true, optional = true }
+
+# misc
+page_size = { workspace = true, optional = true }
+thiserror.workspace = true
+tempfile = { workspace = true, optional = true }
+derive_more.workspace = true
+rustc-hash = { workspace = true, optional = true, features = ["std"] }
+sysinfo = { workspace = true, features = ["system"] }
+parking_lot = { workspace = true, optional = true }
+
+# arbitrary utils
+strum = { workspace = true, features = ["derive"], optional = true }
+
+[target.'cfg(unix)'.dependencies]
+libc.workspace = true
+
+[dev-dependencies]
+# rsil libs with arbitrary
+rsil-primitives-traits = { workspace = true, features = ["rsil-codec"] }
+rsil-prune-types.workspace = true
+
+alloy-primitives = { workspace = true, features = ["getrandom"] }
+alloy-consensus.workspace = true
+
+serde_json.workspace = true
+tempfile.workspace = true
+parking_lot.workspace = true
+
+serde.workspace = true
+
+arbitrary = { workspace = true, features = ["derive"] }
+proptest.workspace = true
+
+assert_matches.workspace = true
+
+[features]
+default = ["mdbx"]
+mdbx = [
+    "dep:rsil-libmdbx",
+    "dep:eyre",
+    "dep:page_size",
+    "dep:quanta",
+    "rsil-metrics",
+    "dep:metrics",
+    "dep:strum",
+    "dep:rustc-hash",
+]
+test-utils = [
+    "dep:tempfile",
+    "mdbx",
+    "arbitrary",
+    "parking_lot",
+    "rsil-db-api/test-utils",
+    "rsil-nippy-jar/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-prune-types/test-utils",
+]
+arbitrary = [
+    "rsil-db-api/arbitrary",
+    "alloy-primitives/arbitrary",
+    "alloy-consensus/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "rsil-prune-types/arbitrary",
+]
+disable-lock = []

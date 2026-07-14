@@ -1,0 +1,191 @@
+[package]
+name = "rsil-sila"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits.workspace = true
+rsil-chainspec.workspace = true
+rsil-network = { workspace = true, optional = true }
+rsil-network-api = { workspace = true, optional = true }
+rsil-sil-wire = { workspace = true, optional = true }
+rsil-provider = { workspace = true, optional = true }
+rsil-db = { workspace = true, optional = true, features = ["mdbx"] }
+rsil-codecs = { workspace = true, optional = true }
+rsil-storage-api = { workspace = true, optional = true }
+rsil-node-api = { workspace = true, optional = true }
+rsil-node-core = { workspace = true, optional = true }
+rsil-consensus = { workspace = true, optional = true }
+rsil-consensus-common = { workspace = true, optional = true }
+rsil-savm = { workspace = true, optional = true }
+rsil-revm = { workspace = true, optional = true }
+rsil-transaction-pool = { workspace = true, optional = true }
+rsil-rpc = { workspace = true, optional = true }
+rsil-rpc-api = { workspace = true, optional = true }
+rsil-rpc-sil-types = { workspace = true, optional = true }
+rsil-rpc-builder = { workspace = true, optional = true }
+rsil-exex = { workspace = true, optional = true }
+rsil-trie = { workspace = true, optional = true }
+rsil-trie-db = { workspace = true, optional = true }
+rsil-node-builder = { workspace = true, optional = true }
+rsil-tasks = { workspace = true, optional = true }
+rsil-cli-util = { workspace = true, optional = true }
+rsil-engine-local = { workspace = true, optional = true }
+
+# rsil-sila
+rsil-sila-primitives.workspace = true
+rsil-sila-cli = { workspace = true, optional = true }
+rsil-sila-consensus = { workspace = true, optional = true }
+rsil-savm-sila = { workspace = true, optional = true }
+rsil-node-sila = { workspace = true, optional = true }
+
+# alloy
+alloy-rpc-types-sil = { workspace = true, optional = true }
+alloy-rpc-types-engine = { workspace = true, optional = true }
+
+[features]
+default = ["std"]
+std = [
+    "rsil-chainspec/std",
+    "rsil-sila-primitives/std",
+    "rsil-sila-consensus?/std",
+    "rsil-primitives-traits/std",
+    "rsil-consensus?/std",
+    "rsil-consensus-common?/std",
+    "alloy-rpc-types-sil?/std",
+    "rsil-storage-api?/std",
+    "rsil-savm?/std",
+    "rsil-savm-sila?/std",
+    "rsil-revm?/std",
+    "alloy-rpc-types-engine?/std",
+    "rsil-codecs?/std",
+]
+arbitrary = [
+    "std",
+    "rsil-chainspec/arbitrary",
+    "rsil-sila-primitives/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "rsil-db?/arbitrary",
+    "alloy-rpc-types-sil?/arbitrary",
+    "rsil-transaction-pool?/arbitrary",
+    "rsil-sil-wire?/arbitrary",
+    "alloy-rpc-types-engine?/arbitrary",
+    "rsil-codecs?/arbitrary",
+]
+keccak-cache-global = [
+    "rsil-node-sila?/keccak-cache-global",
+    "rsil-node-core?/keccak-cache-global",
+]
+test-utils = [
+    "rsil-chainspec/test-utils",
+    "rsil-consensus?/test-utils",
+    "rsil-db?/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "rsil-savm?/test-utils",
+    "rsil-revm?/test-utils",
+    "rsil-network?/test-utils",
+    "rsil-node-sila?/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-provider?/test-utils",
+    "rsil-trie?/test-utils",
+    "rsil-transaction-pool?/test-utils",
+    "rsil-savm-sila?/test-utils",
+    "rsil-node-builder?/test-utils",
+    "rsil-trie-db?/test-utils",
+    "rsil-codecs?/test-utils",
+    "rsil-tasks?/test-utils",
+]
+
+full = [
+    "consensus",
+    "savm",
+    "node",
+    "provider",
+    "rpc",
+    "exex",
+    "trie",
+    "pool",
+    "network",
+]
+
+cli = ["dep:rsil-sila-cli", "dep:rsil-cli-util"]
+consensus = [
+    "dep:rsil-consensus",
+    "dep:rsil-consensus-common",
+    "dep:rsil-sila-consensus",
+]
+savm = ["dep:rsil-savm", "dep:rsil-savm-sila", "dep:rsil-revm"]
+exex = ["provider", "dep:rsil-exex"]
+node-api = ["dep:rsil-node-api", "dep:rsil-node-core"]
+node = [
+    "provider",
+    "consensus",
+    "savm",
+    "network",
+    "node-api",
+    "dep:rsil-node-sila",
+    "dep:rsil-node-builder",
+    "dep:rsil-engine-local",
+    "rpc",
+    "trie-db",
+    "pool",
+]
+pool = ["dep:rsil-transaction-pool"]
+rpc = [
+    "tasks",
+    "dep:rsil-rpc",
+    "dep:rsil-rpc-builder",
+    "dep:rsil-rpc-api",
+    "dep:rsil-rpc-sil-types",
+    "dep:alloy-rpc-types-sil",
+    "dep:alloy-rpc-types-engine",
+]
+tasks = ["dep:rsil-tasks"]
+jemalloc = [
+    "rsil-cli-util?/jemalloc",
+    "rsil-sila-cli?/jemalloc",
+    "rsil-node-core?/jemalloc",
+    "rsil-provider?/jemalloc",
+]
+jemalloc-prof = [
+    "jemalloc",
+    "rsil-cli-util?/jemalloc-prof",
+    "rsil-sila-cli?/jemalloc-prof",
+]
+jemalloc-symbols = [
+    "jemalloc-prof",
+    "rsil-sila-cli?/jemalloc-symbols",
+]
+jit = ["rsil-node-sila?/jit"]
+js-tracer = [
+    "rpc",
+    "rsil-rpc/js-tracer",
+    "rsil-node-builder?/js-tracer",
+    "rsil-node-sila?/js-tracer",
+    "rsil-rpc-sil-types?/js-tracer",
+]
+network = ["dep:rsil-network", "tasks", "dep:rsil-network-api", "dep:rsil-sil-wire"]
+otlp = [
+    "rsil-sila-cli?/otlp",
+    "rsil-node-core?/otlp",
+]
+portable = [
+    "rsil-revm?/portable",
+]
+gmp = [
+    "rsil-savm-sila?/gmp",
+    "rsil-node-sila?/gmp",
+    "rsil-revm?/gmp",
+]
+provider = ["storage-api", "tasks", "dep:rsil-provider", "dep:rsil-db", "dep:rsil-codecs"]
+storage-api = ["dep:rsil-storage-api"]
+trie = ["dep:rsil-trie"]
+trie-db = ["trie", "dep:rsil-trie-db"]

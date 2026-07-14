@@ -1,0 +1,39 @@
+[package]
+name = "rsil-execution-cache"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Cross-block execution cache for payload processing"
+
+[lints]
+workspace = true
+
+[dependencies]
+alloy-primitives.workspace = true
+fixed-cache = { workspace = true, features = ["stats"] }
+metrics.workspace = true
+parking_lot.workspace = true
+rsil-errors.workspace = true
+rsil-metrics = { workspace = true, features = ["common"] }
+rsil-primitives-traits = { workspace = true, features = ["std"] }
+rsil-provider.workspace = true
+rsil-revm.workspace = true
+rsil-trie.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+alloy-primitives = { workspace = true, features = ["rand"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-revm = { workspace = true, features = ["test-utils"] }
+revm.workspace = true
+
+[features]
+test-utils = [
+    "rsil-primitives-traits/test-utils",
+    "rsil-revm/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-trie/test-utils",
+]

@@ -1,0 +1,13 @@
+[package]
+name = "my-exex"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rsil = { git = "https://github.com/sila-chain/sila-rsil.git" } # Rsil
+rsil-exex = { git = "https://github.com/sila-chain/sila-rsil.git" } # Execution Extensions
+rsil-node-sila = { git = "https://github.com/sila-chain/sila-rsil.git" } # Sila Node implementation
+rsil-tracing = { git = "https://github.com/sila-chain/sila-rsil.git" } # Logging
+
+eyre = "0.6" # Easy error handling
+futures-util = "0.3" # Stream utilities for consuming notifications

@@ -1,0 +1,51 @@
+[package]
+name = "rsil-network-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Network interfaces and commonly used types"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-network-peers.workspace = true
+rsil-network-types.workspace = true
+rsil-network-p2p.workspace = true
+rsil-sil-wire-types.workspace = true
+rsil-tokio-util.workspace = true
+rsil-sila-forks.workspace = true
+
+# sila
+alloy-consensus.workspace = true
+alloy-rpc-types-sil.workspace = true
+alloy-primitives = { workspace = true, features = ["getrandom"] }
+alloy-rpc-types-admin.workspace = true
+enr = { workspace = true, default-features = false, features = ["rust-secp256k1"] }
+
+# async
+futures.workspace = true
+tokio-stream.workspace = true
+
+# misc
+thiserror.workspace = true
+serde = { workspace = true, features = ["derive"], optional = true }
+tokio = { workspace = true, features = ["sync"] }
+auto_impl.workspace = true
+derive_more.workspace = true
+
+[features]
+serde = [
+    "dep:serde",
+    "rsil-sil-wire-types/serde",
+    "rsil-network-types/serde",
+    "alloy-primitives/serde",
+    "enr/serde",
+    "rsil-sila-forks/serde",
+    "alloy-consensus/serde",
+    "alloy-rpc-types-sil/serde",
+]

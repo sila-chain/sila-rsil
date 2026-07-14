@@ -1,0 +1,21 @@
+[package]
+name = "example-custom-engine-types"
+version = "0.0.0"
+publish = false
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rsil-payload-builder.workspace = true
+rsil-basic-payload-builder.workspace = true
+rsil-sila-payload-builder.workspace = true
+rsil-sila = { workspace = true, features = ["test-utils", "node", "node-api", "pool"] }
+rsil-tracing.workspace = true
+alloy-genesis.workspace = true
+alloy-rpc-types = { workspace = true, features = ["engine"] }
+alloy-primitives.workspace = true
+
+eyre.workspace = true
+tokio.workspace = true
+thiserror.workspace = true
+serde.workspace = true

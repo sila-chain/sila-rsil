@@ -1,0 +1,59 @@
+[package]
+name = "rsil-rpc-engine-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Implementation of Engine API"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-rpc-api.workspace = true
+rsil-storage-api.workspace = true
+rsil-payload-builder.workspace = true
+rsil-payload-builder-primitives.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-tasks.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-network-api.workspace = true
+
+# sila
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+# async
+tokio = { workspace = true, features = ["sync"] }
+
+# metrics
+rsil-metrics.workspace = true
+metrics.workspace = true
+
+# misc
+async-trait.workspace = true
+jsonrpsee-core.workspace = true
+jsonrpsee-types.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+rsil-sila-engine-primitives.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-sila-primitives.workspace = true
+rsil-payload-builder = { workspace = true, features = ["test-utils"] }
+rsil-testing-utils.workspace = true
+alloy-rlp.workspace = true
+rsil-node-sila.workspace = true
+rsil-tasks = { workspace = true, features = ["test-utils"] }
+
+assert_matches.workspace = true

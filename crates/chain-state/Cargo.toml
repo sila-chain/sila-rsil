@@ -1,0 +1,87 @@
+[package]
+name = "rsil-chain-state"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil state related types and functionality."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-errors.workspace = true
+rsil-execution-types.workspace = true
+rsil-metrics.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-primitives-traits = { workspace = true, features = ["dashmap"] }
+rsil-storage-api.workspace = true
+rsil-tasks = { workspace = true, features = ["rayon"], optional = true }
+rsil-trie-sparse = { workspace = true, features = ["std"] }
+rsil-trie.workspace = true
+
+# sila
+alloy-sips.workspace = true
+alloy-primitives = { workspace = true, features = ["std"] }
+alloy-consensus.workspace = true
+revm.workspace = true
+
+# async
+tokio = { workspace = true, default-features = false, features = ["sync", "macros"] }
+tokio-stream = { workspace = true, features = ["sync"] }
+
+# tracing
+tracing.workspace = true
+
+# misc
+derive_more.workspace = true
+metrics.workspace = true
+parking_lot.workspace = true
+pin-project.workspace = true
+rayon = { workspace = true, optional = true }
+serde = { workspace = true, optional = true }
+
+# optional deps for test-utils
+alloy-signer = { workspace = true, optional = true }
+alloy-signer-local = { workspace = true, optional = true }
+rand = { workspace = true, optional = true }
+
+[dev-dependencies]
+rsil-primitives-traits = { workspace = true, features = ["test-utils"] }
+rsil-testing-utils.workspace = true
+alloy-signer.workspace = true
+alloy-signer-local.workspace = true
+rand.workspace = true
+
+[features]
+serde = [
+    "dep:serde",
+    "alloy-consensus/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "parking_lot/serde",
+    "rand?/serde",
+    "rsil-sila-primitives/serde",
+    "rsil-execution-types/serde",
+    "rsil-primitives-traits/serde",
+    "rsil-trie/serde",
+    "revm/serde",
+    "rsil-storage-api/serde",
+]
+test-utils = [
+    "alloy-primitives/getrandom",
+    "alloy-signer",
+    "alloy-signer-local",
+    "rand",
+    "rsil-chainspec/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-trie/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "rsil-tasks?/test-utils",
+    "rsil-trie-sparse/test-utils",
+]
+rayon = ["dep:rayon", "dep:rsil-tasks"]

@@ -1,0 +1,77 @@
+[package]
+name = "rsil-trie-parallel"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Parallel implementation of merkle root algorithm"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits = { workspace = true, features = ["dashmap", "std"] }
+rsil-execution-errors.workspace = true
+rsil-provider.workspace = true
+rsil-storage-errors.workspace = true
+rsil-tasks = { workspace = true, features = ["rayon"] }
+rsil-trie.workspace = true
+
+# alloy
+alloy-savm.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+
+# tracing
+tracing.workspace = true
+
+# revm
+revm.workspace = true
+
+# misc
+thiserror.workspace = true
+crossbeam-channel.workspace = true
+crossbeam-utils.workspace = true
+
+# `metrics` feature
+rsil-metrics = { workspace = true, optional = true }
+metrics = { workspace = true, optional = true }
+
+# `trie-debug` feature
+rsil-trie-sparse = { workspace = true, optional = true, features = ["trie-debug"] }
+rand = { workspace = true, optional = true }
+
+[dev-dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-trie-db.workspace = true
+rsil-trie = { workspace = true, features = ["test-utils"] }
+
+# misc
+rand.workspace = true
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
+
+[features]
+default = ["metrics"]
+metrics = ["rsil-metrics", "dep:metrics", "rsil-trie/metrics"]
+trie-debug = [
+    "dep:rand",
+    "dep:rsil-trie-sparse",
+    "rsil-trie-sparse?/trie-debug",
+]
+test-utils = [
+    "rsil-primitives-traits/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-trie-db/test-utils",
+    "rsil-trie/test-utils",
+    "rsil-tasks/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-trie-sparse?/test-utils",
+    "rsil-sila-primitives/test-utils",
+]

@@ -1,0 +1,52 @@
+[package]
+name = "rsil-payload-builder"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "rsil payload builder"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-execution-cache.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-chain-state.workspace = true
+rsil-payload-builder-primitives.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-sila-engine-primitives.workspace = true
+rsil-trie-parallel.workspace = true
+
+# alloy
+alloy-consensus.workspace = true
+alloy-primitives.workspace = true
+alloy-rpc-types = { workspace = true, features = ["engine"] }
+
+# async
+tokio = { workspace = true, features = ["sync"] }
+tokio-stream.workspace = true
+futures-util.workspace = true
+
+# metrics
+rsil-metrics.workspace = true
+metrics.workspace = true
+
+# misc
+derive_more.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["sync", "rt"] }
+
+[features]
+test-utils = [
+    "rsil-chain-state/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "tokio/rt",
+    "rsil-execution-cache/test-utils",
+    "rsil-trie-parallel/test-utils",
+]

@@ -1,0 +1,51 @@
+[package]
+name = "rsil-exex-types"
+version.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+description = "Commonly used types for exex usage in rsil."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chain-state.workspace = true
+rsil-execution-types.workspace = true
+rsil-primitives-traits.workspace = true
+
+# rsil
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+
+# misc
+serde = { workspace = true, optional = true }
+serde_with = { workspace = true, optional = true }
+
+[dev-dependencies]
+rsil-primitives-traits = { workspace = true, features = ["arbitrary"] }
+rsil-sila-primitives = { workspace = true, features = ["arbitrary", "std"] }
+arbitrary.workspace = true
+bincode.workspace = true
+rand.workspace = true
+
+[features]
+default = []
+serde = [
+    "dep:serde",
+    "rsil-execution-types/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "rand/serde",
+    "rsil-primitives-traits/serde",
+    "rsil-sila-primitives/serde",
+    "rsil-chain-state/serde",
+]
+serde-bincode-compat = [
+    "rsil-execution-types/serde-bincode-compat",
+    "serde_with",
+    "alloy-sips/serde-bincode-compat",
+]

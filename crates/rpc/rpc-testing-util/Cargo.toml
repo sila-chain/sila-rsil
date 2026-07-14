@@ -1,0 +1,38 @@
+[package]
+name = "rsil-rpc-api-testing-util"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil RPC testing helpers"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-sila-primitives.workspace = true
+rsil-rpc-api = { workspace = true, features = ["client"] }
+
+# sila
+alloy-primitives.workspace = true
+alloy-rpc-types-sil.workspace = true
+alloy-rpc-types-trace.workspace = true
+alloy-sips.workspace = true
+
+# async
+futures.workspace = true
+
+# misc
+jsonrpsee = { workspace = true, features = ["client", "async-client"] }
+serde_json.workspace = true
+
+# assertions
+similar-asserts.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "rt"] }
+rsil-rpc-sil-api.workspace = true
+jsonrpsee-http-client.workspace = true

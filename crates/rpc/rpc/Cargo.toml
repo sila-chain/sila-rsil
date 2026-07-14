@@ -1,0 +1,110 @@
+[package]
+name = "rsil-rpc"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil RPC implementation"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-rpc-api.workspace = true
+rsil-rpc-sil-api.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-errors.workspace = true
+rsil-metrics.workspace = true
+rsil-storage-api.workspace = true
+rsil-execution-types = { workspace = true, features = ["serde"] }
+rsil-chain-state.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-network-api.workspace = true
+rsil-rpc-engine-api.workspace = true
+rsil-revm = { workspace = true, features = ["witness"] }
+rsil-tasks = { workspace = true, features = ["rayon"] }
+rsil-rpc-convert.workspace = true
+revm-inspectors.workspace = true
+rsil-network-peers = { workspace = true, features = ["secp256k1"] }
+rsil-savm.workspace = true
+rsil-savm-sila.workspace = true
+rsil-rpc-sil-types.workspace = true
+rsil-rpc-server-types.workspace = true
+rsil-network-types.workspace = true
+rsil-consensus.workspace = true
+rsil-consensus-common.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-sila-engine-primitives.workspace = true
+rsil-node-api.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-trie-common.workspace = true
+
+# sila
+alloy-savm = { workspace = true, features = ["overrides"] }
+alloy-consensus.workspace = true
+alloy-signer.workspace = true
+alloy-signer-local = { workspace = true, features = ["mnemonic"] }
+alloy-sip7928 = { workspace = true, features = ["rlp"] }
+alloy-sips = { workspace = true, features = ["kzg"] }
+alloy-dyn-abi.workspace = true
+alloy-genesis.workspace = true
+alloy-network.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-client.workspace = true
+alloy-rpc-types-beacon = { workspace = true, features = ["ssz"] }
+alloy-rpc-types.workspace = true
+alloy-rpc-types-sil = { workspace = true, features = ["serde"] }
+alloy-rpc-types-debug.workspace = true
+alloy-rpc-types-trace.workspace = true
+alloy-rpc-types-mev.workspace = true
+alloy-rpc-types-txpool.workspace = true
+alloy-rpc-types-admin.workspace = true
+alloy-rpc-types-engine = { workspace = true, features = ["kzg"] }
+alloy-serde.workspace = true
+revm = { workspace = true, features = ["optional_block_gas_limit", "optional_eip3607", "optional_no_base_fee", "memory_limit"] }
+
+# rpc
+jsonrpsee.workspace = true
+serde_json.workspace = true
+jsonrpsee-types.workspace = true
+
+# async
+async-trait.workspace = true
+tokio = { workspace = true, features = ["sync"] }
+tokio-stream.workspace = true
+pin-project.workspace = true
+parking_lot.workspace = true
+
+# misc
+dyn-clone.workspace = true
+tracing.workspace = true
+tracing-futures.workspace = true
+futures.workspace = true
+serde.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+derive_more.workspace = true
+itertools.workspace = true
+
+[dev-dependencies]
+rsil-testing-utils.workspace = true
+rsil-transaction-pool = { workspace = true, features = ["test-utils"] }
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-db-api.workspace = true
+
+rand.workspace = true
+
+jsonrpsee = { workspace = true, features = ["client"] }
+
+[features]
+js-tracer = [
+    "revm-inspectors/js-tracer",
+    "rsil-rpc-sil-types/js-tracer",
+    "rsil-rpc-sil-api/js-tracer",
+]

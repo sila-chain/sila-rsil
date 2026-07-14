@@ -1,0 +1,87 @@
+[package]
+name = "rsil-sila-primitives"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Sila primitive types"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-codecs = { workspace = true, optional = true, features = ["alloy"] }
+rsil-primitives-traits.workspace = true
+
+# sila
+alloy-sips = { workspace = true, features = ["k256"] }
+alloy-primitives.workspace = true
+alloy-consensus = { workspace = true, features = ["serde"] }
+alloy-rpc-types-sil = { workspace = true, optional = true }
+
+# misc
+serde = { workspace = true, optional = true }
+
+[dev-dependencies]
+arbitrary.workspace = true
+proptest.workspace = true
+proptest-arbitrary-interop.workspace = true
+rand.workspace = true
+alloy-rlp.workspace = true
+rsil-codecs = { workspace = true, features = ["test-utils"] }
+rsil-zstd-compressors.workspace = true
+alloy-consensus = { workspace = true, features = ["serde", "arbitrary"] }
+serde_json.workspace = true
+serde_with.workspace = true
+
+[features]
+default = ["std"]
+test-utils = [
+    "rsil-codecs?/test-utils",
+    "rsil-primitives-traits/test-utils",
+]
+std = [
+    "alloy-consensus/std",
+    "alloy-primitives/std",
+    "rsil-primitives-traits/std",
+    "rsil-primitives-traits/quanta",
+    "serde?/std",
+    "alloy-sips/std",
+    "alloy-rpc-types-sil?/std",
+    "alloy-rlp/std",
+    "rsil-zstd-compressors/std",
+    "serde_json/std",
+    "serde_with/std",
+    "rsil-codecs?/std",
+]
+rsil-codec = [
+    "std",
+    "dep:rsil-codecs",
+]
+arbitrary = [
+    "std",
+    "alloy-consensus/arbitrary",
+    "alloy-consensus/k256",
+    "alloy-primitives/arbitrary",
+    "rsil-codecs?/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "alloy-sips/arbitrary",
+    "alloy-rpc-types-sil?/arbitrary",
+]
+serde = [
+    "dep:serde",
+    "alloy-consensus/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "rsil-codecs?/serde",
+    "rsil-primitives-traits/serde",
+    "alloy-rpc-types-sil?/serde",
+    "rand/serde",
+]
+rpc = [
+    "dep:alloy-rpc-types-sil",
+    "alloy-rpc-types-sil?/serde",
+]

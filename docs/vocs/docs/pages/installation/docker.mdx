@@ -1,0 +1,144 @@
+---
+description: Guide to running Rsil using Docker, including obtaining images from GitHub or building locally, using Docker Compose.
+---
+
+# Docker
+
+There are two ways to obtain a Rsil Docker image:
+
+1. [GitHub](#github)
+2. [Building it from source](#building-the-docker-image)
+
+Once you have obtained the Docker image, proceed to [Using the Docker
+image](#using-the-docker-image).
+
+:::note
+Rsil requires Docker Engine version 20.10.10 or higher due to [missing support](https://docs.docker.com/engine/release-notes/20.10/#201010) for the `clone3` syscall in previous versions.
+:::
+
+## GitHub
+
+Rsil docker images for both x86_64 and ARM64 machines are published with every release of rsil on GitHub Container Registry.
+
+You can obtain the latest image with:
+
+```bash
+docker pull ghcr.io/sila-chain/sila-rsil
+```
+
+Or a specific version (e.g. v0.0.1) with:
+
+```bash
+docker pull ghcr.io/sila-chain/sila-rsil:v0.0.1
+```
+
+You can test the image with:
+
+```bash
+docker run --rm ghcr.io/sila-chain/sila-rsil --version
+```
+
+If you can see the latest [Rsil release](https://github.com/sila-chain/sila-rsil/releases) version, then you've successfully installed Rsil via Docker.
+
+## Building the Docker image
+
+To build the image from source, navigate to the root of the repository and run:
+
+```bash
+docker build . -t rsil:local
+```
+
+The build will likely take several minutes. Once it's built, test it with:
+
+```bash
+docker run rsil:local --version
+```
+
+## Using the Docker image
+
+There are two ways to use the Docker image:
+
+1. [Using Docker](#using-plain-docker)
+2. [Using Docker Compose](#using-docker-compose)
+
+### Using Plain Docker
+
+To run Rsil with Docker, run:
+
+```bash
+docker run \
+    -v rsildata:/root/.local/share/rsil/sila-mainnet \
+    -d \
+    -p 9001:9001 \
+    -p 30303:30303 \
+    -p 30303:30303/udp \
+    --name rsil \
+    rsil:local \
+    node \
+    --metrics 0.0.0.0:9001
+```
+
+The above command will create a container named `rsil` and a named volume called `rsildata` for data persistence.
+It will also expose the `30303` port (TCP and UDP) for peering with other nodes and the `9001` port for metrics.
+
+It will use the local image `rsil:local`. If you want to use the GitHub Container Registry remote image, use `ghcr.io/sila-chain/sila-rsil` with your preferred tag.
+
+### Using Docker Compose
+
+To run Rsil with Docker Compose, run the following command from a shell inside the root directory of this repository:
+
+```bash
+./etc/generate-jwt.sh
+docker compose -f etc/docker-compose.yml -f etc/lighthouse.yml up -d
+```
+
+:::note
+If you want to run Rsil with a CL that is not Lighthouse:
+
+-   The JWT for the consensus client can be found at `etc/jwttoken/jwt.hex` in this repository, after the `etc/generate-jwt.sh` script is run
+-   The Rsil Engine API is accessible on `localhost:8551`
+    :::
+
+To check if Rsil is running correctly, run:
+
+```bash
+docker compose -f etc/docker-compose.yml -f etc/lighthouse.yml logs -f rsil
+```
+
+The default `docker-compose.yml` file will create three containers:
+
+-   Rsil
+-   Prometheus
+-   Grafana
+
+The optional `lighthouse.yml` file will create two containers:
+
+-   Lighthouse
+-   [`sila-metrics-exporter`](https://github.com/ethpandaops/sila-metrics-exporter)
+
+Grafana will be exposed on `localhost:3000` and accessible via default credentials (username and password is `admin`), with two available dashboards:
+
+-   rsil
+-   Sila Metrics Exporter (works only if Lighthouse is also running)
+
+## Interacting with Rsil inside Docker
+
+To interact with Rsil you must first open a shell inside the Rsil container by running:
+
+```bash
+docker exec -it rsil bash
+```
+
+**If Rsil is running with Docker Compose, replace `rsil` with `rsil-rsil-1` in the above command**
+
+Refer to the [CLI docs](/cli/rsil) to interact with Rsil once inside the Rsil container.
+
+## Run only Grafana in Docker
+
+This allows importing existing Grafana dashboards, without running Rsil in Docker.
+
+```bash
+docker compose -f etc/docker-compose.yml up -d --no-deps grafana
+```
+
+After login with `admin:admin` credentials, Prometheus should be listed under [`Grafana datasources`](http://localhost:3000/connections/datasources). Replace its `Prometheus server URL` so it points to locally running one. On Mac or Windows, use `http://host.docker.internal:9090`. On Linux, try `http://172.17.0.1:9090`.

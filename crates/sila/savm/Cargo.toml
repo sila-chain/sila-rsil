@@ -1,0 +1,73 @@
+[package]
+name = "rsil-savm-sila"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# Rsil
+rsil-execution-types.workspace = true
+rsil-chainspec.workspace = true
+rsil-sila-forks.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-sila-primitives.workspace = true
+revm.workspace = true
+rsil-savm.workspace = true
+rsil-storage-errors.workspace = true
+
+# Alloy
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+alloy-savm.workspace = true
+alloy-consensus.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+metrics = { workspace = true, optional = true }
+rsil-metrics = { workspace = true, optional = true }
+revmc = { workspace = true, features = ["alloy-savm"], optional = true }
+
+[dev-dependencies]
+rsil-testing-utils.workspace = true
+rsil-savm = { workspace = true, features = ["test-utils"] }
+secp256k1.workspace = true
+alloy-genesis.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "alloy-consensus/std",
+    "alloy-sips/std",
+    "alloy-genesis/std",
+    "alloy-primitives/std",
+    "secp256k1/std",
+    "rsil-sila-forks/std",
+    "rsil-chainspec/std",
+    "alloy-savm/std",
+    "rsil-execution-types/std",
+    "rsil-savm/std",
+    "rsil-primitives-traits/std",
+    "revm/std",
+    "rsil-sila-primitives/std",
+    "alloy-rpc-types-engine/std",
+    "rsil-storage-errors/std",
+]
+jit = [
+    "std",
+    "dep:revmc",
+    "dep:metrics",
+    "dep:rsil-metrics",
+]
+gmp = ["revm/gmp"]
+test-utils = [
+    "std",
+    "rsil-chainspec/test-utils",
+    "rsil-sila-primitives/test-utils",
+    "rsil-savm/test-utils",
+    "rsil-primitives-traits/test-utils",
+]

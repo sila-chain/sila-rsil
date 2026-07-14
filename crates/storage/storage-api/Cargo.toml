@@ -1,0 +1,92 @@
+[package]
+name = "rsil-storage-api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Rsil storage provider traits and types"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-db-models.workspace = true
+rsil-chainspec.workspace = true
+rsil-db-api = { workspace = true, optional = true }
+rsil-execution-types.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-prune-types.workspace = true
+rsil-stages-types.workspace = true
+rsil-storage-errors.workspace = true
+rsil-trie-common.workspace = true
+revm.workspace = true
+rsil-sila-primitives.workspace = true
+
+# sila
+alloy-sips.workspace = true
+alloy-sip7928.workspace = true
+alloy-primitives.workspace = true
+alloy-consensus.workspace = true
+alloy-rpc-types-engine.workspace = true
+
+auto_impl.workspace = true
+serde_json = { workspace = true, optional = true }
+rsil-tokio-util = { workspace = true, optional = true }
+
+[dev-dependencies]
+alloy-primitives = { workspace = true, features = ["getrandom"] }
+tokio = { workspace = true, features = ["macros", "rt"] }
+tokio-stream.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "rsil-chainspec/std",
+    "alloy-consensus/std",
+    "alloy-sips/std",
+    "alloy-primitives/std",
+    "alloy-rpc-types-engine/std",
+    "rsil-primitives-traits/std",
+    "rsil-stages-types/std",
+    "revm/std",
+    "rsil-sila-primitives/std",
+    "rsil-execution-types/std",
+    "rsil-prune-types/std",
+    "rsil-storage-errors/std",
+    "rsil-db-models/std",
+    "rsil-trie-common/std",
+    "serde_json?/std",
+    "dep:rsil-tokio-util",
+    "alloy-sip7928/std",
+]
+
+db-api = [
+    "dep:rsil-db-api",
+    "dep:serde_json",
+]
+
+serde = [
+    "rsil-sila-primitives/serde",
+    "rsil-db-models/serde",
+    "rsil-execution-types/serde",
+    "rsil-primitives-traits/serde",
+    "rsil-prune-types/serde",
+    "rsil-stages-types/serde",
+    "rsil-trie-common/serde",
+    "revm/serde",
+    "alloy-sips/serde",
+    "alloy-primitives/serde",
+    "alloy-consensus/serde",
+    "alloy-rpc-types-engine/serde",
+    "alloy-sip7928/serde",
+]
+
+serde-bincode-compat = [
+    "rsil-execution-types/serde-bincode-compat",
+    "rsil-trie-common/serde-bincode-compat",
+    "alloy-sips/serde-bincode-compat",
+    "alloy-consensus/serde-bincode-compat",
+]

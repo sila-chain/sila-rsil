@@ -1,0 +1,91 @@
+[package]
+name = "rsil-trie-sparse"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Sparse MPT implementation"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits = { workspace = true, optional = true }
+rsil-execution-errors.workspace = true
+rsil-trie-common.workspace = true
+tracing = { workspace = true, features = ["attributes"], optional = true }
+alloy-trie.workspace = true
+
+# alloy
+alloy-primitives.workspace = true
+
+# misc
+either = { workspace = true, optional = true }
+rayon = { workspace = true, optional = true }
+serde = { workspace = true, features = ["derive"], optional = true }
+serde_json = { workspace = true, optional = true }
+smallvec = { workspace = true, optional = true }
+slotmap = { workspace = true, optional = true }
+strum = { workspace = true, features = ["derive"] }
+
+# metrics
+rsil-metrics = { workspace = true, optional = true }
+metrics = { workspace = true, optional = true }
+
+[dev-dependencies]
+rsil-primitives-traits = { workspace = true, features = ["arbitrary"] }
+rsil-trie = { workspace = true, features = ["test-utils"] }
+rsil-trie-common = { workspace = true, features = ["test-utils", "arbitrary"] }
+rsil-tracing.workspace = true
+
+arbitrary.workspace = true
+alloy-rlp.workspace = true
+itertools.workspace = true
+pretty_assertions.workspace = true
+proptest-arbitrary-interop.workspace = true
+proptest.workspace = true
+rand.workspace = true
+rand_08.workspace = true
+
+[features]
+default = ["std", "metrics"]
+std = [
+    "dep:either",
+    "dep:rayon",
+    "dep:rsil-primitives-traits",
+    "dep:smallvec",
+    "dep:slotmap",
+    "dep:tracing",
+    "alloy-primitives/std",
+    "alloy-rlp/std",
+    "alloy-trie/std",
+    "rsil-execution-errors/std",
+    "rsil-primitives-traits/std",
+    "rsil-primitives-traits/rayon",
+    "rsil-trie-common/std",
+    "tracing/std",
+    "serde?/std",
+    "serde_json?/std",
+    "strum/std",
+    "rsil-tracing/std",
+    "either/std",
+]
+metrics = ["dep:rsil-metrics", "dep:metrics", "std"]
+trie-debug = ["std", "dep:serde", "dep:serde_json", "alloy-primitives/serde", "alloy-trie/serde"]
+test-utils = [
+    "std",
+    "rsil-primitives-traits/test-utils",
+    "rsil-trie-common/test-utils",
+    "rsil-trie/test-utils",
+]
+arbitrary = [
+    "std",
+    "alloy-primitives/arbitrary",
+    "alloy-trie/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "rsil-trie-common/arbitrary",
+    "smallvec/arbitrary",
+]

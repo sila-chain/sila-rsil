@@ -1,0 +1,66 @@
+[package]
+name = "rsil-savm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-execution-errors.workspace = true
+rsil-execution-types.workspace = true
+rsil-metrics = { workspace = true, optional = true }
+rsil-primitives-traits.workspace = true
+rsil-storage-api.workspace = true
+rsil-storage-errors.workspace = true
+rsil-trie-common.workspace = true
+
+revm.workspace = true
+
+# alloy
+alloy-primitives.workspace = true
+alloy-sip7928.workspace = true
+alloy-sips.workspace = true
+alloy-savm.workspace = true
+alloy-consensus.workspace = true
+
+auto_impl.workspace = true
+derive_more.workspace = true
+futures-util.workspace = true
+metrics = { workspace = true, optional = true }
+rayon = { workspace = true, optional = true }
+
+[dev-dependencies]
+rsil-sila-primitives.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "dep:rayon",
+    "rsil-primitives-traits/std",
+    "alloy-sips/std",
+    "alloy-primitives/std",
+    "alloy-consensus/std",
+    "revm/std",
+    "alloy-savm/std",
+    "rsil-execution-errors/std",
+    "rsil-execution-types/std",
+    "rsil-storage-errors/std",
+    "futures-util/std",
+    "derive_more/std",
+    "rsil-storage-api/std",
+    "rsil-trie-common/std",
+    "rsil-sila-primitives/std",
+    "alloy-sip7928/std",
+]
+metrics = ["std", "dep:metrics", "dep:rsil-metrics"]
+test-utils = [
+    "rsil-primitives-traits/test-utils",
+    "rsil-trie-common/test-utils",
+    "rsil-sila-primitives/test-utils",
+]

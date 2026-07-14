@@ -1,0 +1,47 @@
+[package]
+name = "rsil-engine-util"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits.workspace = true
+rsil-errors.workspace = true
+rsil-chainspec.workspace = true
+rsil-fs-util.workspace = true
+rsil-engine-primitives = { workspace = true, features = ["std"] }
+rsil-engine-tree.workspace = true
+rsil-savm.workspace = true
+rsil-revm.workspace = true
+rsil-storage-api.workspace = true
+rsil-payload-primitives.workspace = true
+
+# alloy
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-rpc-types-engine.workspace = true
+alloy-consensus.workspace = true
+
+# async
+tokio = { workspace = true, default-features = false }
+tokio-util.workspace = true
+pin-project.workspace = true
+futures.workspace = true
+
+# io
+serde.workspace = true
+serde_json.workspace = true
+
+# misc
+eyre.workspace = true
+itertools.workspace = true
+
+# tracing
+tracing.workspace = true

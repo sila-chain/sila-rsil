@@ -1,0 +1,138 @@
+[package]
+name = "rsil-cli-commands"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-cli.workspace = true
+rsil-cli-runner.workspace = true
+rsil-cli-util.workspace = true
+rsil-codecs.workspace = true
+rsil-config = { workspace = true, features = ["serde"] }
+rsil-consensus.workspace = true
+rsil-db = { workspace = true, features = ["mdbx"] }
+rsil-db-api.workspace = true
+rsil-db-common.workspace = true
+rsil-downloaders = { workspace = true, features = ["file-client"] }
+rsil-ecies.workspace = true
+rsil-sil-wire.workspace = true
+rsil-era.workspace = true
+rsil-era-downloader.workspace = true
+rsil-era-utils.workspace = true
+rsil-etl.workspace = true
+rsil-savm.workspace = true
+rsil-exex.workspace = true
+rsil-fs-util.workspace = true
+rsil-net-nat.workspace = true
+rsil-network = { workspace = true, features = ["serde"] }
+rsil-network-p2p.workspace = true
+rsil-network-peers = { workspace = true, features = ["secp256k1"] }
+rsil-node-api.workspace = true
+rsil-node-builder.workspace = true
+rsil-node-core.workspace = true
+rsil-node-events.workspace = true
+rsil-node-metrics.workspace = true
+rsil-sila-primitives = { workspace = true, optional = true }
+rsil-provider.workspace = true
+rsil-prune.workspace = true
+rsil-prune-types.workspace = true
+rsil-revm.workspace = true
+rsil-stages.workspace = true
+rsil-stages-types.workspace = true
+rsil-static-file-types = { workspace = true, features = ["clap"] }
+rsil-static-file.workspace = true
+rsil-tasks.workspace = true
+rsil-storage-api.workspace = true
+rsil-trie = { workspace = true, features = ["metrics"] }
+rsil-trie-db = { workspace = true, features = ["metrics"] }
+rsil-trie-common = { workspace = true, optional = true }
+rsil-primitives-traits.workspace = true
+rsil-discv4.workspace = true
+rsil-discv5.workspace = true
+
+# sila
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+alloy-rlp.workspace = true
+alloy-consensus.workspace = true
+alloy-chains.workspace = true
+
+itertools.workspace = true
+futures.workspace = true
+tokio = { workspace = true, features = ["net"] }
+socket2 = { workspace = true, features = ["all"] }
+
+# misc
+humantime.workspace = true
+human_bytes.workspace = true
+eyre.workspace = true
+clap = { workspace = true, features = ["derive", "env"] }
+lz4.workspace = true
+zstd.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+parking_lot.workspace = true
+tar.workspace = true
+tracing.workspace = true
+backon.workspace = true
+secp256k1 = { workspace = true, features = ["global-context", "std", "recovery"] }
+tokio-stream.workspace = true
+reqwest = { workspace = true, features = ["blocking"] }
+url.workspace = true
+metrics.workspace = true
+blake3.workspace = true
+rayon.workspace = true
+
+# io
+fdlimit.workspace = true
+toml = { workspace = true, features = ["display"] }
+
+# tui
+comfy-table.workspace = true
+crossterm.workspace = true
+ratatui = { workspace = true, features = ["crossterm"] }
+
+# rsil test-vectors
+proptest = { workspace = true, optional = true }
+arbitrary = { workspace = true, optional = true }
+proptest-arbitrary-interop = { workspace = true, optional = true }
+
+[dev-dependencies]
+rsil-sila-cli.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+tempfile.workspace = true
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[features]
+arbitrary = [
+    "dep:proptest",
+    "dep:arbitrary",
+    "dep:proptest-arbitrary-interop",
+    "dep:rsil-trie-common",
+    "rsil-db-api/arbitrary",
+    "rsil-sil-wire/arbitrary",
+    "rsil-db/arbitrary",
+    "rsil-chainspec/arbitrary",
+    "alloy-chains/arbitrary",
+    "alloy-sips/arbitrary",
+    "alloy-primitives/arbitrary",
+    "rsil-codecs/test-utils",
+    "rsil-prune-types/test-utils",
+    "rsil-stages-types/test-utils",
+    "rsil-trie-common?/test-utils",
+    "rsil-codecs/arbitrary",
+    "rsil-prune-types/arbitrary",
+    "rsil-stages-types/arbitrary",
+    "rsil-trie-common?/arbitrary",
+    "alloy-consensus/arbitrary",
+    "rsil-primitives-traits/arbitrary",
+    "rsil-sila-primitives/arbitrary",
+]

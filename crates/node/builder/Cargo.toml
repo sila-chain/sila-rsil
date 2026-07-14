@@ -1,0 +1,128 @@
+[package]
+name = "rsil-node-builder"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+readme = "README.md"
+
+[lints]
+workspace = true
+
+[dependencies]
+## rsil
+rsil-chain-state.workspace = true
+rsil-chainspec.workspace = true
+rsil-config.workspace = true
+rsil-consensus-debug-client.workspace = true
+rsil-consensus.workspace = true
+rsil-db = { workspace = true, features = ["mdbx"] }
+rsil-db-api.workspace = true
+rsil-db-common.workspace = true
+rsil-downloaders.workspace = true
+rsil-engine-local.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-engine-tree.workspace = true
+rsil-engine-util.workspace = true
+rsil-savm.workspace = true
+rsil-exex.workspace = true
+rsil-fs-util.workspace = true
+rsil-invalid-block-hooks.workspace = true
+rsil-network-api.workspace = true
+rsil-network-p2p.workspace = true
+rsil-network.workspace = true
+rsil-node-api.workspace = true
+rsil-node-core.workspace = true
+rsil-node-events.workspace = true
+rsil-node-metrics.workspace = true
+rsil-payload-builder.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider.workspace = true
+rsil-prune.workspace = true
+rsil-rpc.workspace = true
+rsil-rpc-api.workspace = true
+rsil-rpc-builder.workspace = true
+rsil-rpc-engine-api.workspace = true
+rsil-rpc-sil-types.workspace = true
+rsil-rpc-layer.workspace = true
+rsil-stages.workspace = true
+rsil-static-file.workspace = true
+rsil-tasks = { workspace = true, features = ["rayon"] }
+rsil-tokio-util.workspace = true
+rsil-tracing = { workspace = true, features = ["std"] }
+rsil-transaction-pool.workspace = true
+rsil-trie-db = { workspace = true, features = ["metrics"] }
+rsil-basic-payload-builder.workspace = true
+rsil-node-ethstats.workspace = true
+
+## sila
+alloy-consensus.workspace = true
+alloy-primitives.workspace = true
+alloy-provider.workspace = true
+alloy-rpc-types = { workspace = true, features = ["engine"] }
+alloy-sips = { workspace = true, features = ["kzg"] }
+alloy-rpc-types-engine.workspace = true
+
+## async
+futures.workspace = true
+tokio = { workspace = true, features = ["sync", "macros", "time", "rt-multi-thread"] }
+tokio-stream.workspace = true
+
+## crypto
+secp256k1 = { workspace = true, features = ["global-context", "std", "recovery"] }
+
+## misc
+aquamarine.workspace = true
+eyre.workspace = true
+parking_lot.workspace = true
+jsonrpsee.workspace = true
+fdlimit.workspace = true
+rayon.workspace = true
+serde_json.workspace = true
+
+# tracing
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+rsil-sila-engine-primitives.workspace = true
+rsil-payload-builder = { workspace = true, features = ["test-utils"] }
+rsil-node-sila.workspace = true
+rsil-provider = { workspace = true, features = ["test-utils"] }
+rsil-savm-sila = { workspace = true, features = ["test-utils"] }
+
+[features]
+default = []
+js-tracer = [
+    "rsil-rpc/js-tracer",
+    "rsil-node-sila/js-tracer",
+    "rsil-rpc-sil-types/js-tracer",
+]
+test-utils = [
+    "rsil-db/test-utils",
+    "rsil-chain-state/test-utils",
+    "rsil-chainspec/test-utils",
+    "rsil-consensus/test-utils",
+    "rsil-engine-tree/test-utils",
+    "rsil-savm/test-utils",
+    "rsil-downloaders/test-utils",
+    "rsil-network/test-utils",
+    "rsil-network-p2p/test-utils",
+    "rsil-payload-builder/test-utils",
+    "rsil-stages/test-utils",
+    "rsil-db-api/test-utils",
+    "rsil-provider/test-utils",
+    "rsil-transaction-pool/test-utils",
+    "rsil-trie-db/test-utils",
+    "rsil-savm-sila/test-utils",
+    "rsil-node-sila/test-utils",
+    "rsil-primitives-traits/test-utils",
+    "rsil-tasks/test-utils",
+]
+trie-debug = [
+    "rsil-engine-tree/trie-debug",
+    "rsil-engine-primitives/trie-debug",
+    "rsil-node-core/trie-debug",
+]

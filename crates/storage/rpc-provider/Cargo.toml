@@ -1,0 +1,49 @@
+[package]
+name = "rsil-storage-rpc-provider"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "RPC-based blockchain provider for rsil that fetches data via RPC calls"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-storage-api.workspace = true
+rsil-chainspec.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-provider.workspace = true
+rsil-errors.workspace = true
+rsil-execution-types.workspace = true
+rsil-prune-types.workspace = true
+rsil-node-types.workspace = true
+rsil-trie.workspace = true
+rsil-stages-types.workspace = true
+rsil-db-api.workspace = true
+
+# alloy
+alloy-provider = { workspace = true, features = ["debug-api"] }
+alloy-network.workspace = true
+alloy-primitives.workspace = true
+alloy-consensus.workspace = true
+alloy-rpc-types.workspace = true
+alloy-rpc-types-engine.workspace = true
+alloy-sips.workspace = true
+
+# async
+tokio = { workspace = true, features = ["sync", "macros", "rt-multi-thread"] }
+
+# other
+tracing.workspace = true
+dashmap = { workspace = true, features = ["inline"] }
+
+# revm
+revm.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros"] }

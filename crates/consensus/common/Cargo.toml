@@ -1,0 +1,39 @@
+[package]
+name = "rsil-consensus-common"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-chainspec.workspace = true
+rsil-consensus.workspace = true
+
+# sila
+rsil-primitives-traits.workspace = true
+alloy-consensus.workspace = true
+alloy-sips.workspace = true
+alloy-primitives.workspace = true
+
+[dev-dependencies]
+alloy-primitives = { workspace = true, features = ["rand"] }
+rsil-sila-primitives.workspace = true
+rand.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "alloy-consensus/std",
+    "alloy-sips/std",
+    "rsil-chainspec/std",
+    "rsil-consensus/std",
+    "rsil-primitives-traits/std",
+    "rsil-sila-primitives/std",
+    "alloy-primitives/std",
+]

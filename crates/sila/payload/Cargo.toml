@@ -1,0 +1,44 @@
+[package]
+name = "rsil-sila-payload-builder"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "A basic sila payload builder for rsil that uses the txpool API to build payloads."
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-consensus-common.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-execution-cache.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-revm.workspace = true
+rsil-transaction-pool.workspace = true
+rsil-payload-builder.workspace = true
+rsil-storage-api.workspace = true
+rsil-payload-builder-primitives.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-basic-payload-builder.workspace = true
+rsil-savm.workspace = true
+rsil-savm-sila = { workspace = true, features = ["std"] }
+rsil-errors.workspace = true
+rsil-chainspec.workspace = true
+rsil-payload-validator.workspace = true
+
+# sila
+alloy-rlp.workspace = true
+alloy-rpc-types-engine.workspace = true
+revm.workspace = true
+
+# alloy
+alloy-sips.workspace = true
+alloy-consensus.workspace = true
+alloy-primitives.workspace = true
+
+# misc
+tracing.workspace = true

@@ -1,0 +1,75 @@
+[package]
+name = "rsil-revm"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "rsil specific revm utilities"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-primitives-traits.workspace = true
+rsil-storage-errors.workspace = true
+rsil-storage-api.workspace = true
+rsil-trie = { workspace = true, optional = true }
+
+# alloy
+alloy-primitives.workspace = true
+alloy-rlp = { workspace = true, optional = true }
+alloy-rpc-types-debug = { workspace = true, optional = true }
+
+# revm
+revm.workspace = true
+
+[dev-dependencies]
+rsil-trie.workspace = true
+rsil-sila-forks.workspace = true
+alloy-consensus.workspace = true
+
+[features]
+default = ["std"]
+std = [
+    "rsil-primitives-traits/std",
+    "alloy-primitives/std",
+    "alloy-rlp?/std",
+    "revm/std",
+    "alloy-consensus/std",
+    "rsil-sila-forks/std",
+    "rsil-storage-api/std",
+    "rsil-storage-errors/std",
+]
+witness = ["dep:rsil-trie", "dep:alloy-rlp", "dep:alloy-rpc-types-debug"]
+test-utils = [
+    "dep:rsil-trie",
+    "rsil-primitives-traits/test-utils",
+    "rsil-trie?/test-utils",
+]
+serde = [
+    "revm/serde",
+    "alloy-primitives/serde",
+    "alloy-consensus/serde",
+    "rsil-trie?/serde",
+    "rsil-sila-forks/serde",
+    "rsil-primitives-traits/serde",
+    "rsil-storage-api/serde",
+]
+portable = ["revm/portable"]
+gmp = ["revm/gmp"]
+optional-balance-check = ["revm/optional_balance_check"]
+optional-block-gas-limit = ["revm/optional_block_gas_limit"]
+optional-sip3541 = ["revm/optional_eip3541"]
+optional-sip3607 = ["revm/optional_eip3607"]
+optional-no-base-fee = ["revm/optional_no_base_fee"]
+optional-checks = [
+    "optional-balance-check",
+    "optional-block-gas-limit",
+    "optional-sip3541",
+    "optional-sip3607",
+    "optional-no-base-fee",
+]
+memory_limit = ["revm/memory_limit"]

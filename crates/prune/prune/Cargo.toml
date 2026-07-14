@@ -1,0 +1,51 @@
+[package]
+name = "rsil-prune"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+description = "Pruning implementation"
+
+[lints]
+workspace = true
+
+[dependencies]
+# rsil
+rsil-exex-types.workspace = true
+rsil-db-api.workspace = true
+rsil-errors.workspace = true
+rsil-provider.workspace = true
+rsil-storage-api.workspace = true
+rsil-tokio-util.workspace = true
+rsil-config.workspace = true
+rsil-prune-types.workspace = true
+rsil-primitives-traits.workspace = true
+rsil-stages-types.workspace = true
+rsil-static-file-types.workspace = true
+
+# sila
+alloy-consensus.workspace = true
+
+# metrics
+rsil-metrics.workspace = true
+metrics.workspace = true
+alloy-primitives.workspace = true
+
+# misc
+tracing.workspace = true
+thiserror.workspace = true
+itertools.workspace = true
+tokio.workspace = true
+rustc-hash.workspace = true
+
+[dev-dependencies]
+# rsil
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-stages = { workspace = true, features = ["test-utils"] }
+rsil-primitives-traits = { workspace = true, features = ["arbitrary"] }
+rsil-testing-utils.workspace = true
+rsil-tracing.workspace = true
+
+assert_matches.workspace = true

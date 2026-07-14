@@ -1,0 +1,77 @@
+[package]
+name = "rsil-e2e-test-utils"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+rsil-chainspec.workspace = true
+rsil-tracing.workspace = true
+rsil-db = { workspace = true, features = ["test-utils"] }
+rsil-network-api.workspace = true
+rsil-network-p2p.workspace = true
+rsil-rpc-server-types.workspace = true
+rsil-rpc-builder.workspace = true
+rsil-rpc-sil-api.workspace = true
+rsil-rpc-api = { workspace = true, features = ["client"] }
+rsil-payload-builder = { workspace = true, features = ["test-utils"] }
+rsil-payload-builder-primitives.workspace = true
+rsil-payload-primitives.workspace = true
+rsil-provider.workspace = true
+rsil-node-api.workspace = true
+rsil-node-core.workspace = true
+rsil-node-builder = { workspace = true, features = ["test-utils"] }
+rsil-tokio-util.workspace = true
+rsil-stages-types.workspace = true
+rsil-network-peers.workspace = true
+rsil-engine-local.workspace = true
+rsil-engine-primitives.workspace = true
+rsil-tasks.workspace = true
+rsil-node-sila.workspace = true
+rsil-sila-primitives.workspace = true
+rsil-cli-commands.workspace = true
+rsil-config.workspace = true
+rsil-consensus.workspace = true
+rsil-db-common.workspace = true
+rsil-primitives-traits.workspace = true
+
+revm.workspace = true
+tempfile.workspace = true
+
+# rpc
+jsonrpsee.workspace = true
+url.workspace = true
+
+# sila
+alloy-primitives.workspace = true
+alloy-sips.workspace = true
+alloy-rlp.workspace = true
+alloy-signer.workspace = true
+alloy-signer-local = { workspace = true, features = ["mnemonic"] }
+alloy-rpc-types-sil.workspace = true
+alloy-rpc-types-engine.workspace = true
+alloy-network.workspace = true
+alloy-consensus = { workspace = true, features = ["kzg"] }
+alloy-provider = { workspace = true, features = ["reqwest"] }
+
+futures-util.workspace = true
+eyre.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+derive_more.workspace = true
+
+[[test]]
+name = "e2e_testsuite"
+path = "tests/e2e-testsuite/main.rs"
+
+[[test]]
+name = "rocksdb"
+path = "tests/rocksdb/main.rs"

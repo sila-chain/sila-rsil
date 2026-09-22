@@ -22,7 +22,7 @@ permissions: {}
 jobs:
   test:
     name: test / ${{ matrix.type }}
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-4' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
@@ -65,7 +65,7 @@ jobs:
 
   state:
     name: Sila state tests
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-8' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
@@ -108,7 +108,7 @@ jobs:
 
   doc:
     name: doc tests
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     env:

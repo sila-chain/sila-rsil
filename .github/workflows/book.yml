@@ -14,7 +14,7 @@ permissions: {}
 
 jobs:
   build:
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-8' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 90

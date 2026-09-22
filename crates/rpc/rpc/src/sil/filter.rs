@@ -131,7 +131,7 @@ where
     ///     NoopProvider::default(),
     ///     NoopTransactionPool::default(),
     ///     NoopNetwork::default(),
-    ///     SilEvmConfig::sila-mainnet(),
+    ///     SilEvmConfig::sila_mainnet(),
     /// )
     /// .build();
     /// let filter = SilFilter::new(eth_api, Default::default(), Runtime::test());

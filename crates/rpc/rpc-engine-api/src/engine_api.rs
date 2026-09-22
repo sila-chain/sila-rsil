@@ -1824,7 +1824,7 @@ mod tests {
 
     #[tokio::test]
     async fn new_payload_v5_accepts_amsterdam_payloads() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let provider = Arc::new(MockEthProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
@@ -1926,7 +1926,7 @@ mod tests {
     #[tokio::test]
     async fn get_blobs_v3_returns_null_when_syncing() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().osaka_activated().build());
+            Arc::new(ChainSpecBuilder::sila_mainnet().osaka_activated().build());
         let provider = Arc::new(MockEthProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, _engine_rx) = unbounded_channel::<BeaconEngineMessage<SilEngineTypes>>();
@@ -1957,7 +1957,7 @@ mod tests {
     #[tokio::test]
     async fn get_blobs_v4_returns_null_when_syncing() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+            Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let provider = Arc::new(MockEthProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, _engine_rx) = unbounded_channel::<BeaconEngineMessage<SilEngineTypes>>();
@@ -1988,7 +1988,7 @@ mod tests {
     #[tokio::test]
     async fn fcu_v4_updates_shared_cell_custody_before_forkchoice_result() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+            Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let provider = Arc::new(MockEthProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
@@ -2054,7 +2054,7 @@ mod tests {
     #[tokio::test]
     async fn fcu_v4_updates_shared_cell_custody_when_payload_attrs_invalid() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+            Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let provider = Arc::new(MockEthProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();

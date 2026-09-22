@@ -686,7 +686,7 @@ mod tests {
     fn validate_osaka_get_payload_restrictions() {
         // SilaOsaka activates at timestamp 1000
         let osaka_activation = 1000;
-        let chain_spec = ChainSpecBuilder::sila-mainnet()
+        let chain_spec = ChainSpecBuilder::sila_mainnet()
             .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(0))
             .with_fork(SilaHardfork::SilaOsaka, ForkCondition::Timestamp(osaka_activation))
             .build();
@@ -712,7 +712,7 @@ mod tests {
 
     #[test]
     fn validate_amsterdam_staggered_version_restrictions() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().amsterdam_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().amsterdam_activated().build();
 
         let res = validate_payload_timestamp(
             &chain_spec,
@@ -749,7 +749,7 @@ mod tests {
 
     #[test]
     fn validate_amsterdam_slot_and_bal_presence() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().amsterdam_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().amsterdam_activated().build();
 
         let res = validate_slot_number_presence(
             &chain_spec,

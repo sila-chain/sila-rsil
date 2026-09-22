@@ -52,7 +52,7 @@ mod tests {
     > {
         let provider = NoopProvider::default();
         let pool = testing_pool();
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         SilApi::builder(provider, pool, NoopNetwork::default(), evm_config).build()
     }

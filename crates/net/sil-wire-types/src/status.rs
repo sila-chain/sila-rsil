@@ -526,7 +526,7 @@ mod tests {
     fn roundtrip_eth69() {
         let unified_status = UnifiedStatus::builder()
             .version(SilVersion::Sil69)
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(MAINNET_GENESIS_HASH)
             .forkid(ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 })
             .blockhash(b256!("0xfeb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d"))
@@ -563,7 +563,7 @@ mod tests {
     fn roundtrip_eth70() {
         let unified_status = UnifiedStatus::builder()
             .version(SilVersion::Sil70)
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(MAINNET_GENESIS_HASH)
             .forkid(ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 })
             .blockhash(b256!("0xfeb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d"))

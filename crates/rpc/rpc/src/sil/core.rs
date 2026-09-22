@@ -110,7 +110,7 @@ impl
     ///     NoopProvider::default(),
     ///     NoopTransactionPool::default(),
     ///     NoopNetwork::default(),
-    ///     SilEvmConfig::sila-mainnet(),
+    ///     SilEvmConfig::sila_mainnet(),
     /// )
     /// .build();
     /// ```

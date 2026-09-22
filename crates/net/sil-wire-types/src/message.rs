@@ -1120,7 +1120,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil68,
-            chain: alloy_chains::Chain::sila-mainnet(),
+            chain: alloy_chains::Chain::sila_mainnet(),
             total_difficulty: U256::from(100u64),
             blockhash: B256::random(),
             genesis: B256::random(),

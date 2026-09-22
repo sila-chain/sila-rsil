@@ -197,7 +197,7 @@ where
             let blob_store = InMemoryBlobStore::default();
             let pool = TransactionValidationTaskExecutor::sil(
                 peer.client.clone(),
-                SilEvmConfig::sila-mainnet(),
+                SilEvmConfig::sila_mainnet(),
                 blob_store.clone(),
                 Runtime::test(),
             );
@@ -227,7 +227,7 @@ where
             let blob_store = InMemoryBlobStore::default();
             let pool = TransactionValidationTaskExecutor::sil(
                 peer.client.clone(),
-                SilEvmConfig::sila-mainnet(),
+                SilEvmConfig::sila_mainnet(),
                 blob_store.clone(),
                 Runtime::test(),
             );

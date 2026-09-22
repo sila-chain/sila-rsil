@@ -169,7 +169,7 @@ async fn test_eth_subscribe_pending_transactions_receives_tx() {
         .with_pool(pool)
         .with_network(NoopNetwork::default())
         .with_executor(Runtime::test())
-        .with_evm_config(SilEvmConfig::sila-mainnet())
+        .with_evm_config(SilEvmConfig::sila_mainnet())
         .with_consensus(NoopConsensus::default());
 
     let eth_api = builder.bootstrap_eth_api();

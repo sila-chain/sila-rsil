@@ -38,7 +38,7 @@ pub fn eth_handshake() -> (UnifiedStatus, ForkFilter) {
 
     let status = Status {
         version: SilVersion::Sil67,
-        chain: Chain::sila-mainnet(),
+        chain: Chain::sila_mainnet(),
         total_difficulty: U256::ZERO,
         blockhash: B256::random(),
         genesis,

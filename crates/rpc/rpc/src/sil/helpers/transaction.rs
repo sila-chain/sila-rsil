@@ -167,7 +167,7 @@ mod tests {
         SilRpcConverter<ChainSpec>,
     > {
         let mock_provider = MockEthProvider::default()
-            .with_chain_spec(ChainSpecBuilder::sila-mainnet().cancun_activated().build());
+            .with_chain_spec(ChainSpecBuilder::sila_mainnet().cancun_activated().build());
         mock_provider.extend_accounts(accounts);
 
         let evm_config = SilEvmConfig::new(mock_provider.chain_spec());

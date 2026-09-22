@@ -486,7 +486,7 @@ mod tests {
 
     #[test]
     fn cancun_block_incorrect_blob_gas_used() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().cancun_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().cancun_activated().build();
 
         // create a tx with 10 blobs
         let transaction = mock_blob_tx(1, 10);
@@ -538,7 +538,7 @@ mod tests {
 
     #[test]
     fn precomputed_tx_root_correct_passes() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().cancun_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().cancun_activated().build();
 
         let transaction = mock_blob_tx(1, 1);
         let tx_root = proofs::calculate_transaction_root(std::slice::from_ref(&transaction));
@@ -568,7 +568,7 @@ mod tests {
 
     #[test]
     fn precomputed_tx_root_wrong_fails() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().cancun_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().cancun_activated().build();
 
         let transaction = mock_blob_tx(1, 1);
         let tx_root = proofs::calculate_transaction_root(std::slice::from_ref(&transaction));

@@ -828,7 +828,7 @@ mod tests {
         let dns = config.dns_discovery_config.unwrap();
         let bootstrap_nodes = dns.bootstrap_dns_networks.unwrap();
         let mainnet_dns: LinkEntry =
-            Chain::sila-mainnet().public_dns_network_protocol().unwrap().parse().unwrap();
+            Chain::sila_mainnet().public_dns_network_protocol().unwrap().parse().unwrap();
         assert!(bootstrap_nodes.contains(&mainnet_dns));
         assert_eq!(bootstrap_nodes.len(), 1);
     }

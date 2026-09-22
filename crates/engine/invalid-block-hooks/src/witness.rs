@@ -606,7 +606,7 @@ mod tests {
         let output_directory = temp_dir.path().to_path_buf();
 
         let provider = MockEthProvider::<SilPrimitives, ChainSpec>::default();
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let hook =
             InvalidBlockWitnessHook::new(provider, evm_config, output_directory.clone(), None);

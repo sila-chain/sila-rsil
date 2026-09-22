@@ -344,7 +344,7 @@ jobs:
       - uses: taiki-e/install-action@4684b8405694ae9dd42c9f39ba901a70ae83f4a3 # v2.82.9
         with:
           tool: cargo-deny
-      - run: cargo deny check all --all-features
+      - run: cargo deny --all-features check all
 
   lint-success:
     name: lint success

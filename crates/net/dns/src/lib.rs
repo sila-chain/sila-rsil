@@ -664,7 +664,7 @@ mod tests {
             Default::default(),
         );
 
-        service.sync_tree(&Chain::sila-mainnet().public_dns_network_protocol().unwrap()).unwrap();
+        service.sync_tree(&Chain::sila_mainnet().public_dns_network_protocol().unwrap()).unwrap();
 
         while let Some(event) = service.next().await {
             match event {

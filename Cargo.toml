@@ -459,7 +459,7 @@ alloy-network-primitives = { version = "2.1.1", default-features = false }
 alloy-provider = { version = "2.1.1", features = ["reqwest", "debug-api"], default-features = false }
 alloy-pubsub = { version = "2.1.1", default-features = false }
 alloy-rpc-client = { version = "2.1.1", default-features = false }
-alloy-rpc-types = { version = "2.1.1", features = ["sil"], default-features = false }
+alloy-rpc-types = { version = "2.1.1", features = ["eth"], default-features = false }
 alloy-rpc-types-admin = { version = "2.1.1", default-features = false }
 alloy-rpc-types-anvil = { version = "2.1.1", default-features = false }
 alloy-rpc-types-beacon = { version = "2.1.1", default-features = false }

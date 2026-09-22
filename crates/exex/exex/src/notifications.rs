@@ -584,7 +584,7 @@ mod tests {
         let mut notifications = ExExNotificationsWithoutHead::new(
             node_head,
             provider,
-            SilEvmConfig::sila-mainnet(),
+            SilEvmConfig::sila_mainnet(),
             notifications_rx,
             wal.handle(),
         )
@@ -652,7 +652,7 @@ mod tests {
         let mut notifications = ExExNotificationsWithoutHead::new(
             node_head,
             provider,
-            SilEvmConfig::sila-mainnet(),
+            SilEvmConfig::sila_mainnet(),
             notifications_rx,
             wal.handle(),
         )
@@ -691,7 +691,7 @@ mod tests {
         provider_rw.commit()?;
         let node_head_notification = ExExNotification::ChainCommitted {
             new: Arc::new(
-                BackfillJobFactory::new(SilEvmConfig::sila-mainnet(), provider.clone())
+                BackfillJobFactory::new(SilEvmConfig::sila_mainnet(), provider.clone())
                     .backfill(node_head.number..=node_head.number)
                     .next()
                     .ok_or_else(|| eyre::eyre!("failed to backfill"))??,
@@ -733,7 +733,7 @@ mod tests {
         let mut notifications = ExExNotificationsWithoutHead::new(
             node_head,
             provider,
-            SilEvmConfig::sila-mainnet(),
+            SilEvmConfig::sila_mainnet(),
             notifications_rx,
             wal.handle(),
         )
@@ -809,7 +809,7 @@ mod tests {
         let mut notifications = ExExNotificationsWithoutHead::new(
             node_head,
             provider,
-            SilEvmConfig::sila-mainnet(),
+            SilEvmConfig::sila_mainnet(),
             notifications_rx,
             wal.handle(),
         )
@@ -914,7 +914,7 @@ mod tests {
         let mut notifications = ExExNotificationsWithoutHead::new(
             node_head,
             provider,
-            SilEvmConfig::sila-mainnet(),
+            SilEvmConfig::sila_mainnet(),
             notifications_rx,
             wal.handle(),
         )

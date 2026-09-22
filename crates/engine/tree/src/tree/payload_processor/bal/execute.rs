@@ -424,7 +424,7 @@ mod tests {
         //      `reference_bal_for_empty_block`).
         //   2. Hash it, stamp the header, and run `execute_block` with that BAL. Every check must
         //      pass (A, B, D, F).
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let input_bal = reference_bal_for_empty_block(&evm_config);
         let bal_hash = alloy_eip7928::compute_block_access_list_hash(&input_bal);
@@ -572,7 +572,7 @@ mod tests {
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let carol: alloy_primitives::Address = alloy_primitives::Address::from([0xCA; 20]);
         let sender_balance = U256::from(alloy_consensus::constants::ETH_TO_WEI);
 
@@ -785,7 +785,7 @@ mod tests {
         // System calls only — no txs. Both paths should produce identical system-call
         // side effects in their BundleState (beacon roots storage, history storage, etc.).
         assert_shadow_equal(
-            SilEvmConfig::sila-mainnet(),
+            SilEvmConfig::sila_mainnet(),
             system_contracts_db(),
             empty_amsterdam_block(B256::ZERO),
             Vec::new(),
@@ -803,7 +803,7 @@ mod tests {
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let carol: alloy_primitives::Address = alloy_primitives::Address::from([0xCA; 20]);
         let sender_balance = U256::from(alloy_consensus::constants::ETH_TO_WEI);
 
@@ -850,7 +850,7 @@ mod tests {
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let carol: alloy_primitives::Address = alloy_primitives::Address::from([0xCA; 20]);
         let sender_balance = U256::from(alloy_consensus::constants::ETH_TO_WEI);
         let block_gas_limit = 1_000_000;
@@ -929,7 +929,7 @@ mod tests {
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let revert_contract: alloy_primitives::Address =
             alloy_primitives::Address::from([0xDE; 20]);
         let sender_balance = U256::from(alloy_consensus::constants::ETH_TO_WEI);
@@ -986,7 +986,7 @@ mod tests {
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let sstore_contract: alloy_primitives::Address =
             alloy_primitives::Address::from([0x55; 20]);
         let sender_balance = U256::from(alloy_consensus::constants::ETH_TO_WEI);
@@ -1036,7 +1036,7 @@ mod tests {
         // validator is responsible for comparing that rebuilt hash to the header commitment.
         use alloy_eip7928::AccountChanges;
 
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         // Real BAL the block would produce.
         let real_bal = reference_bal_for_empty_block(&evm_config);
@@ -1081,7 +1081,7 @@ mod tests {
     fn canonical_make_db_failure() {
         // A make_db that always fails must surface as Provider before any workers are
         // spawned or the BAL is processed.
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let block = empty_amsterdam_block(B256::ZERO);
 
         let failing_make_db = || -> Result<CacheDB<EmptyDB>, BalExecutionError> {
@@ -1108,7 +1108,7 @@ mod tests {
         // A tx recovery failure fed into the worker channel must surface as
         // BalExecutionError::Other. Uses execute_block directly since tx_stream hardcodes
         // Infallible and cannot inject errors.
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let block = empty_amsterdam_block(B256::ZERO);
 
         let (tx_tx, tx_rx) = crossbeam_channel::unbounded::<(

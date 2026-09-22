@@ -30,7 +30,7 @@ jobs:
   prepare-hive:
     if: github.repository == 'sila-chain/sila-rsil'
     timeout-minutes: 45
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-16' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
@@ -201,7 +201,7 @@ jobs:
       - prepare-hive
     name: Hive-SilaAmsterdam / ${{ matrix.scenario.sim }}${{ matrix.scenario.limit && format(' - {0}', matrix.scenario.limit) }}
     # Use larger runners for eels tests to avoid OOM runner crashes
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && (contains(matrix.scenario.sim, 'eels') && 'depot-ubuntu-latest-8' || 'depot-ubuntu-latest-4') || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: write
@@ -380,7 +380,7 @@ jobs:
       - prepare-hive
     name: Hive-SilaOsaka / ${{ matrix.scenario.sim }}${{ matrix.scenario.limit && format(' - {0}', matrix.scenario.limit) }}
     # Use larger runners for eels tests to avoid OOM runner crashes
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && (contains(matrix.scenario.sim, 'eels') && 'depot-ubuntu-latest-8' || 'depot-ubuntu-latest-4') || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: write

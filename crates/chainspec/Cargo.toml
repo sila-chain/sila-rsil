@@ -14,7 +14,7 @@ workspace = true
 # rsil
 rsil-sila-forks.workspace = true
 rsil-network-peers.workspace = true
-alloy-trie = { workspace = true, features = ["sila"] }
+alloy-trie = { workspace = true, features = ["ethereum"] }
 rsil-primitives-traits.workspace = true
 
 # sila

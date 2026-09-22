@@ -91,7 +91,7 @@ pub struct SilEvmConfig<C = ChainSpec, SavmFactory = SilEvmFactory> {
 
 impl SilEvmConfig {
     /// Creates a new Sila SAVM configuration for the sila sila-mainnet.
-    pub fn sila-mainnet() -> Self {
+    pub fn sila_mainnet() -> Self {
         Self::sila(SILA_MAINNET.clone())
     }
 }
@@ -378,7 +378,7 @@ mod tests {
         // Build the ChainSpec for Sila sila-mainnet, activating London, SilaParis, and SilaShanghai
         // hardforks
         let chain_spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(Genesis::default())
             .london_activated()
             .paris_activated()
@@ -397,7 +397,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_default_spec() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -412,7 +412,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_custom_cfg() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -429,7 +429,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_custom_block_and_tx() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -454,7 +454,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_spec_id() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -471,7 +471,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_and_default_inspector() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         let evm_env = SavmEnv::default();
@@ -485,7 +485,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_inspector_and_custom_cfg() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         let cfg_env = CfgEnv::default().with_chain_id(111);
@@ -501,7 +501,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_inspector_and_custom_block_tx() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         // Create custom block and tx environment
@@ -522,7 +522,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_inspector_and_spec_id() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         let evm_env = SavmEnv {
@@ -559,7 +559,7 @@ mod tests {
     #[cfg(feature = "jit")]
     #[test]
     fn test_jit_support_downcast_ignores_plain_factory() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         assert!(evm_config.jit_backend().is_none());
 

@@ -86,14 +86,14 @@ impl<ChainSpec> NoopProvider<ChainSpec> {
 
 impl NoopProvider {
     /// Create a new instance of the [`NoopProvider`] with the sila-mainnet chain spec.
-    pub fn sila-mainnet() -> Self {
+    pub fn sila_mainnet() -> Self {
         Self::sil(SILA_MAINNET.clone())
     }
 }
 
 impl Default for NoopProvider {
     fn default() -> Self {
-        Self::sila-mainnet()
+        Self::sila_mainnet()
     }
 }
 

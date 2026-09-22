@@ -995,7 +995,7 @@ pub struct ChainSpecBuilder {
 
 impl ChainSpecBuilder {
     /// Construct a new builder from the sila-mainnet chain spec.
-    pub fn sila-mainnet() -> Self {
+    pub fn sila_mainnet() -> Self {
         Self {
             chain: Some(SILA_MAINNET.chain),
             genesis: Some(SILA_MAINNET.genesis.clone()),
@@ -1945,7 +1945,7 @@ Post-merge hard forks (timestamp based):
     /// This is based off of the test vectors here: <https://github.com/sila-chain/go-sila/blob/5c8cc10d1e05c23ff1108022f4150749e73c0ca1/core/forkid/forkid_test.go#L155-L188>
     #[test]
     fn timestamped_forks() {
-        let mainnet_with_timestamps = ChainSpecBuilder::sila-mainnet().build();
+        let mainnet_with_timestamps = ChainSpecBuilder::sila_mainnet().build();
         test_fork_ids(
             &mainnet_with_timestamps,
             &[
@@ -2150,7 +2150,7 @@ Post-merge hard forks (timestamp based):
     /// Checks that the fork is not active at a terminal ttd block.
     #[test]
     fn check_terminal_ttd() {
-        let chainspec = ChainSpecBuilder::sila-mainnet().build();
+        let chainspec = ChainSpecBuilder::sila_mainnet().build();
 
         // Check that SilaParis is not active on terminal PoW block #15537393.
         let terminal_block_ttd = U256::from(58750003716598352816469_u128);

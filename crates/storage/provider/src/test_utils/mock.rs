@@ -102,7 +102,7 @@ impl<T: NodePrimitives> MockEthProvider<T, rsil_chainspec::ChainSpec> {
             headers: Default::default(),
             receipts: Default::default(),
             accounts: Default::default(),
-            chain_spec: Arc::new(rsil_chainspec::ChainSpecBuilder::sila-mainnet().build()),
+            chain_spec: Arc::new(rsil_chainspec::ChainSpecBuilder::sila_mainnet().build()),
             state_roots: Default::default(),
             block_body_indices: Default::default(),
             bal_store: Default::default(),

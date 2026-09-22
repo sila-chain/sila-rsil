@@ -1521,7 +1521,7 @@ mod tests {
     use revm::primitives::sip3860::MAX_INITCODE_SIZE;
 
     fn test_evm_config() -> SilEvmConfig {
-        SilEvmConfig::sila-mainnet()
+        SilEvmConfig::sila_mainnet()
     }
 
     fn get_transaction() -> SilPooledTransaction {
@@ -1689,7 +1689,7 @@ mod tests {
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .set_tx_fee_cap(0) // no cap
             .build(blob_store);
 
@@ -1707,7 +1707,7 @@ mod tests {
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .set_tx_fee_cap(2e18 as u128) // 2 SIL cap
             .build(blob_store);
 
@@ -1725,7 +1725,7 @@ mod tests {
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .with_max_tx_gas_limit(Some(500_000)) // Set limit lower than transaction gas limit (1_015_288)
             .build(blob_store.clone());
 
@@ -1757,7 +1757,7 @@ mod tests {
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .with_max_tx_gas_limit(None) // disabled
             .build(blob_store);
 
@@ -1775,7 +1775,7 @@ mod tests {
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .with_max_tx_gas_limit(Some(2_000_000)) // Set limit higher than transaction gas limit (1_015_288)
             .build(blob_store);
 
@@ -2016,7 +2016,7 @@ mod tests {
 
         // Validate with balance check enabled
         let validator =
-            SilTransactionValidatorBuilder::new(provider.clone(), SilEvmConfig::sila-mainnet())
+            SilTransactionValidatorBuilder::new(provider.clone(), SilEvmConfig::sila_mainnet())
                 .build(InMemoryBlobStore::default());
 
         let outcome = validator.validate_one(TransactionOrigin::External, transaction.clone());
@@ -2032,7 +2032,7 @@ mod tests {
         }
 
         // Validate with balance check disabled
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .disable_balance_check()
             .build(InMemoryBlobStore::default());
 

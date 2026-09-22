@@ -892,7 +892,7 @@ mod tests {
         let sender = hex!("1f9090aaE28b8a3dCeaDf281B0F12828e676c326").into();
         provider.add_account(sender, ExtendedAccount::new(42, U256::MAX));
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .build(blob_store.clone());
 
         let txpool = Pool::new(

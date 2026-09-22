@@ -399,7 +399,7 @@ mod tests {
     fn shanghai_block_zero_withdrawals() {
         // ensures that if shanghai is activated, and we include a block with a withdrawals root,
         // that the header is valid
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().shanghai_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().shanghai_activated().build());
 
         let header = rsil_primitives_traits::Header {
             base_fee_per_gas: Some(1337),
@@ -414,7 +414,7 @@ mod tests {
 
     #[test]
     fn prague_header_rejects_block_access_list_hash_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
 
@@ -428,7 +428,7 @@ mod tests {
 
     #[test]
     fn prague_header_allows_block_access_list_hash_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
 
@@ -440,7 +440,7 @@ mod tests {
 
     #[test]
     fn prague_header_rejects_slot_number_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.slot_number = Some(0);
 
@@ -454,7 +454,7 @@ mod tests {
 
     #[test]
     fn prague_header_rejects_slot_number_with_allowed_bal_hashes_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
         header.slot_number = Some(0);
@@ -470,7 +470,7 @@ mod tests {
 
     #[test]
     fn prague_post_execution_allows_block_access_list_hash_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let expected_hash = B256::repeat_byte(0x42);
         let block = prague_recovered_block_with_bal_hash(expected_hash);
         let result = BlockExecutionResult::<Receipt>::default();
@@ -505,7 +505,7 @@ mod tests {
 
     #[test]
     fn amsterdam_header_requires_block_access_list_hash() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let mut header = valid_prague_header();
         header.slot_number = Some(0);
 
@@ -519,7 +519,7 @@ mod tests {
 
     #[test]
     fn amsterdam_header_requires_slot_number() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
 
@@ -533,7 +533,7 @@ mod tests {
 
     #[test]
     fn amsterdam_header_accepts_block_access_list_hash_and_slot_number() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
         header.slot_number = Some(0);

@@ -774,9 +774,9 @@ mod tests {
 
     fn stage() -> ExecutionStage<SilEvmConfig> {
         let evm_config =
-            SilEvmConfig::new(Arc::new(ChainSpecBuilder::sila-mainnet().berlin_activated().build()));
+            SilEvmConfig::new(Arc::new(ChainSpecBuilder::sila_mainnet().berlin_activated().build()));
         let consensus = Arc::new(SilBeaconConsensus::new(Arc::new(
-            ChainSpecBuilder::sila-mainnet().berlin_activated().build(),
+            ChainSpecBuilder::sila_mainnet().berlin_activated().build(),
         )));
         ExecutionStage::new(
             evm_config,
@@ -1192,7 +1192,7 @@ mod tests {
     #[test]
     fn unwind_from_cancun_to_pre_cancun_is_rejected() {
         let chain_spec = Arc::new(
-            ChainSpecBuilder::sila-mainnet()
+            ChainSpecBuilder::sila_mainnet()
                 .berlin_activated()
                 .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(15))
                 .build(),

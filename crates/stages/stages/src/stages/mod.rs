@@ -154,10 +154,10 @@ mod tests {
             // configuration
             let mut execution_stage = ExecutionStage::new(
                 SilEvmConfig::sila(Arc::new(
-                    ChainSpecBuilder::sila-mainnet().berlin_activated().build(),
+                    ChainSpecBuilder::sila_mainnet().berlin_activated().build(),
                 )),
                 Arc::new(SilBeaconConsensus::new(Arc::new(
-                    ChainSpecBuilder::sila-mainnet().berlin_activated().build(),
+                    ChainSpecBuilder::sila_mainnet().berlin_activated().build(),
                 ))),
                 ExecutionStageThresholds {
                     max_blocks: Some(100),

@@ -674,7 +674,7 @@ mod tests {
         let parent = parent_at(5, 100);
         let blocks = vec![block_with_number(8)];
 
-        let out = sanitize_chain(blocks, &parent, Chain::sila-mainnet().id(), 256).unwrap();
+        let out = sanitize_chain(blocks, &parent, Chain::sila_mainnet().id(), 256).unwrap();
         assert_eq!(out.len(), 3);
 
         let numbers: Vec<u64> = out
@@ -698,7 +698,7 @@ mod tests {
         let blocks: Vec<SimBlock<TransactionRequest>> =
             vec![SimBlock::default(), SimBlock::default()];
 
-        let out = sanitize_chain(blocks, &parent, Chain::sila-mainnet().id(), 256).unwrap();
+        let out = sanitize_chain(blocks, &parent, Chain::sila_mainnet().id(), 256).unwrap();
         assert_eq!(out.len(), 2);
 
         let overrides = out[0].block_overrides.as_ref().unwrap();
@@ -750,7 +750,7 @@ mod tests {
     #[test]
     fn sanitize_chain_rejects_non_increasing_number() {
         let parent = parent_at(10, 100);
-        let err = sanitize_chain(vec![block_with_number(10)], &parent, Chain::sila-mainnet().id(), 256)
+        let err = sanitize_chain(vec![block_with_number(10)], &parent, Chain::sila_mainnet().id(), 256)
             .unwrap_err();
         assert!(matches!(err, SilApiError::Other(_)));
     }
@@ -758,7 +758,7 @@ mod tests {
     #[test]
     fn sanitize_chain_enforces_max_blocks() {
         let parent = parent_at(0, 0);
-        let err = sanitize_chain(vec![block_with_number(257)], &parent, Chain::sila-mainnet().id(), 256)
+        let err = sanitize_chain(vec![block_with_number(257)], &parent, Chain::sila_mainnet().id(), 256)
             .unwrap_err();
         assert!(matches!(err, SilApiError::Other(_)));
     }

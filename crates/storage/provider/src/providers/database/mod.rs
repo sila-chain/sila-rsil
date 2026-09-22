@@ -1076,7 +1076,7 @@ mod tests {
 
     #[test]
     fn provider_factory_with_database_path() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().build();
         let (_static_dir, static_dir_path) = create_test_static_files_dir();
         let (_rocksdb_dir, rocksdb_path) = create_test_rocksdb_dir();
         let _db_tempdir = tempfile::TempDir::new().expect(ERROR_TEMPDIR);

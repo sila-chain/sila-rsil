@@ -102,7 +102,7 @@ impl<T: Decodable2718, TxReq: SignableTxRequest<T>> SilSigner<T, TxReq> for DevS
     }
 
     fn sign_typed_data(&self, address: Address, payload: &TypedData) -> Result<Signature> {
-        let encoded = payload.sip712_signing_hash().map_err(|_| SignError::InvalidTypedData)?;
+        let encoded = payload.eip712_signing_hash().map_err(|_| SignError::InvalidTypedData)?;
         self.sign_hash(encoded, address)
     }
 }
@@ -128,7 +128,7 @@ mod tests {
     async fn test_sign_type_data() {
         let sip_712_example = r#"{
             "types": {
-            "SIP712Domain": [
+            "EIP712Domain": [
                 {
                     "name": "name",
                     "type": "string"

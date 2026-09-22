@@ -176,9 +176,9 @@ where
     let typed_data = serde_json::from_str(
         r#"{
         "types": {
-            "SIP712Domain": []
+            "EIP712Domain": []
         },
-        "primaryType": "SIP712Domain",
+        "primaryType": "EIP712Domain",
         "domain": {},
         "message": {}
     }"#,

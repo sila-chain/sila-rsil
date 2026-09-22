@@ -125,7 +125,7 @@ version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a6ff0c4adba2abdcd9fb5829ae5f4394c06f8585ed283a9ba79aa33763c802e1"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-serde",
@@ -154,7 +154,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7cdf48932b1db3216175e19a2b476d89d53076e004850ee7983c6807ba0fde74"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-serde",
@@ -175,7 +175,7 @@ dependencies = [
  "alloy-network-primitives",
  "alloy-primitives",
  "alloy-provider",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-sol-types",
  "alloy-transport",
  "futures",
@@ -203,7 +203,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sip2124"
+name = "alloy-eip2124"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "741bdd7499908b3aa0b159bba11e71c8cddd009a2c2eb7a06e825f1ec87900a5"
@@ -218,7 +218,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sip2930"
+name = "alloy-eip2930"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9441120fa82df73e8959ae0e4ab8ade03de2aaae61be313fbf5746277847ce25"
@@ -232,7 +232,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sip7702"
+name = "alloy-eip7702"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2919c5a56a1007492da313e7a3b6d45ef5edc5d33416fdec63c0d7a2702a0d20"
@@ -249,7 +249,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sip7928"
+name = "alloy-eip7928"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b3b12337f74cbfa451cb04dac173974814a6ff463079e1793aa09600ba8813ab"
@@ -264,15 +264,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sips"
+name = "alloy-eips"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea4c0453065b9206acc0f869a258dc8dcbbd595e144b4446f2c493a24a814d1f"
 dependencies = [
- "alloy-sip2124",
- "alloy-sip2930",
- "alloy-sip7702",
- "alloy-sip7928",
+ "alloy-eip2124",
+ "alloy-eip2930",
+ "alloy-eip7702",
+ "alloy-eip7928",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-serde",
@@ -282,25 +282,25 @@ dependencies = [
  "c-kzg",
  "derive_more",
  "either",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "serde",
  "serde_with",
  "sha2",
 ]
 
 [[package]]
-name = "alloy-savm"
+name = "alloy-evm"
 version = "0.37.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acde665074b478c97047dc2a461b4916cac77922d690e5b7415d1941ae7ff7bf"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-hardforks 0.4.7",
  "alloy-primitives",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-sol-types",
  "auto_impl",
  "derive_more",
@@ -315,7 +315,7 @@ version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "027ba57264c5d05e4ff52e6090b3592e7526f5d5f5a844add6bbdd17c071c911"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-serde",
  "alloy-trie",
@@ -331,7 +331,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3165210652f71dfc094b051602bafd691f506c54050a174b1cba18fb5ef706a3"
 dependencies = [
  "alloy-chains",
- "alloy-sip2124",
+ "alloy-eip2124",
  "alloy-primitives",
  "auto_impl",
  "dyn-clone",
@@ -344,7 +344,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83ba208044232d14d4adbfa77e57d6329f51bc1acc21f5667bb7db72d88a0831"
 dependencies = [
  "alloy-chains",
- "alloy-sip2124",
+ "alloy-eip2124",
  "alloy-primitives",
  "auto_impl",
  "dyn-clone",
@@ -386,12 +386,12 @@ checksum = "9d912bb639bf4ac31e83095afe9e907c8b9774ce0c405966228368309fcfc45f"
 dependencies = [
  "alloy-consensus",
  "alloy-consensus-any",
- "alloy-sips",
+ "alloy-eips",
  "alloy-json-rpc",
  "alloy-network-primitives",
  "alloy-primitives",
  "alloy-rpc-types-any",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "alloy-signer",
  "alloy-sol-types",
@@ -411,7 +411,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d875a11bd98595f57f73890f2e36f4a1cca0fa670623e59c9fb08b2389979c36"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-serde",
  "serde",
@@ -479,7 +479,7 @@ checksum = "0e7d526d184d392a8fbcf4293e457789b307bb70646e4f8b902989a246529450"
 dependencies = [
  "alloy-chains",
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-json-rpc",
  "alloy-network",
  "alloy-network-primitives",
@@ -487,7 +487,7 @@ dependencies = [
  "alloy-pubsub",
  "alloy-rpc-client",
  "alloy-rpc-types-debug",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-trace",
  "alloy-signer",
  "alloy-sol-types",
@@ -593,7 +593,7 @@ checksum = "96deb317fe224e98a8ae17a7ed7ea63478867385bf50b7abd53642b24cfd811a"
 dependencies = [
  "alloy-primitives",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "serde",
 ]
@@ -617,7 +617,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f89d27756bf3effdac25d07692724e840ce90ca1ff956a6b47dd2ae1612f597"
 dependencies = [
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "serde",
 ]
@@ -631,7 +631,7 @@ dependencies = [
  "alloy-consensus-any",
  "alloy-network-primitives",
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "serde",
  "serde_json",
@@ -643,12 +643,12 @@ version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "81133671b8da58169589aac996f3c4da23bbdee85b13ecee7098065f3eae718a"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "derive_more",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "serde",
  "serde_json",
  "serde_with",
@@ -677,14 +677,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b1f682c4881aa7000ac7cc86d7aeeb3b09836a77a90b329820140233651aeea"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-serde",
  "arbitrary",
  "derive_more",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "jsonwebtoken",
  "rand 0.8.6",
  "serde",
@@ -692,14 +692,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-rpc-types-sil"
+name = "alloy-rpc-types-eth"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e1bd19904581ee2075b61faabab1a4cefa8b96d8f2c85343adeae8ecf615e2b"
 dependencies = [
  "alloy-consensus",
  "alloy-consensus-any",
- "alloy-sips",
+ "alloy-eips",
  "alloy-network-primitives",
  "alloy-primitives",
  "alloy-rlp",
@@ -720,9 +720,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "54c635f0c45a871b55c276653e3838d1687d86282eeaf3d83a1914e02563b3f2"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "serde",
  "serde_json",
@@ -735,7 +735,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "796729a4e1783904c6040f11a503c4d55ddb16f69dc199ad15e50c4ad039f371"
 dependencies = [
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "serde",
  "serde_json",
@@ -749,7 +749,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8533c450895de79eb581875bfc317d1a239ae71aba79e20ee158fa153268f163"
 dependencies = [
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "serde",
 ]
@@ -2789,7 +2789,7 @@ name = "custom-hardforks"
 version = "0.1.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "rsil-chainspec",
@@ -3213,7 +3213,7 @@ name = "ef-tests"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
@@ -3227,7 +3227,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-savm",
  "rsil-savm-sila",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-tracing",
@@ -3364,7 +3364,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_hashing"
+name = "ethereum_hashing"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5aa93f58bb1eb3d1e556e4f408ef1dac130bad01ac37db4e7ade45de40d1c86a"
@@ -3375,7 +3375,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_serde_utils"
+name = "ethereum_serde_utils"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3dc1355dbb41fbbd34ec28d4fb2a57d9a70c67ac3c19f6a5ca4d4a176b9e997a"
@@ -3388,13 +3388,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_ssz"
+name = "ethereum_ssz"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e462875ad8693755ea8913d6e905715c76ea4836e2254e18c9cf0f7a8f8c2a13"
 dependencies = [
  "alloy-primitives",
- "sila_serde_utils",
+ "ethereum_serde_utils",
  "itertools 0.14.0",
  "serde",
  "serde_derive",
@@ -3403,7 +3403,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_ssz_derive"
+name = "ethereum_ssz_derive"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "daf022360bdbe9456eda5f35718a50476d5b2a0d51a97ed4eae27420737a6fba"
@@ -3430,7 +3430,7 @@ name = "example-beacon-api-sidecar-fetcher"
 version = "0.1.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-beacon",
  "clap",
@@ -3479,7 +3479,7 @@ dependencies = [
  "rsil-network-peers",
  "rsil-node-sila",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-tasks",
  "rsil-tracing",
@@ -3509,8 +3509,8 @@ dependencies = [
 name = "example-custom-beacon-withdrawals"
 version = "0.0.0"
 dependencies = [
- "alloy-sips",
- "alloy-savm",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-sol-types",
  "eyre",
  "rsil-sila",
@@ -3551,7 +3551,7 @@ dependencies = [
 name = "example-custom-savm"
 version = "0.0.0"
 dependencies = [
- "alloy-savm",
+ "alloy-evm",
  "alloy-genesis",
  "alloy-primitives",
  "eyre",
@@ -3564,10 +3564,10 @@ dependencies = [
 name = "example-custom-inspector"
 version = "0.0.0"
 dependencies = [
- "alloy-sips",
- "alloy-savm",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "clap",
  "futures-util",
  "rsil-sila",
@@ -3586,7 +3586,7 @@ dependencies = [
 name = "example-custom-payload-builder"
 version = "0.0.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "eyre",
  "futures-util",
  "rsil-basic-payload-builder",
@@ -3633,7 +3633,7 @@ dependencies = [
  "rsil-engine-tree",
  "rsil-sila",
  "rsil-savm",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-trie",
  "serde_json",
@@ -3759,7 +3759,7 @@ dependencies = [
 name = "example-precompile-cache"
 version = "0.0.0"
 dependencies = [
- "alloy-savm",
+ "alloy-evm",
  "alloy-genesis",
  "alloy-primitives",
  "eyre",
@@ -7553,7 +7553,7 @@ dependencies = [
  "alloy-primitives",
  "alloy-provider",
  "alloy-rpc-types",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "aquamarine",
  "backon",
  "clap",
@@ -7575,7 +7575,7 @@ dependencies = [
  "rsil-node-metrics",
  "rsil-payload-builder",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-rpc",
@@ -7600,7 +7600,7 @@ name = "rsil-basic-payload-builder"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "futures-core",
  "futures-util",
@@ -7611,7 +7611,7 @@ dependencies = [
  "rsil-payload-builder",
  "rsil-payload-builder-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-revm",
  "rsil-storage-api",
  "rsil-tasks",
@@ -7626,8 +7626,8 @@ name = "rsil-bb"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-hardforks 0.4.7",
  "alloy-primitives",
  "alloy-rlp",
@@ -7657,7 +7657,7 @@ dependencies = [
  "rsil-node-core",
  "rsil-node-sila",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-rpc-api",
@@ -7673,7 +7673,7 @@ name = "rsil-chain-state"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-signer",
  "alloy-signer-local",
@@ -7688,7 +7688,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-execution-types",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-api",
  "rsil-tasks",
  "rsil-testing-utils",
@@ -7707,8 +7707,8 @@ version = "2.4.0"
 dependencies = [
  "alloy-chains",
  "alloy-consensus",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
@@ -7717,7 +7717,7 @@ dependencies = [
  "derive_more",
  "rsil-sila-forks",
  "rsil-network-peers",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "serde_json",
 ]
 
@@ -7739,7 +7739,7 @@ version = "2.4.0"
 dependencies = [
  "alloy-chains",
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "arbitrary",
@@ -7766,7 +7766,7 @@ dependencies = [
  "rsil-cli",
  "rsil-cli-runner",
  "rsil-cli-util",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-config",
  "rsil-consensus",
  "rsil-db",
@@ -7795,7 +7795,7 @@ dependencies = [
  "rsil-node-core",
  "rsil-node-events",
  "rsil-node-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune",
  "rsil-prune-types",
@@ -7836,7 +7836,7 @@ dependencies = [
 name = "rsil-cli-util"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "cfg-if",
  "eyre",
@@ -7855,13 +7855,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "rsil-codecs"
+name = "reth-codecs"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eb43f4858fef4e3b42b80954d2edf1ff67c8ad7498347083cdc7d0f6eff2f081"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-trie",
@@ -7869,14 +7869,14 @@ dependencies = [
  "bytes",
  "modular-bitfield",
  "parity-scale-codec",
- "rsil-codecs-derive",
- "rsil-zstd-compressors",
+ "reth-codecs-derive",
+ "reth-zstd-compressors",
  "serde",
  "visibility",
 ]
 
 [[package]]
-name = "rsil-codecs-derive"
+name = "reth-codecs-derive"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5798ae4d6b264764bc0d742468bd32c7fb515e774645d4930f95ff6311f3ae14"
@@ -7909,11 +7909,11 @@ name = "rsil-consensus"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sip7928",
+ "alloy-eip7928",
  "alloy-primitives",
  "auto_impl",
  "rsil-execution-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "thiserror 2.0.18",
 ]
 
@@ -7922,13 +7922,13 @@ name = "rsil-consensus-common"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "rand 0.9.4",
  "rsil-chainspec",
  "rsil-consensus",
  "rsil-sila-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
 ]
 
 [[package]]
@@ -7936,7 +7936,7 @@ name = "rsil-consensus-debug-client"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-json-rpc",
  "alloy-primitives",
  "alloy-provider",
@@ -7976,7 +7976,7 @@ dependencies = [
  "rsil-libmdbx",
  "rsil-metrics",
  "rsil-nippy-jar",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-static-file-types",
  "rsil-storage-errors",
@@ -8006,10 +8006,10 @@ dependencies = [
  "proptest",
  "proptest-arbitrary-interop",
  "rand 0.9.4",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-db-models",
  "rsil-sila-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-stages-types",
  "rsil-storage-errors",
@@ -8029,7 +8029,7 @@ dependencies = [
  "boyer-moore-magiclen",
  "eyre",
  "rsil-chainspec",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-config",
  "rsil-db",
  "rsil-db-api",
@@ -8037,7 +8037,7 @@ dependencies = [
  "rsil-execution-errors",
  "rsil-fs-util",
  "rsil-node-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-stages-types",
  "rsil-static-file-types",
@@ -8054,15 +8054,15 @@ dependencies = [
 name = "rsil-db-models"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "arbitrary",
  "bytes",
  "modular-bitfield",
  "proptest",
  "proptest-arbitrary-interop",
- "rsil-codecs",
- "rsil-primitives-traits",
+ "reth-codecs",
+ "reth-primitives-traits",
  "serde",
 ]
 
@@ -8150,7 +8150,7 @@ name = "rsil-downloaders"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "assert_matches",
@@ -8169,7 +8169,7 @@ dependencies = [
  "rsil-metrics",
  "rsil-network-p2p",
  "rsil-network-peers",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-storage-api",
  "rsil-tasks",
@@ -8188,13 +8188,13 @@ name = "rsil-e2e-test-utils"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-network",
  "alloy-primitives",
  "alloy-provider",
  "alloy-rlp",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-signer",
  "alloy-signer-local",
  "derive_more",
@@ -8220,7 +8220,7 @@ dependencies = [
  "rsil-payload-builder",
  "rsil-payload-builder-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-rpc-api",
  "rsil-rpc-builder",
@@ -8279,7 +8279,7 @@ dependencies = [
  "rsil-sila-engine-primitives",
  "rsil-payload-builder",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-api",
  "rsil-transaction-pool",
  "tokio",
@@ -8292,7 +8292,7 @@ name = "rsil-engine-primitives"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "auto_impl",
@@ -8305,7 +8305,7 @@ dependencies = [
  "rsil-execution-types",
  "rsil-payload-builder-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-api",
  "rsil-trie-common",
  "serde",
@@ -8318,9 +8318,9 @@ name = "rsil-engine-tree"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
@@ -8358,7 +8358,7 @@ dependencies = [
  "rsil-node-sila",
  "rsil-payload-builder",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune",
  "rsil-prune-types",
@@ -8401,7 +8401,7 @@ dependencies = [
  "rsil-savm",
  "rsil-fs-util",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-revm",
  "rsil-storage-api",
  "serde",
@@ -8416,13 +8416,13 @@ name = "rsil-era"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-beacon",
  "alloy-rpc-types-engine",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "eyre",
  "rand 0.9.4",
  "reqwest",
@@ -8472,7 +8472,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-etl",
  "rsil-fs-util",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-stages-types",
  "rsil-storage-api",
@@ -8498,7 +8498,7 @@ version = "2.4.0"
 dependencies = [
  "alloy-chains",
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "arbitrary",
@@ -8511,13 +8511,13 @@ dependencies = [
  "proptest-arbitrary-interop",
  "rand 0.8.6",
  "rand 0.9.4",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-ecies",
  "rsil-sil-wire-types",
  "rsil-sila-forks",
  "rsil-metrics",
  "rsil-network-peers",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-tracing",
  "secp256k1 0.30.0",
  "serde",
@@ -8536,8 +8536,8 @@ version = "2.4.0"
 dependencies = [
  "alloy-chains",
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
+ "alloy-eip7928",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-hardforks 0.4.7",
  "alloy-primitives",
@@ -8549,9 +8549,9 @@ dependencies = [
  "proptest-arbitrary-interop",
  "rand 0.9.4",
  "rsil-chainspec",
- "rsil-codecs-derive",
+ "reth-codecs-derive",
  "rsil-sila-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "serde",
  "test-case",
  "thiserror 2.0.18",
@@ -8562,10 +8562,10 @@ name = "rsil-sila"
 version = "2.4.0"
 dependencies = [
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "rsil-chainspec",
  "rsil-cli-util",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-consensus",
  "rsil-consensus-common",
  "rsil-db",
@@ -8583,7 +8583,7 @@ dependencies = [
  "rsil-node-builder",
  "rsil-node-core",
  "rsil-node-sila",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-rpc",
@@ -8625,14 +8625,14 @@ name = "rsil-sila-consensus"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "rsil-chainspec",
  "rsil-consensus",
  "rsil-consensus-common",
  "rsil-sila-primitives",
  "rsil-execution-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "tracing",
 ]
 
@@ -8640,13 +8640,13 @@ dependencies = [
 name = "rsil-sila-engine-primitives"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "rsil-engine-primitives",
  "rsil-sila-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -8656,7 +8656,7 @@ dependencies = [
 name = "rsil-sila-forks"
 version = "2.4.0"
 dependencies = [
- "alloy-sip2124",
+ "alloy-eip2124",
  "alloy-hardforks 0.4.7",
  "alloy-primitives",
  "arbitrary",
@@ -8670,7 +8670,7 @@ name = "rsil-sila-payload-builder"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
@@ -8686,7 +8686,7 @@ dependencies = [
  "rsil-payload-builder-primitives",
  "rsil-payload-primitives",
  "rsil-payload-validator",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-revm",
  "rsil-storage-api",
  "rsil-transaction-pool",
@@ -8699,17 +8699,17 @@ name = "rsil-sila-primitives"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "arbitrary",
  "proptest",
  "proptest-arbitrary-interop",
  "rand 0.9.4",
- "rsil-codecs",
- "rsil-primitives-traits",
- "rsil-zstd-compressors",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "reth-zstd-compressors",
  "serde",
  "serde_json",
  "serde_with",
@@ -8730,9 +8730,9 @@ name = "rsil-savm"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-primitives",
  "auto_impl",
  "derive_more",
@@ -8743,7 +8743,7 @@ dependencies = [
  "rsil-execution-errors",
  "rsil-execution-types",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-api",
  "rsil-storage-errors",
  "rsil-trie-common",
@@ -8755,8 +8755,8 @@ name = "rsil-savm-sila"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rpc-types-engine",
@@ -8767,7 +8767,7 @@ dependencies = [
  "rsil-savm",
  "rsil-execution-types",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-errors",
  "rsil-testing-utils",
  "revm",
@@ -8785,7 +8785,7 @@ dependencies = [
  "parking_lot",
  "rsil-errors",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-trie",
@@ -8797,7 +8797,7 @@ dependencies = [
 name = "rsil-execution-errors"
 version = "2.4.0"
 dependencies = [
- "alloy-savm",
+ "alloy-evm",
  "alloy-primitives",
  "alloy-rlp",
  "nybbles",
@@ -8810,8 +8810,8 @@ name = "rsil-execution-types"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-primitives",
  "alloy-rlp",
  "arbitrary",
@@ -8819,7 +8819,7 @@ dependencies = [
  "derive_more",
  "rand 0.9.4",
  "rsil-sila-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-trie-common",
  "revm",
  "serde",
@@ -8831,7 +8831,7 @@ name = "rsil-exex"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "eyre",
@@ -8853,7 +8853,7 @@ dependencies = [
  "rsil-node-api",
  "rsil-node-core",
  "rsil-payload-builder",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune-types",
  "rsil-revm",
@@ -8875,7 +8875,7 @@ dependencies = [
 name = "rsil-exex-test-utils"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "eyre",
  "futures-util",
  "rsil-chainspec",
@@ -8893,7 +8893,7 @@ dependencies = [
  "rsil-node-core",
  "rsil-node-sila",
  "rsil-payload-builder",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-tasks",
  "rsil-transaction-pool",
@@ -8906,7 +8906,7 @@ dependencies = [
 name = "rsil-exex-types"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "arbitrary",
  "bincode",
@@ -8914,7 +8914,7 @@ dependencies = [
  "rsil-chain-state",
  "rsil-sila-primitives",
  "rsil-execution-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "serde",
  "serde_with",
 ]
@@ -8933,7 +8933,7 @@ name = "rsil-invalid-block-hooks"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-debug",
@@ -8946,7 +8946,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-savm",
  "rsil-savm-sila",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-rpc-api",
@@ -9013,7 +9013,7 @@ dependencies = [
  "futures",
  "metrics",
  "metrics-derive",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "tokio",
  "tokio-util",
 ]
@@ -9045,7 +9045,7 @@ name = "rsil-network"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
@@ -9081,7 +9081,7 @@ dependencies = [
  "rsil-network-p2p",
  "rsil-network-peers",
  "rsil-network-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-storage-api",
  "rsil-tasks",
@@ -9109,7 +9109,7 @@ dependencies = [
  "alloy-consensus",
  "alloy-primitives",
  "alloy-rpc-types-admin",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "auto_impl",
  "derive_more",
  "enr",
@@ -9131,8 +9131,8 @@ name = "rsil-network-p2p"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
+ "alloy-eip7928",
+ "alloy-eips",
  "alloy-primitives",
  "auto_impl",
  "derive_more",
@@ -9143,7 +9143,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-network-peers",
  "rsil-network-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-errors",
  "test-case",
  "tokio",
@@ -9171,7 +9171,7 @@ dependencies = [
 name = "rsil-network-types"
 version = "2.4.0"
 dependencies = [
- "alloy-sip2124",
+ "alloy-eip2124",
  "humantime-serde",
  "rsil-net-banlist",
  "rsil-network-peers",
@@ -9226,7 +9226,7 @@ name = "rsil-node-builder"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-provider",
  "alloy-rpc-types",
@@ -9268,7 +9268,7 @@ dependencies = [
  "rsil-node-events",
  "rsil-node-metrics",
  "rsil-payload-builder",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune",
  "rsil-rpc",
@@ -9297,7 +9297,7 @@ name = "rsil-node-core"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "clap",
@@ -9324,7 +9324,7 @@ dependencies = [
  "rsil-network",
  "rsil-network-p2p",
  "rsil-network-peers",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-rpc-convert",
  "rsil-rpc-sil-types",
@@ -9354,20 +9354,20 @@ version = "2.4.0"
 dependencies = [
  "alloy-consensus",
  "alloy-contract",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-network",
  "alloy-primitives",
  "alloy-provider",
  "alloy-rpc-types-beacon",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-trace",
  "alloy-signer",
  "alloy-sol-types",
  "enr",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "eyre",
  "futures",
  "http-body-util",
@@ -9392,7 +9392,7 @@ dependencies = [
  "rsil-node-builder",
  "rsil-node-core",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-rpc",
@@ -9427,7 +9427,7 @@ dependencies = [
  "futures-util",
  "rsil-chain-state",
  "rsil-network-api",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-api",
  "rsil-transaction-pool",
  "serde",
@@ -9445,7 +9445,7 @@ name = "rsil-node-events"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "derive_more",
@@ -9454,7 +9454,7 @@ dependencies = [
  "pin-project",
  "rsil-engine-primitives",
  "rsil-network-api",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-stages",
  "rsil-static-file-types",
@@ -9500,7 +9500,7 @@ dependencies = [
  "rsil-db-api",
  "rsil-engine-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
 ]
 
 [[package]]
@@ -9519,7 +9519,7 @@ dependencies = [
  "rsil-metrics",
  "rsil-payload-builder-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-trie-parallel",
  "tokio",
  "tokio-stream",
@@ -9542,7 +9542,7 @@ name = "rsil-payload-primitives"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
@@ -9552,7 +9552,7 @@ dependencies = [
  "rsil-chainspec",
  "rsil-errors",
  "rsil-execution-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-trie-common",
  "serde",
  "serde_json",
@@ -9576,21 +9576,21 @@ version = "2.4.0"
 dependencies = [
  "alloy-consensus",
  "alloy-rpc-types-engine",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
 ]
 
 [[package]]
-name = "rsil-primitives-traits"
+name = "reth-primitives-traits"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f59c928b2865af5bcdbce94800270b7f7798f27a22ca0aabdd2b7d3e6587c9ce"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-trie",
  "arbitrary",
  "byteorder",
@@ -9603,7 +9603,7 @@ dependencies = [
  "proptest-arbitrary-interop",
  "quanta",
  "rayon",
- "rsil-codecs",
+ "reth-codecs",
  "revm-bytecode",
  "revm-primitives",
  "revm-state",
@@ -9617,8 +9617,8 @@ name = "rsil-provider"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
+ "alloy-eip7928",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rpc-types-engine",
@@ -9632,7 +9632,7 @@ dependencies = [
  "rayon",
  "rsil-chain-state",
  "rsil-chainspec",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-db",
  "rsil-db-api",
  "rsil-errors",
@@ -9643,7 +9643,7 @@ dependencies = [
  "rsil-metrics",
  "rsil-nippy-jar",
  "rsil-node-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-stages-types",
  "rsil-static-file-types",
@@ -9680,7 +9680,7 @@ dependencies = [
  "rsil-errors",
  "rsil-exex-types",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune-types",
  "rsil-stages",
@@ -9711,7 +9711,7 @@ dependencies = [
  "modular-bitfield",
  "proptest",
  "proptest-arbitrary-interop",
- "rsil-codecs",
+ "reth-codecs",
  "serde",
  "serde_json",
  "strum 0.27.2",
@@ -9729,7 +9729,7 @@ dependencies = [
  "alloy-rlp",
  "alloy-rpc-types-debug",
  "rsil-sila-forks",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-storage-api",
  "rsil-storage-errors",
  "rsil-trie",
@@ -9742,9 +9742,9 @@ version = "2.4.0"
 dependencies = [
  "alloy-consensus",
  "alloy-dyn-abi",
- "alloy-sip7928",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-genesis",
  "alloy-network",
  "alloy-primitives",
@@ -9755,7 +9755,7 @@ dependencies = [
  "alloy-rpc-types-beacon",
  "alloy-rpc-types-debug",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-mev",
  "alloy-rpc-types-trace",
  "alloy-rpc-types-txpool",
@@ -9790,7 +9790,7 @@ dependencies = [
  "rsil-network-types",
  "rsil-node-api",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
  "rsil-rpc-api",
@@ -9820,7 +9820,7 @@ dependencies = [
 name = "rsil-rpc-api"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-json-rpc",
  "alloy-primitives",
@@ -9830,7 +9830,7 @@ dependencies = [
  "alloy-rpc-types-beacon",
  "alloy-rpc-types-debug",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-mev",
  "alloy-rpc-types-trace",
  "alloy-rpc-types-txpool",
@@ -9850,9 +9850,9 @@ dependencies = [
 name = "rsil-rpc-api-testing-util"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-trace",
  "futures",
  "jsonrpsee",
@@ -9869,12 +9869,12 @@ dependencies = [
 name = "rsil-rpc-builder"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-network",
  "alloy-primitives",
  "alloy-provider",
  "alloy-rpc-types-engine",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-trace",
  "clap",
  "dyn-clone",
@@ -9899,7 +9899,7 @@ dependencies = [
  "rsil-node-sila",
  "rsil-payload-builder",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-rpc",
  "rsil-rpc-api",
@@ -9928,17 +9928,17 @@ name = "rsil-rpc-convert"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-savm",
+ "alloy-evm",
  "alloy-json-rpc",
  "alloy-network",
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "auto_impl",
  "dyn-clone",
  "jsonrpsee-types",
  "rsil-savm",
- "rsil-primitives-traits",
- "rsil-rpc-traits",
+ "reth-primitives-traits",
+ "reth-rpc-traits",
  "serde_json",
  "thiserror 2.0.18",
 ]
@@ -9967,7 +9967,7 @@ dependencies = [
 name = "rsil-rpc-engine-api"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
@@ -9986,7 +9986,7 @@ dependencies = [
  "rsil-payload-builder",
  "rsil-payload-builder-primitives",
  "rsil-payload-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-rpc-api",
  "rsil-storage-api",
@@ -10005,14 +10005,14 @@ version = "2.4.0"
 dependencies = [
  "alloy-consensus",
  "alloy-dyn-abi",
- "alloy-sip7928",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-json-rpc",
  "alloy-network",
  "alloy-primitives",
  "alloy-rlp",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-mev",
  "alloy-serde",
  "async-trait",
@@ -10028,7 +10028,7 @@ dependencies = [
  "rsil-savm",
  "rsil-network-api",
  "rsil-node-api",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-revm",
  "rsil-rpc-convert",
@@ -10051,13 +10051,13 @@ version = "2.4.0"
 dependencies = [
  "alloy-chains",
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
- "alloy-savm",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
  "alloy-network",
  "alloy-primitives",
  "alloy-rpc-client",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "alloy-sol-types",
  "alloy-transport",
@@ -10077,7 +10077,7 @@ dependencies = [
  "rsil-savm",
  "rsil-execution-types",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-revm",
  "rsil-rpc-convert",
  "rsil-rpc-server-types",
@@ -10118,7 +10118,7 @@ dependencies = [
 name = "rsil-rpc-server-types"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "jsonrpsee-core",
@@ -10130,7 +10130,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rsil-rpc-traits"
+name = "reth-rpc-traits"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ace77dbcdd59c014fda4565ebfec76cd1fe6f5d98584b4655e8d22a947b9eee3"
@@ -10138,9 +10138,9 @@ dependencies = [
  "alloy-consensus",
  "alloy-network",
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-signer",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "thiserror 2.0.18",
 ]
 
@@ -10149,7 +10149,7 @@ name = "rsil-stages"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
@@ -10164,7 +10164,7 @@ dependencies = [
  "rayon",
  "reqwest",
  "rsil-chainspec",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-config",
  "rsil-consensus",
  "rsil-db",
@@ -10185,7 +10185,7 @@ dependencies = [
  "rsil-libmdbx",
  "rsil-network-p2p",
  "rsil-network-peers",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune",
  "rsil-prune-types",
@@ -10210,7 +10210,7 @@ dependencies = [
 name = "rsil-stages-api"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "aquamarine",
  "assert_matches",
@@ -10218,14 +10218,14 @@ dependencies = [
  "futures-util",
  "metrics",
  "rsil-chainspec",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-consensus",
  "rsil-db",
  "rsil-db-api",
  "rsil-errors",
  "rsil-metrics",
  "rsil-network-p2p",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune",
  "rsil-stages-types",
@@ -10251,7 +10251,7 @@ dependencies = [
  "proptest",
  "proptest-arbitrary-interop",
  "rand 0.9.4",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-trie-common",
  "serde",
 ]
@@ -10264,9 +10264,9 @@ dependencies = [
  "assert_matches",
  "parking_lot",
  "rayon",
- "rsil-codecs",
+ "reth-codecs",
  "rsil-db-api",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune-types",
  "rsil-stages",
@@ -10302,8 +10302,8 @@ name = "rsil-storage-api"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sip7928",
- "alloy-sips",
+ "alloy-eip7928",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "auto_impl",
@@ -10312,7 +10312,7 @@ dependencies = [
  "rsil-db-models",
  "rsil-sila-primitives",
  "rsil-execution-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-stages-types",
  "rsil-storage-errors",
@@ -10328,12 +10328,12 @@ dependencies = [
 name = "rsil-storage-errors"
 version = "2.4.0"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "derive_more",
- "rsil-codecs",
- "rsil-primitives-traits",
+ "reth-codecs",
+ "reth-primitives-traits",
  "rsil-prune-types",
  "rsil-static-file-types",
  "revm",
@@ -10345,7 +10345,7 @@ name = "rsil-storage-rpc-provider"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-network",
  "alloy-primitives",
  "alloy-provider",
@@ -10358,7 +10358,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-execution-types",
  "rsil-node-types",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-prune-types",
  "rsil-stages-types",
@@ -10394,14 +10394,14 @@ name = "rsil-testing-utils"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
  "rand 0.8.6",
  "rand 0.9.4",
  "rsil-sila-primitives",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "secp256k1 0.30.0",
 ]
 
@@ -10456,7 +10456,7 @@ name = "rsil-transaction-pool"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "aquamarine",
@@ -10483,7 +10483,7 @@ dependencies = [
  "rsil-execution-types",
  "rsil-fs-util",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-storage-api",
  "rsil-tasks",
@@ -10507,7 +10507,7 @@ name = "rsil-trie"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-trie",
@@ -10523,7 +10523,7 @@ dependencies = [
  "rand 0.9.4",
  "rsil-execution-errors",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-stages-types",
  "rsil-storage-errors",
  "rsil-tracing",
@@ -10538,11 +10538,11 @@ name = "rsil-trie-common"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",
- "alloy-sips",
+ "alloy-eips",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-serde",
  "alloy-trie",
  "arbitrary",
@@ -10557,8 +10557,8 @@ dependencies = [
  "proptest",
  "proptest-arbitrary-interop",
  "rayon",
- "rsil-codecs",
- "rsil-primitives-traits",
+ "reth-codecs",
+ "reth-primitives-traits",
  "revm",
  "serde",
  "serde_json",
@@ -10581,7 +10581,7 @@ dependencies = [
  "rsil-db-api",
  "rsil-execution-errors",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-stages-types",
  "rsil-storage-api",
@@ -10599,7 +10599,7 @@ dependencies = [
 name = "rsil-trie-parallel"
 version = "2.4.0"
 dependencies = [
- "alloy-savm",
+ "alloy-evm",
  "alloy-primitives",
  "alloy-rlp",
  "crossbeam-channel",
@@ -10610,7 +10610,7 @@ dependencies = [
  "rsil-sila-primitives",
  "rsil-execution-errors",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-provider",
  "rsil-storage-errors",
  "rsil-tasks",
@@ -10642,7 +10642,7 @@ dependencies = [
  "rayon",
  "rsil-execution-errors",
  "rsil-metrics",
- "rsil-primitives-traits",
+ "reth-primitives-traits",
  "rsil-tracing",
  "rsil-trie",
  "rsil-trie-common",
@@ -10655,7 +10655,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rsil-zstd-compressors"
+name = "reth-zstd-compressors"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1bd4ae4f54a2ba813eef082910bc646bd31cab8ed134308fa71f1068331fb84"
@@ -10718,8 +10718,8 @@ version = "41.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac68282a454318246817486835a446519291dd0a8167d09de14c7e96f2147696"
 dependencies = [
- "alloy-sip2930",
- "alloy-sip7702",
+ "alloy-eip2930",
+ "alloy-eip7702",
  "auto_impl",
  "either",
  "revm-database-interface",
@@ -10734,7 +10734,7 @@ version = "41.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d761681a43e48408ea23f7f66ff56ff7b6128cadb8f9135d1b94787d0c0fc6b4"
 dependencies = [
- "alloy-sips",
+ "alloy-eips",
  "derive_more",
  "either",
  "revm-bytecode",
@@ -10802,7 +10802,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "54e22e1aa328f78e8c3dea6a3a860a3a3c3a77c4a7e775e3fdd3dcbb24a152ac"
 dependencies = [
  "alloy-primitives",
- "alloy-rpc-types-sil",
+ "alloy-rpc-types-eth",
  "alloy-rpc-types-trace",
  "alloy-sol-types",
  "anstyle",
@@ -10872,7 +10872,7 @@ version = "41.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "73ef2fffc28acc41e8ef7525f2b1d16288a10f80579a1b33e7e62abc9892314a"
 dependencies = [
- "alloy-sip7928",
+ "alloy-eip7928",
  "bitflags 2.13.0",
  "nonmax",
  "revm-bytecode",
@@ -10993,7 +10993,7 @@ name = "revmc-runtime"
 version = "0.1.0"
 source = "git+https://github.com/paradigmxyz/revmc?branch=main#7e3536d659d3bdd4b433cff7df201d1605cc8853"
 dependencies = [
- "alloy-savm",
+ "alloy-evm",
  "alloy-primitives",
  "crossbeam-channel",
  "crossbeam-queue",
@@ -12911,8 +12911,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f7fd51aa83d2eb83b04570808430808b5d24fdbf479a4d5ac5dee4a2e2dd2be4"
 dependencies = [
  "alloy-primitives",
- "sila_hashing",
- "sila_ssz",
+ "ethereum_hashing",
+ "ethereum_ssz",
  "smallvec",
  "typenum",
 ]

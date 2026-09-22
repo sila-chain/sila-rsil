@@ -324,8 +324,8 @@ rsil-cli = { path = "crates/cli/cli" }
 rsil-cli-commands = { path = "crates/cli/commands" }
 rsil-cli-runner = { path = "crates/cli/runner" }
 rsil-cli-util = { path = "crates/cli/util" }
-rsil-codecs = { version = "0.5.0", default-features = false }
-rsil-codecs-derive = "0.5.0"
+rsil-codecs = { package = "reth-codecs", version = "0.5.0", default-features = false }
+rsil-codecs-derive = { package = "reth-codecs-derive", version = "0.5.0" }
 rsil-config = { path = "crates/config", default-features = false }
 rsil-consensus = { path = "crates/consensus/consensus", default-features = false }
 rsil-consensus-common = { path = "crates/consensus/common", default-features = false }
@@ -393,7 +393,7 @@ rsil-payload-builder-primitives = { path = "crates/payload/builder-primitives" }
 rsil-payload-primitives = { path = "crates/payload/primitives" }
 rsil-payload-validator = { path = "crates/payload/validator" }
 rsil-payload-util = { path = "crates/payload/util" }
-rsil-primitives-traits = { version = "0.5.0", default-features = false }
+rsil-primitives-traits = { package = "reth-primitives-traits", version = "0.5.0", default-features = false }
 rsil-provider = { path = "crates/storage/provider" }
 rsil-prune = { path = "crates/prune/prune" }
 rsil-prune-types = { path = "crates/prune/types", default-features = false }
@@ -409,7 +409,7 @@ rsil-rpc-sil-types = { path = "crates/rpc/rpc-sil-types", default-features = fal
 rsil-rpc-layer = { path = "crates/rpc/rpc-layer" }
 rsil-rpc-server-types = { path = "crates/rpc/rpc-server-types" }
 rsil-rpc-convert = { path = "crates/rpc/rpc-convert" }
-rsil-rpc-traits = { version = "0.5.0", default-features = false }
+rsil-rpc-traits = { package = "reth-rpc-traits", version = "0.5.0", default-features = false }
 rsil-stages = { path = "crates/stages/stages" }
 rsil-stages-api = { path = "crates/stages/api" }
 rsil-stages-types = { path = "crates/stages/types", default-features = false }
@@ -428,7 +428,7 @@ rsil-trie-common = { path = "crates/trie/common", default-features = false }
 rsil-trie-db = { path = "crates/trie/db" }
 rsil-trie-parallel = { path = "crates/trie/parallel" }
 rsil-trie-sparse = { path = "crates/trie/sparse", default-features = false }
-rsil-zstd-compressors = { version = "0.5.0", default-features = false }
+rsil-zstd-compressors = { package = "reth-zstd-compressors", version = "0.5.0", default-features = false }
 
 # revm
 revm = { version = "41.0.0", default-features = false }
@@ -441,9 +441,9 @@ alloy-primitives = { version = "1.6.0", default-features = false, features = ["m
 alloy-sol-types = { version = "1.6.0", default-features = false }
 
 alloy-chains = { version = "0.2.33", default-features = false }
-alloy-sip2124 = { version = "0.2.0", default-features = false }
-alloy-sip7928 = { version = "0.4.5", default-features = false, features = ["rlp"] }
-alloy-savm = { version = "0.37.0", default-features = false }
+alloy-sip2124 = { package = "alloy-eip2124", version = "0.2.0", default-features = false }
+alloy-sip7928 = { package = "alloy-eip7928", version = "0.4.5", default-features = false, features = ["rlp"] }
+alloy-savm = { package = "alloy-evm", version = "0.37.0", default-features = false }
 alloy-rlp = { version = "0.3.16", default-features = false, features = ["core-net"] }
 alloy-trie = { version = "0.9.4", default-features = false }
 
@@ -451,7 +451,7 @@ alloy-hardforks = "0.4.7"
 
 alloy-consensus = { version = "2.1.1", default-features = false }
 alloy-contract = { version = "2.1.1", default-features = false }
-alloy-sips = { version = "2.1.1", default-features = false }
+alloy-sips = { package = "alloy-eips", version = "2.1.1", default-features = false }
 alloy-genesis = { version = "2.1.1", default-features = false }
 alloy-json-rpc = { version = "2.1.1", default-features = false }
 alloy-network = { version = "2.1.1", default-features = false }
@@ -465,7 +465,7 @@ alloy-rpc-types-anvil = { version = "2.1.1", default-features = false }
 alloy-rpc-types-beacon = { version = "2.1.1", default-features = false }
 alloy-rpc-types-debug = { version = "2.1.1", default-features = false }
 alloy-rpc-types-engine = { version = "2.1.1", default-features = false }
-alloy-rpc-types-sil = { version = "2.1.1", default-features = false }
+alloy-rpc-types-sil = { package = "alloy-rpc-types-eth", version = "2.1.1", default-features = false }
 alloy-rpc-types-mev = { version = "2.1.1", default-features = false }
 alloy-rpc-types-trace = { version = "2.1.1", default-features = false }
 alloy-rpc-types-txpool = { version = "2.1.1", default-features = false }
@@ -628,8 +628,8 @@ rstest = "0.26.1"
 test-case = "3"
 
 # ssz encoding
-sila_ssz = "0.10.4"
-sila_ssz_derive = "0.10.4"
+sila_ssz = { package = "ethereum_ssz", version = "0.10.4" }
+sila_ssz_derive = { package = "ethereum_ssz_derive", version = "0.10.4" }
 
 # allocators
 jemalloc_pprof = { version = "0.8", default-features = false }

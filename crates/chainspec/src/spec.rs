@@ -4,8 +4,8 @@ use alloy_evm::sil::spec::SilExecutorSpec;
 use crate::{
     constants::{MAINNET_DEPOSIT_CONTRACT, MAINNET_PRUNE_DELETE_LIMIT},
     sila::SEPOLIA_PARIS_TTD,
-    holesky, hoodi, sila-mainnet,
-    sila-mainnet::{MAINNET_PARIS_BLOCK, MAINNET_PARIS_TTD},
+    holesky, hoodi, sila_mainnet,
+    sila_mainnet::{MAINNET_PARIS_BLOCK, MAINNET_PARIS_TTD},
     sepolia,
     sepolia::SEPOLIA_PARIS_BLOCK,
     SilChainSpec,
@@ -115,9 +115,9 @@ pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Hea
 pub static SILA_MAINNET: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     let genesis = serde_json::from_str(include_str!("../res/genesis/sila-mainnet.json"))
         .expect("Can't deserialize SilaMainnet genesis json");
-    let hardforks = SilaHardfork::sila-mainnet().into();
+    let hardforks = SilaHardfork::sila_mainnet().into();
     let mut spec = ChainSpec {
-        chain: Chain::sila-mainnet(),
+        chain: Chain::sila_mainnet(),
         genesis_header: SealedHeader::new(
             make_genesis_header(&genesis, &hardforks),
             MAINNET_GENESIS_HASH,
@@ -134,8 +134,8 @@ pub static SILA_MAINNET: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
         base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
         prune_delete_limit: MAINNET_PRUNE_DELETE_LIMIT,
         blob_params: BlobScheduleBlobParams::default().with_scheduled([
-            (sila-mainnet::MAINNET_BPO1_TIMESTAMP, BlobParams::bpo1()),
-            (sila-mainnet::MAINNET_BPO2_TIMESTAMP, BlobParams::bpo2()),
+            (sila_mainnet::MAINNET_BPO1_TIMESTAMP, BlobParams::bpo1()),
+            (sila_mainnet::MAINNET_BPO2_TIMESTAMP, BlobParams::bpo2()),
         ]),
     };
     spec.genesis.config.dao_fork_support = true;
@@ -327,10 +327,10 @@ pub fn create_chain_config(
 
 /// Returns a [`ChainConfig`] for the current Sila sila-mainnet chain.
 pub fn mainnet_chain_config() -> ChainConfig {
-    let hardforks: ChainHardforks = SilaHardfork::sila-mainnet().into();
+    let hardforks: ChainHardforks = SilaHardfork::sila_mainnet().into();
     let blob_schedule = blob_params_to_schedule(&SILA_MAINNET.blob_params, &hardforks);
     create_chain_config(
-        Some(Chain::sila-mainnet()),
+        Some(Chain::sila_mainnet()),
         &hardforks,
         Some(MAINNET_DEPOSIT_CONTRACT.address),
         blob_schedule,
@@ -908,7 +908,7 @@ impl From<Genesis> for ChainSpec {
         hardforks.append(&mut time_hardforks);
 
         // Ordered Hardforks
-        let mainnet_hardforks: ChainHardforks = SilaHardfork::sila-mainnet().into();
+        let mainnet_hardforks: ChainHardforks = SilaHardfork::sila_mainnet().into();
         let mainnet_order = mainnet_hardforks.forks_iter();
 
         let mut ordered_hardforks = Vec::with_capacity(hardforks.len());
@@ -1363,7 +1363,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn test_hardfork_list_ignores_disabled_forks() {
         let spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(Genesis::default())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Never)
@@ -1379,7 +1379,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn ignores_genesis_fork_blocks() {
         let spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(Genesis::default())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(0))
@@ -1407,14 +1407,14 @@ Post-merge hard forks (timestamp based):
     fn ignores_duplicate_fork_blocks() {
         let empty_genesis = Genesis::default();
         let unique_spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(1))
             .build();
 
         let duplicate_spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis)
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(1))
@@ -1433,7 +1433,7 @@ Post-merge hard forks (timestamp based):
         let empty_genesis = Genesis::default();
         // happy path test case
         let happy_path_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
@@ -1447,7 +1447,7 @@ Post-merge hard forks (timestamp based):
         );
         // multiple timestamp test case (i.e SilaShanghai -> SilaCancun)
         let multiple_timestamp_fork_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
@@ -1464,7 +1464,7 @@ Post-merge hard forks (timestamp based):
         );
         // no ForkCondition::Block test case
         let no_block_fork_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(11313123))
             .build();
@@ -1476,7 +1476,7 @@ Post-merge hard forks (timestamp based):
         );
         // spec w/ ForkCondition::TTD with block_num test case (SilaSepolia merge netsplit edge case)
         let fork_cond_ttd_blocknum_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
@@ -1503,7 +1503,7 @@ Post-merge hard forks (timestamp based):
         // no regressions, for these ForkConditions(Block/TTD) - a separate chain spec definition is
         // technically unnecessary - but we include it here for thoroughness
         let fork_cond_block_only_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(empty_genesis)
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
@@ -2710,7 +2710,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn check_fork_id_chainspec_with_fork_condition_never() {
         let spec: ChainSpec = ChainSpec {
-            chain: Chain::sila-mainnet(),
+            chain: Chain::sila_mainnet(),
             genesis: Genesis::default(),
             hardforks: ChainHardforks::new(vec![(
                 SilaHardfork::Frontier.boxed(),
@@ -2727,7 +2727,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn check_fork_filter_chainspec_with_fork_condition_never() {
         let spec: ChainSpec = ChainSpec {
-            chain: Chain::sila-mainnet(),
+            chain: Chain::sila_mainnet(),
             genesis: Genesis::default(),
             hardforks: ChainHardforks::new(vec![(
                 SilaHardfork::SilaShanghai.boxed(),

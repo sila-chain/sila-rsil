@@ -343,7 +343,7 @@ impl ForkSpec {
     }
 
     fn to_chain_spec_inner(self) -> ChainSpec {
-        let spec_builder = ChainSpecBuilder::sila-mainnet().reset();
+        let spec_builder = ChainSpecBuilder::sila_mainnet().reset();
 
         match self {
             Self::Frontier => spec_builder.frontier_activated(),

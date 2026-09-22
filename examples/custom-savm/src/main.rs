@@ -60,7 +60,7 @@ impl SavmFactory for MyEvmFactory {
 
     fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Savm<DB, NoOpInspector> {
         let spec = input.cfg_env.spec;
-        let mut savm = Context::sila-mainnet()
+        let mut savm = Context::sila_mainnet()
             .with_db(db)
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
@@ -126,7 +126,7 @@ async fn main() -> eyre::Result<()> {
 
     // create a custom chain spec
     let spec = ChainSpec::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(Genesis::default())
         .london_activated()
         .paris_activated()

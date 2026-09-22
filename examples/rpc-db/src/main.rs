@@ -48,7 +48,7 @@ async fn main() -> eyre::Result<()> {
         db_path.join("db").as_path(),
         DatabaseArguments::new(ClientVersion::default()),
     )?;
-    let spec = Arc::new(ChainSpecBuilder::sila-mainnet().build());
+    let spec = Arc::new(ChainSpecBuilder::sila_mainnet().build());
     let runtime = Runtime::test();
     let factory = ProviderFactory::<NodeTypesWithDBAdapter<SilaNode, DatabaseEnv>>::new(
         db.clone(),
@@ -76,7 +76,7 @@ async fn main() -> eyre::Result<()> {
         provider.clone(),
         NoopTransactionPool::default(),
         NoopNetwork::default(),
-        SilEvmConfig::sila-mainnet(),
+        SilEvmConfig::sila_mainnet(),
     )
     .build();
 

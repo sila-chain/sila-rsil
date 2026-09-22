@@ -70,7 +70,7 @@ fn main() -> eyre::Result<()> {
     let contract_address = Address::from_str(&address)?;
 
     let datadir = std::env::var("RSIL_DATADIR")?;
-    let spec = ChainSpecBuilder::sila-mainnet().build();
+    let spec = ChainSpecBuilder::sila_mainnet().build();
     let runtime = rsil_sila::tasks::Runtime::test();
     let factory = SilaNode::provider_factory_builder().open_read_only(
         spec.into(),

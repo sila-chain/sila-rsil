@@ -384,7 +384,7 @@ async fn main() -> eyre::Result<()> {
 
     // create genesis with canyon at block 2
     let spec = ChainSpec::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(Genesis::default())
         .london_activated()
         .paris_activated()

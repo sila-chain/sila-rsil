@@ -110,7 +110,7 @@ async fn handshake_eth(
     });
 
     let unified_status = UnifiedStatus::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(MAINNET_GENESIS_HASH)
         .forkid(SILA_MAINNET.hardfork_fork_id(SilaHardfork::SilaShanghai).unwrap())
         .build();

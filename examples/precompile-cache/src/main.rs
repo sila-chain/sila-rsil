@@ -76,7 +76,7 @@ impl SavmFactory for MyEvmFactory {
         let new_cache = self.precompile_cache.clone();
         let spec = input.cfg_env.spec;
 
-        let savm = Context::sila-mainnet()
+        let savm = Context::sila_mainnet()
             .with_db(db)
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
@@ -191,7 +191,7 @@ async fn main() -> eyre::Result<()> {
 
     // create a custom chain spec
     let spec = ChainSpec::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(Genesis::default())
         .london_activated()
         .paris_activated()

@@ -32,7 +32,7 @@ arbitrary = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
 # rsil
-rsil-primitives-traits = { workspace = true, features = ["arbitrary", "rsil-codec"] }
+rsil-primitives-traits = { workspace = true, features = ["arbitrary", "reth-codec"] }
 rsil-codecs.workspace = true
 
 bytes.workspace = true
@@ -76,5 +76,5 @@ rsil-codec = [
     "dep:rsil-codecs",
     "dep:modular-bitfield",
     "dep:bytes",
-    "rsil-primitives-traits/rsil-codec",
+    "rsil-primitives-traits/reth-codec",
 ]

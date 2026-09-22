@@ -76,10 +76,10 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - name: Checkout sila/tests
+      - name: Checkout upstream ethereum/tests
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          repository: sila/tests
+          repository: ethereum/tests
           ref: 81862e4848585a438d64f911a19b3825f0f4cd95
           path: testing/ef-tests/sila-tests
           submodules: recursive

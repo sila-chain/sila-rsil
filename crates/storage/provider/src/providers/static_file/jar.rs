@@ -7,7 +7,7 @@ use crate::{
     TransactionsProvider,
 };
 use alloy_consensus::transaction::{TransactionMeta, TxHashRef};
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 use rsil_chainspec::ChainInfo;
 use rsil_db::static_file::{

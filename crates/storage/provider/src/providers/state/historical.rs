@@ -3,7 +3,7 @@ use crate::{
     AccountReader, BlockHashReader, ChangeSetReader, EitherReader, HashedPostStateProvider,
     ProviderError, RocksDBProviderFactory, StateProvider, StateRootProvider,
 };
-use alloy_eips::merge::EPOCH_SLOTS;
+use alloy_sips::merge::EPOCH_SLOTS;
 use alloy_primitives::{Address, BlockNumber, Bytes, StorageKey, StorageValue, B256};
 use rsil_db_api::{
     cursor::{DbCursorRO, DbDupCursorRO},

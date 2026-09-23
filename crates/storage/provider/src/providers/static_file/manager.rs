@@ -12,7 +12,7 @@ use alloy_consensus::{
     transaction::{TransactionMeta, TxHashRef},
     Header,
 };
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{b256, Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 
 use parking_lot::RwLock;

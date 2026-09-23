@@ -10,7 +10,7 @@ use alloy_consensus::{
     transaction::{TransactionMeta, TxHashRef},
     BlockHeader,
 };
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{
     keccak256,
     map::{AddressMap, B256Map, HashMap},
@@ -625,15 +625,15 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync + 'static> BlockNumReader
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> BlockIdReader
     for MockEthProvider<T, ChainSpec>
 {
-    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 }

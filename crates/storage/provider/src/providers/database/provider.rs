@@ -24,7 +24,7 @@ use alloy_consensus::{
     transaction::{SignerRecoverable, TransactionMeta, TxHashRef},
     BlockHeader, TxReceipt,
 };
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{
     keccak256,
     map::{hash_map, AddressSet, B256Map, HashMap},

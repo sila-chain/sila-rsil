@@ -6,7 +6,7 @@ use alloy_primitives::{
 };
 
 use alloy_consensus::Header;
-use alloy_eips::sip4895::{Withdrawal, Withdrawals};
+use alloy_sips::eip4895::{Withdrawal, Withdrawals};
 use alloy_primitives::Signature;
 use revm::{database::BundleState, state::AccountInfo};
 use rsil_db_api::{database::Database, models::StoredBlockBodyIndices, tables};

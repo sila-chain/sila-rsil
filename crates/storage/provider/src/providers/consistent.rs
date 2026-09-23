@@ -11,7 +11,7 @@ use alloy_consensus::{
     transaction::{TransactionMeta, TxHashRef},
     BlockHeader,
 };
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumHash, BlockNumberOrTag, HashOrNumber};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumHash, BlockNumberOrTag, HashOrNumber};
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 use revm::database::states::PlainStorageRevert;
 use rsil_chain_state::{BlockState, CanonicalInMemoryState, MemoryOverlayStateProviderRef};
@@ -1531,7 +1531,7 @@ mod tests {
         providers::blockchain_provider::BlockchainProvider,
         test_utils::create_test_provider_factory, BlockWriter,
     };
-    use alloy_eips::BlockHashOrNumber;
+    use alloy_sips::BlockHashOrNumber;
     use alloy_primitives::B256;
     use itertools::Itertools;
     use rand::Rng;

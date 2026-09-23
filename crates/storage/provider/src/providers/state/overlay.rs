@@ -1,4 +1,4 @@
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 use alloy_primitives::{BlockHash, BlockNumber, B256};
 use metrics::{Counter, Histogram};
 use rsil_chain_state::{SilPrimitives, StateTrieOverlayManager};

@@ -3,10 +3,10 @@
 
 use alloy_eips::BlockNumHash;
 use rsil_chainspec::SilChainSpec;
-use rsil_sila_primitives::SilPrimitives;
 use rsil_node_api::{FullNodeComponents, HeaderTy, NodePrimitives, NodeTypes, PrimitivesTy};
 use rsil_node_core::node_config::NodeConfig;
 use rsil_provider::BlockReader;
+use rsil_sila_primitives::SilPrimitives;
 use std::fmt::Debug;
 use tokio::sync::mpsc;
 

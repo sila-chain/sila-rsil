@@ -16,15 +16,15 @@ use alloy_primitives::{
 };
 use rand::seq::SliceRandom;
 use rsil_eth_wire::{
-    BlockHashNumber, Capabilities, DisconnectReason, SilNetworkPrimitives, GetReceipts70,
-    NetworkPrimitives, NewBlockHashes, NewBlockPayload, UnifiedStatus,
+    BlockHashNumber, Capabilities, DisconnectReason, GetReceipts70, NetworkPrimitives,
+    NewBlockHashes, NewBlockPayload, SilNetworkPrimitives, UnifiedStatus,
 };
-use rsil_sila_forks::ForkId;
 use rsil_network_api::{DiscoveredEvent, DiscoveryEvent, PeerRequest, PeerRequestSender};
 use rsil_network_p2p::receipts::client::ReceiptsResponse;
 use rsil_network_peers::PeerId;
 use rsil_network_types::{PeerAddr, PeerKind};
 use rsil_primitives_traits::Block;
+use rsil_sila_forks::ForkId;
 use std::{
     collections::VecDeque,
     fmt,
@@ -218,7 +218,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
         for (peer_id, peer) in peers {
             if peer.blocks.contains(&msg.hash) {
                 // skip peers which already reported the block
-                continue
+                continue;
             }
 
             // Queue a `NewBlock` message for the peer
@@ -238,7 +238,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
             }
 
             if count >= num_propagate {
-                break
+                break;
             }
         }
     }
@@ -251,7 +251,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
         for (peer_id, peer) in &mut self.active_peers {
             if peer.blocks.contains(&msg.hash) {
                 // skip peers which already reported the block
-                continue
+                continue;
             }
 
             if self.state_fetcher.update_peer_block(peer_id, msg.hash, number) {
@@ -355,7 +355,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
                 let peer_id = record.id;
                 let tcp_addr = record.tcp_addr();
                 if tcp_addr.port() == 0 {
-                    return
+                    return;
                 }
                 let udp_addr = record.udp_addr();
                 let addr = PeerAddr::new(tcp_addr, Some(udp_addr));
@@ -378,8 +378,8 @@ impl<N: NetworkPrimitives> NetworkState<N> {
                 self.state_fetcher.on_pending_disconnect(&peer_id);
                 self.queued_messages.push_back(StateAction::Disconnect { peer_id, reason });
             }
-            PeerAction::DisconnectBannedIncoming { peer_id } |
-            PeerAction::DisconnectUntrustedIncoming { peer_id } => {
+            PeerAction::DisconnectBannedIncoming { peer_id }
+            | PeerAction::DisconnectUntrustedIncoming { peer_id } => {
                 self.state_fetcher.on_pending_disconnect(&peer_id);
                 self.queued_messages.push_back(StateAction::Disconnect { peer_id, reason: None });
             }
@@ -521,7 +521,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
         loop {
             // drain buffered messages
             if let Some(message) = self.queued_messages.pop_front() {
-                return Poll::Ready(message)
+                return Poll::Ready(message);
             }
 
             while let Poll::Ready(discovery) = self.discovery.poll(cx) {
@@ -591,7 +591,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
             // We need to poll again in case we have received any responses because they may have
             // triggered follow-up requests.
             if self.queued_messages.is_empty() {
-                return Poll::Pending
+                return Poll::Pending;
             }
         }
     }
@@ -685,10 +685,10 @@ mod tests {
     use alloy_consensus::Header;
     use alloy_primitives::B256;
     use rsil_eth_wire::{BlockBodies, Capabilities, Capability, SilNetworkPrimitives, SilVersion};
-    use rsil_sila_primitives::BlockBody;
     use rsil_network_api::PeerRequestSender;
     use rsil_network_p2p::{bodies::client::BodiesClient, error::RequestError};
     use rsil_network_peers::PeerId;
+    use rsil_sila_primitives::BlockBody;
     use rsil_storage_api::noop::NoopProvider;
     use std::{
         future::poll_fn,

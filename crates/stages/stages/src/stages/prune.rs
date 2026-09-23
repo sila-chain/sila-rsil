@@ -113,8 +113,8 @@ where
 
         for (segment, mut checkpoint) in prune_checkpoints {
             // Only update the checkpoint if unwind_to is lower than the existing checkpoint.
-            if let Some(block) = checkpoint.block_number &&
-                input.unwind_to < block
+            if let Some(block) = checkpoint.block_number
+                && input.unwind_to < block
             {
                 checkpoint.block_number = Some(input.unwind_to);
                 checkpoint.tx_number = unwind_to_last_tx;
@@ -198,12 +198,12 @@ mod tests {
         TestRunnerError, TestStageDB, UnwindStageTestRunner,
     };
     use alloy_primitives::B256;
-    use rsil_sila_primitives::Block;
     use rsil_primitives_traits::{SealedBlock, SignerRecoverable};
     use rsil_provider::{
         providers::StaticFileWriter, TransactionsProvider, TransactionsProviderExt,
     };
     use rsil_prune::PruneMode;
+    use rsil_sila_primitives::Block;
     use rsil_testing_utils::generators::{self, random_block_range, BlockRangeParams};
 
     stage_test_suite_ext!(PruneTestRunner, prune);
@@ -260,7 +260,7 @@ mod tests {
                 let end_block = output.checkpoint.block_number;
 
                 if start_block > end_block {
-                    return Ok(())
+                    return Ok(());
                 }
 
                 let provider = self.db.factory.provider()?;

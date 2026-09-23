@@ -3,7 +3,7 @@
 use crate::SilApi;
 use rsil_rpc_convert::RpcConvert;
 use rsil_rpc_eth_api::{
-    helpers::{SilState, LoadPendingBlock, LoadState},
+    helpers::{LoadPendingBlock, LoadState, SilState},
     RpcNodeCore,
 };
 use rsil_rpc_eth_types::SilApiError;
@@ -52,7 +52,7 @@ mod tests {
     > {
         let provider = NoopProvider::default();
         let pool = testing_pool();
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         SilApi::builder(provider, pool, NoopNetwork::default(), evm_config).build()
     }

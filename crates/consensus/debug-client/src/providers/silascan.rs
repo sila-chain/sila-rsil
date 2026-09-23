@@ -108,7 +108,7 @@ where
                         %err,
                         "Failed to fetch a block from SilaScan",
                     );
-                    continue
+                    continue;
                 }
             };
             let block_number = payload.block_number();

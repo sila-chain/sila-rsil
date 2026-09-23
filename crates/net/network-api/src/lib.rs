@@ -25,7 +25,7 @@ pub mod noop;
 pub mod test_utils;
 use test_utils::PeersHandleProvider;
 
-pub use alloy_rpc_types_admin::SilProtocolInfo;
+pub use alloy_rpc_types_admin::EthProtocolInfo as SilProtocolInfo;
 pub use rsil_network_p2p::{BlockClient, HeadersClient};
 pub use rsil_network_types::{PeerKind, Reputation, ReputationChangeKind};
 
@@ -37,8 +37,8 @@ pub use events::{
     PeerRequestSender, RequestMessage,
 };
 
-use rsil_eth_wire_types::{
-    capability::Capabilities, Capability, DisconnectReason, SilVersion, NetworkPrimitives,
+use rsil_sil_wire_types::{
+    capability::Capabilities, Capability, DisconnectReason, NetworkPrimitives, SilVersion,
     UnifiedStatus,
 };
 use rsil_network_p2p::sync::NetworkSyncUpdater;

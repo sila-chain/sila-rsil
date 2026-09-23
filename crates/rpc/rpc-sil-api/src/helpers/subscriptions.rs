@@ -1,6 +1,6 @@
 //! Streams subscriptions providers for `eth_subscribe`.
 
-use crate::{SilApiTypes, RpcConvert, RpcNodeCore, RpcReceipt};
+use crate::{RpcConvert, RpcNodeCore, RpcReceipt, SilApiTypes};
 use alloy_consensus::{transaction::TxHashRef, BlockHeader, TxReceipt};
 use alloy_rpc_types_eth::{pubsub::TransactionReceiptsParams, Filter, Log};
 use futures::StreamExt;

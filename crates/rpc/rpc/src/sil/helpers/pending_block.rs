@@ -6,7 +6,7 @@ use rsil_rpc_eth_api::{
     helpers::{pending_block::PendingEnvBuilder, LoadPendingBlock},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{builder::config::PendingBlockKind, SilApiError, PendingBlock};
+use rsil_rpc_eth_types::{builder::config::PendingBlockKind, PendingBlock, SilApiError};
 
 impl<N, Rpc> LoadPendingBlock for SilApi<N, Rpc>
 where

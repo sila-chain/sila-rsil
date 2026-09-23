@@ -66,9 +66,9 @@ pub mod utils {
 
 /// Re-exported payload related types
 pub mod payload {
-    pub use rsil_sila_payload_builder::SilaExecutionPayloadValidator;
     pub use rsil_payload_builder::*;
     pub use rsil_payload_primitives::*;
+    pub use rsil_sila_payload_builder::SilaExecutionPayloadValidator;
 }
 
 /// Re-exported from `rsil_node_api`.
@@ -126,8 +126,8 @@ pub mod providers {
 /// Re-exported primitives.
 #[allow(ambiguous_glob_reexports)]
 pub mod primitives {
-    pub use rsil_sila_primitives::*;
     pub use rsil_primitives_traits::*;
+    pub use rsil_sila_primitives::*;
 }
 
 /// Re-exported from `rsil_sila_consensus`.

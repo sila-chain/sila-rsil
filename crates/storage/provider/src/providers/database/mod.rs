@@ -12,11 +12,12 @@ use crate::{
     StaticFileProviderFactory, StaticFileWriter, TransactionVariant, TransactionsProvider,
 };
 use alloy_consensus::transaction::TransactionMeta;
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 use core::fmt;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use parking_lot::RwLock;
+use revm::database::BundleState;
 use rsil_chainspec::ChainInfo;
 use rsil_db::{init_db, mdbx::DatabaseArguments, DatabaseEnv};
 use rsil_db_api::{database::Database, models::StoredBlockBodyIndices};
@@ -35,7 +36,6 @@ use rsil_storage_api::{
 use rsil_storage_errors::provider::ProviderResult;
 use rsil_trie::HashedPostState;
 use rsil_trie_db::ChangesetCache;
-use revm::database::BundleState;
 use std::{
     ops::{RangeBounds, RangeInclusive},
     path::Path,
@@ -1076,7 +1076,7 @@ mod tests {
 
     #[test]
     fn provider_factory_with_database_path() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().build();
         let (_static_dir, static_dir_path) = create_test_static_files_dir();
         let (_rocksdb_dir, rocksdb_path) = create_test_rocksdb_dir();
         let _db_tempdir = tempfile::TempDir::new().expect(ERROR_TEMPDIR);

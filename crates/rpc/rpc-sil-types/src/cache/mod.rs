@@ -1,6 +1,6 @@
 //! Async caching support for sil RPC
 
-use super::{SilStateCacheConfig, MultiConsumerLruCache};
+use super::{MultiConsumerLruCache, SilStateCacheConfig};
 use crate::block::CachedTransaction;
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_eip7928::bal::DecodedBal;
@@ -518,7 +518,7 @@ where
                         CacheAction::GetBlockWithSenders { block_hash, response_tx } => {
                             if let Some(block) = this.full_block_cache.get(&block_hash).cloned() {
                                 let _ = response_tx.send(Ok(Some(block)));
-                                continue
+                                continue;
                             }
 
                             // block is not in the cache, request it if this is the first consumer
@@ -547,7 +547,7 @@ where
                             // check if block is cached
                             if let Some(receipts) = this.receipts_cache.get(&block_hash).cloned() {
                                 let _ = response_tx.send(Ok(Some(receipts)));
-                                continue
+                                continue;
                             }
 
                             // block is not in the cache, request it if this is the first consumer
@@ -572,13 +572,13 @@ where
                             // check if the header is cached
                             if let Some(header) = this.headers_cache.get(&block_hash).cloned() {
                                 let _ = response_tx.send(Ok(header));
-                                continue
+                                continue;
                             }
 
                             // it's possible we have the entire block cached
                             if let Some(block) = this.full_block_cache.get(&block_hash) {
                                 let _ = response_tx.send(Ok(block.clone_header()));
-                                continue
+                                continue;
                             }
 
                             // header is not in the cache, request it if this is the first
@@ -604,7 +604,7 @@ where
                         CacheAction::GetBal { block_hash, response_tx } => {
                             if let Some(bal) = this.bal_cache.get(&block_hash).cloned() {
                                 let _ = response_tx.send(Ok(Some(bal)));
-                                continue
+                                continue;
                             }
 
                             if this.bal_cache.queue(block_hash, response_tx) {
@@ -943,31 +943,31 @@ impl InMemorySize for CachedRevmBal {
 }
 
 fn decoded_revm_bal_size(bal: &DecodedBal<Arc<RevmBal>>) -> usize {
-    core::mem::size_of::<DecodedBal<Arc<RevmBal>>>() +
-        bal.as_raw().len() +
-        revm_bal_size(bal.as_bal())
+    core::mem::size_of::<DecodedBal<Arc<RevmBal>>>()
+        + bal.as_raw().len()
+        + revm_bal_size(bal.as_bal())
 }
 
 fn revm_bal_size(bal: &Arc<RevmBal>) -> usize {
-    core::mem::size_of::<RevmBal>() +
-        bal.accounts.capacity() * core::mem::size_of::<(Address, RevmAccountBal)>() +
-        bal.accounts.values().map(revm_account_bal_heap_size).sum::<usize>()
+    core::mem::size_of::<RevmBal>()
+        + bal.accounts.capacity() * core::mem::size_of::<(Address, RevmAccountBal)>()
+        + bal.accounts.values().map(revm_account_bal_heap_size).sum::<usize>()
 }
 
 fn revm_account_bal_heap_size(account: &RevmAccountBal) -> usize {
-    revm_account_info_bal_heap_size(&account.account_info) +
-        revm_storage_bal_heap_size(&account.storage)
+    revm_account_info_bal_heap_size(&account.account_info)
+        + revm_storage_bal_heap_size(&account.storage)
 }
 
 fn revm_account_info_bal_heap_size(account_info: &RevmAccountInfoBal) -> usize {
-    revm_bal_writes_heap_size(&account_info.nonce, |_| 0) +
-        revm_bal_writes_heap_size(&account_info.balance, |_| 0) +
-        revm_bal_writes_heap_size(&account_info.code, revm_code_write_heap_size)
+    revm_bal_writes_heap_size(&account_info.nonce, |_| 0)
+        + revm_bal_writes_heap_size(&account_info.balance, |_| 0)
+        + revm_bal_writes_heap_size(&account_info.code, revm_code_write_heap_size)
 }
 
 fn revm_storage_bal_heap_size(storage: &RevmStorageBal) -> usize {
-    storage.storage.len() * core::mem::size_of::<(StorageKey, RevmBalWrites<StorageValue>)>() +
-        storage
+    storage.storage.len() * core::mem::size_of::<(StorageKey, RevmBalWrites<StorageValue>)>()
+        + storage
             .storage
             .values()
             .map(|writes| revm_bal_writes_heap_size(writes, |_| 0))
@@ -979,8 +979,8 @@ where
     T: PartialEq + Clone,
     F: FnMut(&T) -> usize,
 {
-    writes.writes.capacity() * core::mem::size_of::<(u64, T)>() +
-        writes.writes.iter().map(|(_, item)| item_heap_size(item)).sum::<usize>()
+    writes.writes.capacity() * core::mem::size_of::<(u64, T)>()
+        + writes.writes.iter().map(|(_, item)| item_heap_size(item)).sum::<usize>()
 }
 
 fn revm_code_write_heap_size((_, bytecode): &(B256, Bytecode)) -> usize {
@@ -996,10 +996,10 @@ mod tests {
     use alloy_primitives::{Address, BlockHash, BlockNumber, Bytes, Signature, TxHash, TxNumber};
     use core::ops::{RangeBounds, RangeInclusive};
     use rsil_db_models::StoredBlockBodyIndices;
-    use rsil_sila_primitives::{
-        Block, BlockBody, SilPrimitives, Receipt, Transaction, TransactionSigned,
-    };
     use rsil_primitives_traits::{RecoveredBlock, SealedHeader};
+    use rsil_sila_primitives::{
+        Block, BlockBody, Receipt, SilPrimitives, Transaction, TransactionSigned,
+    };
     use rsil_storage_api::{
         noop::NoopProvider, BalProvider, BalStore, BalStoreHandle, BlockBodyIndicesProvider,
         BlockHashReader, BlockNumReader, BlockReader, BlockSource, HeaderProvider, ReceiptProvider,
@@ -1139,10 +1139,10 @@ mod tests {
         bal.accounts.insert(Address::ZERO, account);
 
         let raw = Bytes::from_static(&[0xc0, 0x01, 0x02]);
-        let previous_estimate = core::mem::size_of::<CachedRevmBal>() +
-            core::mem::size_of::<DecodedBal<Arc<RevmBal>>>() +
-            raw.len() +
-            core::mem::size_of::<RevmBal>();
+        let previous_estimate = core::mem::size_of::<CachedRevmBal>()
+            + core::mem::size_of::<DecodedBal<Arc<RevmBal>>>()
+            + raw.len()
+            + core::mem::size_of::<RevmBal>();
         assert!(CachedRevmBal::new(DecodedBal::new(Arc::new(bal), raw)).size() > previous_estimate);
     }
 

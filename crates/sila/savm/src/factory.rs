@@ -5,7 +5,7 @@
 
 #[cfg(feature = "jit")]
 use alloc::string::String;
-use alloy_evm::{Database, SavmEnv, SavmFactory};
+use alloy_savm::{Database, EvmEnv as SavmEnv, EvmFactory as SavmFactory};
 use revm::{
     context::{BlockEnv, DBErrorMarker},
     context_interface::result::{EVMError, HaltReason},
@@ -28,7 +28,7 @@ pub use revmc::{
 #[cfg(feature = "jit")]
 type Inner = JitEvmFactory;
 #[cfg(not(feature = "jit"))]
-type Inner = alloy_evm::SilEvmFactory;
+type Inner = alloy_savm::EthEvmFactory;
 
 /// Rsil SAVM factory.
 ///
@@ -38,9 +38,9 @@ type Inner = alloy_evm::SilEvmFactory;
 /// An SAVM can execute JIT-compiled code only when all three gates are enabled: the binary was built
 /// with the `jit` feature, runtime compilation was enabled with `--jit` or the `rsil_jit` RPC
 /// method, and the local SAVM config selected JIT support with
-/// [`ConfigureEvm::with_jit_support`](rsil_evm::ConfigureEvm::with_jit_support).
+/// [`ConfigureEvm::with_jit_support`](rsil_savm::ConfigureEvm::with_jit_support).
 ///
-/// Without the `jit` feature, this is a thin wrapper around [`alloy_evm::SilEvmFactory`].
+/// Without the `jit` feature, this is a thin wrapper around [`alloy_savm::EthEvmFactory`].
 #[derive(Debug)]
 pub struct RsilEvmFactory {
     inner: Inner,
@@ -150,7 +150,7 @@ impl RsilEvmFactory {
 }
 
 #[cfg(feature = "jit")]
-impl rsil_evm::JitBackend for RsilEvmFactory {
+impl rsil_savm::JitBackend for RsilEvmFactory {
     fn set_enabled(&self, enabled: bool) -> Result<(), String> {
         self.inner.backend().set_enabled(enabled).map_err(|err| err.to_string())
     }
@@ -169,8 +169,8 @@ impl rsil_evm::JitBackend for RsilEvmFactory {
 }
 
 impl SavmFactory for RsilEvmFactory {
-    type Savm<DB: Database, I: Inspector<alloy_evm::sil::SilEvmContext<DB>>> =
-        <Inner as SavmFactory>::Savm<DB, I>;
+    type Evm<DB: Database, I: Inspector<alloy_savm::eth::EthEvmContext<DB>>> =
+        <Inner as SavmFactory>::Evm<DB, I>;
     type Context<DB: Database> = <Inner as SavmFactory>::Context<DB>;
     type Tx = <Inner as SavmFactory>::Tx;
     type Error<DBError: DBErrorMarker> = EVMError<DBError>;
@@ -179,7 +179,7 @@ impl SavmFactory for RsilEvmFactory {
     type BlockEnv = BlockEnv;
     type Precompiles = <Inner as SavmFactory>::Precompiles;
 
-    fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Savm<DB, NoOpInspector> {
+    fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Evm<DB, NoOpInspector> {
         #[cfg(feature = "jit")]
         {
             if self.jit_support {
@@ -199,7 +199,7 @@ impl SavmFactory for RsilEvmFactory {
         db: DB,
         input: SavmEnv,
         inspector: I,
-    ) -> Self::Savm<DB, I> {
+    ) -> Self::Evm<DB, I> {
         #[cfg(feature = "jit")]
         {
             if self.jit_support {

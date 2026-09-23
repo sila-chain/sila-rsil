@@ -147,9 +147,8 @@ async fn test_selfdestruct_post_dencun() -> eyre::Result<()> {
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Deploy contract that stores 0x42 at slot 0 and selfdestructs on any call
     let pending = provider
@@ -241,9 +240,8 @@ async fn test_selfdestruct_same_tx_post_dencun() -> eyre::Result<()> {
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Deploy contract that selfdestructs during its constructor
     let pending = provider
@@ -321,9 +319,8 @@ async fn test_selfdestruct_pre_dencun() -> eyre::Result<()> {
     .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Deploy contract that stores 0x42 at slot 0 and selfdestructs on any call
     let pending = provider
@@ -426,9 +423,8 @@ async fn test_selfdestruct_same_tx_preexisting_account_post_dencun() -> eyre::Re
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Calculate where the contract will be deployed (CREATE uses sender + nonce)
     // We'll use nonce 1 for deployment, so first send SIL with nonce 0

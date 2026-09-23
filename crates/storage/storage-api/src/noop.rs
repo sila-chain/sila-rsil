@@ -15,10 +15,10 @@ use crate::{
 use crate::{DBProvider, DatabaseProviderFactory, StorageChangeSetReader, StorageSettingsCache};
 use alloc::{boxed::Box, string::String, sync::Arc, vec::Vec};
 use alloy_consensus::transaction::TransactionMeta;
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{
     Address, BlockHash, BlockNumber, Bytes, StorageKey, StorageValue, TxHash, TxNumber, B256,
 };
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use core::{
     fmt::Debug,
     marker::PhantomData,
@@ -28,12 +28,12 @@ use rsil_chainspec::{ChainInfo, ChainSpecProvider, SilChainSpec, SILA_MAINNET};
 #[cfg(feature = "db-api")]
 use rsil_db_api::mock::{DatabaseMock, TxMock};
 use rsil_db_models::{AccountBeforeTx, StoredBlockBodyIndices};
-use rsil_sila_primitives::SilPrimitives;
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::{Account, Bytecode, NodePrimitives, RecoveredBlock, SealedHeader};
 #[cfg(feature = "db-api")]
 use rsil_prune_types::PruneModes;
 use rsil_prune_types::{PruneCheckpoint, PruneSegment};
+use rsil_sila_primitives::SilPrimitives;
 use rsil_stages_types::{StageCheckpoint, StageId};
 use rsil_storage_errors::provider::{ProviderError, ProviderResult};
 use rsil_trie_common::{
@@ -86,14 +86,14 @@ impl<ChainSpec> NoopProvider<ChainSpec> {
 
 impl NoopProvider {
     /// Create a new instance of the [`NoopProvider`] with the sila-mainnet chain spec.
-    pub fn sila-mainnet() -> Self {
+    pub fn sila_mainnet() -> Self {
         Self::sil(SILA_MAINNET.clone())
     }
 }
 
 impl Default for NoopProvider {
     fn default() -> Self {
-        Self::sila-mainnet()
+        Self::sila_mainnet()
     }
 }
 
@@ -161,15 +161,15 @@ impl<ChainSpec: SilChainSpec + 'static, N: Debug + Send + Sync + 'static> ChainS
 }
 
 impl<C: Send + Sync, N: NodePrimitives> BlockIdReader for NoopProvider<C, N> {
-    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 }

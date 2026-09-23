@@ -6,9 +6,9 @@ use alloy_rpc_types_engine::{ExecutionPayloadV3, PayloadStatusEnum};
 use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_node_api::{EngineTypes, PayloadTypes};
 use rsil_rpc_api::clients::{EngineApiClient, SilApiClient};
+use rsil_sila_primitives::TransactionSigned;
 use std::marker::PhantomData;
 use tracing::debug;
 
@@ -93,7 +93,7 @@ where
                     TransactionSigned,
                 >::block_by_number(
                     source_rpc,
-                    alloy_eips::BlockNumberOrTag::Number(self.block_number),
+                    alloy_sips::BlockNumberOrTag::Number(self.block_number),
                     true, // include transactions
                 )
                 .await

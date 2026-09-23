@@ -1,17 +1,15 @@
 //! Sila Node types config.
 
 use crate::{SilEngineTypes, SilEvmConfig};
-use alloy_eips::{sip7840::BlobParams, merge::EPOCH_SLOTS};
+use alloy_eips::{merge::EPOCH_SLOTS, sip7840::BlobParams};
 use alloy_network::Sila;
 use alloy_rpc_types_engine::ExecutionData;
-use rsil_chainspec::{ChainSpec, SilChainSpec, SilaHardforks, Hardforks};
+use revm::context::TxEnv;
+use rsil_chainspec::{ChainSpec, Hardforks, SilChainSpec, SilaHardforks};
 use rsil_engine_local::LocalPayloadAttributesBuilder;
 use rsil_engine_primitives::EngineTypes;
-use rsil_sila_consensus::SilBeaconConsensus;
-use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};
-use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_evm::{
-    sil::spec::SilExecutorSpec, ConfigureEvm, SavmFactory, SavmFactoryFor, NextBlockEnvAttributes,
+    sil::spec::SilExecutorSpec, ConfigureEvm, NextBlockEnvAttributes, SavmFactory, SavmFactoryFor,
 };
 use rsil_evm_sila::factory::RsilEvmFactory;
 #[cfg(feature = "jit")]
@@ -29,9 +27,9 @@ use rsil_node_builder::{
     node::{FullNodeTypes, NodeTypes},
     rpc::{
         BasicEngineApiBuilder, BasicEngineValidatorBuilder, Either, EngineApiBuilder,
-        EngineValidatorAddOn, EngineValidatorBuilder, SilApiBuilder, SilApiCtx, Identity,
-        PayloadValidatorBuilder, RsilAuthHttpMiddleware, RsilRpcAddOns, RsilRpcMiddleware,
-        RpcAddOns, RpcHandle, Stack,
+        EngineValidatorAddOn, EngineValidatorBuilder, Identity, PayloadValidatorBuilder, RpcAddOns,
+        RpcHandle, RsilAuthHttpMiddleware, RsilRpcAddOns, RsilRpcMiddleware, SilApiBuilder,
+        SilApiCtx, Stack,
     },
     BuilderContext, DebugNode, Node, NodeAdapter, PayloadBuilderConfig,
 };
@@ -53,12 +51,14 @@ use rsil_rpc_eth_api::{
 };
 use rsil_rpc_eth_types::{error::FromEvmError, SilApiError};
 use rsil_rpc_server_types::RsilRpcModule;
+use rsil_sila_consensus::SilBeaconConsensus;
+use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};
+use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_tracing::tracing::{debug, info};
 use rsil_transaction_pool::{
-    blobstore::DiskFileBlobStore, SilTransactionPool, PoolPooledTx, PoolTransaction,
+    blobstore::DiskFileBlobStore, PoolPooledTx, PoolTransaction, SilTransactionPool,
     TransactionPool, TransactionValidationTaskExecutor,
 };
-use revm::context::TxEnv;
 use std::{marker::PhantomData, sync::Arc, time::SystemTime};
 
 pub use crate::{payload::SilaPayloadBuilder, SilaEngineValidator};
@@ -448,8 +448,7 @@ where
         SilaConsensusBuilder,
     >;
 
-    type AddOns =
-        SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
+    type AddOns = SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
 
     fn components_builder(&self) -> Self::ComponentsBuilder {
         Self::components()
@@ -659,8 +658,8 @@ where
     ) -> eyre::Result<Self::Pool> {
         let pool_config = ctx.pool_config();
 
-        let blobs_disabled = ctx.config().txpool.disable_blobs_support ||
-            ctx.config().txpool.blobpool_max_count == 0;
+        let blobs_disabled = ctx.config().txpool.disable_blobs_support
+            || ctx.config().txpool.blobpool_max_count == 0;
 
         let blob_cache_size = if let Some(blob_cache_size) = pool_config.blob_cache_size {
             Some(blob_cache_size)

@@ -18,11 +18,11 @@ use rsil_rpc_convert::{RpcConvert, RpcConverter};
 use rsil_rpc_eth_api::{
     helpers::{pending_block::PendingEnvBuilder, spec::SignersForRpc, SpawnBlocking},
     node::{RpcNodeCoreAdapter, RpcNodeCoreExt},
-    SilApiTypes, RpcNodeCore,
+    RpcNodeCore, SilApiTypes,
 };
 use rsil_rpc_eth_types::{
-    builder::config::PendingBlockKind, receipt::SilReceiptConverter, SilApiError, SilStateCache,
-    FeeHistoryCache, GasCap, GasPriceOracle, PendingBlock,
+    builder::config::PendingBlockKind, receipt::SilReceiptConverter, FeeHistoryCache, GasCap,
+    GasPriceOracle, PendingBlock, SilApiError, SilStateCache,
 };
 use rsil_storage_api::{noop::NoopProvider, BlockReaderIdExt, ProviderHeader};
 use rsil_tasks::{
@@ -48,8 +48,7 @@ pub type SilRpcConverterFor<N, NetworkT = Sila> = RpcConverter<
 pub type SilApiFor<N, NetworkT = Sila> = SilApi<N, SilRpcConverterFor<N, NetworkT>>;
 
 /// Helper type alias for [`SilApi`] with components from the given [`FullNodeComponents`].
-pub type SilApiBuilderFor<N, NetworkT = Sila> =
-    SilApiBuilder<N, SilRpcConverterFor<N, NetworkT>>;
+pub type SilApiBuilderFor<N, NetworkT = Sila> = SilApiBuilder<N, SilRpcConverterFor<N, NetworkT>>;
 
 /// `Sil` API implementation.
 ///
@@ -110,7 +109,7 @@ impl
     ///     NoopProvider::default(),
     ///     NoopTransactionPool::default(),
     ///     NoopNetwork::default(),
-    ///     SilEvmConfig::sila-mainnet(),
+    ///     SilEvmConfig::sila_mainnet(),
     /// )
     /// .build();
     /// ```
@@ -581,7 +580,6 @@ mod tests {
     use rand::Rng;
     use rsil_chain_state::CanonStateSubscriptions;
     use rsil_chainspec::{ChainSpec, ChainSpecProvider, SilChainSpec};
-    use rsil_sila_primitives::TransactionSigned;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
@@ -589,6 +587,7 @@ mod tests {
         PruneCheckpointReader, StageCheckpointReader,
     };
     use rsil_rpc_eth_api::{node::RpcNodeCoreAdapter, SilApiServer};
+    use rsil_sila_primitives::TransactionSigned;
     use rsil_storage_api::{BalProvider, BlockReader, BlockReaderIdExt, StateProviderFactory};
     use rsil_testing_utils::generators;
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
@@ -667,13 +666,11 @@ mod tests {
 
                 if let Some(base_fee_per_gas) = header.base_fee_per_gas {
                     let transaction = TransactionSigned::new_unhashed(
-                        rsil_sila_primitives::Transaction::Sip1559(
-                            alloy_consensus::TxEip1559 {
-                                max_priority_fee_per_gas: random_fee,
-                                max_fee_per_gas: random_fee + base_fee_per_gas as u128,
-                                ..Default::default()
-                            },
-                        ),
+                        rsil_sila_primitives::Transaction::Sip1559(alloy_consensus::TxEip1559 {
+                            max_priority_fee_per_gas: random_fee,
+                            max_fee_per_gas: random_fee + base_fee_per_gas as u128,
+                            ..Default::default()
+                        }),
                         Signature::test_signature(),
                     );
 

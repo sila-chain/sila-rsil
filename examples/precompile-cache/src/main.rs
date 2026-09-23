@@ -3,9 +3,9 @@
 #![warn(unused_crate_dependencies)]
 
 use alloy_evm::{
-    sil::SilEvmContext,
     precompiles::{DynPrecompile, Precompile, PrecompileInput, PrecompilesMap},
     revm::{context::DBErrorMarker, handler::SilPrecompiles, precompile::PrecompileId},
+    sil::SilEvmContext,
     Savm, SavmFactory,
 };
 use alloy_genesis::Genesis;
@@ -13,6 +13,14 @@ use alloy_primitives::Bytes;
 use parking_lot::RwLock;
 use rsil_sila::{
     chainspec::{Chain, ChainSpec},
+    node::{
+        api::{FullNodeTypes, NodeTypes},
+        builder::{components::ExecutorBuilder, BuilderContext, NodeBuilder},
+        core::{args::RpcServerArgs, node_config::NodeConfig},
+        node::SilaAddOns,
+        savm::SilEvm,
+        SilEvmConfig, SilaNode,
+    },
     savm::{
         primitives::{Database, SavmEnv},
         revm::{
@@ -24,14 +32,6 @@ use rsil_sila::{
             primitives::hardfork::SpecId,
             MainBuilder, MainContext,
         },
-    },
-    node::{
-        api::{FullNodeTypes, NodeTypes},
-        builder::{components::ExecutorBuilder, BuilderContext, NodeBuilder},
-        core::{args::RpcServerArgs, node_config::NodeConfig},
-        savm::SilEvm,
-        node::SilaAddOns,
-        SilEvmConfig, SilaNode,
     },
     tasks::Runtime,
     SilPrimitives,
@@ -76,7 +76,7 @@ impl SavmFactory for MyEvmFactory {
         let new_cache = self.precompile_cache.clone();
         let spec = input.cfg_env.spec;
 
-        let savm = Context::sila-mainnet()
+        let savm = Context::sila_mainnet()
             .with_db(db)
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
@@ -138,7 +138,7 @@ impl Precompile for WrappedPrecompile {
 
         // get the result if it exists
         if let Some(result) = cache.cache.get(&key) {
-            return result.clone()
+            return result.clone();
         }
 
         // call the precompile if cache miss
@@ -191,7 +191,7 @@ async fn main() -> eyre::Result<()> {
 
     // create a custom chain spec
     let spec = ChainSpec::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(Genesis::default())
         .london_activated()
         .paris_activated()

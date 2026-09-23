@@ -99,7 +99,7 @@ impl<T: ParkedOrd> ParkedPool<T> {
                 if value.count == 0 {
                     entry.remove()
                 } else {
-                    return
+                    return;
                 }
             }
             Entry::Vacant(_) => {
@@ -189,7 +189,7 @@ impl<T: ParkedOrd> ParkedPool<T> {
     ) -> Vec<Arc<ValidPoolTransaction<T::Transaction>>> {
         if !self.exceeds(&limit) {
             // if we are below the limits, we don't need to drop anything
-            return Vec::new()
+            return Vec::new();
         }
 
         let mut removed = Vec::with_capacity(limit.tx_excess(self.len()).unwrap_or(1));
@@ -207,7 +207,7 @@ impl<T: ParkedOrd> ParkedPool<T> {
                 }
 
                 if !self.exceeds(&limit) {
-                    break
+                    break;
                 }
             }
         }
@@ -291,7 +291,7 @@ impl<T: PoolTransaction> ParkedPool<BasefeeOrd<T>> {
                 // still parked -> skip descendant transactions
                 'this: while let Some((peek, _)) = iter.peek() {
                     if peek.sender != id.sender {
-                        break 'this
+                        break 'this;
                     }
                     iter.next();
                 }
@@ -620,17 +620,17 @@ mod tests {
         let d_sender = address!("0x000000000000000000000000000000000000000d");
 
         // create a chain of transactions by sender A, B, C
-        let mut tx_set = MockTransactionSet::dependent(a_sender, 0, 4, TxType::Sip1559);
+        let mut tx_set = MockTransactionSet::dependent(a_sender, 0, 4, TxType::Eip1559);
         let a = tx_set.clone().into_vec();
 
-        let b = MockTransactionSet::dependent(b_sender, 0, 3, TxType::Sip1559).into_vec();
+        let b = MockTransactionSet::dependent(b_sender, 0, 3, TxType::Eip1559).into_vec();
         tx_set.extend(b.clone());
 
         // C has the same number of txs as B
-        let c = MockTransactionSet::dependent(c_sender, 0, 3, TxType::Sip1559).into_vec();
+        let c = MockTransactionSet::dependent(c_sender, 0, 3, TxType::Eip1559).into_vec();
         tx_set.extend(c.clone());
 
-        let d = MockTransactionSet::dependent(d_sender, 0, 1, TxType::Sip1559).into_vec();
+        let d = MockTransactionSet::dependent(d_sender, 0, 1, TxType::Eip1559).into_vec();
         tx_set.extend(d.clone());
 
         let all_txs = tx_set.into_vec();
@@ -694,7 +694,7 @@ mod tests {
         let a_sender = address!("0x000000000000000000000000000000000000000a");
 
         // 2 txs, that should put the pool over the size limit but not max txs
-        let a_txs = MockTransactionSet::dependent(a_sender, 0, 2, TxType::Sip1559)
+        let a_txs = MockTransactionSet::dependent(a_sender, 0, 2, TxType::Eip1559)
             .into_iter()
             .map(|mut tx| {
                 tx.set_size(default_limits.max_size / 2 + 1);
@@ -724,17 +724,17 @@ mod tests {
         let d_sender = address!("0x000000000000000000000000000000000000000d");
 
         // create a chain of transactions by sender A, B, C
-        let mut tx_set = MockTransactionSet::dependent(a_sender, 0, 4, TxType::Sip1559);
+        let mut tx_set = MockTransactionSet::dependent(a_sender, 0, 4, TxType::Eip1559);
         let a = tx_set.clone().into_vec();
 
-        let b = MockTransactionSet::dependent(b_sender, 0, 3, TxType::Sip1559).into_vec();
+        let b = MockTransactionSet::dependent(b_sender, 0, 3, TxType::Eip1559).into_vec();
         tx_set.extend(b.clone());
 
         // C has the same number of txs as B
-        let c = MockTransactionSet::dependent(c_sender, 0, 3, TxType::Sip1559).into_vec();
+        let c = MockTransactionSet::dependent(c_sender, 0, 3, TxType::Eip1559).into_vec();
         tx_set.extend(c.clone());
 
-        let d = MockTransactionSet::dependent(d_sender, 0, 1, TxType::Sip1559).into_vec();
+        let d = MockTransactionSet::dependent(d_sender, 0, 1, TxType::Eip1559).into_vec();
         tx_set.extend(d.clone());
 
         let all_txs = tx_set.into_vec();

@@ -18,11 +18,17 @@ use alloy_rpc_types_eth::{
     BlockId, Bundle, SilCallResponse, StateContext, TransactionInfo,
 };
 use futures::Future;
+use revm::{
+    context::Block,
+    context_interface::{result::ResultAndState, Transaction},
+    Database, DatabaseCommit,
+};
+use revm_inspectors::{access_list::AccessListInspector, transfer::TransferInspector};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_errors::{ProviderError, RsilError};
 use rsil_evm::{
-    block::BlockExecutor, env::BlockEnvironment, execute::BlockBuilder, ConfigureEvm, Savm,
-    SavmEnvFor, HaltReasonFor, InspectorFor, TransactionEnvMut, TxEnvFor,
+    block::BlockExecutor, env::BlockEnvironment, execute::BlockBuilder, ConfigureEvm,
+    HaltReasonFor, InspectorFor, Savm, SavmEnvFor, TransactionEnvMut, TxEnvFor,
 };
 use rsil_node_api::BlockBody;
 use rsil_primitives_traits::Recovered;
@@ -39,12 +45,6 @@ use rsil_rpc_eth_types::{
     SilApiError, StateCacheDb,
 };
 use rsil_storage_api::{BlockIdReader, ProviderTx, StateProviderBox};
-use revm::{
-    context::Block,
-    context_interface::{result::ResultAndState, Transaction},
-    Database, DatabaseCommit,
-};
-use revm_inspectors::{access_list::AccessListInspector, transfer::TransferInspector};
 use std::collections::BTreeMap;
 use tracing::{trace, warn};
 
@@ -75,7 +75,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
     ) -> impl Future<Output = SimulatedBlocksResult<Self::NetworkTypes, Self::Error>> + Send {
         async move {
             if payload.block_state_calls.len() > self.max_simulate_blocks() as usize {
-                return Err(SilApiError::other(SilSimulateError::TooManyBlocks).into())
+                return Err(SilApiError::other(SilSimulateError::TooManyBlocks).into());
             }
 
             let block = block.unwrap_or_default();
@@ -88,7 +88,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
             } = payload;
 
             if block_state_calls.is_empty() {
-                return Err(SilApiError::InvalidParams(String::from("calls are empty.")).into())
+                return Err(SilApiError::InvalidParams(String::from("calls are empty.")).into());
             }
 
             let _permit = self.acquire_owned_blocking_io().await;
@@ -318,7 +318,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                     .block_hash_for_id(target_block)
                     .map_err(Self::Error::from_eth_err::<ProviderError>)?
                 else {
-                    return Err(SilApiError::HeaderNotFound(target_block).into())
+                    return Err(SilApiError::HeaderNotFound(target_block).into());
                 };
                 target_block = block_hash.into();
             }
@@ -633,7 +633,7 @@ pub trait Call:
                 .spawn_with_call_at(request, at, overrides, move |db, evm_env, tx_env| {
                     if cancel.is_cancelled() {
                         // callsite dropped the guard
-                        return Err(SilApiError::InternalEthError.into())
+                        return Err(SilApiError::InternalEthError.into());
                     }
                     this.transact(db, evm_env, tx_env)
                 })
@@ -795,7 +795,7 @@ pub trait Call:
         for tx in transactions {
             if *tx.tx_hash() == target_tx_hash {
                 // reached the target transaction
-                break
+                break;
             }
 
             let tx_env = self.evm_config().tx_env(tx);

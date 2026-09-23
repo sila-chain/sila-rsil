@@ -6,8 +6,8 @@ use crate::{
 use alloy_chains::Chain;
 use alloy_primitives::B256;
 use rsil_eth_wire_types::{snap::SnapProtocolError, SilVersion};
-use rsil_sila_forks::ValidationError;
 use rsil_primitives_traits::{GotExpected, GotExpectedBoxed};
+use rsil_sila_forks::ValidationError;
 use std::io;
 
 /// Errors when sending/receiving messages
@@ -73,18 +73,18 @@ impl SilStreamError {
     pub const fn is_protocol_breach(&self) -> bool {
         matches!(
             self,
-            Self::InvalidMessage(_) |
-                Self::InvalidSnapMessage(_) |
-                Self::MessageTooBig(_) |
-                Self::TransactionHashesInvalidLenOfFields { .. } |
-                Self::UnsupportedMessage { .. } |
-                Self::P2PStreamError(
-                    P2PStreamError::Rlp(_) |
-                        P2PStreamError::Snap(_) |
-                        P2PStreamError::MessageTooBig { .. } |
-                        P2PStreamError::UnknownReservedMessageId(_) |
-                        P2PStreamError::EmptyProtocolMessage |
-                        P2PStreamError::UnknownDisconnectReason(_)
+            Self::InvalidMessage(_)
+                | Self::InvalidSnapMessage(_)
+                | Self::MessageTooBig(_)
+                | Self::TransactionHashesInvalidLenOfFields { .. }
+                | Self::UnsupportedMessage { .. }
+                | Self::P2PStreamError(
+                    P2PStreamError::Rlp(_)
+                        | P2PStreamError::Snap(_)
+                        | P2PStreamError::MessageTooBig { .. }
+                        | P2PStreamError::UnknownReservedMessageId(_)
+                        | P2PStreamError::EmptyProtocolMessage
+                        | P2PStreamError::UnknownDisconnectReason(_)
                 )
         )
     }
@@ -92,7 +92,7 @@ impl SilStreamError {
     /// Returns the [`io::Error`] if it was caused by IO
     pub const fn as_io(&self) -> Option<&io::Error> {
         if let Self::P2PStreamError(P2PStreamError::Io(io)) = self {
-            return Some(io)
+            return Some(io);
         }
         None
     }

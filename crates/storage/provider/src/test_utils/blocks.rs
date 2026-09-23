@@ -6,14 +6,14 @@ use alloy_primitives::{
 };
 
 use alloy_consensus::Header;
-use alloy_eips::sip4895::{Withdrawal, Withdrawals};
+use alloy_sips::eip4895::{Withdrawal, Withdrawals};
 use alloy_primitives::Signature;
+use revm::{database::BundleState, state::AccountInfo};
 use rsil_db_api::{database::Database, models::StoredBlockBodyIndices, tables};
-use rsil_sila_primitives::{BlockBody, Receipt, Transaction, TransactionSigned, TxType};
 use rsil_node_types::NodeTypes;
 use rsil_primitives_traits::{Account, RecoveredBlock, SealedBlock, SealedHeader};
+use rsil_sila_primitives::{BlockBody, Receipt, Transaction, TransactionSigned, TxType};
 use rsil_trie::root::{state_root_unhashed, storage_root_unhashed};
-use revm::{database::BundleState, state::AccountInfo};
 use std::{str::FromStr, sync::LazyLock};
 
 /// Assert genesis block
@@ -185,9 +185,7 @@ fn bundle_state_root(execution_outcome: &ExecutionOutcome) -> B256 {
 }
 
 /// Block one that points to genesis
-fn block1(
-    number: BlockNumber,
-) -> (RecoveredBlock<rsil_sila_primitives::Block>, ExecutionOutcome) {
+fn block1(number: BlockNumber) -> (RecoveredBlock<rsil_sila_primitives::Block>, ExecutionOutcome) {
     // block changes
     let account1: Address = [0x60; 20].into();
     let account2: Address = [0x61; 20].into();
@@ -203,7 +201,7 @@ fn block1(
             .state_storage(account1, HashMap::from_iter([(slot, (U256::ZERO, U256::from(10)))]))
             .build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip2930,
+            tx_type: TxType::Eip2930,
             success: true,
             cumulative_gas_used: 300,
             logs: vec![Log::new_unchecked(
@@ -257,7 +255,7 @@ fn block2(
             .revert_storage(number, account, Vec::from([(slot, U256::from(10))]))
             .build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: false,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(
@@ -320,7 +318,7 @@ fn block3(
     let execution_outcome = ExecutionOutcome::new(
         bundle_state_builder.build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: true,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(
@@ -403,7 +401,7 @@ fn block4(
     let execution_outcome = ExecutionOutcome::new(
         bundle_state_builder.build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: true,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(
@@ -483,7 +481,7 @@ fn block5(
     let execution_outcome = ExecutionOutcome::new(
         bundle_state_builder.build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: true,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(

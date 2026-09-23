@@ -16,7 +16,7 @@
 
 use alloy_consensus::{Header, Transaction};
 use alloy_eips::{sip1559::calculate_block_gas_limit, sip2718::Decodable2718};
-use alloy_evm::{Savm, RecoveredTx};
+use alloy_evm::{RecoveredTx, Savm};
 use alloy_primitives::{
     map::{DefaultHashBuilder, HashSet},
     Address, Bytes, B256, U256,
@@ -25,12 +25,11 @@ use alloy_rlp::Encodable;
 use alloy_rpc_types_engine::{ExecutionPayloadEnvelopeV5, ForkchoiceState, PayloadAttributes};
 use async_trait::async_trait;
 use jsonrpsee::core::RpcResult;
+use revm::context::Block;
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_consensus_common::validation::MAX_RLP_BLOCK_SIZE;
 use rsil_engine_primitives::ConsensusEngineHandle;
 use rsil_errors::RsilError;
-use rsil_sila_engine_primitives::SilBuiltPayload;
-use rsil_sila_primitives::SilPrimitives;
 use rsil_evm::{execute::BlockBuilder, ConfigureEvm, NextBlockEnvAttributes};
 use rsil_payload_primitives::PayloadTypes;
 use rsil_primitives_traits::{
@@ -41,9 +40,10 @@ use rsil_revm::{database::StateProviderDatabase, db::State};
 use rsil_rpc_api::{TestingApiServer, TestingBuildBlockRequestV1};
 use rsil_rpc_eth_api::{helpers::Call, FromEthApiError};
 use rsil_rpc_eth_types::SilApiError;
+use rsil_sila_engine_primitives::SilBuiltPayload;
+use rsil_sila_primitives::SilPrimitives;
 use rsil_storage_api::{BlockReader, BlockReaderIdExt, HeaderProvider};
 use rsil_transaction_pool::{BestTransactionsAttributes, PoolTransaction, TransactionPool};
-use revm::context::Block;
 use std::sync::Arc;
 use tracing::debug;
 
@@ -204,10 +204,10 @@ where
                     let tx_rlp_len = tx.tx().length();
                     if is_osaka {
                         // 1KB overhead for block header
-                        let estimated_block_size = block_transactions_rlp_length +
-                            tx_rlp_len +
-                            withdrawals_rlp_length +
-                            1024;
+                        let estimated_block_size = block_transactions_rlp_length
+                            + tx_rlp_len
+                            + withdrawals_rlp_length
+                            + 1024;
                         if estimated_block_size > MAX_RLP_BLOCK_SIZE {
                             if allow_skip_invalid_transactions {
                                 debug!(

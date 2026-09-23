@@ -10,8 +10,8 @@ use core::{
     time::Duration,
 };
 use rsil_chain_state::{ExecutedBlock, ExecutionTimingStats};
-use rsil_sila_primitives::SilPrimitives;
 use rsil_primitives_traits::{NodePrimitives, SealedBlock, SealedHeader};
+use rsil_sila_primitives::SilPrimitives;
 
 /// Type alias for backwards compat
 #[deprecated(note = "Use ConsensusEngineEvent instead")]

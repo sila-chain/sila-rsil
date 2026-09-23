@@ -4,8 +4,8 @@ use crate::table::{Compress, Decompress};
 use bytes::BufMut;
 use core::fmt;
 use derive_more::Deref;
-use rsil_codecs::DecompressError;
 use roaring::RoaringTreemap;
+use rsil_codecs::DecompressError;
 
 /// A data structure that uses Roaring Bitmaps to efficiently store a list of integers.
 ///

@@ -7,8 +7,8 @@ use alloy_eips::sip7840::BlobParams;
 use alloy_genesis::Genesis;
 use alloy_primitives::{B256, U256};
 use rsil_chainspec::{
-    hardfork, BaseFeeParams, Chain, ChainSpec, DepositContract, SilChainSpec, SilaHardfork,
-    SilaHardforks, ForkCondition, Hardfork, Hardforks,
+    hardfork, BaseFeeParams, Chain, ChainSpec, DepositContract, ForkCondition, Hardfork, Hardforks,
+    SilChainSpec, SilaHardfork, SilaHardforks,
 };
 use rsil_network_peers::NodeRecord;
 use serde::{Deserialize, Serialize};

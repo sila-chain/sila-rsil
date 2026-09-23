@@ -1,9 +1,7 @@
 use alloy_eips::{sip2930::AccessListItem, sip7702::Authorization, BlockId, BlockNumberOrTag};
 use alloy_primitives::{bytes, Address, B256, U256};
 use alloy_provider::{
-    network::{
-        Sila, SilaWallet, NetworkWallet, TransactionBuilder, TransactionBuilder7702,
-    },
+    network::{NetworkWallet, Sila, SilaWallet, TransactionBuilder, TransactionBuilder7702},
     Provider, ProviderBuilder, SendableTx,
 };
 use alloy_rpc_types_engine::PayloadAttributes;
@@ -11,10 +9,10 @@ use alloy_rpc_types_eth::TransactionRequest;
 use alloy_signer::SignerSync;
 use rand::{seq::IndexedRandom, Rng};
 use rsil_e2e_test_utils::{wallet::Wallet, NodeHelperType, TmpDB};
-use rsil_sila_primitives::TxType;
 use rsil_node_api::NodeTypesWithDBAdapter;
 use rsil_node_sila::SilaNode;
 use rsil_provider::FullProvider;
+use rsil_sila_primitives::TxType;
 
 /// Helper function to create a new sil payload attributes
 pub(crate) const fn eth_payload_attributes(timestamp: u64) -> PayloadAttributes {
@@ -144,8 +142,7 @@ where
 
             let SendableTx::Builder(tx) = provider.fill(tx).await? else { unreachable!() };
             let tx =
-                NetworkWallet::<Sila>::sign_request(&SilaWallet::new(signer.clone()), tx)
-                    .await?;
+                NetworkWallet::<Sila>::sign_request(&SilaWallet::new(signer.clone()), tx).await?;
 
             if let Ok(res) = provider.send_tx_envelope(tx).await {
                 pending.push(res);

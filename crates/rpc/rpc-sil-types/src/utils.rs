@@ -34,7 +34,7 @@ pub fn calculate_gas_used_and_next_log_index(
 /// See [`alloy_eips::sip2718::Decodable2718::decode_2718_exact`]
 pub fn recover_raw_transaction<T: SignedTransaction>(data: &[u8]) -> SilResult<Recovered<T>> {
     if data.is_empty() {
-        return Err(SilApiError::EmptyRawTransactionData)
+        return Err(SilApiError::EmptyRawTransactionData);
     }
 
     let transaction =

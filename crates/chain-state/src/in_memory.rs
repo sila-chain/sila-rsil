@@ -5,17 +5,17 @@ use crate::{
     ChainInfoTracker, MemoryOverlayStateProvider,
 };
 use alloy_consensus::{transaction::TransactionMeta, BlockHeader};
-use alloy_eips::{BlockHashOrNumber, BlockNumHash};
 use alloy_primitives::{map::B256Map, BlockNumber, TxHash, B256};
+use alloy_sips::{BlockHashOrNumber, BlockNumHash};
 use parking_lot::RwLock;
 use rsil_chainspec::ChainInfo;
-use rsil_sila_primitives::SilPrimitives;
 use rsil_execution_types::{BlockExecutionOutput, BlockExecutionResult, Chain, ExecutionOutcome};
 use rsil_metrics::{metrics::Gauge, Metrics};
 use rsil_primitives_traits::{
     BlockBody as _, IndexedTx, NodePrimitives, RecoveredBlock, SealedBlock, SealedHeader,
     SignedTransaction,
 };
+use rsil_sila_primitives::SilPrimitives;
 use rsil_storage_api::StateProviderBox;
 use rsil_trie::{
     updates::TrieUpdatesSorted, ComputedTrieData, HashedPostStateSorted, LazyTrieData,
@@ -327,7 +327,7 @@ impl<N: NodePrimitives> CanonicalInMemoryState<N> {
         {
             if self.inner.in_memory_state.blocks.read().get(&persisted_num_hash.hash).is_none() {
                 // do nothing
-                return
+                return;
             }
         }
 
@@ -566,7 +566,7 @@ impl<N: NodePrimitives> CanonicalInMemoryState<N> {
             if let Some(tx) =
                 block_state.block_ref().recovered_block().body().transaction_by_hash(&hash)
             {
-                return Some(tx.clone())
+                return Some(tx.clone());
             }
         }
         None
@@ -782,8 +782,8 @@ impl<N: NodePrimitives> Default for ExecutedBlock<N> {
 impl<N: NodePrimitives> PartialEq for ExecutedBlock<N> {
     fn eq(&self, other: &Self) -> bool {
         // Trie data is computed asynchronously and doesn't define block identity.
-        self.recovered_block == other.recovered_block &&
-            self.execution_output == other.execution_output
+        self.recovered_block == other.recovered_block
+            && self.execution_output == other.execution_output
     }
 }
 
@@ -974,12 +974,12 @@ impl<N: NodePrimitives<SignedTx: SignedTransaction>> NewCanonicalChain<N> {
 mod tests {
     use super::*;
     use crate::test_utils::TestBlockBuilder;
-    use alloy_eips::sip7685::Requests;
     use alloy_primitives::{Address, BlockNumber, Bytes, StorageKey, StorageValue};
+    use alloy_sips::sip7685::Requests;
     use rand::Rng;
     use rsil_errors::ProviderResult;
-    use rsil_sila_primitives::{SilPrimitives, Receipt};
     use rsil_primitives_traits::{Account, Bytecode};
+    use rsil_sila_primitives::{Receipt, SilPrimitives};
     use rsil_storage_api::{
         AccountReader, BlockHashReader, BytecodeReader, HashedPostStateProvider,
         StateProofProvider, StateProvider, StateRootProvider, StorageRootProvider,

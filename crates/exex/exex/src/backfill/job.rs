@@ -8,7 +8,6 @@ use std::{
 
 use alloy_consensus::BlockHeader;
 use alloy_primitives::BlockNumber;
-use rsil_sila_primitives::Receipt;
 use rsil_evm::execute::{BlockExecutionError, BlockExecutionOutput, Executor};
 use rsil_node_api::{Block as _, BlockBody as _, NodePrimitives};
 use rsil_primitives_traits::{format_gas_throughput, RecoveredBlock, SignedTransaction};
@@ -18,6 +17,7 @@ use rsil_provider::{
 };
 use rsil_prune_types::PruneModes;
 use rsil_revm::database::StateProviderDatabase;
+use rsil_sila_primitives::Receipt;
 use rsil_stages_api::ExecutionStageThresholds;
 use rsil_tracing::tracing::{debug, trace};
 
@@ -47,7 +47,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.range.is_empty() {
-            return None
+            return None;
         }
 
         Some(self.execute_range())
@@ -128,7 +128,7 @@ where
                 cumulative_gas,
                 batch_start.elapsed(),
             ) {
-                break
+                break;
             }
         }
 

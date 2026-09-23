@@ -2,12 +2,12 @@
 # Patches alloy dependencies in Cargo.toml for testing breaking changes.
 #
 # Usage:
-#   ./scripts/patch-alloy.sh [--alloy <branch>] [--savm <branch>]
+#   ./scripts/patch-alloy.sh [--alloy <branch>] [--evm <branch>]
 #
 # Examples:
 #   ./scripts/patch-alloy.sh --alloy main
-#   ./scripts/patch-alloy.sh --alloy feat/new-api --savm main
-#   ./scripts/patch-alloy.sh --alloy main --savm main
+#   ./scripts/patch-alloy.sh --alloy feat/new-api --evm main
+#   ./scripts/patch-alloy.sh --alloy main --evm main
 
 set -euo pipefail
 
@@ -20,16 +20,16 @@ while [[ $# -gt 0 ]]; do
             ALLOY_BRANCH="$2"
             shift 2
             ;;
-        --savm)
+        --evm)
             ALLOY_EVM_BRANCH="$2"
             shift 2
             ;;
         -h|--help)
-            echo "Usage: $0 [--alloy <branch>] [--savm <branch>]"
+            echo "Usage: $0 [--alloy <branch>] [--evm <branch>]"
             echo ""
             echo "Options:"
             echo "  --alloy <branch>  Patch alloy-rs/alloy crates"
-            echo "  --savm <branch>    Patch alloy-rs/savm crates (alloy-savm, alloy-op-savm)"
+            echo "  --evm <branch>    Patch alloy-rs/evm crates (alloy-evm, alloy-op-evm)"
             exit 0
             ;;
         *)
@@ -55,7 +55,7 @@ if [[ -n "$ALLOY_BRANCH" ]]; then
 # Patched by patch-alloy.sh
 alloy-consensus = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-contract = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
-alloy-sips = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
+alloy-eips = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-genesis = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-json-rpc = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-network = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
@@ -69,7 +69,7 @@ alloy-rpc-types-anvil = { git = "https://github.com/alloy-rs/alloy", branch = "$
 alloy-rpc-types-beacon = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-rpc-types-debug = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-rpc-types-engine = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
-alloy-rpc-types-sil = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
+alloy-rpc-types-eth = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-rpc-types-mev = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-rpc-types-trace = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
 alloy-rpc-types-txpool = { git = "https://github.com/alloy-rs/alloy", branch = "$ALLOY_BRANCH" }
@@ -84,10 +84,10 @@ EOF
 fi
 
 if [[ -n "$ALLOY_EVM_BRANCH" ]]; then
-    echo "Patching alloy-rs/savm with branch: $ALLOY_EVM_BRANCH"
+    echo "Patching alloy-rs/evm with branch: $ALLOY_EVM_BRANCH"
     cat >> "$CARGO_TOML" << EOF
-alloy-savm = { git = "https://github.com/alloy-rs/savm", branch = "$ALLOY_EVM_BRANCH" }
-alloy-op-savm = { git = "https://github.com/alloy-rs/savm", branch = "$ALLOY_EVM_BRANCH" }
+alloy-evm = { git = "https://github.com/alloy-rs/evm", branch = "$ALLOY_EVM_BRANCH" }
+alloy-op-evm = { git = "https://github.com/alloy-rs/evm", branch = "$ALLOY_EVM_BRANCH" }
 EOF
 fi
 

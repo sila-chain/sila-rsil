@@ -3,13 +3,13 @@
 #![allow(missing_docs)]
 
 use crate::{
-    hello::DEFAULT_TCP_PORT, SilVersion, HelloMessageWithProtocols, P2PStream, ProtocolVersion,
+    hello::DEFAULT_TCP_PORT, HelloMessageWithProtocols, P2PStream, ProtocolVersion, SilVersion,
     Status, StatusMessage, UnauthedP2PStream, UnifiedStatus,
 };
 use alloy_chains::Chain;
 use alloy_primitives::{B256, U256};
-use rsil_sila_forks::{ForkFilter, Head};
 use rsil_network_peers::pk2id;
+use rsil_sila_forks::{ForkFilter, Head};
 use secp256k1::{SecretKey, SECP256K1};
 use std::net::SocketAddr;
 use tokio::net::TcpStream;
@@ -38,7 +38,7 @@ pub fn eth_handshake() -> (UnifiedStatus, ForkFilter) {
 
     let status = Status {
         version: SilVersion::Sil67,
-        chain: Chain::sila-mainnet(),
+        chain: Chain::sila_mainnet(),
         total_difficulty: U256::ZERO,
         blockhash: B256::random(),
         genesis,
@@ -142,7 +142,7 @@ pub mod proto {
         /// Decodes a `TestProtoMessage` from the given message buffer.
         pub fn decode_message(buf: &mut &[u8]) -> Option<Self> {
             if buf.is_empty() {
-                return None
+                return None;
             }
             let id = buf[0];
             buf.advance(1);

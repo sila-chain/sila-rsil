@@ -2,7 +2,7 @@
 
 use alloy_dyn_abi::TypedData;
 use alloy_eips::sip2718::Decodable2718;
-use alloy_primitives::{sip191_hash_message, map::AddressMap, Address, Signature, B256};
+use alloy_primitives::{map::AddressMap, sip191_hash_message, Address, Signature, B256};
 use alloy_signer::SignerSync;
 use alloy_signer_local::{coins_bip39::English, MnemonicBuilder, PrivateKeySigner};
 use rsil_rpc_convert::SignableTxRequest;
@@ -102,7 +102,7 @@ impl<T: Decodable2718, TxReq: SignableTxRequest<T>> SilSigner<T, TxReq> for DevS
     }
 
     fn sign_typed_data(&self, address: Address, payload: &TypedData) -> Result<Signature> {
-        let encoded = payload.sip712_signing_hash().map_err(|_| SignError::InvalidTypedData)?;
+        let encoded = payload.eip712_signing_hash().map_err(|_| SignError::InvalidTypedData)?;
         self.sign_hash(encoded, address)
     }
 }
@@ -128,7 +128,7 @@ mod tests {
     async fn test_sign_type_data() {
         let sip_712_example = r#"{
             "types": {
-            "SIP712Domain": [
+            "EIP712Domain": [
                 {
                     "name": "name",
                     "type": "string"

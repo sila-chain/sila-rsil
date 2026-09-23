@@ -8,13 +8,13 @@ use crate::{
     BlockClient,
 };
 use alloy_consensus::Header;
-use alloy_eips::{BlockHashOrNumber, BlockNumHash};
+use alloy_sips::{BlockHashOrNumber, BlockNumHash};
 use alloy_primitives::{map::B256Map, Bytes, B256};
 use parking_lot::Mutex;
-use rsil_eth_wire_types::{BlockAccessLists, HeadersDirection};
-use rsil_sila_primitives::{Block, BlockBody};
+use rsil_sil_wire_types::{BlockAccessLists, HeadersDirection};
 use rsil_network_peers::{PeerId, WithPeerId};
 use rsil_primitives_traits::{SealedBlock, SealedHeader};
+use rsil_sila_primitives::{Block, BlockBody};
 use std::{ops::RangeInclusive, sync::Arc};
 
 /// A headers+bodies client that stores the headers and bodies in memory, with an artificial soft

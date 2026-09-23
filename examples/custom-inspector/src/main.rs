@@ -18,6 +18,9 @@ use clap::Parser;
 use futures_util::StreamExt;
 use rsil_sila::{
     cli::{chainspec::SilaChainSpecParser, interface::Cli},
+    node::{builder::FullNodeFor, SilaNode},
+    pool::TransactionPool,
+    rpc::api::sil::helpers::Call,
     savm::{
         primitives::ConfigureEvm,
         revm::revm::{
@@ -27,9 +30,6 @@ use rsil_sila::{
             interpreter::{interpreter::SilInterpreter, interpreter_types::Jumps, Interpreter},
         },
     },
-    node::{builder::FullNodeFor, SilaNode},
-    pool::TransactionPool,
-    rpc::api::sil::helpers::Call,
 };
 
 fn main() {
@@ -56,8 +56,8 @@ fn main() {
                     let tx = event.transaction;
                     println!("Transaction received: {tx:?}");
 
-                    if let Some(recipient) = tx.to() &&
-                        args.is_match(&recipient)
+                    if let Some(recipient) = tx.to()
+                        && args.is_match(&recipient)
                     {
                         // convert the pool transaction
                         let call_request =

@@ -5,10 +5,10 @@ use jsonrpsee::{
     server::middleware::rpc::RpcServiceT,
     types::Request,
 };
-use rsil_sila_primitives::TransactionSigned;
 use rsil_rpc_builder::{RpcServerConfig, TransportRpcModuleConfig};
 use rsil_rpc_eth_api::SilApiClient;
 use rsil_rpc_server_types::RpcModuleSelection;
+use rsil_sila_primitives::TransactionSigned;
 use rsil_tokio_util::EventSender;
 use std::{
     future::Future,

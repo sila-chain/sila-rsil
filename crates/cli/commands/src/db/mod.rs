@@ -167,7 +167,7 @@ impl<C: ChainSpecParser<ChainSpec: SilChainSpec + SilaHardforks>> Command<C> {
 
                     if !input.trim().eq_ignore_ascii_case("y") {
                         println!("Database drop aborted!");
-                        return Ok(())
+                        return Ok(());
                     }
                 }
 
@@ -264,13 +264,9 @@ mod tests {
     #[test]
     fn parse_stats_globals() {
         let path = format!("../{}", SUPPORTED_CHAINS[0]);
-        let cmd = Command::<SilaChainSpecParser>::try_parse_from([
-            "rsil",
-            "--datadir",
-            &path,
-            "stats",
-        ])
-        .unwrap();
+        let cmd =
+            Command::<SilaChainSpecParser>::try_parse_from(["rsil", "--datadir", &path, "stats"])
+                .unwrap();
         assert_eq!(cmd.env.datadir.resolve_datadir(cmd.env.chain.chain).as_ref(), Path::new(&path));
     }
 }

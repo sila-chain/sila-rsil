@@ -2,9 +2,9 @@
 
 use alloy_primitives::map::HashSet;
 use futures::StreamExt;
-use rsil_chainspec::{SILA_MAINNET, SEPOLIA};
+use rsil_chainspec::{SEPOLIA, SILA_MAINNET};
 use rsil_discv4::Discv4Config;
-use rsil_eth_wire::{DisconnectReason, SilNetworkPrimitives, HeadersDirection};
+use rsil_eth_wire::{DisconnectReason, HeadersDirection, SilNetworkPrimitives};
 use rsil_network::{
     test_utils::{NetworkEventStream, PeerConfig, Testnet},
     BlockDownloaderProvider, NetworkConfigBuilder, NetworkEvent, NetworkEventListenerProvider,
@@ -64,8 +64,8 @@ async fn test_establish_connections() {
                 NetworkEvent::Peer(PeerEvent::SessionClosed { .. } | PeerEvent::PeerRemoved(_)) => {
                     panic!("unexpected event")
                 }
-                NetworkEvent::ActivePeerSession { info, .. } |
-                NetworkEvent::Peer(PeerEvent::SessionEstablished(info)) => {
+                NetworkEvent::ActivePeerSession { info, .. }
+                | NetworkEvent::Peer(PeerEvent::SessionEstablished(info)) => {
                     let SessionInfo { peer_id, .. } = info;
                     assert!(expected_connections.remove(&peer_id));
                 }

@@ -15,7 +15,7 @@ workspace = true
 # alloy
 alloy-primitives.workspace = true
 alloy-rlp = { workspace = true, features = ["arrayvec"] }
-alloy-trie = { workspace = true, features = ["sila"] }
+alloy-trie = { workspace = true, features = ["ethereum"] }
 alloy-consensus.workspace = true
 rsil-primitives-traits.workspace = true
 rsil-codecs = { workspace = true, optional = true }

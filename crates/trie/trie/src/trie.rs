@@ -244,7 +244,7 @@ where
                         hash_builder,
                         account_root_state.last_hashed_key,
                         Some(storage_state),
-                    ))
+                    ));
                 }
             }
 
@@ -317,7 +317,7 @@ where
                             hash_builder,
                             hashed_address,
                             Some(storage_state),
-                        ))
+                        ));
                     }
 
                     // decide if we need to return intermediate progress
@@ -329,7 +329,7 @@ where
                             hash_builder,
                             hashed_address,
                             None,
-                        ))
+                        ));
                     }
                 }
             }
@@ -423,9 +423,9 @@ impl StateRootContext {
         H: HashedCursor,
         K: AsRef<AddedRemovedKeys>,
     {
-        (self.updated_storage_nodes +
-            account_node_iter.walker.removed_keys_len() +
-            hash_builder.updates_len()) as u64
+        (self.updated_storage_nodes
+            + account_node_iter.walker.removed_keys_len()
+            + hash_builder.updates_len()) as u64
     }
 
     /// Processes the result of a storage root calculation.
@@ -743,7 +743,7 @@ where
                 EMPTY_ROOT_HASH,
                 0,
                 StorageTrieUpdates::deleted(),
-            ))
+            ));
         }
 
         trie_cursor.set_hashed_address(hashed_address);
@@ -807,7 +807,7 @@ where
                             Box::new(state),
                             hashed_entries_walked,
                             trie_updates,
-                        ))
+                        ));
                     }
                 }
             }

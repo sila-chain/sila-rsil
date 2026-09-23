@@ -5,7 +5,7 @@ use alloy_consensus::Header as RsilHeader;
 use alloy_eips::sip4895::Withdrawals;
 use alloy_genesis::GenesisAccount;
 use alloy_primitives::{keccak256, map::HashMap, Address, Bloom, Bytes, B256, B64, U256};
-use rsil_chainspec::{ChainSpec, ChainSpecBuilder, SilaHardfork, ForkCondition};
+use rsil_chainspec::{ChainSpec, ChainSpecBuilder, ForkCondition, SilaHardfork};
 use rsil_db_api::{cursor::DbDupCursorRO, tables, transaction::DbTx};
 use rsil_primitives_traits::SealedHeader;
 use serde::Deserialize;
@@ -249,12 +249,12 @@ impl Account {
                 } else {
                     return Err(Error::Assertion(format!(
                         "Slot {slot:?} is missing from the database. Expected {value:?}"
-                    )))
+                    )));
                 }
             } else {
                 return Err(Error::Assertion(format!(
                     "Slot {slot:?} is missing from the database. Expected {value:?}"
-                )))
+                )));
             }
         }
 
@@ -343,7 +343,7 @@ impl ForkSpec {
     }
 
     fn to_chain_spec_inner(self) -> ChainSpec {
-        let spec_builder = ChainSpecBuilder::sila-mainnet().reset();
+        let spec_builder = ChainSpecBuilder::sila_mainnet().reset();
 
         match self {
             Self::Frontier => spec_builder.frontier_activated(),

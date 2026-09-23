@@ -3,12 +3,12 @@ use std::sync::Arc;
 use alloy_genesis::ChainConfig;
 use alloy_primitives::keccak256;
 use alloy_rpc_types_admin::{
-    SilInfo, SilPeerInfo, SilProtocolInfo, NodeInfo, PeerInfo, PeerNetworkInfo, PeerProtocolInfo,
-    Ports, ProtocolInfo,
+    NodeInfo, PeerInfo, PeerNetworkInfo, PeerProtocolInfo, Ports, ProtocolInfo, SilInfo,
+    SilPeerInfo, SilProtocolInfo,
 };
 use async_trait::async_trait;
 use jsonrpsee::core::RpcResult;
-use rsil_chainspec::{SilChainSpec, SilaHardfork, SilaHardforks, ForkCondition};
+use rsil_chainspec::{ForkCondition, SilChainSpec, SilaHardfork, SilaHardforks};
 use rsil_network_api::{NetworkInfo, Peers};
 use rsil_network_peers::{AnyNode, NodeRecord};
 use rsil_network_types::PeerKind;

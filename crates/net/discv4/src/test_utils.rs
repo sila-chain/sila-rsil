@@ -9,8 +9,8 @@ use crate::{
 };
 use alloy_primitives::{hex, B256, B512};
 use rand_08::{thread_rng, Rng, RngCore};
-use rsil_sila_forks::{ForkHash, ForkId};
 use rsil_network_peers::{pk2id, NodeRecord};
+use rsil_sila_forks::{ForkHash, ForkId};
 use secp256k1::{SecretKey, SECP256K1};
 use std::{
     collections::{HashMap, HashSet},
@@ -167,7 +167,7 @@ impl Stream for MockDiscovery {
                                 ping,
                                 pong,
                                 to: remote_addr,
-                            }))
+                            }));
                         }
                     }
                     Message::Pong(_) | Message::Neighbours(_) => {}
@@ -181,7 +181,7 @@ impl Stream for MockDiscovery {
                             return Poll::Ready(Some(MockEvent::Neighbours {
                                 nodes,
                                 to: remote_addr,
-                            }))
+                            }));
                         }
                     }
                     Message::EnrRequest(_) | Message::EnrResponse(_) => todo!(),

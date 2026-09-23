@@ -15,7 +15,7 @@ permissions: {}
 jobs:
   clippy-binaries:
     name: clippy binaries / ${{ matrix.type }}
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -49,7 +49,7 @@ jobs:
 
   clippy:
     name: clippy
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -71,7 +71,7 @@ jobs:
           RUSTFLAGS: -D warnings
 
   wasm:
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -97,7 +97,7 @@ jobs:
           .github/scripts/check_wasm.sh
 
   riscv:
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 60
@@ -122,7 +122,7 @@ jobs:
 
   crate-checks:
     name: crate-checks (${{ matrix.partition }}/${{ matrix.total_partitions }})
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-4' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
@@ -148,7 +148,7 @@ jobs:
 
   msrv:
     name: MSRV
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-8' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -171,7 +171,7 @@ jobs:
 
   docs:
     name: docs
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-4' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -194,7 +194,7 @@ jobs:
 
   fmt:
     name: fmt
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -209,10 +209,9 @@ jobs:
       - uses: mozilla-actions/sccache-action@9e7fa8a12102821edf02ca5dbea1acd0f89a2696 # v0.0.10
       - name: Run fmt
         run: cargo fmt --all --check
-
   udeps:
     name: udeps
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -234,7 +233,7 @@ jobs:
 
   book:
     name: book
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 30
@@ -312,7 +311,7 @@ jobs:
 
   # Check crates correctly propagate features
   feature-propagation:
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     timeout-minutes: 20
@@ -332,9 +331,21 @@ jobs:
       - run: zepter run check
 
   deny:
+    name: cargo deny check
+    runs-on: ubuntu-latest
     permissions:
       contents: read
-    uses: tempoxyz/ci/.github/workflows/deny.yml@main
+    env:
+      RUSTC_WRAPPER: ""
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: taiki-e/install-action@4684b8405694ae9dd42c9f39ba901a70ae83f4a3 # v2.82.9
+        with:
+          tool: cargo-deny
+      - run: cargo deny --all-features check all
 
   lint-success:
     name: lint success

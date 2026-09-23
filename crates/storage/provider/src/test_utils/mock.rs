@@ -10,7 +10,7 @@ use alloy_consensus::{
     transaction::{TransactionMeta, TxHashRef},
     BlockHeader,
 };
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{
     keccak256,
     map::{AddressMap, B256Map, HashMap},
@@ -24,13 +24,13 @@ use rsil_db_api::{
     mock::{DatabaseMock, TxMock},
     models::{AccountBeforeTx, StorageSettings, StoredBlockBodyIndices},
 };
-use rsil_sila_primitives::SilPrimitives;
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::{
     Account, Block, BlockBody, Bytecode, GotExpected, NodePrimitives, RecoveredBlock, SealedHeader,
     SignerRecoverable, StorageEntry,
 };
 use rsil_prune_types::{PruneCheckpoint, PruneModes, PruneSegment};
+use rsil_sila_primitives::SilPrimitives;
 use rsil_stages_types::{StageCheckpoint, StageId};
 use rsil_storage_api::{
     BlockBodyIndicesProvider, BytecodeReader, DBProvider, DatabaseProviderFactory,
@@ -102,7 +102,7 @@ impl<T: NodePrimitives> MockEthProvider<T, rsil_chainspec::ChainSpec> {
             headers: Default::default(),
             receipts: Default::default(),
             accounts: Default::default(),
-            chain_spec: Arc::new(rsil_chainspec::ChainSpecBuilder::sila-mainnet().build()),
+            chain_spec: Arc::new(rsil_chainspec::ChainSpecBuilder::sila_mainnet().build()),
             state_roots: Default::default(),
             block_body_indices: Default::default(),
             bal_store: Default::default(),
@@ -421,7 +421,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> TransactionsProvider
                         excess_blob_gas: block.header().excess_blob_gas(),
                         timestamp: block.header().timestamp(),
                     };
-                    return Ok(Some((tx.clone(), meta)))
+                    return Ok(Some((tx.clone(), meta)));
                 }
             }
         }
@@ -625,15 +625,15 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync + 'static> BlockNumReader
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> BlockIdReader
     for MockEthProvider<T, ChainSpec>
 {
-    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 }

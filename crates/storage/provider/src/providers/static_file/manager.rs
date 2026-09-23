@@ -12,12 +12,12 @@ use alloy_consensus::{
     transaction::{TransactionMeta, TxHashRef},
     Header,
 };
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{b256, Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 
 use parking_lot::RwLock;
 use rsil_chain_state::ExecutedBlock;
-use rsil_chainspec::{ChainInfo, ChainSpecProvider, SilChainSpec, NamedChain};
+use rsil_chainspec::{ChainInfo, ChainSpecProvider, NamedChain, SilChainSpec};
 use rsil_db::{
     lockfile::StorageLock,
     static_file::{
@@ -32,7 +32,6 @@ use rsil_db_api::{
     tables,
     transaction::DbTx,
 };
-use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_nippy_jar::{NippyJar, NippyJarChecker};
 use rsil_node_types::NodePrimitives;
 use rsil_primitives_traits::{
@@ -40,6 +39,7 @@ use rsil_primitives_traits::{
     SignedTransaction, StorageEntry,
 };
 use rsil_prune_types::PruneSegment;
+use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_stages_types::PipelineTarget;
 use rsil_static_file_types::{
     find_fixed_range, HighestStaticFiles, SegmentHeader, SegmentRangeInclusive, StaticFileMap,
@@ -498,11 +498,12 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
             w.increment_block(block_number)?;
 
             // skip writing receipts if pruning configuration requires us to.
-            if ctx.receipts_prunable &&
-                ctx.receipts_prune_mode
+            if ctx.receipts_prunable
+                && ctx
+                    .receipts_prune_mode
                     .is_some_and(|mode| mode.should_prune(block_number, ctx.tip))
             {
-                continue
+                continue;
             }
 
             for (i, receipt) in block.execution_outcome().receipts.iter().enumerate() {
@@ -723,8 +724,8 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
         match provider {
             Ok(provider) => Ok(Some(provider)),
             Err(
-                ProviderError::MissingStaticFileBlock(_, _) |
-                ProviderError::MissingStaticFileTx(_, _),
+                ProviderError::MissingStaticFileBlock(_, _)
+                | ProviderError::MissingStaticFileTx(_, _),
             ) => Ok(None),
             Err(err) => Err(err),
         }
@@ -1276,8 +1277,8 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
         //
         // If we detect an OVM import was done (block #1 <https://optimistic.silascan.io/block/1>), skip it.
         // More on [#11099](https://github.com/sila-chain/sila-rsil/pull/11099).
-        if provider.chain_spec().is_optimism() &&
-            rsil_chainspec::Chain::optimism_mainnet() == provider.chain_spec().chain_id()
+        if provider.chain_spec().is_optimism()
+            && rsil_chainspec::Chain::optimism_mainnet() == provider.chain_spec().chain_id()
         {
             // check whether we have the first OVM block: <https://optimistic.silascan.io/block/0xbee7192e575af30420cae0c7776304ac196077ee72b048970549e4f08e875453>
             const OVM_HEADER_1_HASH: B256 =
@@ -1347,18 +1348,18 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                         // If the block body indices can not be found, then it means that static
                         // files is ahead of database, and the `ensure_invariants` check will fix
                         // it by comparing with stage checkpoints.
-                        break
+                        break;
                     };
 
                     debug!(target: "rsil::providers::static_file", last_block, last_tx_num = indices.last_tx_num(), "Found block body indices");
 
                     if indices.last_tx_num() <= highest_tx {
-                        break
+                        break;
                     }
 
                     if last_block == 0 {
                         debug!(target: "rsil::providers::static_file", "Reached block 0 in verification loop");
-                        break
+                        break;
                     }
 
                     last_block -= 1;
@@ -1444,8 +1445,8 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                     return false;
                 }
 
-                if NamedChain::Gnosis == provider.chain_spec().chain_id() ||
-                    NamedChain::Chiado == provider.chain_spec().chain_id()
+                if NamedChain::Gnosis == provider.chain_spec().chain_id()
+                    || NamedChain::Chiado == provider.chain_spec().chain_id()
                 {
                     // Gnosis and Chiado's historical import is broken and does not work with
                     // this check. They are importing receipts along
@@ -1479,7 +1480,7 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
             StaticFileSegment::StorageChangeSets => {
                 if EitherWriter::storage_changesets_destination(provider).is_database() {
                     debug!(target: "rsil::providers::static_file", ?segment, "Skipping storage changesets segment: changesets stored in database");
-                    return false
+                    return false;
                 }
                 true
             }
@@ -1670,12 +1671,12 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                 }
             }
 
-            if let Some((db_last_entry, _)) = db_cursor.last()? &&
-                highest_static_file_entry
+            if let Some((db_last_entry, _)) = db_cursor.last()?
+                && highest_static_file_entry
                     .is_none_or(|highest_entry| db_last_entry > highest_entry)
             {
                 debug!(target: "rsil::providers::static_file", db_last_entry, "Database has entries beyond static files, no unwind needed");
-                return Ok(None)
+                return Ok(None);
             }
         } else {
             debug!(target: "rsil::providers::static_file", "No database entries found");
@@ -1728,9 +1729,9 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                 // TODO(joshie): is_block_meta
                 writer.prune_headers(prune_count)?;
             }
-            StaticFileSegment::Transactions |
-            StaticFileSegment::Receipts |
-            StaticFileSegment::TransactionSenders => {
+            StaticFileSegment::Transactions
+            | StaticFileSegment::Receipts
+            | StaticFileSegment::TransactionSenders => {
                 if let Some(block) = provider.block_body_indices(checkpoint_block_number)? {
                     let number = highest_static_file_entry - block.last_tx_num();
                     debug!(target: "rsil::providers::static_file", prune_count = number, checkpoint_block_number, "Pruning transaction based segment");
@@ -1745,9 +1746,9 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                         StaticFileSegment::TransactionSenders => {
                             writer.prune_transaction_senders(number, checkpoint_block_number)?
                         }
-                        StaticFileSegment::Headers |
-                        StaticFileSegment::AccountChangeSets |
-                        StaticFileSegment::StorageChangeSets => {
+                        StaticFileSegment::Headers
+                        | StaticFileSegment::AccountChangeSets
+                        | StaticFileSegment::StorageChangeSets => {
                             unreachable!()
                         }
                     }
@@ -1793,8 +1794,8 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
 
         if let Some((db_first_key, _)) = db_cursor.first()? {
             let db_first_block = block_from_key(&db_first_key);
-            if let Some(highest_block) = highest_static_file_block &&
-                !(db_first_block <= highest_block || highest_block + 1 == db_first_block)
+            if let Some(highest_block) = highest_static_file_block
+                && !(db_first_block <= highest_block || highest_block + 1 == db_first_block)
             {
                 info!(
                     target: "rsil::providers::static_file",
@@ -1804,11 +1805,11 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                     ?segment,
                     "Setting unwind target."
                 );
-                return Ok(Some(highest_block))
+                return Ok(Some(highest_block));
             }
 
-            if let Some((db_last_key, _)) = db_cursor.last()? &&
-                highest_static_file_block
+            if let Some((db_last_key, _)) = db_cursor.last()?
+                && highest_static_file_block
                     .is_none_or(|highest_block| block_from_key(&db_last_key) > highest_block)
             {
                 debug!(
@@ -1816,7 +1817,7 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                     ?segment,
                     "Database has entries beyond static files, no unwind needed"
                 );
-                return Ok(None)
+                return Ok(None);
             }
         } else {
             debug!(target: "rsil::providers::static_file", ?segment, "No database entries found");
@@ -1836,7 +1837,7 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                 ?segment,
                 "Setting unwind target."
             );
-            return Ok(Some(highest_static_file_block))
+            return Ok(Some(highest_static_file_block));
         }
 
         if checkpoint_block_number < highest_static_file_block {
@@ -1998,8 +1999,8 @@ impl<N: NodePrimitives> StaticFileProvider<N> {
                 match self.get_segment_provider(segment, $number) {
                     Ok(provider) => provider,
                     Err(
-                        ProviderError::MissingStaticFileBlock(_, _) |
-                        ProviderError::MissingStaticFileTx(_, _),
+                        ProviderError::MissingStaticFileBlock(_, _)
+                        | ProviderError::MissingStaticFileTx(_, _),
                     ) => return Ok(result),
                     Err(err) => return Err(err),
                 }
@@ -2391,8 +2392,8 @@ impl<N: NodePrimitives> ChangeSetReader for StaticFileProvider<N> {
             }
         }
 
-        if low < range.end &&
-            let Some(change) = cursor
+        if low < range.end
+            && let Some(change) = cursor
                 .get_one::<rsil_db::static_file::AccountChangesetMask>(low.into())?
                 .filter(|change| change.address == address)
         {
@@ -2492,8 +2493,8 @@ impl<N: NodePrimitives> StorageChangeSetReader for StaticFileProvider<N> {
             }
         }
 
-        if low < range.end &&
-            let Some(change) = cursor
+        if low < range.end
+            && let Some(change) = cursor
                 .get_one::<StorageChangesetMask>(low.into())?
                 .filter(|change| change.address == address && change.key == storage_key)
         {
@@ -2978,9 +2979,9 @@ impl<N: NodePrimitives> BlockBodyIndicesProvider for StaticFileProvider<N> {
 impl<N: NodePrimitives> StatsReader for StaticFileProvider<N> {
     fn count_entries<T: Table>(&self) -> ProviderResult<usize> {
         match T::NAME {
-            tables::CanonicalHeaders::NAME |
-            tables::Headers::<Header>::NAME |
-            tables::HeaderTerminalDifficulties::NAME => Ok(self
+            tables::CanonicalHeaders::NAME
+            | tables::Headers::<Header>::NAME
+            | tables::HeaderTerminalDifficulties::NAME => Ok(self
                 .get_highest_static_file_block(StaticFileSegment::Headers)
                 .map(|block| block + 1)
                 .unwrap_or_default()

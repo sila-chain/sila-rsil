@@ -1,4 +1,4 @@
-use crate::{Capability, SilVersion, ProtocolVersion};
+use crate::{Capability, ProtocolVersion, SilVersion};
 use alloy_rlp::{RlpDecodable, RlpEncodable};
 use rsil_codecs::add_arbitrary_tests;
 use rsil_network_peers::PeerId;
@@ -229,8 +229,8 @@ impl HelloMessageBuilder {
 #[cfg(test)]
 mod tests {
     use crate::{
-        p2pstream::P2PMessage, Capability, SilVersion, HelloMessage, HelloMessageWithProtocols,
-        ProtocolVersion,
+        p2pstream::P2PMessage, Capability, HelloMessage, HelloMessageWithProtocols,
+        ProtocolVersion, SilVersion,
     };
     use alloy_rlp::{Decodable, Encodable, EMPTY_STRING_CODE};
     use rsil_network_peers::pk2id;

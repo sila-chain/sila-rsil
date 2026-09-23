@@ -1,7 +1,7 @@
 use alloy_primitives::B256;
+use ringbuffer::{AllocRingBuffer, RingBuffer};
 use rsil_node_api::{ConsensusEngineHandle, ExecutionPayload, PayloadTypes};
 use rsil_tracing::tracing::warn;
-use ringbuffer::{AllocRingBuffer, RingBuffer};
 use std::future::Future;
 use tokio::sync::mpsc;
 

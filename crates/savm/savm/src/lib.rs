@@ -19,19 +19,19 @@ extern crate alloc;
 
 use crate::execute::{BasicBlockBuilder, Executor};
 use alloc::{string::String, vec::Vec};
-use alloy_eips::sip4895::Withdrawals;
-use alloy_evm::{
+use alloy_primitives::{Address, Bytes, B256};
+use alloy_savm::{
     block::{BlockExecutorFactory, BlockExecutorFor},
     precompiles::PrecompilesMap,
 };
-use alloy_primitives::{Address, Bytes, B256};
+use alloy_sips::eip4895::Withdrawals;
 use core::{error::Error, fmt::Debug};
 use execute::{BasicBlockExecutor, BlockAssembler, BlockBuilder};
+use revm::{database::State, primitives::hardfork::SpecId};
 use rsil_execution_errors::BlockExecutionError;
 use rsil_primitives_traits::{
     BlockTy, HeaderTy, NodePrimitives, ReceiptTy, SealedBlock, SealedHeader, TxTy,
 };
-use revm::{database::State, primitives::hardfork::SpecId};
 
 pub mod either;
 /// SAVM environment configuration.
@@ -52,9 +52,9 @@ pub mod noop;
 /// test helpers for mocking executor
 pub mod test_utils;
 
-pub use alloy_evm::{
+pub use alloy_savm::{
     block::{state_changes, system_calls, OnStateHook},
-    *,
+    Evm as Savm, EvmEnv as SavmEnv, EvmFactory as SavmFactory, *,
 };
 
 /// A complete configuration of SAVM for Rsil.
@@ -176,7 +176,7 @@ pub use alloy_evm::{
 ///
 /// [`ExecutionCtx`]: BlockExecutorFactory::ExecutionCtx
 /// [`NextBlockEnvCtx`]: ConfigureEvm::NextBlockEnvCtx
-/// [`BlockExecutor`]: alloy_evm::block::BlockExecutor
+/// [`BlockExecutor`]: alloy_savm::block::BlockExecutor
 #[auto_impl::auto_impl(&, Arc)]
 pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
     /// The primitives type used by the SAVM.
@@ -195,7 +195,7 @@ pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
         Transaction = TxTy<Self::Primitives>,
         Receipt = ReceiptTy<Self::Primitives>,
         ExecutionCtx<'a>: Debug + Send,
-        SavmFactory: SavmFactory<
+        EvmFactory: SavmFactory<
             Tx: TransactionEnvMut
                     + FromRecoveredTx<TxTy<Self::Primitives>>
                     + FromTxWithEncoded<TxTy<Self::Primitives>>,
@@ -217,7 +217,8 @@ pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
     fn block_assembler(&self) -> &Self::BlockAssembler;
 
     /// Creates a new [`SavmEnv`] for the given header.
-    fn evm_env(&self, header: &HeaderTy<Self::Primitives>) -> Result<SavmEnvFor<Self>, Self::Error>;
+    fn evm_env(&self, header: &HeaderTy<Self::Primitives>)
+        -> Result<SavmEnvFor<Self>, Self::Error>;
 
     /// Returns the configured [`SavmEnv`] for `parent + 1` block.
     ///
@@ -374,7 +375,7 @@ pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
 
     /// Creates a [`BlockBuilder`]. Should be used when building a new block.
     ///
-    /// Block builder wraps an inner [`alloy_evm::block::BlockExecutor`] and has a similar
+    /// Block builder wraps an inner [`alloy_savm::block::BlockExecutor`] and has a similar
     /// interface. Builder collects all of the executed transactions, and once
     /// [`BlockBuilder::finish`] is called, it invokes the configured [`BlockAssembler`] to
     /// create a block.

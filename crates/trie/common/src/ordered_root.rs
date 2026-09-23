@@ -263,7 +263,7 @@ mod tests {
         use super::*;
         use alloy_consensus::{
             proofs::{calculate_receipt_root, calculate_transaction_root},
-            SilaReceipt, ReceiptWithBloom, Signed, TxLegacy,
+            ReceiptWithBloom, Signed, SilaReceipt, TxLegacy,
         };
         use alloy_eips::sip2718::Encodable2718;
         use alloy_primitives::Signature;

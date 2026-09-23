@@ -147,6 +147,6 @@ pub fn test_rpc_builder(
         .with_pool(TestPoolBuilder::default().into())
         .with_network(NoopNetwork::default())
         .with_executor(Runtime::test())
-        .with_evm_config(SilEvmConfig::sila-mainnet())
+        .with_evm_config(SilEvmConfig::sila_mainnet())
         .with_consensus(NoopConsensus::default())
 }

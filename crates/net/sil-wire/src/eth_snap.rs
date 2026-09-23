@@ -7,11 +7,11 @@
 
 use crate::{
     capability::SharedCapabilities,
-    errors::{SilStreamError, P2PStreamError},
+    errors::{P2PStreamError, SilStreamError},
     handshake::SilRlpxHandshake,
     message::SilBroadcastMessage,
-    Capability, SilMessage, SilNetworkPrimitives, SilStreamInner, SilVersion, NetworkPrimitives,
-    P2PStream, UnifiedStatus, HANDSHAKE_TIMEOUT,
+    Capability, NetworkPrimitives, P2PStream, SilMessage, SilNetworkPrimitives, SilStreamInner,
+    SilVersion, UnifiedStatus, HANDSHAKE_TIMEOUT,
 };
 use alloy_primitives::bytes::{Bytes, BytesMut};
 use futures::{Sink, SinkExt, Stream, StreamExt};
@@ -150,14 +150,14 @@ where
         };
 
         let Some(&id) = bytes.first() else {
-            return Poll::Ready(Some(Err(P2PStreamError::EmptyProtocolMessage.into())))
+            return Poll::Ready(Some(Err(P2PStreamError::EmptyProtocolMessage.into())));
         };
 
         // `sil` occupies ids below the snap offset and is decoded by the shared codec. Ids at or
         // above it are snap: rebased to snap-relative (`0x00..`) and validated by
         // `decode_versioned`, which rejects ids that are out of range or invalid for `snap/2`.
         let Some(snap_id) = id.checked_sub(this.snap_offset) else {
-            return Poll::Ready(Some(this.sil.decode_message(bytes).map(SilSnapMessage::Sil)))
+            return Poll::Ready(Some(this.sil.decode_message(bytes).map(SilSnapMessage::Sil)));
         };
         bytes[0] = snap_id;
         Poll::Ready(Some(
@@ -213,7 +213,7 @@ where
 /// general-purpose satellite multiplexer and are rejected here.
 fn eth_snap_layout(caps: &SharedCapabilities) -> Result<u8, SilStreamError> {
     if !caps.is_exact_eth_snap_v2() {
-        return Err(P2PStreamError::CapabilityNotShared.into())
+        return Err(P2PStreamError::CapabilityNotShared.into());
     }
     let snap = caps
         .ensure_matching_capability(&Capability::snap_2())
@@ -222,7 +222,7 @@ fn eth_snap_layout(caps: &SharedCapabilities) -> Result<u8, SilStreamError> {
 
     let sil = caps.sil()?;
     if sil.relative_message_id_offset() != 0 || sil.num_messages() != snap_offset {
-        return Err(P2PStreamError::CapabilityNotShared.into())
+        return Err(P2PStreamError::CapabilityNotShared.into());
     }
     Ok(snap_offset)
 }

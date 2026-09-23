@@ -3,8 +3,9 @@ use std::sync::Arc;
 use alloy_consensus::{constants::ETH_TO_WEI, BlockHeader, Header, TxEip2930};
 use alloy_genesis::{Genesis, GenesisAccount};
 use alloy_primitives::{b256, Address, TxKind, U256};
-use rsil_chainspec::{ChainSpec, ChainSpecBuilder, SilaHardfork, SILA_MAINNET, MIN_TRANSACTION_GAS};
-use rsil_sila_primitives::{Block, BlockBody, Receipt, Transaction};
+use rsil_chainspec::{
+    ChainSpec, ChainSpecBuilder, SilaHardfork, MIN_TRANSACTION_GAS, SILA_MAINNET,
+};
 use rsil_evm::{
     execute::{BlockExecutionOutput, Executor},
     ConfigureEvm,
@@ -17,6 +18,7 @@ use rsil_provider::{
     ProviderFactory,
 };
 use rsil_revm::database::StateProviderDatabase;
+use rsil_sila_primitives::{Block, BlockBody, Receipt, Transaction};
 use rsil_testing_utils::generators::sign_tx_with_key_pair;
 use rsil_trie_common::KeccakKeyHasher;
 use secp256k1::Keypair;
@@ -162,9 +164,7 @@ pub(crate) fn blocks_and_execution_outputs<N>(
     provider_factory: ProviderFactory<N>,
     chain_spec: Arc<ChainSpec>,
     key_pair: Keypair,
-) -> eyre::Result<
-    Vec<(RecoveredBlock<rsil_sila_primitives::Block>, BlockExecutionOutput<Receipt>)>,
->
+) -> eyre::Result<Vec<(RecoveredBlock<rsil_sila_primitives::Block>, BlockExecutionOutput<Receipt>)>>
 where
     N: ProviderNodeTypes<
         Primitives: NodePrimitives<

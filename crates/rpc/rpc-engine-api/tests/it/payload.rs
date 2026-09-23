@@ -8,8 +8,8 @@ use alloy_rpc_types_engine::{
     PayloadError,
 };
 use assert_matches::assert_matches;
-use rsil_sila_primitives::{Block, TransactionSigned};
 use rsil_primitives_traits::{proofs, SealedBlock};
+use rsil_sila_primitives::{Block, TransactionSigned};
 use rsil_testing_utils::generators::{
     self, random_block, random_block_range, BlockParams, BlockRangeParams, Rng,
 };

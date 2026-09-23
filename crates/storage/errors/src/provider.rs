@@ -1,16 +1,16 @@
 use crate::{any::AnyError, db::DatabaseError};
 use alloc::{boxed::Box, string::String};
-use alloy_eips::{BlockHashOrNumber, HashOrNumber};
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxNumber, B256};
+use alloy_sips::{BlockHashOrNumber, HashOrNumber};
 use derive_more::Display;
+use revm::{
+    database_interface::{bal::EvmDatabaseError as SavmDatabaseError, DBErrorMarker},
+    state::bal::BalError,
+};
 use rsil_codecs::DecompressError;
 use rsil_primitives_traits::{transaction::signed::RecoveryError, GotExpected};
 use rsil_prune_types::PruneSegmentError;
 use rsil_static_file_types::StaticFileSegment;
-use revm::{
-    database_interface::{bal::SavmDatabaseError, DBErrorMarker},
-    state::bal::BalError,
-};
 
 /// Provider result type.
 pub type ProviderResult<Ok> = Result<Ok, ProviderError>;

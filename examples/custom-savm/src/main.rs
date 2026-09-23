@@ -3,19 +3,26 @@
 #![warn(unused_crate_dependencies)]
 
 use alloy_evm::{
-    sil::SilEvmContext,
     precompiles::PrecompilesMap,
     revm::{
         context::DBErrorMarker,
         handler::SilPrecompiles,
         precompile::{Precompile, PrecompileId},
     },
+    sil::SilEvmContext,
     SavmFactory,
 };
 use alloy_genesis::Genesis;
 use alloy_primitives::{address, Bytes};
 use rsil_sila::{
     chainspec::{Chain, ChainSpec},
+    node::{
+        api::{FullNodeTypes, NodeTypes},
+        builder::{components::ExecutorBuilder, BuilderContext, NodeBuilder},
+        core::{args::RpcServerArgs, node_config::NodeConfig},
+        node::SilaAddOns,
+        SilaNode,
+    },
     savm::{
         primitives::{Database, SavmEnv},
         revm::{
@@ -28,13 +35,6 @@ use rsil_sila::{
             MainBuilder, MainContext,
         },
         SilEvm, SilEvmConfig,
-    },
-    node::{
-        api::{FullNodeTypes, NodeTypes},
-        builder::{components::ExecutorBuilder, BuilderContext, NodeBuilder},
-        core::{args::RpcServerArgs, node_config::NodeConfig},
-        node::SilaAddOns,
-        SilaNode,
     },
     tasks::Runtime,
     SilPrimitives,
@@ -60,7 +60,7 @@ impl SavmFactory for MyEvmFactory {
 
     fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Savm<DB, NoOpInspector> {
         let spec = input.cfg_env.spec;
-        let mut savm = Context::sila-mainnet()
+        let mut savm = Context::sila_mainnet()
             .with_db(db)
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
@@ -126,7 +126,7 @@ async fn main() -> eyre::Result<()> {
 
     // create a custom chain spec
     let spec = ChainSpec::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(Genesis::default())
         .london_activated()
         .paris_activated()

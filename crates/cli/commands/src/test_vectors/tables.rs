@@ -12,8 +12,8 @@ use rsil_db_api::{
     table::{DupSort, Table, TableRow},
     tables,
 };
-use rsil_sila_primitives::TransactionSigned;
 use rsil_fs_util as fs;
+use rsil_sila_primitives::TransactionSigned;
 use std::collections::HashSet;
 use tracing::error;
 
@@ -132,7 +132,7 @@ where
         let key: T::Key = start_keys.new_tree(runner).map_err(|e| eyre::eyre!("{e}"))?.current();
 
         if !seen_keys.insert(key.clone()) {
-            continue
+            continue;
         }
 
         let mut values: Vec<T::Value> =

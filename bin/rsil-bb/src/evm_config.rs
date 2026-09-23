@@ -20,16 +20,16 @@ use alloy_evm::{
 use alloy_primitives::B256;
 use alloy_rpc_types::engine::ExecutionData;
 use core::convert::Infallible;
+use revm::{primitives::hardfork::SpecId, state::bal::BlockAccessIndex};
 use rsil_chainspec::{ChainSpec, SilChainSpec};
+use rsil_evm::{
+    execute::BlockAssembler, ConfigureEngineEvm, ConfigureEvm, Database, ExecutableTxIterator,
+    ExecutionCtxFor, NextBlockEnvAttributes, SavmEnv, SavmEnvFor,
+};
+use rsil_evm_sila::{RsilReceiptBuilder, SilEvmConfig};
+use rsil_primitives_traits::{SealedBlock, SealedHeader, SignedTransaction, TxTy};
 use rsil_sila_forks::Hardforks;
 use rsil_sila_primitives::{Block, SilPrimitives};
-use rsil_evm::{
-    execute::BlockAssembler, ConfigureEngineEvm, ConfigureEvm, Database, SavmEnv, SavmEnvFor,
-    ExecutableTxIterator, ExecutionCtxFor, NextBlockEnvAttributes,
-};
-use rsil_evm_sila::{SilEvmConfig, RsilReceiptBuilder};
-use rsil_primitives_traits::{SealedBlock, SealedHeader, SignedTransaction, TxTy};
-use revm::{primitives::hardfork::SpecId, state::bal::BlockAccessIndex};
 use std::sync::Arc;
 
 // ---------------------------------------------------------------------------

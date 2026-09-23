@@ -3,13 +3,13 @@ use alloy_eips::BlockNumHash;
 use crossbeam_channel::Sender as CrossbeamSender;
 use rsil_chain_state::ExecutedBlock;
 use rsil_errors::ProviderError;
-use rsil_sila_primitives::SilPrimitives;
 use rsil_primitives_traits::{FastInstant as Instant, NodePrimitives};
 use rsil_provider::{
     providers::ProviderNodeTypes, BalProvider, BlockExecutionWriter, BlockHashReader,
     ChainStateBlockWriter, DBProvider, DatabaseProviderFactory, ProviderFactory, SaveBlocksMode,
 };
 use rsil_prune::{PrunerError, PrunerWithFactory};
+use rsil_sila_primitives::SilPrimitives;
 use rsil_stages_api::{MetricEvent, MetricEventsSender};
 use rsil_tasks::spawn_os_thread;
 use std::{

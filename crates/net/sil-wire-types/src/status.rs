@@ -1,10 +1,10 @@
 use crate::{BlockRangeUpdate, SilVersion};
 use alloy_chains::{Chain, NamedChain};
-use alloy_hardforks::{SilaHardfork, ForkId, Head};
+use alloy_hardforks::{EthereumHardfork as SilaHardfork, ForkId, Head};
 use alloy_primitives::{hex, B256, U256};
 use alloy_rlp::{BufMut, Encodable, RlpDecodable, RlpEncodable};
 use core::fmt::{Debug, Display};
-use rsil_chainspec::{SilChainSpec, Hardforks, SILA_MAINNET};
+use rsil_chainspec::{Hardforks, SilChainSpec, SILA_MAINNET};
 use rsil_codecs_derive::add_arbitrary_tests;
 
 /// `UnifiedStatus` is an internal superset of all SIL status fields for all `sil/` versions.
@@ -36,7 +36,7 @@ impl Default for UnifiedStatus {
         let mainnet_genesis = SILA_MAINNET.genesis_hash();
         Self {
             version: SilVersion::Sil68,
-            chain: Chain::from_named(NamedChain::SilaMainnet),
+            chain: Chain::from_named(NamedChain::Mainnet),
             genesis: mainnet_genesis,
             forkid: SILA_MAINNET
                 .hardfork_fork_id(SilaHardfork::Frontier)
@@ -260,7 +260,7 @@ impl Default for Status {
         let mainnet_genesis = SILA_MAINNET.genesis_hash();
         Self {
             version: SilVersion::Sil68,
-            chain: Chain::from_named(NamedChain::SilaMainnet),
+            chain: Chain::from_named(NamedChain::Mainnet),
             total_difficulty: U256::from(17_179_869_184u64),
             blockhash: mainnet_genesis,
             genesis: mainnet_genesis,
@@ -473,7 +473,7 @@ mod tests {
     use crate::{BlockRangeUpdate, SilVersion, Status, StatusEth69, StatusMessage, UnifiedStatus};
     use alloy_consensus::constants::MAINNET_GENESIS_HASH;
     use alloy_genesis::Genesis;
-    use alloy_hardforks::{SilaHardfork, ForkHash, ForkId, Head};
+    use alloy_hardforks::{EthereumHardfork as SilaHardfork, ForkHash, ForkId, Head};
     use alloy_primitives::{b256, hex, B256, U256};
     use alloy_rlp::{Decodable, Encodable};
     use rand::Rng;
@@ -487,7 +487,7 @@ mod tests {
         );
         let status = Status {
             version: SilVersion::Sil67,
-            chain: Chain::from_named(NamedChain::SilaMainnet),
+            chain: Chain::from_named(NamedChain::Mainnet),
             total_difficulty: U256::from(36206751599115524359527u128),
             blockhash: B256::from_str(
                 "feb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d",
@@ -509,7 +509,7 @@ mod tests {
         );
         let expected = Status {
             version: SilVersion::Sil67,
-            chain: Chain::from_named(NamedChain::SilaMainnet),
+            chain: Chain::from_named(NamedChain::Mainnet),
             total_difficulty: U256::from(36206751599115524359527u128),
             blockhash: B256::from_str(
                 "feb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d",
@@ -526,7 +526,7 @@ mod tests {
     fn roundtrip_eth69() {
         let unified_status = UnifiedStatus::builder()
             .version(SilVersion::Sil69)
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(MAINNET_GENESIS_HASH)
             .forkid(ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 })
             .blockhash(b256!("0xfeb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d"))
@@ -563,7 +563,7 @@ mod tests {
     fn roundtrip_eth70() {
         let unified_status = UnifiedStatus::builder()
             .version(SilVersion::Sil70)
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(MAINNET_GENESIS_HASH)
             .forkid(ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 })
             .blockhash(b256!("0xfeb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d"))
@@ -606,7 +606,7 @@ mod tests {
         let expected = hex!("f8544501a0d4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3c684b715077d8083ed14f2840112a880a0feb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d");
         let status = StatusEth69 {
             version: SilVersion::Sil69,
-            chain: Chain::from_named(NamedChain::SilaMainnet),
+            chain: Chain::from_named(NamedChain::Mainnet),
 
             genesis: MAINNET_GENESIS_HASH,
             forkid: ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 },
@@ -624,7 +624,7 @@ mod tests {
 
         let status = UnifiedStatus::builder()
             .version(SilVersion::Sil69)
-            .chain(Chain::from_named(NamedChain::SilaMainnet))
+            .chain(Chain::from_named(NamedChain::Mainnet))
             .genesis(MAINNET_GENESIS_HASH)
             .forkid(ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 })
             .blockhash(b256!("0xfeb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d"))
@@ -643,7 +643,7 @@ mod tests {
         let data =  hex!("f8544501a0d4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3c684b715077d8083ed14f2840112a880a0feb27336ca7923f8fab3bd617fcb6e75841538f71c1bcfc267d7838489d9e13d");
         let expected = StatusEth69 {
             version: SilVersion::Sil69,
-            chain: Chain::from_named(NamedChain::SilaMainnet),
+            chain: Chain::from_named(NamedChain::Mainnet),
             genesis: MAINNET_GENESIS_HASH,
             forkid: ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 },
             earliest: 15_537_394,
@@ -658,7 +658,7 @@ mod tests {
 
         let expected_message = UnifiedStatus::builder()
             .version(SilVersion::Sil69)
-            .chain(Chain::from_named(NamedChain::SilaMainnet))
+            .chain(Chain::from_named(NamedChain::Mainnet))
             .genesis(MAINNET_GENESIS_HASH)
             .forkid(ForkId { hash: ForkHash([0xb7, 0x15, 0x07, 0x7d]), next: 0 })
             .earliest_block(Some(15_537_394))
@@ -775,7 +775,7 @@ mod tests {
             (SilaHardfork::Byzantium, ForkCondition::Block(3)),
             (SilaHardfork::MuirGlacier, ForkCondition::Block(5)),
             (SilaHardfork::London, ForkCondition::Block(8)),
-            (SilaHardfork::SilaShanghai, ForkCondition::Timestamp(13)),
+            (SilaHardfork::Shanghai, ForkCondition::Timestamp(13)),
         ];
 
         let mut chainspec = ChainSpec::builder().genesis(genesis).chain(Chain::from_id(1337));

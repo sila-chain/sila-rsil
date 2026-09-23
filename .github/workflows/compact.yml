@@ -1,9 +1,9 @@
 # Ensures that `Compact` codec changes are backwards compatible.
 #
-# 1) checkout `main`
-# 2) randomly generate and serialize to disk many different type vectors with `Compact` (eg. Header, Transaction, etc)
-# 3) checkout `pr`
-# 4) deserialize previously generated test vectors
+# 1) checkout the original Sila v2.4.0 identity snapshot authority
+# 2) randomly generate and serialize to disk many different type vectors with `Compact`
+# 3) checkout the Sila PR
+# 4) deserialize the baseline Sila-compatible vectors with current Rsil
 
 on:
   pull_request:
@@ -20,13 +20,9 @@ permissions: {}
 
 jobs:
   compact-codec:
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
-    strategy:
-      matrix:
-        bin:
-          - cargo run --bin rsil --features "dev"
     steps:
       - name: Checkout PR
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -39,20 +35,19 @@ jobs:
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           cache-on-failure: true
-      - name: Checkout base
+      - name: Checkout pinned buildable Sila v2.4.0 compatibility authority
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          ref: ${{ github.base_ref || 'main' }}
+          repository: sila-chain/sila-rsil
+          ref: d90acb5d2661a06cf3575fcde3e7124763138ed7
           persist-credentials: false
-      # On `main` branch, generates test vectors and serializes them to disk using `Compact`.
-      - name: Generate compact vectors
-        run: |
-          ${{ matrix.bin }} -- test-vectors compact --write
+      - name: Generate baseline Sila compact vectors
+        run: cargo run --bin rsil --features "dev" -- test-vectors compact --write
       - name: Checkout PR
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           clean: false
           persist-credentials: false
-      # On incoming merge try to read and decode previously generated vectors with `Compact`
+      # Read and decode the original Sila snapshot vectors with the current Sila build.
       - name: Read vectors
-        run: ${{ matrix.bin }} -- test-vectors compact --read
+        run: cargo run --bin rsil --features "dev" -- test-vectors compact --read

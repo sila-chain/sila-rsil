@@ -1,7 +1,7 @@
 use crate::{
     error::BeaconForkChoiceUpdateError, BeaconOnNewPayloadError, ExecutionPayload, ForkchoiceStatus,
 };
-use alloy_eips::sip4895::Withdrawal;
+use alloy_eips::eip4895::Withdrawal;
 use alloy_primitives::{Bytes, B256};
 use alloy_rpc_types_engine::{
     ExecutionData, ForkChoiceUpdateResult, ForkchoiceState, ForkchoiceUpdateError,

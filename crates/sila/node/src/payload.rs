@@ -1,14 +1,14 @@
 //! Payload component configuration for the Sila node.
 
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
-use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};
-use rsil_sila_payload_builder::SilaBuilderConfig;
-use rsil_sila_primitives::SilPrimitives;
 use rsil_evm::ConfigureEvm;
 use rsil_node_api::{FullNodeTypes, NodeTypes, PrimitivesTy, TxTy};
 use rsil_node_builder::{
     components::PayloadBuilderBuilder, BuilderContext, PayloadBuilderConfig, PayloadTypes,
 };
+use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};
+use rsil_sila_payload_builder::SilaBuilderConfig;
+use rsil_sila_primitives::SilPrimitives;
 use rsil_transaction_pool::{PoolTransaction, TransactionPool};
 
 /// A basic sila payload service.
@@ -30,8 +30,7 @@ where
     Types::Payload:
         PayloadTypes<BuiltPayload = SilBuiltPayload, PayloadAttributes = SilPayloadAttributes>,
 {
-    type PayloadBuilder =
-        rsil_sila_payload_builder::SilaPayloadBuilder<Pool, Node::Provider, Savm>;
+    type PayloadBuilder = rsil_sila_payload_builder::SilaPayloadBuilder<Pool, Node::Provider, Savm>;
 
     async fn build_payload_builder(
         self,

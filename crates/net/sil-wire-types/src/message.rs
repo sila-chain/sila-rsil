@@ -13,9 +13,9 @@ use super::{
     PooledTransactions, Receipts, Status, StatusEth69, Transactions,
 };
 use crate::{
-    status::StatusMessage, BlockRangeUpdate, BroadcastPoolTransactions, Cells,
-    SilNetworkPrimitives, SilVersion, GetCells, NetworkPrimitives, NewPooledTransactionHashes72,
-    RawCapabilityMessage, Receipts69, Receipts70, SharedTransactions,
+    status::StatusMessage, BlockRangeUpdate, BroadcastPoolTransactions, Cells, GetCells,
+    NetworkPrimitives, NewPooledTransactionHashes72, RawCapabilityMessage, Receipts69, Receipts70,
+    SharedTransactions, SilNetworkPrimitives, SilVersion,
 };
 use alloc::{boxed::Box, string::String, sync::Arc};
 use alloy_primitives::{
@@ -81,7 +81,7 @@ impl<N: NetworkPrimitives> ProtocolMessage<N> {
         let message_type = SilMessageID::decode(buf)?;
 
         if message_type != SilMessageID::Status {
-            return Err(MessageError::ExpectedStatusMessage(message_type))
+            return Err(MessageError::ExpectedStatusMessage(message_type));
         }
 
         let status = if version < SilVersion::Sil69 {
@@ -158,13 +158,13 @@ impl<N: NetworkPrimitives> ProtocolMessage<N> {
             }
             SilMessageID::GetNodeData => {
                 if version >= SilVersion::Sil67 {
-                    return Err(MessageError::Invalid(version, SilMessageID::GetNodeData))
+                    return Err(MessageError::Invalid(version, SilMessageID::GetNodeData));
                 }
                 SilMessage::GetNodeData(RequestPair::decode(buf)?)
             }
             SilMessageID::NodeData => {
                 if version >= SilVersion::Sil67 {
-                    return Err(MessageError::Invalid(version, SilMessageID::NodeData))
+                    return Err(MessageError::Invalid(version, SilMessageID::NodeData));
                 }
                 SilMessage::NodeData(RequestPair::decode(buf)?)
             }
@@ -195,31 +195,31 @@ impl<N: NetworkPrimitives> ProtocolMessage<N> {
             }
             SilMessageID::BlockRangeUpdate => {
                 if version < SilVersion::Sil69 {
-                    return Err(MessageError::Invalid(version, SilMessageID::BlockRangeUpdate))
+                    return Err(MessageError::Invalid(version, SilMessageID::BlockRangeUpdate));
                 }
                 SilMessage::BlockRangeUpdate(BlockRangeUpdate::decode(buf)?)
             }
             SilMessageID::GetBlockAccessLists => {
                 if version < SilVersion::Sil71 {
-                    return Err(MessageError::Invalid(version, SilMessageID::GetBlockAccessLists))
+                    return Err(MessageError::Invalid(version, SilMessageID::GetBlockAccessLists));
                 }
                 SilMessage::GetBlockAccessLists(RequestPair::decode(buf)?)
             }
             SilMessageID::BlockAccessLists => {
                 if version < SilVersion::Sil71 {
-                    return Err(MessageError::Invalid(version, SilMessageID::BlockAccessLists))
+                    return Err(MessageError::Invalid(version, SilMessageID::BlockAccessLists));
                 }
                 SilMessage::BlockAccessLists(RequestPair::decode(buf)?)
             }
             SilMessageID::Cells => {
                 if version < SilVersion::Sil72 {
-                    return Err(MessageError::Invalid(version, SilMessageID::Cells))
+                    return Err(MessageError::Invalid(version, SilMessageID::Cells));
                 }
                 SilMessage::Cells(RequestPair::decode(buf)?)
             }
             SilMessageID::GetCells => {
                 if version < SilVersion::Sil72 {
-                    return Err(MessageError::Invalid(version, SilMessageID::GetCells))
+                    return Err(MessageError::Invalid(version, SilMessageID::GetCells));
                 }
                 SilMessage::GetCells(RequestPair::decode(buf)?)
             }
@@ -418,9 +418,9 @@ impl<N: NetworkPrimitives> SilMessage<N> {
             Self::NewBlockHashes(_) => SilMessageID::NewBlockHashes,
             Self::NewBlock(_) => SilMessageID::NewBlock,
             Self::Transactions(_) => SilMessageID::Transactions,
-            Self::NewPooledTransactionHashes66(_) |
-            Self::NewPooledTransactionHashes68(_) |
-            Self::NewPooledTransactionHashes72(_) => SilMessageID::NewPooledTransactionHashes,
+            Self::NewPooledTransactionHashes66(_)
+            | Self::NewPooledTransactionHashes68(_)
+            | Self::NewPooledTransactionHashes72(_) => SilMessageID::NewPooledTransactionHashes,
             Self::GetBlockHeaders(_) => SilMessageID::GetBlockHeaders,
             Self::BlockHeaders(_) => SilMessageID::BlockHeaders,
             Self::GetBlockBodies(_) => SilMessageID::GetBlockBodies,
@@ -444,14 +444,14 @@ impl<N: NetworkPrimitives> SilMessage<N> {
     pub const fn is_request(&self) -> bool {
         matches!(
             self,
-            Self::GetBlockBodies(_) |
-                Self::GetBlockHeaders(_) |
-                Self::GetReceipts(_) |
-                Self::GetReceipts70(_) |
-                Self::GetBlockAccessLists(_) |
-                Self::GetCells(_) |
-                Self::GetPooledTransactions(_) |
-                Self::GetNodeData(_)
+            Self::GetBlockBodies(_)
+                | Self::GetBlockHeaders(_)
+                | Self::GetReceipts(_)
+                | Self::GetReceipts70(_)
+                | Self::GetBlockAccessLists(_)
+                | Self::GetCells(_)
+                | Self::GetPooledTransactions(_)
+                | Self::GetNodeData(_)
         )
     }
 
@@ -459,15 +459,15 @@ impl<N: NetworkPrimitives> SilMessage<N> {
     pub const fn is_response(&self) -> bool {
         matches!(
             self,
-            Self::PooledTransactions(_) |
-                Self::Receipts(_) |
-                Self::Receipts69(_) |
-                Self::Receipts70(_) |
-                Self::BlockAccessLists(_) |
-                Self::BlockHeaders(_) |
-                Self::BlockBodies(_) |
-                Self::NodeData(_) |
-                Self::Cells(_)
+            Self::PooledTransactions(_)
+                | Self::Receipts(_)
+                | Self::Receipts69(_)
+                | Self::Receipts70(_)
+                | Self::BlockAccessLists(_)
+                | Self::BlockHeaders(_)
+                | Self::BlockBodies(_)
+                | Self::NodeData(_)
+                | Self::Cells(_)
         )
     }
 
@@ -493,7 +493,7 @@ impl<N: NetworkPrimitives> SilMessage<N> {
                     Self::GetReceipts70(req)
                 }
                 other => other,
-            }
+            };
         }
 
         self
@@ -834,7 +834,7 @@ impl<T> RequestPair<T> {
 
         let consumed_len = initial_length - buf.len();
         if consumed_len != header.payload_length {
-            return Err(alloy_rlp::Error::UnexpectedLength)
+            return Err(alloy_rlp::Error::UnexpectedLength);
         }
 
         Ok(Self { request_id, message })
@@ -880,7 +880,7 @@ where
         // RequestPair
         let consumed_len = initial_length - buf.len();
         if consumed_len != header.payload_length {
-            return Err(alloy_rlp::Error::UnexpectedLength)
+            return Err(alloy_rlp::Error::UnexpectedLength);
         }
 
         Ok(Self { request_id, message })
@@ -891,9 +891,9 @@ where
 mod tests {
     use super::MessageError;
     use crate::{
-        message::RequestPair, BlockAccessLists, SilMessage, SilMessageID, SilNetworkPrimitives,
-        SilVersion, GetBlockAccessLists, GetNodeData, NodeData, ProtocolMessage,
-        RawCapabilityMessage,
+        message::RequestPair, BlockAccessLists, GetBlockAccessLists, GetNodeData, NodeData,
+        ProtocolMessage, RawCapabilityMessage, SilMessage, SilMessageID, SilNetworkPrimitives,
+        SilVersion,
     };
     use alloy_primitives::hex;
     use alloy_rlp::{Decodable, Encodable, Error};
@@ -1120,7 +1120,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil68,
-            chain: alloy_chains::Chain::sila-mainnet(),
+            chain: alloy_chains::Chain::sila_mainnet(),
             total_difficulty: U256::from(100u64),
             blockhash: B256::random(),
             genesis: B256::random(),

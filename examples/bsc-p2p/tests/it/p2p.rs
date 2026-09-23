@@ -5,7 +5,7 @@ use example_bsc_p2p::{
 use rsil_chainspec::NamedChain;
 use rsil_discv4::Discv4ConfigBuilder;
 use rsil_network::{
-    SilNetworkPrimitives, NetworkConfig, NetworkEvent, NetworkEventListenerProvider, NetworkManager,
+    NetworkConfig, NetworkEvent, NetworkEventListenerProvider, NetworkManager, SilNetworkPrimitives,
 };
 use rsil_provider::noop::NoopProvider;
 use rsil_tasks::Runtime;

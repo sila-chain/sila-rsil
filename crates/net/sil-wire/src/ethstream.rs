@@ -9,13 +9,13 @@ use crate::{
     handshake::SilaEthHandshake,
     message::{SilBroadcastMessage, MAX_MESSAGE_SIZE, TX_MEMORY_BUDGET_MULTIPLIER},
     p2pstream::HANDSHAKE_TIMEOUT,
-    CanDisconnect, DisconnectReason, SilMessage, SilNetworkPrimitives, SilVersion, ProtocolMessage,
+    CanDisconnect, DisconnectReason, ProtocolMessage, SilMessage, SilNetworkPrimitives, SilVersion,
     UnifiedStatus,
 };
 use alloy_primitives::bytes::{Bytes, BytesMut};
 use futures::{ready, Sink, SinkExt};
 use pin_project::pin_project;
-use rsil_eth_wire_types::{SilMessageID, NetworkPrimitives, RawCapabilityMessage};
+use rsil_eth_wire_types::{NetworkPrimitives, RawCapabilityMessage, SilMessageID};
 use rsil_sila_forks::ForkFilter;
 use std::{
     future::Future,
@@ -150,9 +150,9 @@ where
             return Err(SilStreamError::MessageTooBig(bytes.len()));
         }
 
-        if self.reject_block_announcements &&
-            let Some(&id) = bytes.first() &&
-            (id == SilMessageID::NewBlock.to_u8() || id == SilMessageID::NewBlockHashes.to_u8())
+        if self.reject_block_announcements
+            && let Some(&id) = bytes.first()
+            && (id == SilMessageID::NewBlock.to_u8() || id == SilMessageID::NewBlockHashes.to_u8())
         {
             return Err(SilStreamError::UnsupportedMessage { message_id: id });
         }
@@ -320,7 +320,7 @@ where
             // but we can start the disconnect process. The actual disconnect will be handled
             // asynchronously by the caller or the stream's poll methods.
             let _disconnect_future = this.inner.disconnect(DisconnectReason::ProtocolBreach);
-            return Err(SilStreamError::SilHandshakeError(SilHandshakeError::StatusNotInHandshake))
+            return Err(SilStreamError::SilHandshakeError(SilHandshakeError::StatusNotInHandshake));
         }
 
         self.project()
@@ -362,8 +362,8 @@ mod tests {
         ethstream::RawCapabilityMessage,
         hello::DEFAULT_TCP_PORT,
         p2pstream::UnauthedP2PStream,
-        SilMessage, SilStream, SilVersion, HelloMessageWithProtocols, PassthroughCodec,
-        ProtocolVersion, Status, StatusMessage,
+        HelloMessageWithProtocols, PassthroughCodec, ProtocolVersion, SilMessage, SilStream,
+        SilVersion, Status, StatusMessage,
     };
     use alloy_chains::NamedChain;
     use alloy_primitives::{bytes::Bytes, B256, U256};
@@ -371,8 +371,8 @@ mod tests {
     use futures::{SinkExt, StreamExt};
     use rsil_ecies::stream::ECIESStream;
     use rsil_eth_wire_types::{SilNetworkPrimitives, UnifiedStatus};
-    use rsil_sila_forks::{ForkFilter, Head};
     use rsil_network_peers::pk2id;
+    use rsil_sila_forks::{ForkFilter, Head};
     use secp256k1::{SecretKey, SECP256K1};
     use std::time::Duration;
     use tokio::net::{TcpListener, TcpStream};

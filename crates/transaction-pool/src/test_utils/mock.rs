@@ -4,35 +4,35 @@ use crate::{
     identifier::{SenderIdentifiers, TransactionId},
     pool::txpool::TxPool,
     traits::TransactionOrigin,
-    CoinbaseTipOrdering, SilBlobTransactionSidecar, SilPoolTransaction, PoolTransaction,
+    CoinbaseTipOrdering, PoolTransaction, SilBlobTransactionSidecar, SilPoolTransaction,
     ValidPoolTransaction,
 };
 use alloy_consensus::{
     constants::{
-        SIP1559_TX_TYPE_ID, SIP2930_TX_TYPE_ID, SIP4844_TX_TYPE_ID, SIP7702_TX_TYPE_ID,
-        LEGACY_TX_TYPE_ID,
+        LEGACY_TX_TYPE_ID, EIP1559_TX_TYPE_ID, EIP2930_TX_TYPE_ID, EIP4844_TX_TYPE_ID,
+        EIP7702_TX_TYPE_ID,
     },
-    SilaTxEnvelope, Signed, TxEip1559, TxEip2930, TxEip4844, TxEip4844Variant, TxEip7702,
-    TxLegacy, TxType, Typed2718,
+    Signed, EthereumTxEnvelope as SilaTxEnvelope, TxEip1559, TxEip2930, TxEip4844, TxEip4844Variant, TxEip7702, TxLegacy,
+    TxType, Typed2718,
 };
-use alloy_eips::{
-    sip1559::MIN_PROTOCOL_BASE_FEE,
-    sip2930::AccessList,
-    sip4844::{BlobTransactionSidecar, BlobTransactionValidationError, DATA_GAS_PER_BLOB},
-    sip7594::BlobTransactionSidecarVariant,
-    sip7702::SignedAuthorization,
+use alloy_sips::{
+    eip1559::MIN_PROTOCOL_BASE_FEE,
+    eip2930::AccessList,
+    eip4844::{BlobTransactionSidecar, BlobTransactionValidationError, DATA_GAS_PER_BLOB},
+    eip7594::BlobTransactionSidecarVariant,
+    eip7702::SignedAuthorization,
 };
 use alloy_primitives::{Address, Bytes, ChainId, Signature, TxHash, TxKind, B256, U256};
 use paste::paste;
 use rand::{distr::Uniform, prelude::Distribution};
-use rsil_sila_primitives::{PooledTransactionVariant, Transaction, TransactionSigned};
 use rsil_primitives_traits::{
     transaction::error::TryFromRecoveredTransactionError, InMemorySize, Recovered,
     SignedTransaction,
 };
+use rsil_sila_primitives::{PooledTransactionVariant, Transaction, TransactionSigned};
 
 use alloy_consensus::error::ValueError;
-use alloy_eips::sip4844::env_settings::KzgSettings;
+use alloy_sips::eip4844::env_settings::KzgSettings;
 use rand::distr::weighted::WeightedIndex;
 use std::{ops::Range, sync::Arc, time::Instant, vec::IntoIter};
 
@@ -81,11 +81,11 @@ macro_rules! set_value {
     ($this:expr => $field:ident) => {{
         let new_value = $field;
         match $this {
-            MockTransaction::Legacy { ref mut $field, .. } |
-            MockTransaction::Sip1559 { ref mut $field, .. } |
-            MockTransaction::Sip4844 { ref mut $field, .. } |
-            MockTransaction::Sip2930 { ref mut $field, .. } |
-            MockTransaction::Sip7702 { ref mut $field, .. } => {
+            MockTransaction::Legacy { ref mut $field, .. }
+            | MockTransaction::Sip1559 { ref mut $field, .. }
+            | MockTransaction::Sip4844 { ref mut $field, .. }
+            | MockTransaction::Sip2930 { ref mut $field, .. }
+            | MockTransaction::Sip7702 { ref mut $field, .. } => {
                 *$field = new_value;
             }
         }
@@ -98,11 +98,11 @@ macro_rules! set_value {
 macro_rules! get_value {
     ($this:tt => $field:ident) => {
         match $this {
-            MockTransaction::Legacy { $field, .. } |
-            MockTransaction::Sip1559 { $field, .. } |
-            MockTransaction::Sip4844 { $field, .. } |
-            MockTransaction::Sip2930 { $field, .. } |
-            MockTransaction::Sip7702 { $field, .. } => $field,
+            MockTransaction::Legacy { $field, .. }
+            | MockTransaction::Sip1559 { $field, .. }
+            | MockTransaction::Sip4844 { $field, .. }
+            | MockTransaction::Sip2930 { $field, .. }
+            | MockTransaction::Sip7702 { $field, .. } => $field,
         }
     };
 }
@@ -385,7 +385,7 @@ impl MockTransaction {
             value: Default::default(),
             input: Bytes::new(),
             access_list: Default::default(),
-            sidecar: BlobTransactionSidecarVariant::Sip4844(Default::default()),
+            sidecar: BlobTransactionSidecarVariant::Eip4844(Default::default()),
             blob_versioned_hashes: Default::default(),
             size: Default::default(),
             cost: U256::ZERO,
@@ -415,10 +415,10 @@ impl MockTransaction {
     pub fn new_from_type(tx_type: TxType) -> Self {
         match tx_type {
             TxType::Legacy => Self::legacy(),
-            TxType::Sip2930 => Self::sip2930(),
-            TxType::Sip1559 => Self::sip1559(),
-            TxType::Sip4844 => Self::sip4844(),
-            TxType::Sip7702 => Self::sip7702(),
+            TxType::Eip2930 => Self::sip2930(),
+            TxType::Eip1559 => Self::sip1559(),
+            TxType::Eip4844 => Self::sip4844(),
+            TxType::Eip7702 => Self::sip7702(),
         }
     }
 
@@ -446,8 +446,8 @@ impl MockTransaction {
 
     /// Sets the priority fee for dynamic fee transactions (SIP-1559 and SIP-4844)
     pub const fn set_priority_fee(&mut self, val: u128) -> &mut Self {
-        if let Self::Sip1559 { max_priority_fee_per_gas, .. } |
-        Self::Sip4844 { max_priority_fee_per_gas, .. } = self
+        if let Self::Sip1559 { max_priority_fee_per_gas, .. }
+        | Self::Sip4844 { max_priority_fee_per_gas, .. } = self
         {
             *max_priority_fee_per_gas = val;
         }
@@ -463,18 +463,18 @@ impl MockTransaction {
     /// Gets the priority fee for dynamic fee transactions (SIP-1559 and SIP-4844)
     pub const fn get_priority_fee(&self) -> Option<u128> {
         match self {
-            Self::Sip1559 { max_priority_fee_per_gas, .. } |
-            Self::Sip4844 { max_priority_fee_per_gas, .. } |
-            Self::Sip7702 { max_priority_fee_per_gas, .. } => Some(*max_priority_fee_per_gas),
+            Self::Sip1559 { max_priority_fee_per_gas, .. }
+            | Self::Sip4844 { max_priority_fee_per_gas, .. }
+            | Self::Sip7702 { max_priority_fee_per_gas, .. } => Some(*max_priority_fee_per_gas),
             _ => None,
         }
     }
 
     /// Sets the max fee for dynamic fee transactions (SIP-1559 and SIP-4844)
     pub const fn set_max_fee(&mut self, val: u128) -> &mut Self {
-        if let Self::Sip1559 { max_fee_per_gas, .. } |
-        Self::Sip4844 { max_fee_per_gas, .. } |
-        Self::Sip7702 { max_fee_per_gas, .. } = self
+        if let Self::Sip1559 { max_fee_per_gas, .. }
+        | Self::Sip4844 { max_fee_per_gas, .. }
+        | Self::Sip7702 { max_fee_per_gas, .. } = self
         {
             *max_fee_per_gas = val;
         }
@@ -490,9 +490,9 @@ impl MockTransaction {
     /// Gets the max fee for dynamic fee transactions (SIP-1559 and SIP-4844)
     pub const fn get_max_fee(&self) -> Option<u128> {
         match self {
-            Self::Sip1559 { max_fee_per_gas, .. } |
-            Self::Sip4844 { max_fee_per_gas, .. } |
-            Self::Sip7702 { max_fee_per_gas, .. } => Some(*max_fee_per_gas),
+            Self::Sip1559 { max_fee_per_gas, .. }
+            | Self::Sip4844 { max_fee_per_gas, .. }
+            | Self::Sip7702 { max_fee_per_gas, .. } => Some(*max_fee_per_gas),
             _ => None,
         }
     }
@@ -501,10 +501,10 @@ impl MockTransaction {
     pub fn set_accesslist(&mut self, list: AccessList) -> &mut Self {
         match self {
             Self::Legacy { .. } => {}
-            Self::Sip1559 { access_list: accesslist, .. } |
-            Self::Sip4844 { access_list: accesslist, .. } |
-            Self::Sip2930 { access_list: accesslist, .. } |
-            Self::Sip7702 { access_list: accesslist, .. } => {
+            Self::Sip1559 { access_list: accesslist, .. }
+            | Self::Sip4844 { access_list: accesslist, .. }
+            | Self::Sip2930 { access_list: accesslist, .. }
+            | Self::Sip7702 { access_list: accesslist, .. } => {
                 *accesslist = list;
             }
         }
@@ -526,9 +526,9 @@ impl MockTransaction {
             Self::Legacy { gas_price, .. } | Self::Sip2930 { gas_price, .. } => {
                 *gas_price = val;
             }
-            Self::Sip1559 { max_fee_per_gas, max_priority_fee_per_gas, .. } |
-            Self::Sip4844 { max_fee_per_gas, max_priority_fee_per_gas, .. } |
-            Self::Sip7702 { max_fee_per_gas, max_priority_fee_per_gas, .. } => {
+            Self::Sip1559 { max_fee_per_gas, max_priority_fee_per_gas, .. }
+            | Self::Sip4844 { max_fee_per_gas, max_priority_fee_per_gas, .. }
+            | Self::Sip7702 { max_fee_per_gas, max_priority_fee_per_gas, .. } => {
                 *max_fee_per_gas = val;
                 *max_priority_fee_per_gas = val;
             }
@@ -542,9 +542,9 @@ impl MockTransaction {
             Self::Legacy { ref mut gas_price, .. } | Self::Sip2930 { ref mut gas_price, .. } => {
                 *gas_price = val;
             }
-            Self::Sip1559 { ref mut max_fee_per_gas, ref mut max_priority_fee_per_gas, .. } |
-            Self::Sip4844 { ref mut max_fee_per_gas, ref mut max_priority_fee_per_gas, .. } |
-            Self::Sip7702 { ref mut max_fee_per_gas, ref mut max_priority_fee_per_gas, .. } => {
+            Self::Sip1559 { ref mut max_fee_per_gas, ref mut max_priority_fee_per_gas, .. }
+            | Self::Sip4844 { ref mut max_fee_per_gas, ref mut max_priority_fee_per_gas, .. }
+            | Self::Sip7702 { ref mut max_fee_per_gas, ref mut max_priority_fee_per_gas, .. } => {
                 *max_fee_per_gas = val;
                 *max_priority_fee_per_gas = val;
             }
@@ -556,9 +556,9 @@ impl MockTransaction {
     pub const fn get_gas_price(&self) -> u128 {
         match self {
             Self::Legacy { gas_price, .. } | Self::Sip2930 { gas_price, .. } => *gas_price,
-            Self::Sip1559 { max_fee_per_gas, .. } |
-            Self::Sip4844 { max_fee_per_gas, .. } |
-            Self::Sip7702 { max_fee_per_gas, .. } => *max_fee_per_gas,
+            Self::Sip1559 { max_fee_per_gas, .. }
+            | Self::Sip4844 { max_fee_per_gas, .. }
+            | Self::Sip7702 { max_fee_per_gas, .. } => *max_fee_per_gas,
         }
     }
 
@@ -658,10 +658,10 @@ impl MockTransaction {
     pub const fn tx_type(&self) -> u8 {
         match self {
             Self::Legacy { .. } => LEGACY_TX_TYPE_ID,
-            Self::Sip1559 { .. } => SIP1559_TX_TYPE_ID,
-            Self::Sip4844 { .. } => SIP4844_TX_TYPE_ID,
-            Self::Sip2930 { .. } => SIP2930_TX_TYPE_ID,
-            Self::Sip7702 { .. } => SIP7702_TX_TYPE_ID,
+            Self::Sip1559 { .. } => EIP1559_TX_TYPE_ID,
+            Self::Sip4844 { .. } => EIP4844_TX_TYPE_ID,
+            Self::Sip2930 { .. } => EIP2930_TX_TYPE_ID,
+            Self::Sip7702 { .. } => EIP7702_TX_TYPE_ID,
         }
     }
 
@@ -692,13 +692,13 @@ impl MockTransaction {
 
     fn update_cost(&mut self) {
         match self {
-            Self::Legacy { cost, gas_limit, gas_price, value, .. } |
-            Self::Sip2930 { cost, gas_limit, gas_price, value, .. } => {
+            Self::Legacy { cost, gas_limit, gas_price, value, .. }
+            | Self::Sip2930 { cost, gas_limit, gas_price, value, .. } => {
                 *cost = U256::from(*gas_limit) * U256::from(*gas_price) + *value
             }
-            Self::Sip1559 { cost, gas_limit, max_fee_per_gas, value, .. } |
-            Self::Sip4844 { cost, gas_limit, max_fee_per_gas, value, .. } |
-            Self::Sip7702 { cost, gas_limit, max_fee_per_gas, value, .. } => {
+            Self::Sip1559 { cost, gas_limit, max_fee_per_gas, value, .. }
+            | Self::Sip4844 { cost, gas_limit, max_fee_per_gas, value, .. }
+            | Self::Sip7702 { cost, gas_limit, max_fee_per_gas, value, .. } => {
                 *cost = U256::from(*gas_limit) * U256::from(*max_fee_per_gas) + *value
             }
         };
@@ -742,11 +742,11 @@ impl PoolTransaction for MockTransaction {
     // not to be manually set.
     fn cost(&self) -> &U256 {
         match self {
-            Self::Legacy { cost, .. } |
-            Self::Sip2930 { cost, .. } |
-            Self::Sip1559 { cost, .. } |
-            Self::Sip4844 { cost, .. } |
-            Self::Sip7702 { cost, .. } => cost,
+            Self::Legacy { cost, .. }
+            | Self::Sip2930 { cost, .. }
+            | Self::Sip1559 { cost, .. }
+            | Self::Sip4844 { cost, .. }
+            | Self::Sip7702 { cost, .. } => cost,
         }
     }
 
@@ -766,10 +766,10 @@ impl Typed2718 for MockTransaction {
     fn ty(&self) -> u8 {
         match self {
             Self::Legacy { .. } => TxType::Legacy.into(),
-            Self::Sip1559 { .. } => TxType::Sip1559.into(),
-            Self::Sip4844 { .. } => TxType::Sip4844.into(),
-            Self::Sip2930 { .. } => TxType::Sip2930.into(),
-            Self::Sip7702 { .. } => TxType::Sip7702.into(),
+            Self::Sip1559 { .. } => TxType::Eip1559.into(),
+            Self::Sip4844 { .. } => TxType::Eip4844.into(),
+            Self::Sip2930 { .. } => TxType::Eip2930.into(),
+            Self::Sip7702 { .. } => TxType::Eip7702.into(),
         }
     }
 }
@@ -778,10 +778,10 @@ impl alloy_consensus::Transaction for MockTransaction {
     fn chain_id(&self) -> Option<u64> {
         match self {
             Self::Legacy { chain_id, .. } => *chain_id,
-            Self::Sip1559 { chain_id, .. } |
-            Self::Sip4844 { chain_id, .. } |
-            Self::Sip2930 { chain_id, .. } |
-            Self::Sip7702 { chain_id, .. } => Some(*chain_id),
+            Self::Sip1559 { chain_id, .. }
+            | Self::Sip4844 { chain_id, .. }
+            | Self::Sip2930 { chain_id, .. }
+            | Self::Sip7702 { chain_id, .. } => Some(*chain_id),
         }
     }
 
@@ -803,18 +803,18 @@ impl alloy_consensus::Transaction for MockTransaction {
     fn max_fee_per_gas(&self) -> u128 {
         match self {
             Self::Legacy { gas_price, .. } | Self::Sip2930 { gas_price, .. } => *gas_price,
-            Self::Sip1559 { max_fee_per_gas, .. } |
-            Self::Sip4844 { max_fee_per_gas, .. } |
-            Self::Sip7702 { max_fee_per_gas, .. } => *max_fee_per_gas,
+            Self::Sip1559 { max_fee_per_gas, .. }
+            | Self::Sip4844 { max_fee_per_gas, .. }
+            | Self::Sip7702 { max_fee_per_gas, .. } => *max_fee_per_gas,
         }
     }
 
     fn max_priority_fee_per_gas(&self) -> Option<u128> {
         match self {
             Self::Legacy { .. } | Self::Sip2930 { .. } => None,
-            Self::Sip1559 { max_priority_fee_per_gas, .. } |
-            Self::Sip4844 { max_priority_fee_per_gas, .. } |
-            Self::Sip7702 { max_priority_fee_per_gas, .. } => Some(*max_priority_fee_per_gas),
+            Self::Sip1559 { max_priority_fee_per_gas, .. }
+            | Self::Sip4844 { max_priority_fee_per_gas, .. }
+            | Self::Sip7702 { max_priority_fee_per_gas, .. } => Some(*max_priority_fee_per_gas),
         }
     }
 
@@ -828,9 +828,9 @@ impl alloy_consensus::Transaction for MockTransaction {
     fn priority_fee_or_price(&self) -> u128 {
         match self {
             Self::Legacy { gas_price, .. } | Self::Sip2930 { gas_price, .. } => *gas_price,
-            Self::Sip1559 { max_priority_fee_per_gas, .. } |
-            Self::Sip4844 { max_priority_fee_per_gas, .. } |
-            Self::Sip7702 { max_priority_fee_per_gas, .. } => *max_priority_fee_per_gas,
+            Self::Sip1559 { max_priority_fee_per_gas, .. }
+            | Self::Sip4844 { max_priority_fee_per_gas, .. }
+            | Self::Sip7702 { max_priority_fee_per_gas, .. } => *max_priority_fee_per_gas,
         }
     }
 
@@ -877,11 +877,11 @@ impl alloy_consensus::Transaction for MockTransaction {
 
     fn value(&self) -> U256 {
         match self {
-            Self::Legacy { value, .. } |
-            Self::Sip1559 { value, .. } |
-            Self::Sip2930 { value, .. } |
-            Self::Sip4844 { value, .. } |
-            Self::Sip7702 { value, .. } => *value,
+            Self::Legacy { value, .. }
+            | Self::Sip1559 { value, .. }
+            | Self::Sip2930 { value, .. }
+            | Self::Sip4844 { value, .. }
+            | Self::Sip7702 { value, .. } => *value,
         }
     }
 
@@ -892,10 +892,10 @@ impl alloy_consensus::Transaction for MockTransaction {
     fn access_list(&self) -> Option<&AccessList> {
         match self {
             Self::Legacy { .. } => None,
-            Self::Sip1559 { access_list: accesslist, .. } |
-            Self::Sip4844 { access_list: accesslist, .. } |
-            Self::Sip2930 { access_list: accesslist, .. } |
-            Self::Sip7702 { access_list: accesslist, .. } => Some(accesslist),
+            Self::Sip1559 { access_list: accesslist, .. }
+            | Self::Sip4844 { access_list: accesslist, .. }
+            | Self::Sip2930 { access_list: accesslist, .. }
+            | Self::Sip7702 { access_list: accesslist, .. } => Some(accesslist),
         }
     }
 
@@ -947,7 +947,7 @@ impl SilPoolTransaction for MockTransaction {
         &self,
         _blob: &BlobTransactionSidecarVariant,
         _settings: &KzgSettings,
-    ) -> Result<(), alloy_eips::sip4844::BlobTransactionValidationError> {
+    ) -> Result<(), alloy_sips::eip4844::BlobTransactionValidationError> {
         match &self {
             Self::Sip4844 { .. } => Ok(()),
             _ => Err(BlobTransactionValidationError::NotBlobTransaction(self.tx_type())),
@@ -986,7 +986,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(gas_price) + value,
             }),
-            Transaction::Sip2930(TxEip2930 {
+            Transaction::Eip2930(TxEip2930 {
                 chain_id,
                 nonce,
                 gas_price,
@@ -1009,7 +1009,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(gas_price) + value,
             }),
-            Transaction::Sip1559(TxEip1559 {
+            Transaction::Eip1559(TxEip1559 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1034,7 +1034,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(max_fee_per_gas) + value,
             }),
-            Transaction::Sip4844(TxEip4844 {
+            Transaction::Eip4844(TxEip4844 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1059,12 +1059,12 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 value,
                 input,
                 access_list,
-                sidecar: BlobTransactionSidecarVariant::Sip4844(BlobTransactionSidecar::default()),
+                sidecar: BlobTransactionSidecarVariant::Eip4844(BlobTransactionSidecar::default()),
                 blob_versioned_hashes: Default::default(),
                 size,
                 cost: U256::from(gas_limit) * U256::from(max_fee_per_gas) + value,
             }),
-            Transaction::Sip7702(TxEip7702 {
+            Transaction::Eip7702(TxEip7702 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1125,7 +1125,7 @@ impl TryFrom<Recovered<SilaTxEnvelope<TxEip4844Variant<BlobTransactionSidecarVar
                     cost: U256::from(tx.gas_limit) * U256::from(tx.gas_price) + tx.value,
                 })
             }
-            SilaTxEnvelope::Sip2930(signed_tx) => {
+            SilaTxEnvelope::Eip2930(signed_tx) => {
                 let tx = signed_tx.strip_signature();
                 Ok(Self::Sip2930 {
                     chain_id: tx.chain_id,
@@ -1142,7 +1142,7 @@ impl TryFrom<Recovered<SilaTxEnvelope<TxEip4844Variant<BlobTransactionSidecarVar
                     cost: U256::from(tx.gas_limit) * U256::from(tx.gas_price) + tx.value,
                 })
             }
-            SilaTxEnvelope::Sip1559(signed_tx) => {
+            SilaTxEnvelope::Eip1559(signed_tx) => {
                 let tx = signed_tx.strip_signature();
                 Ok(Self::Sip1559 {
                     chain_id: tx.chain_id,
@@ -1160,7 +1160,7 @@ impl TryFrom<Recovered<SilaTxEnvelope<TxEip4844Variant<BlobTransactionSidecarVar
                     cost: U256::from(tx.gas_limit) * U256::from(tx.max_fee_per_gas) + tx.value,
                 })
             }
-            SilaTxEnvelope::Sip4844(signed_tx) => match signed_tx.tx() {
+            SilaTxEnvelope::Eip4844(signed_tx) => match signed_tx.tx() {
                 TxEip4844Variant::TxEip4844(tx) => Ok(Self::Sip4844 {
                     chain_id: tx.chain_id,
                     hash,
@@ -1174,7 +1174,7 @@ impl TryFrom<Recovered<SilaTxEnvelope<TxEip4844Variant<BlobTransactionSidecarVar
                     value: tx.value,
                     input: tx.input.clone(),
                     access_list: tx.access_list.clone(),
-                    sidecar: BlobTransactionSidecarVariant::Sip4844(
+                    sidecar: BlobTransactionSidecarVariant::Eip4844(
                         BlobTransactionSidecar::default(),
                     ),
                     blob_versioned_hashes: tx.blob_versioned_hashes.clone(),
@@ -1183,7 +1183,7 @@ impl TryFrom<Recovered<SilaTxEnvelope<TxEip4844Variant<BlobTransactionSidecarVar
                 }),
                 tx => Err(TryFromRecoveredTransactionError::UnsupportedTransactionType(tx.ty())),
             },
-            SilaTxEnvelope::Sip7702(signed_tx) => {
+            SilaTxEnvelope::Eip7702(signed_tx) => {
                 let tx = signed_tx.strip_signature();
                 Ok(Self::Sip7702 {
                     chain_id: tx.chain_id,
@@ -1249,7 +1249,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
                 ..
-            } => Self::Sip2930(TxEip2930 {
+            } => Self::Eip2930(TxEip2930 {
                 chain_id,
                 nonce,
                 gas_price,
@@ -1270,7 +1270,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
                 ..
-            } => Self::Sip1559(TxEip1559 {
+            } => Self::Eip1559(TxEip1559 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1294,7 +1294,7 @@ impl From<MockTransaction> for Transaction {
                 max_fee_per_blob_gas,
                 input,
                 ..
-            } => Self::Sip4844(TxEip4844 {
+            } => Self::Eip4844(TxEip4844 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1319,7 +1319,7 @@ impl From<MockTransaction> for Transaction {
                 input,
                 authorization_list,
                 ..
-            } => Self::Sip7702(TxEip7702 {
+            } => Self::Eip7702(TxEip7702 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1824,11 +1824,11 @@ mod tests {
 
         // Test SIP1559 transaction creation
         let sip1559 = factory.create_eip1559();
-        assert_eq!(sip1559.transaction.tx_type(), TxType::Sip1559);
+        assert_eq!(sip1559.transaction.tx_type(), TxType::Eip1559);
 
         // Test SIP4844 transaction creation
         let sip4844 = factory.create_eip4844();
-        assert_eq!(sip4844.transaction.tx_type(), TxType::Sip4844);
+        assert_eq!(sip4844.transaction.tx_type(), TxType::Eip4844);
     }
 
     #[test]
@@ -1848,10 +1848,10 @@ mod tests {
 
         // Test SIP1559 transaction set
         let sip1559_set =
-            MockTransactionSet::dependent(sender, nonce_start, count, TxType::Sip1559);
+            MockTransactionSet::dependent(sender, nonce_start, count, TxType::Eip1559);
         assert_eq!(sip1559_set.transactions.len(), count);
         for (idx, tx) in sip1559_set.transactions.iter().enumerate() {
-            assert_eq!(tx.tx_type(), TxType::Sip1559);
+            assert_eq!(tx.tx_type(), TxType::Eip1559);
             assert_eq!(tx.nonce(), nonce_start + idx as u64);
             assert_eq!(tx.sender(), sender);
         }

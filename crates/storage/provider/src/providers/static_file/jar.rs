@@ -7,7 +7,7 @@ use crate::{
     TransactionsProvider,
 };
 use alloy_consensus::transaction::{TransactionMeta, TxHashRef};
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 use rsil_chainspec::ChainInfo;
 use rsil_db::static_file::{
@@ -198,7 +198,7 @@ impl<N: NodePrimitives<BlockHeader: Value>> HeaderProvider for StaticFileJarProv
             {
                 let sealed = SealedHeader::new(header, hash);
                 if !predicate(&sealed) {
-                    break
+                    break;
                 }
                 headers.push(sealed);
             }
@@ -353,10 +353,10 @@ impl<N: NodePrimitives<SignedTx: Decompress + SignedTransaction, Receipt: Decomp
     }
 
     fn receipt_by_hash(&self, hash: TxHash) -> ProviderResult<Option<Self::Receipt>> {
-        if let Some(tx_static_file) = &self.auxiliary_jar &&
-            let Some(num) = tx_static_file.transaction_id(hash)?
+        if let Some(tx_static_file) = &self.auxiliary_jar
+            && let Some(num) = tx_static_file.transaction_id(hash)?
         {
-            return self.receipt(num)
+            return self.receipt(num);
         }
         Ok(None)
     }

@@ -1,4 +1,4 @@
-# Runs `sila/hive` tests.
+# Runs `sila-chain/sila-hive` tests.
 
 name: hive
 
@@ -30,7 +30,7 @@ jobs:
   prepare-hive:
     if: github.repository == 'sila-chain/sila-rsil'
     timeout-minutes: 45
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest-16' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     strategy:
@@ -47,7 +47,7 @@ jobs:
       - name: Checkout hive tests
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          repository: sila/hive
+          repository: sila-chain/sila-hive
           path: hivetests
           persist-credentials: false
 
@@ -95,20 +95,20 @@ jobs:
       fail-fast: false
       matrix:
         # sila/rpc to be deprecated:
-        # https://github.com/sila-chain/hive/pull/1117
+        # Historical upstream Hive context; no unmapped Sila PR link retained.
         scenario:
           - sim: smoke/genesis
           - sim: smoke/network
           - sim: sila/sync
           - sim: devp2p
             limit: discv4
-          # started failing after https://github.com/sila-chain/go-sila/pull/31843, no
+          # Historical upstream regression context; no unmapped Sila PR link retained.
           # action on our side, remove from here when we get unexpected passes on these tests
           # - sim: devp2p
           #  limit: sil
           #  include:
           #    - MaliciousHandshake
-          #    # failures tracked in https://github.com/sila-chain/sila-rsil/issues/14825
+          #    # Historical upstream failure tracking link intentionally omitted.
           #    - Status
           #    - GetBlockHeaders
           #    - ZeroRequestID
@@ -118,7 +118,7 @@ jobs:
           - sim: devp2p
             limit: discv5
             include:
-              # failures tracked at https://github.com/sila-chain/sila-rsil/issues/14825
+              # Historical upstream failure tracking link intentionally omitted.
               - PingLargeRequestID
           - sim: sila/engine
             limit: engine-exchange-capabilities
@@ -201,7 +201,7 @@ jobs:
       - prepare-hive
     name: Hive-SilaAmsterdam / ${{ matrix.scenario.sim }}${{ matrix.scenario.limit && format(' - {0}', matrix.scenario.limit) }}
     # Use larger runners for eels tests to avoid OOM runner crashes
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && (contains(matrix.scenario.sim, 'eels') && 'depot-ubuntu-latest-8' || 'depot-ubuntu-latest-4') || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: write
@@ -234,7 +234,7 @@ jobs:
       - name: Checkout hive tests
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          repository: sila/hive
+          repository: sila-chain/sila-hive
           ref: master
           path: hivetests
           persist-credentials: false
@@ -278,20 +278,20 @@ jobs:
       fail-fast: false
       matrix:
         # sila/rpc to be deprecated:
-        # https://github.com/sila-chain/hive/pull/1117
+        # Historical upstream Hive context; no unmapped Sila PR link retained.
         scenario:
           - sim: smoke/genesis
           - sim: smoke/network
           - sim: sila/sync
           - sim: devp2p
             limit: discv4
-          # started failing after https://github.com/sila-chain/go-sila/pull/31843, no
+          # Historical upstream regression context; no unmapped Sila PR link retained.
           # action on our side, remove from here when we get unexpected passes on these tests
           # - sim: devp2p
           #  limit: sil
           #  include:
           #    - MaliciousHandshake
-          #    # failures tracked in https://github.com/sila-chain/sila-rsil/issues/14825
+          #    # Historical upstream failure tracking link intentionally omitted.
           #    - Status
           #    - GetBlockHeaders
           #    - ZeroRequestID
@@ -301,7 +301,7 @@ jobs:
           - sim: devp2p
             limit: discv5
             include:
-              # failures tracked at https://github.com/sila-chain/sila-rsil/issues/14825
+              # Historical upstream failure tracking link intentionally omitted.
               - PingLargeRequestID
           - sim: sila/engine
             limit: engine-exchange-capabilities
@@ -380,7 +380,7 @@ jobs:
       - prepare-hive
     name: Hive-SilaOsaka / ${{ matrix.scenario.sim }}${{ matrix.scenario.limit && format(' - {0}', matrix.scenario.limit) }}
     # Use larger runners for eels tests to avoid OOM runner crashes
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && (contains(matrix.scenario.sim, 'eels') && 'depot-ubuntu-latest-8' || 'depot-ubuntu-latest-4') || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       issues: write
@@ -413,7 +413,7 @@ jobs:
       - name: Checkout hive tests
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          repository: sila/hive
+          repository: sila-chain/sila-hive
           ref: master
           path: hivetests
           persist-credentials: false

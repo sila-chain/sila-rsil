@@ -1,4 +1,4 @@
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 use alloy_primitives::{BlockHash, BlockNumber, B256};
 use metrics::{Counter, Histogram};
 use rsil_chain_state::{SilPrimitives, StateTrieOverlayManager};
@@ -202,7 +202,7 @@ impl<N: NodePrimitives> OverlayBuilder<N> {
                     return Err(ProviderError::other(std::io::Error::other(format!(
                         "anchor_hash {anchor_hash} doesn't match OverlayBuilder's configured parent ({})",
                         self.parent_hash
-                    ))))
+                    ))));
                 }
                 Ok((Arc::clone(trie), Arc::clone(state)))
             }
@@ -249,7 +249,7 @@ impl<N: NodePrimitives> OverlayBuilder<N> {
     {
         // If the anchor is the DB tip then there won't be any reverts necessary.
         if db_tip_block.hash == anchor_hash {
-            return Ok(None)
+            return Ok(None);
         }
 
         let anchor_number = provider

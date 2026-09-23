@@ -3,7 +3,7 @@ use crate::{
     AccountReader, BlockHashReader, ChangeSetReader, EitherReader, HashedPostStateProvider,
     ProviderError, RocksDBProviderFactory, StateProvider, StateRootProvider,
 };
-use alloy_eips::merge::EPOCH_SLOTS;
+use alloy_sips::merge::EPOCH_SLOTS;
 use alloy_primitives::{Address, BlockNumber, Bytes, StorageKey, StorageValue, B256};
 use rsil_db_api::{
     cursor::{DbCursorRO, DbDupCursorRO},
@@ -92,10 +92,10 @@ impl HistoryInfo {
             if let (Some(_), Some(block_number)) = (lowest_available, found_block) {
                 // The key may have been written, but due to pruning we may not have changesets
                 // and history, so we need to make a changeset lookup.
-                return Self::InChangeset(block_number)
+                return Self::InChangeset(block_number);
             }
             // The key is written to, but only after our block.
-            return Self::NotYetWritten
+            return Self::NotYetWritten;
         }
 
         if let Some(block_number) = found_block {
@@ -187,7 +187,7 @@ where
         Provider: StorageSettingsCache + RocksDBProviderFactory + NodePrimitivesProvider,
     {
         if !self.lowest_available_blocks.is_account_history_available(self.block_number) {
-            return Err(ProviderError::StateAtBlockPruned(self.block_number))
+            return Err(ProviderError::StateAtBlockPruned(self.block_number));
         }
 
         let visible_tip = self.provider.best_block_number()?;
@@ -215,7 +215,7 @@ where
         Provider: StorageSettingsCache + RocksDBProviderFactory + NodePrimitivesProvider,
     {
         if !self.lowest_available_blocks.is_storage_history_available(self.block_number) {
-            return Err(ProviderError::StateAtBlockPruned(self.block_number))
+            return Err(ProviderError::StateAtBlockPruned(self.block_number));
         }
 
         let visible_tip = self.provider.best_block_number()?;
@@ -850,8 +850,8 @@ where
         // This check is worth it, the `cursor.prev()` check is rarely triggered (the if will
         // short-circuit) and when it passes we save a full seek into the changeset/plain state
         // table.
-        let is_before_first_write = needs_prev_shard_check(rank, found_block, block_number) &&
-            !cursor.prev()?.is_some_and(|(k, _)| key_filter(&k));
+        let is_before_first_write = needs_prev_shard_check(rank, found_block, block_number)
+            && !cursor.prev()?.is_some_and(|(k, _)| key_filter(&k));
 
         Ok(HistoryInfo::from_lookup(
             found_block,
@@ -1310,10 +1310,10 @@ mod tests {
     fn history_provider_get_storage_hashed_state() {
         use crate::BlockWriter;
         use alloy_primitives::keccak256;
+        use revm::database::BundleState;
         use rsil_db_api::models::StorageSettings;
         use rsil_execution_types::ExecutionOutcome;
         use rsil_testing_utils::generators::{self, random_block_range, BlockRangeParams};
-        use revm::database::BundleState;
         use std::collections::HashMap;
 
         let factory = create_test_provider_factory();

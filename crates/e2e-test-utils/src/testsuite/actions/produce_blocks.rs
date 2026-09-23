@@ -11,9 +11,9 @@ use alloy_rpc_types_engine::{
 use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_node_api::{EngineTypes, PayloadTypes};
 use rsil_rpc_api::clients::{EngineApiClient, SilApiClient};
+use rsil_sila_primitives::TransactionSigned;
 use std::{collections::HashSet, marker::PhantomData, time::Duration};
 use tokio::time::sleep;
 use tracing::debug;
@@ -82,7 +82,7 @@ where
                 Header,
                 TransactionSigned,
             >::block_by_number(
-                rpc_client, alloy_eips::BlockNumberOrTag::Latest, false
+                rpc_client, alloy_sips::BlockNumberOrTag::Latest, false
             )
             .await?;
 
@@ -295,8 +295,8 @@ where
                 debug!("No payload ID returned, generating fresh payload attributes for forking");
 
                 let fresh_payload_attributes = PayloadAttributes {
-                    timestamp: env.active_node_state()?.latest_header_time +
-                        env.block_timestamp_increment,
+                    timestamp: env.active_node_state()?.latest_header_time
+                        + env.block_timestamp_increment,
                     prev_randao: B256::random(),
                     suggested_fee_recipient: alloy_primitives::Address::random(),
                     withdrawals: Some(vec![]),
@@ -391,7 +391,7 @@ where
                     Header,
                     TransactionSigned,
                 >::block_by_number(
-                    rpc_client, alloy_eips::BlockNumberOrTag::Latest, false
+                    rpc_client, alloy_sips::BlockNumberOrTag::Latest, false
                 )
                 .await?
                 .ok_or_else(|| eyre::eyre!("No latest block found from RPC"))?;
@@ -465,7 +465,7 @@ where
                 Header,
                 TransactionSigned,
             >::block_by_number(
-                rpc_client, alloy_eips::BlockNumberOrTag::Latest, false
+                rpc_client, alloy_sips::BlockNumberOrTag::Latest, false
             )
             .await?
             .ok_or_else(|| eyre::eyre!("No latest block found from RPC"))?;
@@ -576,7 +576,7 @@ where
                     Header,
                     TransactionSigned,
                 >::header_by_number(
-                    rpc_client, alloy_eips::BlockNumberOrTag::Latest
+                    rpc_client, alloy_sips::BlockNumberOrTag::Latest
                 )
                 .await?
                 .ok_or_else(|| eyre::eyre!("No latest header found from rpc"))?;

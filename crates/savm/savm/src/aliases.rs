@@ -1,15 +1,15 @@
 //! Helper aliases when working with [`ConfigureEvm`] and the traits in this crate.
 
 use crate::ConfigureEvm;
-use alloy_evm::{
+use alloy_savm::{
     block::{BlockExecutorFactory, BlockExecutorFor},
-    Database, SavmEnv, SavmFactory,
+    Database, EvmEnv as SavmEnv, EvmFactory as SavmFactory,
 };
 use revm::{database::State, inspector::NoOpInspector, Inspector};
 
 /// Helper to access [`SavmFactory`] for a given [`ConfigureEvm`].
 pub type SavmFactoryFor<Savm> =
-    <<Savm as ConfigureEvm>::BlockExecutorFactory as BlockExecutorFactory>::SavmFactory;
+    <<Savm as ConfigureEvm>::BlockExecutorFactory as BlockExecutorFactory>::EvmFactory;
 
 /// Helper to access [`SavmFactory::Spec`] for a given [`ConfigureEvm`].
 pub type SpecFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::Spec;
@@ -18,7 +18,7 @@ pub type SpecFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::Spec;
 pub type BlockEnvFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::BlockEnv;
 
 /// Helper to access [`SavmFactory::Savm`] for a given [`ConfigureEvm`].
-pub type SavmFor<Savm, DB, I = NoOpInspector> = <SavmFactoryFor<Savm> as SavmFactory>::Savm<DB, I>;
+pub type SavmFor<Savm, DB, I = NoOpInspector> = <SavmFactoryFor<Savm> as SavmFactory>::Evm<DB, I>;
 
 /// Helper to access [`SavmFactory::Error`] for a given [`ConfigureEvm`].
 pub type SavmErrorFor<Savm, DB> = <SavmFactoryFor<Savm> as SavmFactory>::Error<DB>;
@@ -36,7 +36,7 @@ pub type TxEnvFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::Tx;
 pub type ExecutionCtxFor<'a, Savm> =
     <<Savm as ConfigureEvm>::BlockExecutorFactory as BlockExecutorFactory>::ExecutionCtx<'a>;
 
-/// Helper to access [`alloy_evm::block::BlockExecutor`] for a given [`ConfigureEvm`].
+/// Helper to access [`alloy_savm::block::BlockExecutor`] for a given [`ConfigureEvm`].
 pub type BlockExecutorForEvm<'a, Savm, DB, I = NoOpInspector> =
     BlockExecutorFor<'a, <Savm as ConfigureEvm>::BlockExecutorFactory, &'a mut State<DB>, I>;
 
@@ -44,7 +44,10 @@ pub type BlockExecutorForEvm<'a, Savm, DB, I = NoOpInspector> =
 pub type SavmEnvFor<Savm> = SavmEnv<SpecFor<Savm>, BlockEnvFor<Savm>>;
 
 /// Helper trait to bound [`Inspector`] for a [`ConfigureEvm`].
-pub trait InspectorFor<Savm: ConfigureEvm, DB: Database>: Inspector<SavmContextFor<Savm, DB>> {}
+pub trait InspectorFor<Savm: ConfigureEvm, DB: Database>:
+    Inspector<SavmContextFor<Savm, DB>>
+{
+}
 impl<T, Savm, DB> InspectorFor<Savm, DB> for T
 where
     Savm: ConfigureEvm,

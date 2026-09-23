@@ -27,7 +27,7 @@ use rsil_era::{
 use rsil_sila_primitives::TransactionSigned;
 use std::io::Cursor;
 
-use crate::{EraTestDownloader, SILA_MAINNET, SEPOLIA};
+use crate::{EraTestDownloader, SEPOLIA, SILA_MAINNET};
 
 // Helper function to test roundtrip compression/encoding for a specific file
 async fn test_era1_file_roundtrip(

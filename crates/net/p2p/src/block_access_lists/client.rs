@@ -2,7 +2,7 @@ use crate::{download::DownloadClient, error::PeerRequestResult, priority::Priori
 use alloy_primitives::B256;
 use auto_impl::auto_impl;
 use futures::Future;
-use rsil_eth_wire_types::BlockAccessLists;
+use rsil_sil_wire_types::BlockAccessLists;
 
 /// Controls whether a BAL request must wait for a capable peer or may complete early when none are
 /// available.

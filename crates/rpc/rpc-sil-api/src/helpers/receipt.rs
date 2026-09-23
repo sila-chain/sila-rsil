@@ -3,7 +3,7 @@
 
 use std::sync::Arc;
 
-use crate::{SilApiTypes, RpcNodeCoreExt, RpcReceipt};
+use crate::{RpcNodeCoreExt, RpcReceipt, SilApiTypes};
 use alloy_consensus::{transaction::TransactionMeta, TxReceipt};
 use futures::Future;
 use rsil_primitives_traits::Recovered;

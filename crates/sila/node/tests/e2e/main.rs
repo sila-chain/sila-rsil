@@ -3,13 +3,13 @@
 mod blobs;
 mod custom_genesis;
 mod dev;
-mod sil;
 mod invalid_payload;
 mod p2p;
 mod pool;
 mod prestate;
 mod rpc;
 mod selfdestruct;
+mod sil;
 mod simulate;
 mod utils;
 

@@ -215,7 +215,7 @@ where
                 // make sure that our database has been written to, and throw error if it's empty.
                 if factory.get_stage_checkpoint(StageId::Headers)?.is_none() {
                     error!(target: "rsil::storage", "Genesis header found on static files, but database is uninitialized.");
-                    return Err(InitStorageError::UninitializedDatabase)
+                    return Err(InitStorageError::UninitializedDatabase);
                 }
 
                 let stored = factory.storage_settings()?.unwrap_or_else(StorageSettings::v1);
@@ -229,7 +229,7 @@ where
                 }
 
                 debug!("Genesis already written, skipping.");
-                return Ok(hash)
+                return Ok(hash);
             }
 
             if !validate_genesis_hash {
@@ -239,12 +239,12 @@ where
                     storage_hash = %block_hash,
                     "Genesis hash mismatch with chainspec; trusting DB per --debug.skip-genesis-validation"
                 );
-                return Ok(block_hash)
+                return Ok(block_hash);
             }
             return Err(InitStorageError::GenesisHashMismatch {
                 chainspec_hash: hash,
                 storage_hash: block_hash,
-            })
+            });
         }
         Err(e) => {
             debug!(?e);
@@ -545,7 +545,7 @@ where
     >,
 {
     if etl_config.file_size == 0 {
-        return Err(eyre::eyre!("ETL file size cannot be zero"))
+        return Err(eyre::eyre!("ETL file size cannot be zero"));
     }
 
     let (block, hash, expected_state_root) = {
@@ -581,7 +581,7 @@ where
             got: dump_state_root,
             expected: expected_state_root,
         })
-        .into())
+        .into());
     }
 
     // remaining lines are accounts
@@ -618,7 +618,7 @@ where
             got: computed_state_root,
             expected: expected_state_root,
         })
-        .into())
+        .into());
     }
 
     // insert sync stages for stages that require state
@@ -697,7 +697,7 @@ where
 {
     let storage_settings = provider_factory.database_provider_rw()?.cached_storage_settings();
     if storage_settings.storage_v2 {
-        return dump_state_v2(collector, provider_factory, block)
+        return dump_state_v2(collector, provider_factory, block);
     }
 
     let accounts_len = collector.len();
@@ -918,13 +918,13 @@ fn prepare_storage_changeset_writer<N: NodePrimitives>(
 fn snapshot_state_tables_empty<TX: rsil_db_api::transaction::DbTx>(
     tx: &TX,
 ) -> ProviderResult<bool> {
-    Ok(tx.entries::<tables::PlainAccountState>()? == 0 &&
-        tx.entries::<tables::PlainStorageState>()? == 0 &&
-        tx.entries::<tables::HashedAccounts>()? == 0 &&
-        tx.entries::<tables::HashedStorages>()? == 0 &&
-        tx.entries::<tables::AccountChangeSets>()? == 0 &&
-        tx.entries::<tables::StorageChangeSets>()? == 0 &&
-        tx.entries::<tables::Bytecodes>()? == 0)
+    Ok(tx.entries::<tables::PlainAccountState>()? == 0
+        && tx.entries::<tables::PlainStorageState>()? == 0
+        && tx.entries::<tables::HashedAccounts>()? == 0
+        && tx.entries::<tables::HashedStorages>()? == 0
+        && tx.entries::<tables::AccountChangeSets>()? == 0
+        && tx.entries::<tables::StorageChangeSets>()? == 0
+        && tx.entries::<tables::Bytecodes>()? == 0)
 }
 
 fn reset_pre_snapshot_changeset_segment<N: NodePrimitives>(
@@ -933,15 +933,15 @@ fn reset_pre_snapshot_changeset_segment<N: NodePrimitives>(
     block: u64,
 ) -> ProviderResult<()> {
     if block == 0 {
-        return Ok(())
+        return Ok(());
     }
 
     let Some(highest_block) = static_file_provider.get_highest_static_file_block(segment) else {
-        return Ok(())
+        return Ok(());
     };
 
     if highest_block >= block {
-        return Ok(())
+        return Ok(());
     }
 
     let file_start = static_file_provider.find_fixed_range(segment, block).start();
@@ -1188,7 +1188,7 @@ where
                     "State root has been computed"
                 );
 
-                return Ok(root)
+                return Ok(root);
             }
         }
     }
@@ -1259,7 +1259,7 @@ where
                 );
 
                 provider_rw.commit().map_err(provider_db_err)?;
-                return Ok(root)
+                return Ok(root);
             }
         }
     }
@@ -1294,7 +1294,7 @@ mod tests {
         HOLESKY_GENESIS_HASH, MAINNET_GENESIS_HASH, SEPOLIA_GENESIS_HASH,
     };
     use alloy_genesis::Genesis;
-    use rsil_chainspec::{Chain, ChainSpec, HOLESKY, SILA_MAINNET, SEPOLIA};
+    use rsil_chainspec::{Chain, ChainSpec, HOLESKY, SEPOLIA, SILA_MAINNET};
     use rsil_db::DatabaseEnv;
     use rsil_db_api::{
         cursor::DbCursorRO,
@@ -1509,7 +1509,8 @@ mod tests {
     #[test]
     fn success_init_genesis_mainnet() {
         let genesis_hash =
-            init_genesis(&create_test_provider_factory_with_chain_spec(SILA_MAINNET.clone())).unwrap();
+            init_genesis(&create_test_provider_factory_with_chain_spec(SILA_MAINNET.clone()))
+                .unwrap();
 
         // actual, expected
         assert_eq!(genesis_hash, MAINNET_GENESIS_HASH);

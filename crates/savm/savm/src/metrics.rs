@@ -77,8 +77,8 @@ mod tests {
     use super::*;
     use alloy_consensus::Header;
     use alloy_primitives::B256;
-    use rsil_sila_primitives::Block;
     use rsil_primitives_traits::Block as BlockTrait;
+    use rsil_sila_primitives::Block;
 
     fn create_test_block_with_gas(gas_used: u64) -> RecoveredBlock<Block> {
         let header = Header { gas_used, ..Default::default() };

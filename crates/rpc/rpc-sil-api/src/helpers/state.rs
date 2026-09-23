@@ -1,8 +1,8 @@
 //! Loads a pending block from database. Helper trait for `eth_` block, transaction, call and trace
 //! RPC methods.
 
-use super::{SilApiSpec, LoadBlock, LoadPendingBlock, SpawnBlocking};
-use crate::{SilApiTypes, FromEthApiError, RpcNodeCore, RpcNodeCoreExt};
+use super::{LoadBlock, LoadPendingBlock, SilApiSpec, SpawnBlocking};
+use crate::{FromEthApiError, RpcNodeCore, RpcNodeCoreExt, SilApiTypes};
 use alloy_consensus::constants::KECCAK_EMPTY;
 use alloy_eips::BlockId;
 use alloy_primitives::{Address, Bytes, B256, U256};
@@ -15,7 +15,7 @@ use rsil_primitives_traits::{BlockTy, RecoveredBlock, SealedHeaderFor};
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
 use rsil_rpc_eth_types::{
     error::{FromEvmError, IntoEthApiError},
-    SilApiError, PendingBlockEnv, RpcInvalidTransactionError, SignError,
+    PendingBlockEnv, RpcInvalidTransactionError, SignError, SilApiError,
 };
 use rsil_rpc_server_types::constants::DEFAULT_MAX_STORAGE_VALUES_SLOTS;
 use rsil_storage_api::{
@@ -44,7 +44,7 @@ pub trait SilState: LoadState + SpawnBlocking {
             .map_err(Self::Error::from_eth_err)?
             .ok_or(SilApiError::HeaderNotFound(block_id))?;
         if chain_info.best_number.saturating_sub(block_number) > self.max_proof_window() {
-            return Err(SilApiError::ExceedsMaxProofWindow.into())
+            return Err(SilApiError::ExceedsMaxProofWindow.into());
         }
         Ok(())
     }
@@ -276,10 +276,10 @@ pub trait LoadState:
         Self: SpawnBlocking,
     {
         async move {
-            if at.is_pending() &&
-                let Ok(Some(state)) = self.local_pending_state().await
+            if at.is_pending()
+                && let Ok(Some(state)) = self.local_pending_state().await
             {
-                return Ok(state)
+                return Ok(state);
             }
 
             self.provider().state_by_block_id(at).map_err(Self::Error::from_eth_err)

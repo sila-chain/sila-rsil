@@ -3,9 +3,9 @@
 
 use crate::HeadersDirection;
 use alloc::vec::Vec;
-use alloy_eips::BlockHashOrNumber;
 use alloy_primitives::B256;
 use alloy_rlp::{RlpDecodable, RlpDecodableWrapper, RlpEncodable, RlpEncodableWrapper};
+use alloy_sips::BlockHashOrNumber;
 use derive_more::{Deref, IntoIterator};
 use rsil_codecs_derive::{add_arbitrary_tests, generate_tests};
 
@@ -127,9 +127,9 @@ mod tests {
         HeadersDirection,
     };
     use alloy_consensus::{Header, TxLegacy};
-    use alloy_eips::BlockHashOrNumber;
     use alloy_primitives::{hex, Signature, TxKind, U256};
     use alloy_rlp::{Decodable, Encodable};
+    use alloy_sips::BlockHashOrNumber;
     use rsil_sila_primitives::{BlockBody, Transaction, TransactionSigned};
     use std::str::FromStr;
 

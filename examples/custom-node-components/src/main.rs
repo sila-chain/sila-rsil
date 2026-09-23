@@ -5,7 +5,6 @@
 use rsil_sila::{
     chainspec::ChainSpec,
     cli::interface::Cli,
-    savm::primitives::ConfigureEvm,
     node::{
         api::{FullNodeTypes, NodeTypes},
         builder::{components::PoolBuilder, BuilderContext},
@@ -13,10 +12,11 @@ use rsil_sila::{
         SilaNode,
     },
     pool::{
-        blobstore::InMemoryBlobStore, CoinbaseTipOrdering, SilTransactionPool, Pool, PoolConfig,
+        blobstore::InMemoryBlobStore, CoinbaseTipOrdering, Pool, PoolConfig, SilTransactionPool,
         TransactionValidationTaskExecutor,
     },
     provider::CanonStateSubscriptions,
+    savm::primitives::ConfigureEvm,
     SilPrimitives,
 };
 use rsil_tracing::tracing::{debug, info};

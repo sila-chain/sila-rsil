@@ -1,7 +1,7 @@
 //! Transaction pool eviction tests.
 
 use alloy_consensus::Transaction;
-use alloy_eips::sip1559::{SILA_BLOCK_GAS_LIMIT_30M, MIN_PROTOCOL_BASE_FEE};
+use alloy_eips::sip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M};
 use alloy_primitives::{Address, B256};
 use rand::distr::Uniform;
 use rsil_transaction_pool::{

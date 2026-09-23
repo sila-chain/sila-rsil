@@ -214,7 +214,11 @@ async fn test_testing_build_block_v1_osaka() -> eyre::Result<()> {
 
     let genesis: Genesis = serde_json::from_str(include_str!("../assets/genesis.json")).unwrap();
     let chain_spec = Arc::new(
-        ChainSpecBuilder::default().chain(SILA_MAINNET.chain).genesis(genesis).osaka_activated().build(),
+        ChainSpecBuilder::default()
+            .chain(SILA_MAINNET.chain)
+            .genesis(genesis)
+            .osaka_activated()
+            .build(),
     );
     let genesis_hash = chain_spec.genesis_hash();
 

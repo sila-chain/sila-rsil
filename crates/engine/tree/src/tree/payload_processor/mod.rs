@@ -47,7 +47,8 @@ pub mod receipt_root_task;
 pub const SMALL_BLOCK_TX_THRESHOLD: usize = 5;
 
 /// Type alias for [`PayloadHandle`] returned by payload processor spawn methods.
-type IteratorTx<Savm, I> = RecoveredTx<TxEnvFor<Savm>, <I as ExecutableTxIterator<Savm>>::Recovered>;
+type IteratorTx<Savm, I> =
+    RecoveredTx<TxEnvFor<Savm>, <I as ExecutableTxIterator<Savm>>::Recovered>;
 
 type IteratorPayloadHandle<Savm, I> = PayloadHandle<
     IteratorTx<Savm, I>,
@@ -345,8 +346,8 @@ where
                 bal: env.decoded_bal.clone().expect("BAL dispatch implies decoded BAL"),
                 updates: hashed_update_stream,
             }
-        } else if self.disable_transaction_prewarming ||
-            env.transaction_count < SMALL_BLOCK_TX_THRESHOLD
+        } else if self.disable_transaction_prewarming
+            || env.transaction_count < SMALL_BLOCK_TX_THRESHOLD
         {
             PrewarmMode::Skipped
         } else {
@@ -620,11 +621,11 @@ mod tests {
     use alloy_consensus::constants::KECCAK_EMPTY;
     use alloy_eips::sip1898::{BlockNumHash, BlockWithParent};
     use alloy_primitives::{Address, B256, U256};
+    use revm::state::AccountInfo;
     use rsil_chainspec::ChainSpec;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_execution_cache::CachedStatus;
     use rsil_revm::db::BundleState;
-    use revm::state::AccountInfo;
     use std::sync::Arc;
 
     fn make_saved_cache(hash: B256) -> SavedCache {

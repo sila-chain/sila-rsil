@@ -3,14 +3,18 @@
 use crate::{ConfigureEvm, Database, OnStateHook, TxEnvFor};
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use alloy_consensus::{BlockHeader, Header};
-use alloy_eip7928::{compute_block_access_list_hash, BlockAccessList};
-use alloy_eips::sip2718::WithEncoded;
-pub use alloy_evm::block::{BlockExecutor, BlockExecutorFactory, GasOutput};
-use alloy_evm::{
-    block::{CommitChanges, ExecutableTxParts},
-    Savm, SavmEnv, SavmFactory, RecoveredTx, ToTxEnv,
-};
 use alloy_primitives::{Address, B256};
+pub use alloy_savm::block::{BlockExecutor, BlockExecutorFactory, GasOutput};
+use alloy_savm::{
+    block::{CommitChanges, ExecutableTxParts},
+    Evm as Savm, EvmEnv as SavmEnv, EvmFactory as SavmFactory, RecoveredTx, ToTxEnv,
+};
+use alloy_sip7928::{compute_block_access_list_hash, BlockAccessList};
+use alloy_sips::eip2718::WithEncoded;
+use revm::{
+    database::{states::bundle_state::BundleRetention, BundleState, State},
+    state::bal::Bal,
+};
 pub use rsil_execution_errors::{
     BlockExecutionError, BlockValidationError, InternalBlockExecutionError,
 };
@@ -22,10 +26,6 @@ use rsil_primitives_traits::{
 use rsil_storage_api::StateProvider;
 pub use rsil_storage_errors::provider::ProviderError;
 use rsil_trie_common::{updates::TrieUpdates, HashedPostState};
-use revm::{
-    database::{states::bundle_state::BundleRetention, BundleState, State},
-    state::bal::Bal,
-};
 
 /// A type that knows how to execute a block. It is assumed to operate on a
 /// [`crate::Savm`] internally and use [`State`] as database.
@@ -198,7 +198,7 @@ pub struct BlockAssemblerInput<'a, 'b, F: BlockExecutorFactory, H = Header> {
     ///
     /// Contains context relevant to SAVM such as [`revm::context::BlockEnv`].
     pub evm_env:
-        SavmEnv<<F::SavmFactory as SavmFactory>::Spec, <F::SavmFactory as SavmFactory>::BlockEnv>,
+        SavmEnv<<F::EvmFactory as SavmFactory>::Spec, <F::EvmFactory as SavmFactory>::BlockEnv>,
     /// [`BlockExecutorFactory::ExecutionCtx`] used to execute the block.
     pub execution_ctx: F::ExecutionCtx<'a>,
     /// Parent block header.
@@ -223,8 +223,8 @@ impl<'a, 'b, F: BlockExecutorFactory, H> BlockAssemblerInput<'a, 'b, F, H> {
     #[expect(clippy::too_many_arguments)]
     pub fn new(
         evm_env: SavmEnv<
-            <F::SavmFactory as SavmFactory>::Spec,
-            <F::SavmFactory as SavmFactory>::BlockEnv,
+            <F::EvmFactory as SavmFactory>::Spec,
+            <F::EvmFactory as SavmFactory>::BlockEnv,
         >,
         execution_ctx: F::ExecutionCtx<'a>,
         parent: &'a SealedHeader<H>,
@@ -384,14 +384,14 @@ pub trait BlockBuilder {
     /// Provides access to the inner [`BlockExecutor`].
     fn executor(&self) -> &Self::Executor;
 
-    /// Helper to access inner [`BlockExecutor::Savm`] mutably.
-    fn evm_mut(&mut self) -> &mut <Self::Executor as BlockExecutor>::Savm {
+    /// Helper to access inner [`BlockExecutor::Evm`] mutably.
+    fn evm_mut(&mut self) -> &mut <Self::Executor as BlockExecutor>::Evm {
         self.executor_mut().evm_mut()
     }
 
-    /// Helper to access inner [`BlockExecutor::Savm`].
-    fn savm(&self) -> &<Self::Executor as BlockExecutor>::Savm {
-        self.executor().savm()
+    /// Helper to access inner [`BlockExecutor::Evm`].
+    fn savm(&self) -> &<Self::Executor as BlockExecutor>::Evm {
+        self.executor().evm()
     }
 
     /// Consumes the type and returns the underlying [`BlockExecutor`].
@@ -419,37 +419,37 @@ where
 /// Conversions for executable transactions.
 pub trait ExecutorTx<Executor: BlockExecutor> {
     /// Converts the transaction into a tuple of [`TxEnvFor`] and [`Recovered`].
-    fn into_parts(self) -> (<Executor::Savm as Savm>::Tx, Recovered<Executor::Transaction>);
+    fn into_parts(self) -> (<Executor::Evm as Savm>::Tx, Recovered<Executor::Transaction>);
 }
 
 impl<Executor: BlockExecutor> ExecutorTx<Executor>
     for WithEncoded<Recovered<Executor::Transaction>>
 {
-    fn into_parts(self) -> (<Executor::Savm as Savm>::Tx, Recovered<Executor::Transaction>) {
+    fn into_parts(self) -> (<Executor::Evm as Savm>::Tx, Recovered<Executor::Transaction>) {
         (self.to_tx_env(), self.1)
     }
 }
 
 impl<Executor: BlockExecutor> ExecutorTx<Executor> for Recovered<Executor::Transaction> {
-    fn into_parts(self) -> (<Executor::Savm as Savm>::Tx, Self) {
+    fn into_parts(self) -> (<Executor::Evm as Savm>::Tx, Self) {
         (self.to_tx_env(), self)
     }
 }
 
 impl<Executor: BlockExecutor> ExecutorTx<Executor>
-    for (<Executor::Savm as Savm>::Tx, Recovered<Executor::Transaction>)
+    for (<Executor::Evm as Savm>::Tx, Recovered<Executor::Transaction>)
 {
-    fn into_parts(self) -> (<Executor::Savm as Savm>::Tx, Recovered<Executor::Transaction>) {
+    fn into_parts(self) -> (<Executor::Evm as Savm>::Tx, Recovered<Executor::Transaction>) {
         self
     }
 }
 
 impl<Executor> ExecutorTx<Executor>
-    for WithTxEnv<<Executor::Savm as Savm>::Tx, Recovered<Executor::Transaction>>
+    for WithTxEnv<<Executor::Evm as Savm>::Tx, Recovered<Executor::Transaction>>
 where
     Executor: BlockExecutor<Transaction: Clone>,
 {
-    fn into_parts(self) -> (<Executor::Savm as Savm>::Tx, Recovered<Executor::Transaction>) {
+    fn into_parts(self) -> (<Executor::Evm as Savm>::Tx, Recovered<Executor::Transaction>) {
         (self.tx_env, Arc::unwrap_or_clone(self.tx))
     }
 }
@@ -459,10 +459,10 @@ impl<'a, F, DB, Executor, Builder, N> BlockBuilder
 where
     F: BlockExecutorFactory<Transaction = N::SignedTx, Receipt = N::Receipt>,
     Executor: BlockExecutor<
-        Savm: Savm<
-            Spec = <F::SavmFactory as SavmFactory>::Spec,
-            HaltReason = <F::SavmFactory as SavmFactory>::HaltReason,
-            BlockEnv = <F::SavmFactory as SavmFactory>::BlockEnv,
+        Evm: Savm<
+            Spec = <F::EvmFactory as SavmFactory>::Spec,
+            HaltReason = <F::EvmFactory as SavmFactory>::HaltReason,
+            BlockEnv = <F::EvmFactory as SavmFactory>::BlockEnv,
             DB = &'a mut State<DB>,
         >,
         Transaction = N::SignedTx,
@@ -669,7 +669,8 @@ pub trait ExecutableTxFor<Savm: ConfigureEvm>:
 }
 
 impl<T, Savm: ConfigureEvm> ExecutableTxFor<Savm> for T where
-    T: ExecutableTxParts<TxEnvFor<Savm>, TxTy<Savm::Primitives>> + RecoveredTx<TxTy<Savm::Primitives>>
+    T: ExecutableTxParts<TxEnvFor<Savm>, TxTy<Savm::Primitives>>
+        + RecoveredTx<TxTy<Savm::Primitives>>
 {
 }
 
@@ -725,8 +726,8 @@ impl<TxEnv, T: RecoveredTx<Tx>, Tx> ExecutableTxParts<TxEnv, Tx> for WithTxEnv<T
 mod tests {
     use super::*;
     use core::marker::PhantomData;
-    use rsil_sila_primitives::SilPrimitives;
     use revm::database::{CacheDB, EmptyDB};
+    use rsil_sila_primitives::SilPrimitives;
 
     #[derive(Clone, Debug, Default)]
     struct TestExecutorProvider;

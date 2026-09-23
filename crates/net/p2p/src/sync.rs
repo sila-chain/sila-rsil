@@ -1,7 +1,7 @@
 //! Traits used when interacting with the sync status of the network.
 
-use alloy_eips::sip2124::Head;
-use rsil_eth_wire_types::BlockRangeUpdate;
+use alloy_sips::eip2124::Head;
+use rsil_sil_wire_types::BlockRangeUpdate;
 
 /// A type that provides information about whether the node is currently syncing and the network is
 /// currently serving syncing related requests.

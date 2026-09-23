@@ -23,7 +23,7 @@ use alloy_eips::sip4895::Withdrawal;
 use alloy_primitives::{keccak256, B256, U256};
 use metrics::{Counter, Gauge, Histogram};
 use rayon::prelude::*;
-use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, Savm, SavmFor, RecoveredTx, SpecFor};
+use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, RecoveredTx, Savm, SavmFor, SpecFor};
 use rsil_metrics::Metrics;
 use rsil_primitives_traits::{Account, FastInstant as Instant, NodePrimitives};
 use rsil_provider::{
@@ -179,9 +179,9 @@ where
                 }
 
                 // Send withdrawal prefetch targets after all transactions dispatched
-                if let Some(state_root_hint_stream) = state_root_hint_stream &&
-                    let Some(withdrawals) = &ctx.env.withdrawals &&
-                    !withdrawals.is_empty()
+                if let Some(state_root_hint_stream) = state_root_hint_stream
+                    && let Some(withdrawals) = &ctx.env.withdrawals
+                    && !withdrawals.is_empty()
                 {
                     let targets = multiproof_targets_from_withdrawals(withdrawals);
                     state_root_hint_stream.on_access_hint(targets.into());
@@ -393,9 +393,9 @@ where
             let _ = stream_tx.send(());
         }
 
-        if let Some(saved_cache) = ctx.saved_cache &&
-            !ctx.disable_bal_batch_io &&
-            let Some(pool) = ctx.bal_prewarm_pool.as_ref()
+        if let Some(saved_cache) = ctx.saved_cache
+            && !ctx.disable_bal_batch_io
+            && let Some(pool) = ctx.bal_prewarm_pool.as_ref()
         {
             // If
             //
@@ -484,7 +484,7 @@ where
 
                     if finished_execution {
                         // all tasks are done, we can exit, which will save caches and exit
-                        break
+                        break;
                     }
                 }
                 PrewarmTaskEvent::FinishedTxExecution { executed_transactions } => {
@@ -496,7 +496,7 @@ where
 
                     if final_execution_outcome.is_some() {
                         // all tasks are done, we can exit, which will save caches and exit
-                        break
+                        break;
                     }
                 }
             }
@@ -575,7 +575,7 @@ where
                     %err,
                     "Failed to build state provider in prewarm thread"
                 );
-                return None
+                return None;
             }
         };
 

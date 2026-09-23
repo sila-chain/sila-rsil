@@ -17,7 +17,6 @@ use rsil_db_api::{
     transaction::{DbTx, DbTxMut},
     DatabaseError as DbError,
 };
-use rsil_sila_primitives::{Block, SilPrimitives, Receipt};
 use rsil_primitives_traits::{Account, SealedBlock, SealedHeader, StorageEntry};
 use rsil_provider::{
     providers::{
@@ -27,6 +26,7 @@ use rsil_provider::{
     DatabaseProviderFactory, EitherWriter, HistoryWriter, ProviderError, ProviderFactory,
     RocksBatchArg, StaticFileProviderFactory, StatsReader,
 };
+use rsil_sila_primitives::{Block, Receipt, SilPrimitives};
 use rsil_static_file_types::StaticFileSegment;
 use rsil_storage_errors::provider::ProviderResult;
 use rsil_testing_utils::generators::ChangeSet;
@@ -307,8 +307,8 @@ impl TestStageDB {
                     // Backfill: some tests start at a forward block number, but static files
                     // require no gaps.
                     let segment_header = txs_writer.user_header();
-                    if segment_header.block_end().is_none() &&
-                        segment_header.expected_block_start() == 0
+                    if segment_header.block_end().is_none()
+                        && segment_header.expected_block_start() == 0
                     {
                         for block in 0..block.number {
                             txs_writer.increment_block(block)?;

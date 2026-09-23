@@ -15,7 +15,7 @@ use rsil_storage_api::{
 
 use crate::{
     helpers::{SilSigner, SilState},
-    SilApiTypes, RpcNodeCore,
+    RpcNodeCore, SilApiTypes,
 };
 
 /// `Sil` API trait.

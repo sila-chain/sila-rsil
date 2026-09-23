@@ -26,7 +26,6 @@ use rsil_db::{
     DatabaseEnv,
 };
 use rsil_db_common::init::init_genesis;
-use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_evm_sila::MockEvmConfig;
 use rsil_execution_types::Chain;
 use rsil_exex::{ExExContext, ExExEvent, ExExNotification, ExExNotifications, Wal};
@@ -44,8 +43,8 @@ use rsil_node_builder::{
 use rsil_node_core::node_config::NodeConfig;
 use rsil_node_sila::{
     node::{
-        SilaAddOns, SilaEngineValidatorBuilder, SilaEthApiBuilder,
-        SilaNetworkBuilder, SilaPayloadBuilder,
+        SilaAddOns, SilaEngineValidatorBuilder, SilaEthApiBuilder, SilaNetworkBuilder,
+        SilaPayloadBuilder,
     },
     SilEngineTypes,
 };
@@ -53,8 +52,9 @@ use rsil_payload_builder::noop::NoopPayloadBuilderService;
 use rsil_primitives_traits::{Block as _, RecoveredBlock};
 use rsil_provider::{
     providers::{BlockchainProvider, RocksDBProvider, StaticFileProvider},
-    BlockReader, SilStorage, ProviderFactory,
+    BlockReader, ProviderFactory, SilStorage,
 };
+use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_tasks::Runtime;
 use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
 use tempfile::TempDir;
@@ -138,8 +138,7 @@ where
         TestExecutorBuilder,
         TestConsensusBuilder,
     >;
-    type AddOns =
-        SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
+    type AddOns = SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
 
     fn components_builder(&self) -> Self::ComponentsBuilder {
         ComponentsBuilder::default()

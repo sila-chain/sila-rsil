@@ -19,41 +19,44 @@ extern crate alloc;
 
 use alloc::{borrow::Cow, sync::Arc};
 use alloy_consensus::Header;
-use alloy_evm::{
-    sil::{SilBlockExecutionCtx, SilBlockExecutorFactory},
-    SilEvmFactory, FromRecoveredTx, FromTxWithEncoded,
+use alloy_savm::{
+    eth::{
+        EthBlockExecutionCtx as SilBlockExecutionCtx,
+        EthBlockExecutorFactory as SilBlockExecutorFactory,
+    },
+    EthEvmFactory as SilEvmFactory, FromRecoveredTx, FromTxWithEncoded,
 };
 #[cfg(feature = "jit")]
 use core::any::Any;
 use core::{convert::Infallible, fmt::Debug};
-use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
-use rsil_sila_primitives::{Block, SilPrimitives, TransactionSigned};
-use rsil_evm::{
-    sil::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, SavmEnv, SavmFactory,
-    JitBackend, NextBlockEnvAttributes, TransactionEnvMut,
-};
-use rsil_primitives_traits::{SealedBlock, SealedHeader};
 use revm::{context::BlockEnv, primitives::hardfork::SpecId};
+use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
+use rsil_primitives_traits::{SealedBlock, SealedHeader};
+use rsil_savm::{
+    eth::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, JitBackend,
+    NextBlockEnvAttributes, SavmEnv, SavmFactory, TransactionEnvMut,
+};
+use rsil_sila_primitives::{Block, SilPrimitives, TransactionSigned};
 
 #[cfg(feature = "std")]
-use rsil_evm::{ConfigureEngineEvm, ExecutableTxIterator};
+use rsil_savm::{ConfigureEngineEvm, ExecutableTxIterator};
 #[allow(unused_imports)]
 use {
-    alloy_eips::Decodable2718,
     alloy_primitives::{Bytes, U256},
     alloy_rpc_types_engine::ExecutionData,
-    rsil_chainspec::SilaHardforks,
-    rsil_evm::{SavmEnvFor, ExecutionCtxFor},
-    rsil_primitives_traits::{constants::MAX_TX_GAS_LIMIT_OSAKA, SignedTransaction, TxTy},
-    rsil_storage_errors::any::AnyError,
+    alloy_sips::Decodable2718,
     revm::context::CfgEnv,
     revm::context_interface::block::BlobExcessGasAndPrice,
+    rsil_chainspec::SilaHardforks,
+    rsil_primitives_traits::{constants::MAX_TX_GAS_LIMIT_OSAKA, SignedTransaction, TxTy},
+    rsil_savm::{ExecutionCtxFor, SavmEnvFor},
+    rsil_storage_errors::any::AnyError,
 };
 
-pub use alloy_evm::SilEvm;
+pub use alloy_savm::EthEvm as SilEvm;
 
 mod config;
-use alloy_evm::sil::spec::SilExecutorSpec;
+use alloy_savm::eth::spec::EthExecutorSpec as SilExecutorSpec;
 pub use config::{revm_spec, revm_spec_by_timestamp_and_block_number};
 use rsil_sila_forks::Hardforks;
 
@@ -91,7 +94,7 @@ pub struct SilEvmConfig<C = ChainSpec, SavmFactory = SilEvmFactory> {
 
 impl SilEvmConfig {
     /// Creates a new Sila SAVM configuration for the sila sila-mainnet.
-    pub fn sila-mainnet() -> Self {
+    pub fn sila_mainnet() -> Self {
         Self::sila(SILA_MAINNET.clone())
     }
 }
@@ -277,7 +280,10 @@ where
         + Unpin
         + 'static,
 {
-    fn evm_env_for_payload(&self, payload: &ExecutionData) -> Result<SavmEnvFor<Self>, Self::Error> {
+    fn evm_env_for_payload(
+        &self,
+        payload: &ExecutionData,
+    ) -> Result<SavmEnvFor<Self>, Self::Error> {
         let timestamp = payload.payload.timestamp();
         let block_number = payload.payload.block_number();
 
@@ -361,14 +367,14 @@ mod tests {
     use super::*;
     use alloy_consensus::Header;
     use alloy_genesis::Genesis;
-    use rsil_chainspec::{Chain, ChainSpec};
-    use rsil_evm::{execute::ProviderError, SavmEnv};
     use revm::{
         context::{BlockEnv, CfgEnv},
         database::CacheDB,
         database_interface::EmptyDBTyped,
         inspector::NoOpInspector,
     };
+    use rsil_chainspec::{Chain, ChainSpec};
+    use rsil_savm::{execute::ProviderError, SavmEnv};
 
     #[test]
     fn test_fill_cfg_and_block_env() {
@@ -378,7 +384,7 @@ mod tests {
         // Build the ChainSpec for Sila sila-mainnet, activating London, SilaParis, and SilaShanghai
         // hardforks
         let chain_spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::sila_mainnet())
             .genesis(Genesis::default())
             .london_activated()
             .paris_activated()
@@ -397,7 +403,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_default_spec() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -412,7 +418,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_custom_cfg() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -429,7 +435,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_custom_block_and_tx() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -454,7 +460,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_spec_id() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
@@ -471,7 +477,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_and_default_inspector() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         let evm_env = SavmEnv::default();
@@ -485,7 +491,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_inspector_and_custom_cfg() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         let cfg_env = CfgEnv::default().with_chain_id(111);
@@ -501,7 +507,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_inspector_and_custom_block_tx() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         // Create custom block and tx environment
@@ -522,7 +528,7 @@ mod tests {
 
     #[test]
     fn test_evm_with_env_inspector_and_spec_id() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
         let db = CacheDB::<EmptyDBTyped<ProviderError>>::default();
 
         let evm_env = SavmEnv {
@@ -559,7 +565,7 @@ mod tests {
     #[cfg(feature = "jit")]
     #[test]
     fn test_jit_support_downcast_ignores_plain_factory() {
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         assert!(evm_config.jit_backend().is_none());
 

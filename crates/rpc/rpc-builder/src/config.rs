@@ -1,7 +1,7 @@
 use jsonrpsee::server::ServerConfigBuilder;
 use rsil_node_core::{args::RpcServerArgs, utils::get_or_create_jwt_secret_from_path};
 use rsil_rpc::ValidationApiConfig;
-use rsil_rpc_eth_types::{SilConfig, SilStateCacheConfig, GasPriceOracleConfig};
+use rsil_rpc_eth_types::{GasPriceOracleConfig, SilConfig, SilStateCacheConfig};
 use rsil_rpc_layer::{JwtError, JwtSecret};
 use rsil_rpc_server_types::RpcModuleSelection;
 use std::{net::SocketAddr, path::PathBuf};
@@ -269,7 +269,7 @@ mod tests {
     use clap::{Args, Parser};
     use rsil_node_core::args::RpcServerArgs;
     use rsil_rpc_eth_types::RPC_DEFAULT_GAS_CAP;
-    use rsil_rpc_server_types::{constants, RsilRpcModule, RpcModuleSelection};
+    use rsil_rpc_server_types::{constants, RpcModuleSelection, RsilRpcModule};
     use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 
     use crate::config::RsilRpcServerConfig;

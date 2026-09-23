@@ -20,7 +20,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 use crate::{auth::AuthRpcModule, error::WsHttpSamePortError, metrics::RpcRequestMetrics};
-use alloy_network::{Sila, IntoWallet};
+use alloy_network::{IntoWallet, Sila};
 use alloy_provider::{fillers::RecommendedFillers, Provider, ProviderBuilder};
 use core::marker::PhantomData;
 use error::{ConflictingModules, RpcError, ServerKind};
@@ -38,19 +38,19 @@ use rsil_network_api::{noop::NoopNetwork, NetworkInfo, Peers};
 use rsil_payload_primitives::PayloadTypes;
 use rsil_primitives_traits::{NodePrimitives, TxTy};
 use rsil_rpc::{
-    AdminApi, DebugApi, EngineEthApi, SilApi, SilApiBuilder, SilBundle, MinerApi, NetApi,
-    OtterscanApi, RPCApi, RsilApi, TraceApi, TxPoolApi, Web3Api,
+    AdminApi, DebugApi, EngineEthApi, MinerApi, NetApi, OtterscanApi, RPCApi, RsilApi, SilApi,
+    SilApiBuilder, SilBundle, TraceApi, TxPoolApi, Web3Api,
 };
 use rsil_rpc_api::servers::*;
 use rsil_rpc_engine_api::RsilEngineApi;
 use rsil_rpc_eth_api::{
     helpers::{
-        pending_block::PendingEnvBuilder, Call, SilApiSpec, SilTransactions, LoadPendingBlock,
+        pending_block::PendingEnvBuilder, Call, LoadPendingBlock, SilApiSpec, SilTransactions,
         TraceExt,
     },
     node::RpcNodeCoreAdapter,
-    SilApiServer, SilApiTypes, FullEthApiServer, FullEthApiTypes, RpcBlock, RpcConvert,
-    RpcConverter, RpcHeader, RpcNodeCore, RpcReceipt, RpcTransaction, RpcTxReq,
+    FullEthApiServer, FullEthApiTypes, RpcBlock, RpcConvert, RpcConverter, RpcHeader, RpcNodeCore,
+    RpcReceipt, RpcTransaction, RpcTxReq, SilApiServer, SilApiTypes,
 };
 use rsil_rpc_eth_types::{receipt::SilReceiptConverter, SilConfig, SilSubscriptionIdProvider};
 use rsil_rpc_layer::{AuthLayer, Claims, CompressionLayer, JwtAuthValidator, JwtSecret};
@@ -1034,9 +1034,9 @@ where
                         // these are implementation specific and need to be handled during
                         // initialization and should be registered via extend_rpc_modules in the
                         // nodebuilder rpc addon stack
-                        RsilRpcModule::Flashbots |
-                        RsilRpcModule::Testing |
-                        RsilRpcModule::Other(_) => Default::default(),
+                        RsilRpcModule::Flashbots
+                        | RsilRpcModule::Testing
+                        | RsilRpcModule::Other(_) => Default::default(),
                     })
                     .clone()
             })
@@ -1298,9 +1298,9 @@ impl<RpcMiddleware> RpcServerConfig<RpcMiddleware> {
     ///
     /// If no server is configured, no server will be launched on [`RpcServerConfig::start`].
     pub const fn has_server(&self) -> bool {
-        self.http_server_config.is_some() ||
-            self.ws_server_config.is_some() ||
-            self.ipc_server_config.is_some()
+        self.http_server_config.is_some()
+            || self.ws_server_config.is_some()
+            || self.ipc_server_config.is_some()
     }
 
     /// Returns the [`SocketAddr`] of the http server
@@ -1384,9 +1384,9 @@ impl<RpcMiddleware> RpcServerConfig<RpcMiddleware> {
         }
 
         // If both are configured on the same port, we combine them into one server.
-        if self.http_addr == self.ws_addr &&
-            self.http_server_config.is_some() &&
-            self.ws_server_config.is_some()
+        if self.http_addr == self.ws_addr
+            && self.http_server_config.is_some()
+            && self.ws_server_config.is_some()
         {
             let cors = match (self.ws_cors_domains.as_ref(), self.http_cors_domains.as_ref()) {
                 (Some(ws_cors), Some(http_cors)) => {
@@ -1789,7 +1789,7 @@ impl TransportRpcModules {
     /// Returns [Ok(false)] if no http transport is configured.
     pub fn merge_http(&mut self, other: impl Into<Methods>) -> Result<bool, RegisterMethodError> {
         if let Some(ref mut http) = self.http {
-            return http.merge(other.into()).map(|_| true)
+            return http.merge(other.into()).map(|_| true);
         }
         Ok(false)
     }
@@ -1801,7 +1801,7 @@ impl TransportRpcModules {
     /// Returns [Ok(false)] if no ws transport is configured.
     pub fn merge_ws(&mut self, other: impl Into<Methods>) -> Result<bool, RegisterMethodError> {
         if let Some(ref mut ws) = self.ws {
-            return ws.merge(other.into()).map(|_| true)
+            return ws.merge(other.into()).map(|_| true);
         }
         Ok(false)
     }
@@ -1813,7 +1813,7 @@ impl TransportRpcModules {
     /// Returns [Ok(false)] if no ipc transport is configured.
     pub fn merge_ipc(&mut self, other: impl Into<Methods>) -> Result<bool, RegisterMethodError> {
         if let Some(ref mut ipc) = self.ipc {
-            return ipc.merge(other.into()).map(|_| true)
+            return ipc.merge(other.into()).map(|_| true);
         }
         Ok(false)
     }
@@ -2148,8 +2148,8 @@ impl RpcServerHandle {
                 "Bearer {}",
                 secret
                     .encode(&Claims {
-                        iat: (SystemTime::now().duration_since(UNIX_EPOCH).unwrap() +
-                            Duration::from_secs(60))
+                        iat: (SystemTime::now().duration_since(UNIX_EPOCH).unwrap()
+                            + Duration::from_secs(60))
                         .as_secs(),
                         exp: None,
                     })

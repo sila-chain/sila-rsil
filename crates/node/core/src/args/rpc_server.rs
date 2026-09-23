@@ -13,7 +13,7 @@ use clap::{
 use rand::Rng;
 use rsil_cli_util::{parse_duration_from_secs_or_ms, parse_ether_value};
 use rsil_rpc_eth_types::builder::config::PendingBlockKind;
-use rsil_rpc_server_types::{constants, RsilRpcModule, RpcModuleSelection};
+use rsil_rpc_server_types::{constants, RpcModuleSelection, RsilRpcModule};
 use std::{
     ffi::OsStr,
     net::{IpAddr, Ipv4Addr},

@@ -61,25 +61,25 @@ use crate::{
     AddedTransactionOutcome, AllTransactionsEvents,
 };
 use alloy_consensus::{error::ValueError, transaction::TxHashRef, BlockHeader, Signed, Typed2718};
-use alloy_eips::{
-    sip2718::{Decodable2718, Encodable2718, WithEncoded},
-    sip2930::AccessList,
-    sip4844::{
+use alloy_sips::{
+    eip2718::{Decodable2718, Encodable2718, WithEncoded},
+    eip2930::AccessList,
+    eip4844::{
         env_settings::KzgSettings, BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1,
         BlobTransactionValidationError,
     },
-    sip7594::BlobTransactionSidecarVariant,
-    sip7702::SignedAuthorization,
+    eip7594::BlobTransactionSidecarVariant,
+    eip7702::SignedAuthorization,
 };
 use alloy_primitives::{
     map::{AddressSet, B256Map},
     Address, Bytes, TxHash, TxKind, B128, B256, U256,
 };
 use futures_util::{ready, Stream};
-use rsil_eth_wire_types::HandleMempoolData;
-use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
+use rsil_sil_wire_types::HandleMempoolData;
 use rsil_execution_types::ChangedAccount;
 use rsil_primitives_traits::{Block, InMemorySize, Recovered, SealedBlock, SignedTransaction};
+use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
 use serde::{Deserialize, Serialize};
 use std::{
     fmt,
@@ -1381,7 +1381,7 @@ pub trait PoolTransaction:
     /// intermediate value when the raw representation can be converted directly into `Self`.
     fn recover_raw_transaction(data: &[u8]) -> Result<Self, RawPoolTransactionError> {
         if data.is_empty() {
-            return Err(RawPoolTransactionError::EmptyRawTransactionData)
+            return Err(RawPoolTransactionError::EmptyRawTransactionData);
         }
 
         let transaction = Self::Pooled::decode_2718_exact(data)
@@ -1579,7 +1579,7 @@ impl PoolTransaction for SilPooledTransaction {
         let encoded_length = tx.encode_2718_len();
         let (tx, signer) = tx.into_parts();
         match tx {
-            PooledTransactionVariant::Sip4844(tx) => {
+            PooledTransactionVariant::Eip4844(tx) => {
                 // include the blob sidecar
                 let (tx, sig, hash) = tx.into_parts();
                 let (tx, blob) = tx.into_parts();
@@ -1892,7 +1892,7 @@ impl<Tx: PoolTransaction> NewSubpoolTransactionStream<Tx> {
         loop {
             let event = self.st.try_recv()?;
             if event.subpool == self.subpool {
-                return Ok(event)
+                return Ok(event);
             }
         }
     }
@@ -1906,7 +1906,7 @@ impl<Tx: PoolTransaction> Stream for NewSubpoolTransactionStream<Tx> {
             match ready!(self.st.poll_recv(cx)) {
                 Some(event) => {
                     if event.subpool == self.subpool {
-                        return Poll::Ready(Some(event))
+                        return Poll::Ready(Some(event));
                     }
                 }
                 None => return Poll::Ready(None),
@@ -1919,10 +1919,10 @@ impl<Tx: PoolTransaction> Stream for NewSubpoolTransactionStream<Tx> {
 mod tests {
     use super::*;
     use alloy_consensus::{
-        SilaTxEnvelope, SignableTransaction, TxEip1559, TxEip2930, TxEip4844, TxEip7702,
+        SignableTransaction, EthereumTxEnvelope as SilaTxEnvelope, TxEip1559, TxEip2930, TxEip4844, TxEip7702,
         TxEnvelope, TxLegacy,
     };
-    use alloy_eips::sip4844::DATA_GAS_PER_BLOB;
+    use alloy_sips::eip4844::DATA_GAS_PER_BLOB;
     use alloy_primitives::Signature;
 
     #[test]
@@ -2031,7 +2031,7 @@ mod tests {
     #[test]
     fn test_eth_pooled_transaction_new_eip4844() {
         // Create an SIP-4844 transaction with specific parameters
-        let tx = SilaTxEnvelope::Sip4844(
+        let tx = SilaTxEnvelope::Eip4844(
             TxEip4844 {
                 max_fee_per_gas: 10,
                 gas_limit: 1000,
@@ -2057,7 +2057,7 @@ mod tests {
     #[test]
     fn test_eth_pooled_transaction_new_eip7702() {
         // Init an SIP-7702 transaction with specific parameters
-        let tx = SilaTxEnvelope::<TxEip4844>::Sip7702(
+        let tx = SilaTxEnvelope::<TxEip4844>::Eip7702(
             TxEip7702 {
                 max_fee_per_gas: 10,
                 gas_limit: 1000,

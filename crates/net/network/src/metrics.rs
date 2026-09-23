@@ -1,10 +1,10 @@
 use metrics::Histogram;
 use rsil_eth_wire::DisconnectReason;
-use rsil_sila_primitives::TxType;
 use rsil_metrics::{
     metrics::{Counter, Gauge},
     Metrics,
 };
+use rsil_sila_primitives::TxType;
 
 /// Scope for monitoring transactions sent from the manager to the tx manager
 pub(crate) const NETWORK_POOL_TRANSACTIONS_SCOPE: &str = "network.pool.transactions";

@@ -14,18 +14,18 @@ use alloy_consensus::constants::MAINNET_GENESIS_HASH;
 use futures::StreamExt;
 use rsil_discv4::{DiscoveryUpdate, Discv4, Discv4ConfigBuilder, DEFAULT_DISCOVERY_ADDRESS};
 use rsil_ecies::stream::ECIESStream;
+use rsil_network_peers::{mainnet_nodes, pk2id, NodeRecord};
 use rsil_sila::{
-    chainspec::{Chain, SilaHardfork, Head, SILA_MAINNET},
+    chainspec::{Chain, Head, SilaHardfork, SILA_MAINNET},
     network::{
         config::rng_secret_key,
         eth_wire::{
-            SilMessage, SilStream, HelloMessage, P2PStream, UnauthedEthStream, UnauthedP2PStream,
+            HelloMessage, P2PStream, SilMessage, SilStream, UnauthedEthStream, UnauthedP2PStream,
             UnifiedStatus,
         },
         SilNetworkPrimitives,
     },
 };
-use rsil_network_peers::{mainnet_nodes, pk2id, NodeRecord};
 use secp256k1::{SecretKey, SECP256K1};
 use std::sync::LazyLock;
 use tokio::net::TcpStream;
@@ -54,14 +54,14 @@ async fn main() -> eyre::Result<()> {
             if let DiscoveryUpdate::Added(peer) = update {
                 // Boot nodes hard at work, lets not disturb them
                 if MAINNET_BOOT_NODES.contains(&peer) {
-                    return
+                    return;
                 }
 
                 let (p2p_stream, their_hello) = match handshake_p2p(peer, our_key).await {
                     Ok(s) => s,
                     Err(e) => {
                         println!("Failed P2P handshake with peer {}, {}", peer.address, e);
-                        return
+                        return;
                     }
                 };
 
@@ -69,7 +69,7 @@ async fn main() -> eyre::Result<()> {
                     Ok(s) => s,
                     Err(e) => {
                         println!("Failed SIL handshake with peer {}, {}", peer.address, e);
-                        return
+                        return;
                     }
                 };
 
@@ -110,7 +110,7 @@ async fn handshake_eth(
     });
 
     let unified_status = UnifiedStatus::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(MAINNET_GENESIS_HASH)
         .forkid(SILA_MAINNET.hardfork_fork_id(SilaHardfork::SilaShanghai).unwrap())
         .build();

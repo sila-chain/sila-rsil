@@ -654,7 +654,7 @@ impl DefaultStateRootStrategy {
                 guard.store(PreservedSparseTrie::cleared(trie));
                 drop(guard);
                 executor.spawn_drop(deferred);
-                return
+                return;
             }
 
             let _enter =
@@ -741,14 +741,14 @@ where
         mut ctx: StateRootJobContext<'_, N, P, Savm>,
     ) -> ProviderResult<PreparedStateRootJob<N>> {
         if ctx.config.skip_state_root() {
-            return Ok(PreparedStateRootJob::new(Box::new(SkippedStateRootJob {}), None))
+            return Ok(PreparedStateRootJob::new(Box::new(SkippedStateRootJob {}), None));
         }
 
         if !ctx.config.use_state_root_task() {
             return Ok(PreparedStateRootJob::new(
                 Box::new(SynchronousStateRootJob { provider_builder: ctx.provider_builder }),
                 None,
-            ))
+            ));
         }
 
         let pending_sparse_trie_prune_blocks = ctx.take_sparse_trie_prune_blocks();
@@ -817,11 +817,11 @@ where
     ) -> ProviderResult<Option<PayloadStateRootHandle>> {
         // Sharing the engine state-root task with the payload builder is opt-in, and needs a
         // host that can run the task pipeline at all.
-        if !ctx.config.share_sparse_trie_with_payload_builder() ||
-            ctx.config.skip_state_root() ||
-            !ctx.config.has_enough_parallelism()
+        if !ctx.config.share_sparse_trie_with_payload_builder()
+            || ctx.config.skip_state_root()
+            || !ctx.config.has_enough_parallelism()
         {
-            return Ok(None)
+            return Ok(None);
         }
 
         let pending_sparse_trie_prune_blocks = ctx.take_sparse_trie_prune_blocks();
@@ -959,7 +959,7 @@ where
     ) -> ProviderResult<StateRootJobOutcome> {
         let outcome = self.sparse_outcome(block, output, outcome);
         if outcome.state_root == block.header().state_root() {
-            return Ok(outcome)
+            return Ok(outcome);
         }
         warn!(
             target: "engine::tree::state_root_strategy",
@@ -1034,7 +1034,7 @@ where
                     debug!(target: "engine::tree::state_root_strategy", %err, "State root task failed, falling back to serial root");
                     self.compute_serial(&output)
                 }
-            }
+            };
         }
 
         let timeout = self.timeout.expect("checked above");
@@ -1072,7 +1072,7 @@ where
             if let Ok(Ok(outcome)) = task_rx.try_recv() {
                 let outcome = self.sparse_outcome(block, &output, outcome);
                 if outcome.state_root == block.header().state_root() {
-                    return Ok(outcome)
+                    return Ok(outcome);
                 }
                 // A wrong task root falls through to the serial fallback already racing below.
                 warn!(
@@ -1087,7 +1087,7 @@ where
                 Ok(Ok((state_root, trie_updates, hashed_state))) => {
                     self.metrics.state_root_task_fallback_success_total.increment(1);
                     return Ok(StateRootJobOutcome::new(state_root, Arc::new(trie_updates))
-                        .with_hashed_state(Some(hashed_state)))
+                        .with_hashed_state(Some(hashed_state)));
                 }
                 Ok(Err(err)) => return Err(err),
                 Err(mpsc::TryRecvError::Empty) => {}
@@ -1204,10 +1204,10 @@ mod tests {
     use alloy_consensus::constants::KECCAK_EMPTY;
     use alloy_primitives::{map::HashMap, Address, U256};
     use rand::Rng;
+    use revm::state::{AccountInfo, AccountStatus, SavmState, SavmStorageSlot, TransactionId};
     use rsil_chain_state::{test_utils::TestBlockBuilder, StateTrieOverlayManager};
     use rsil_chainspec::ChainSpec;
     use rsil_db_common::init::init_genesis;
-    use rsil_sila_primitives::SilPrimitives;
     use rsil_evm::OnStateHook;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_primitives_traits::{Account, StorageEntry};
@@ -1216,10 +1216,10 @@ mod tests {
         test_utils::create_test_provider_factory_with_chain_spec,
         HashingWriter,
     };
+    use rsil_sila_primitives::SilPrimitives;
     use rsil_testing_utils::generators;
     use rsil_trie::{test_utils::state_root, HashedPostState, HashedStorage, LazyTrieData};
     use rsil_trie_db::ChangesetCache;
-    use revm::state::{AccountInfo, AccountStatus, SavmState, SavmStorageSlot, TransactionId};
 
     fn with_hashed_state(
         block: ExecutedBlock<SilPrimitives>,
@@ -1272,7 +1272,10 @@ mod tests {
         assert_eq!(retained_paths.storage_prefix_sets.len(), 2);
     }
 
-    fn create_mock_state_updates(num_accounts: usize, updates_per_account: usize) -> Vec<SavmState> {
+    fn create_mock_state_updates(
+        num_accounts: usize,
+        updates_per_account: usize,
+    ) -> Vec<SavmState> {
         let mut rng = generators::rng();
         let all_addresses: Vec<Address> = (0..num_accounts).map(|_| rng.random()).collect();
         let mut updates = Vec::with_capacity(updates_per_account);

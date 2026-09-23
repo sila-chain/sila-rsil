@@ -2,8 +2,8 @@
 
 use super::{LoadPendingBlock, LoadReceipt, SpawnBlocking};
 use crate::{
-    node::RpcNodeCoreExt, SilApiTypes, FromEthApiError, FullEthApiTypes, RpcBlock, RpcNodeCore,
-    RpcReceipt,
+    node::RpcNodeCoreExt, FromEthApiError, FullEthApiTypes, RpcBlock, RpcNodeCore, RpcReceipt,
+    SilApiTypes,
 };
 use alloy_consensus::{transaction::TxHashRef, TxReceipt};
 use alloy_eips::BlockId;
@@ -137,7 +137,7 @@ pub trait SilBlocks: LoadBlock<RpcConvert: RpcConvert<Primitives = Self::Primiti
                 return Ok(self
                     .converter()
                     .convert_receipts_with_block(inputs, block.sealed_block())
-                    .map(Some)?)
+                    .map(Some)?);
             }
 
             Ok(None)
@@ -177,8 +177,8 @@ pub trait SilBlocks: LoadBlock<RpcConvert: RpcConvert<Primitives = Self::Primiti
             }
 
             if let Some(block_hash) =
-                self.provider().block_hash_for_id(block_id).map_err(Self::Error::from_eth_err)? &&
-                let Some((block, receipts)) = self
+                self.provider().block_hash_for_id(block_id).map_err(Self::Error::from_eth_err)?
+                && let Some((block, receipts)) = self
                     .cache()
                     .get_block_and_receipts(block_hash)
                     .await

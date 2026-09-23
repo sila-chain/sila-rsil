@@ -55,10 +55,10 @@ impl Decodable for BlockAccessLists {
     fn decode(buf: &mut &[u8]) -> alloy_rlp::Result<Self> {
         let header = Header::decode(buf)?;
         if !header.list {
-            return Err(alloy_rlp::Error::UnexpectedString)
+            return Err(alloy_rlp::Error::UnexpectedString);
         }
         if buf.len() < header.payload_length {
-            return Err(alloy_rlp::Error::InputTooShort)
+            return Err(alloy_rlp::Error::InputTooShort);
         }
 
         let (mut payload, rest) = buf.split_at(header.payload_length);
@@ -71,14 +71,14 @@ impl Decodable for BlockAccessLists {
             let header_length = item_start.len() - payload.len();
             let item_length = header_length + item_header.payload_length;
             if item_length > item_start.len() {
-                return Err(alloy_rlp::Error::InputTooShort)
+                return Err(alloy_rlp::Error::InputTooShort);
             }
             if item_header.list {
                 bals.push(Some(Bytes::copy_from_slice(&item_start[..item_length])));
             } else if item_start[..item_length] == [EMPTY_STRING_CODE] {
                 bals.push(None);
             } else {
-                return Err(alloy_rlp::Error::UnexpectedString)
+                return Err(alloy_rlp::Error::UnexpectedString);
             }
 
             payload = &payload[item_header.payload_length..];
@@ -91,7 +91,7 @@ impl Decodable for BlockAccessLists {
 #[cfg(any(test, feature = "arbitrary"))]
 impl<'a> arbitrary::Arbitrary<'a> for BlockAccessLists {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        let entries = Vec::<Option<Vec<alloy_eip7928::AccountChanges>>>::arbitrary(u)?
+        let entries = Vec::<Option<Vec<alloy_sip7928::AccountChanges>>>::arbitrary(u)?
             .into_iter()
             .map(|entry| {
                 let entry = entry?;

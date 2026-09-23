@@ -13,7 +13,6 @@ use rsil_downloaders::{
     bodies::bodies::BodiesDownloaderBuilder, file_client::FileClient,
     headers::reverse_headers::ReverseHeadersDownloaderBuilder,
 };
-use rsil_sila_primitives::{Block, BlockBody, Transaction};
 use rsil_evm::{execute::Executor, ConfigureEvm};
 use rsil_evm_sila::SilEvmConfig;
 use rsil_network_p2p::{
@@ -32,6 +31,7 @@ use rsil_provider::{
 };
 use rsil_prune_types::PruneModes;
 use rsil_revm::database::StateProviderDatabase;
+use rsil_sila_primitives::{Block, BlockBody, Transaction};
 use rsil_stages::sets::DefaultStages;
 use rsil_stages_api::{Pipeline, StageId};
 use rsil_static_file::StaticFileProducer;

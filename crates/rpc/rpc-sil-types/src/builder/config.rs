@@ -3,7 +3,7 @@
 use std::time::Duration;
 
 use crate::{
-    SilStateCacheConfig, FeeHistoryCacheConfig, ForwardConfig, GasPriceOracleConfig,
+    FeeHistoryCacheConfig, ForwardConfig, GasPriceOracleConfig, SilStateCacheConfig,
     RPC_DEFAULT_GAS_CAP,
 };
 use reqwest::Url;

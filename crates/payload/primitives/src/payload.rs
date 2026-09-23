@@ -2,9 +2,9 @@
 
 use crate::{MessageValidationKind, PayloadAttributes};
 use alloc::vec::Vec;
-use alloy_eips::{sip1898::BlockWithParent, sip4895::Withdrawal, sip7685::Requests, BlockNumHash};
 use alloy_primitives::{Bytes, B256};
 use alloy_rpc_types_engine::ExecutionData;
+use alloy_sips::{eip1898::BlockWithParent, eip4895::Withdrawal, eip7685::Requests, BlockNumHash};
 use core::fmt::Debug;
 use serde::{de::DeserializeOwned, Serialize};
 

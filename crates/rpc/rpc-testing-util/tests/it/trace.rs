@@ -8,9 +8,9 @@ use alloy_rpc_types_trace::{
 use futures::StreamExt;
 use jsonrpsee::http_client::HttpClientBuilder;
 use jsonrpsee_http_client::HttpClient;
-use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_rpc_api_testing_util::{debug::DebugApiExt, trace::TraceApiExt, utils::parse_env_url};
 use rsil_rpc_eth_api::SilApiClient;
+use rsil_sila_primitives::{Receipt, TransactionSigned};
 use std::time::Instant;
 
 /// This is intended to be run locally against a running node.
@@ -20,7 +20,7 @@ use std::time::Instant;
 async fn trace_many_blocks() {
     let url = parse_env_url("RSIL_RPC_TEST_NODE_URL");
     if url.is_err() {
-        return
+        return;
     }
     let url = url.unwrap();
 
@@ -107,7 +107,7 @@ async fn trace_call() {
 async fn debug_trace_block_entire_chain() {
     let url = parse_env_url("RSIL_RPC_TEST_NODE_URL");
     if url.is_err() {
-        return
+        return;
     }
     let url = url.unwrap();
 
@@ -142,7 +142,7 @@ async fn debug_trace_block_opcodes_entire_chain() {
     let opcodes7702 = ["EXTCODESIZE", "EXTCODECOPY", "EXTCODEHASH"];
     let url = parse_env_url("RSIL_RPC_TEST_NODE_URL");
     if url.is_err() {
-        return
+        return;
     }
     let url = url.unwrap();
 

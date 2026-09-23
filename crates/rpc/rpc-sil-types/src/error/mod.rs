@@ -9,6 +9,13 @@ use alloy_sol_types::{ContractError, RevertReason};
 use alloy_transport::{RpcError, TransportErrorKind};
 pub use api::{AsEthApiError, FromEthApiError, FromEvmError, IntoEthApiError};
 use core::time::Duration;
+use revm::{
+    context_interface::result::{
+        EVMError, HaltReason, InvalidHeader, InvalidTransaction, OutOfGasError,
+    },
+    state::bal::BalError,
+};
+use revm_inspectors::tracing::{DebugInspectorError, MuxError};
 use rsil_errors::{BlockExecutionError, BlockValidationError, RsilError};
 use rsil_primitives_traits::transaction::{error::InvalidTransactionError, signed::RecoveryError};
 use rsil_revm::db::bal::SavmDatabaseError;
@@ -17,16 +24,9 @@ use rsil_rpc_server_types::result::{
     block_id_to_str, internal_rpc_err, invalid_params_rpc_err, rpc_err, rpc_error_with_code,
 };
 use rsil_transaction_pool::error::{
-    Sip4844PoolTransactionError, Sip7702PoolTransactionError, InvalidPoolTransactionError,
-    PoolError, PoolErrorKind, PoolTransactionError, RawPoolTransactionError,
+    InvalidPoolTransactionError, PoolError, PoolErrorKind, PoolTransactionError,
+    RawPoolTransactionError, Sip4844PoolTransactionError, Sip7702PoolTransactionError,
 };
-use revm::{
-    context_interface::result::{
-        EVMError, HaltReason, InvalidHeader, InvalidTransaction, OutOfGasError,
-    },
-    state::bal::BalError,
-};
-use revm_inspectors::tracing::{DebugInspectorError, MuxError};
 use std::convert::Infallible;
 use tokio::sync::oneshot::error::RecvError;
 
@@ -235,8 +235,8 @@ impl SilApiError {
         matches!(
             self,
             Self::InvalidTransaction(
-                RpcInvalidTransactionError::GasTooHigh |
-                    RpcInvalidTransactionError::GasLimitTooHigh
+                RpcInvalidTransactionError::GasTooHigh
+                    | RpcInvalidTransactionError::GasLimitTooHigh
             )
         )
     }
@@ -279,26 +279,26 @@ impl SilApiError {
 impl From<SilApiError> for jsonrpsee_types::error::ErrorObject<'static> {
     fn from(error: SilApiError) -> Self {
         match error {
-            SilApiError::FailedToDecodeSignedTransaction |
-            SilApiError::InvalidTransactionSignature |
-            SilApiError::EmptyRawTransactionData |
-            SilApiError::InvalidBlockRange |
-            SilApiError::RequestBeyondHead { .. } |
-            SilApiError::ExceedsMaxProofWindow |
-            SilApiError::ConflictingFeeFieldsInRequest |
-            SilApiError::Signing(_) |
-            SilApiError::BothStateAndStateDiffInOverride(_) |
-            SilApiError::InvalidTracerConfig |
-            SilApiError::TransactionConversionError(_) |
-            SilApiError::InvalidRewardPercentiles |
-            SilApiError::InvalidBytecode(_) => invalid_params_rpc_err(error.to_string()),
+            SilApiError::FailedToDecodeSignedTransaction
+            | SilApiError::InvalidTransactionSignature
+            | SilApiError::EmptyRawTransactionData
+            | SilApiError::InvalidBlockRange
+            | SilApiError::RequestBeyondHead { .. }
+            | SilApiError::ExceedsMaxProofWindow
+            | SilApiError::ConflictingFeeFieldsInRequest
+            | SilApiError::Signing(_)
+            | SilApiError::BothStateAndStateDiffInOverride(_)
+            | SilApiError::InvalidTracerConfig
+            | SilApiError::TransactionConversionError(_)
+            | SilApiError::InvalidRewardPercentiles
+            | SilApiError::InvalidBytecode(_) => invalid_params_rpc_err(error.to_string()),
             SilApiError::InvalidTransaction(err) => err.into(),
             SilApiError::PoolError(err) => err.into(),
-            SilApiError::PrevrandaoNotSet |
-            SilApiError::ExcessBlobGasNotSet |
-            SilApiError::InvalidBlockData(_) |
-            SilApiError::Internal(_) |
-            SilApiError::SavmCustom(_) => internal_rpc_err(error.to_string()),
+            SilApiError::PrevrandaoNotSet
+            | SilApiError::ExcessBlobGasNotSet
+            | SilApiError::InvalidBlockData(_)
+            | SilApiError::Internal(_)
+            | SilApiError::SavmCustom(_) => internal_rpc_err(error.to_string()),
             SilApiError::UnknownBlockOrTxIndex | SilApiError::TransactionNotFound => {
                 rpc_error_with_code(SilRpcErrorCode::ResourceNotFound.code(), error.to_string())
             }
@@ -764,14 +764,14 @@ impl RpcInvalidTransactionError {
     /// Returns the rpc error code for this error.
     pub const fn error_code(&self) -> i32 {
         match self {
-            Self::InvalidChainId |
-            Self::GasTooLow |
-            Self::GasTooHigh |
-            Self::GasRequiredExceedsAllowance { .. } |
-            Self::NonceTooLow { .. } |
-            Self::NonceTooHigh { .. } |
-            Self::FeeCapTooLow |
-            Self::FeeCapVeryHigh => SilRpcErrorCode::InvalidInput.code(),
+            Self::InvalidChainId
+            | Self::GasTooLow
+            | Self::GasTooHigh
+            | Self::GasRequiredExceedsAllowance { .. }
+            | Self::NonceTooLow { .. }
+            | Self::NonceTooHigh { .. }
+            | Self::FeeCapTooLow
+            | Self::FeeCapVeryHigh => SilRpcErrorCode::InvalidInput.code(),
             Self::Revert(_) => SilRpcErrorCode::ExecutionError.code(),
             _ => SilRpcErrorCode::TransactionRejected.code(),
         }
@@ -832,8 +832,8 @@ impl From<InvalidTransaction> for RpcInvalidTransactionError {
             }
             InvalidTransaction::PriorityFeeGreaterThanMaxFee => Self::TipAboveFeeCap,
             InvalidTransaction::GasPriceLessThanBasefee => Self::FeeCapTooLow,
-            InvalidTransaction::CallerGasLimitMoreThanBlock |
-            InvalidTransaction::TxGasLimitGreaterThanCap { .. } => {
+            InvalidTransaction::CallerGasLimitMoreThanBlock
+            | InvalidTransaction::TxGasLimitGreaterThanCap { .. } => {
                 // tx.gas > block.gas_limit
                 Self::GasTooHigh
             }
@@ -870,13 +870,13 @@ impl From<InvalidTransaction> for RpcInvalidTransactionError {
             InvalidTransaction::AuthorizationListNotSupported => {
                 Self::AuthorizationListNotSupported
             }
-            InvalidTransaction::AuthorizationListInvalidFields |
-            InvalidTransaction::EmptyAuthorizationList => Self::AuthorizationListInvalidFields,
-            InvalidTransaction::Sip2930NotSupported |
-            InvalidTransaction::Sip1559NotSupported |
-            InvalidTransaction::Sip4844NotSupported |
-            InvalidTransaction::Sip7702NotSupported |
-            InvalidTransaction::Sip7873NotSupported => Self::TxTypeNotSupported,
+            InvalidTransaction::AuthorizationListInvalidFields
+            | InvalidTransaction::EmptyAuthorizationList => Self::AuthorizationListInvalidFields,
+            InvalidTransaction::Sip2930NotSupported
+            | InvalidTransaction::Sip1559NotSupported
+            | InvalidTransaction::Sip4844NotSupported
+            | InvalidTransaction::Sip7702NotSupported
+            | InvalidTransaction::Sip7873NotSupported => Self::TxTypeNotSupported,
             InvalidTransaction::Sip7873MissingTarget => {
                 Self::other(internal_rpc_err(err.to_string()))
             }
@@ -902,11 +902,11 @@ impl From<InvalidTransactionError> for RpcInvalidTransactionError {
                 Self::OldLegacyChainId
             }
             InvalidTransactionError::ChainIdMismatch => Self::InvalidChainId,
-            InvalidTransactionError::Sip2930Disabled |
-            InvalidTransactionError::Sip1559Disabled |
-            InvalidTransactionError::Sip4844Disabled |
-            InvalidTransactionError::Sip7702Disabled |
-            InvalidTransactionError::TxTypeNotSupported => Self::TxTypeNotSupported,
+            InvalidTransactionError::Sip2930Disabled
+            | InvalidTransactionError::Sip1559Disabled
+            | InvalidTransactionError::Sip4844Disabled
+            | InvalidTransactionError::Sip7702Disabled
+            | InvalidTransactionError::TxTypeNotSupported => Self::TxTypeNotSupported,
             InvalidTransactionError::GasUintOverflow => Self::GasUintOverflow,
             InvalidTransactionError::GasTooLow => Self::GasTooLow,
             InvalidTransactionError::GasTooHigh => Self::GasTooHigh,
@@ -1042,20 +1042,20 @@ impl From<RpcPoolError> for jsonrpsee_types::error::ErrorObject<'static> {
             RpcPoolError::TxPoolOverflow => {
                 rpc_error_with_code(SilRpcErrorCode::TransactionRejected.code(), error.to_string())
             }
-            RpcPoolError::AlreadyKnown |
-            RpcPoolError::InvalidSender |
-            RpcPoolError::Underpriced |
-            RpcPoolError::ReplaceUnderpriced |
-            RpcPoolError::ExceedsGasLimit |
-            RpcPoolError::MaxTxGasLimitExceeded |
-            RpcPoolError::ExceedsFeeCap { .. } |
-            RpcPoolError::NegativeValue |
-            RpcPoolError::OversizedData { .. } |
-            RpcPoolError::ExceedsMaxInitCodeSize |
-            RpcPoolError::PoolTransactionError(_) |
-            RpcPoolError::Sip4844(_) |
-            RpcPoolError::Sip7702(_) |
-            RpcPoolError::AddressAlreadyReserved => {
+            RpcPoolError::AlreadyKnown
+            | RpcPoolError::InvalidSender
+            | RpcPoolError::Underpriced
+            | RpcPoolError::ReplaceUnderpriced
+            | RpcPoolError::ExceedsGasLimit
+            | RpcPoolError::MaxTxGasLimitExceeded
+            | RpcPoolError::ExceedsFeeCap { .. }
+            | RpcPoolError::NegativeValue
+            | RpcPoolError::OversizedData { .. }
+            | RpcPoolError::ExceedsMaxInitCodeSize
+            | RpcPoolError::PoolTransactionError(_)
+            | RpcPoolError::Sip4844(_)
+            | RpcPoolError::Sip7702(_)
+            | RpcPoolError::AddressAlreadyReserved => {
                 rpc_error_with_code(SilRpcErrorCode::InvalidInput.code(), error.to_string())
             }
             RpcPoolError::Other(other) => internal_rpc_err(other.to_string()),

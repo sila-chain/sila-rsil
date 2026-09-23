@@ -75,7 +75,7 @@ impl<Node: FullNodeComponents + Clone> ExExLauncher<Node> {
 
         if extensions.is_empty() {
             // nothing to launch
-            return Ok(None)
+            return Ok(None);
         }
 
         info!(target: "rsil::cli", "Loading ExEx Write-Ahead Log...");

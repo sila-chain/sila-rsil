@@ -58,8 +58,6 @@ mod tests {
         transaction::{DbTx, DbTxMut},
         AccountsHistory,
     };
-    use rsil_sila_consensus::SilBeaconConsensus;
-    use rsil_sila_primitives::Block;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_exex::ExExManagerHandle;
     use rsil_primitives_traits::{Account, Bytecode, SealedBlock};
@@ -71,6 +69,8 @@ mod tests {
         StaticFileProviderFactory, StorageReader,
     };
     use rsil_prune_types::{PruneMode, PruneModes};
+    use rsil_sila_consensus::SilBeaconConsensus;
+    use rsil_sila_primitives::Block;
     use rsil_stages_api::{
         ExecInput, ExecutionStageThresholds, PipelineTarget, Stage, StageCheckpoint, StageId,
     };
@@ -154,10 +154,10 @@ mod tests {
             // configuration
             let mut execution_stage = ExecutionStage::new(
                 SilEvmConfig::sila(Arc::new(
-                    ChainSpecBuilder::sila-mainnet().berlin_activated().build(),
+                    ChainSpecBuilder::sila_mainnet().berlin_activated().build(),
                 )),
                 Arc::new(SilBeaconConsensus::new(Arc::new(
-                    ChainSpecBuilder::sila-mainnet().berlin_activated().build(),
+                    ChainSpecBuilder::sila_mainnet().berlin_activated().build(),
                 ))),
                 ExecutionStageThresholds {
                     max_blocks: Some(100),

@@ -8,9 +8,9 @@ use alloy_rpc_types_engine::{ForkchoiceState, PayloadAttributes};
 use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_node_api::{EngineTypes, PayloadTypes};
 use rsil_rpc_api::clients::SilApiClient;
+use rsil_sila_primitives::TransactionSigned;
 use std::marker::PhantomData;
 use tracing::debug;
 
@@ -140,7 +140,7 @@ where
                 TransactionSigned,
             >::block_by_number(
                 rpc_client,
-                alloy_eips::BlockNumberOrTag::Number(self.fork_base_block),
+                alloy_sips::BlockNumberOrTag::Number(self.fork_base_block),
                 false,
             )
             .await?

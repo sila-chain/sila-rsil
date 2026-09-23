@@ -11,6 +11,10 @@
 
 extern crate alloc;
 
+// Compatibility name required by the upstream Compact derive expansion.
+#[cfg(any(test, feature = "rsil-codec"))]
+extern crate rsil_codecs as reth_codecs;
+
 mod checkpoint;
 mod event;
 mod mode;
@@ -79,8 +83,8 @@ impl ReceiptsLogPruneConfig {
             let block = base_block.max(
                 mode.prune_target_block(tip, PruneSegment::ContractLogs, PrunePurpose::User)?
                     .map(|(block, _)| block)
-                    .unwrap_or_default() +
-                    1,
+                    .unwrap_or_default()
+                    + 1,
             );
 
             map.entry(block).or_insert_with(Vec::new).push(address)
@@ -98,8 +102,8 @@ impl ReceiptsLogPruneConfig {
         let mut lowest = None;
 
         for mode in self.values() {
-            if mode.is_distance() &&
-                let Some((block, _)) =
+            if mode.is_distance()
+                && let Some((block, _)) =
                     mode.prune_target_block(tip, PruneSegment::ContractLogs, PrunePurpose::User)?
             {
                 lowest = Some(lowest.unwrap_or(u64::MAX).min(block));

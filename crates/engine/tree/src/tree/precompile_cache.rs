@@ -5,9 +5,9 @@ use alloy_primitives::{
     Address, Bytes,
 };
 use moka::policy::EvictionPolicy;
+use revm::precompile::{PrecompileId, PrecompileOutput, PrecompileResult};
 use rsil_evm::precompiles::{DynPrecompile, Precompile, PrecompileInput};
 use rsil_primitives_traits::dashmap::DashMap;
-use revm::precompile::{PrecompileId, PrecompileOutput, PrecompileResult};
 use std::{hash::Hash, sync::Arc};
 use tracing::error;
 
@@ -179,8 +179,8 @@ where
     }
 
     fn call(&self, input: PrecompileInput<'_>) -> PrecompileResult {
-        if let Some(entry) = &self.cache.get(input.data, self.spec_id.clone()) &&
-            input.gas >= entry.gas_used()
+        if let Some(entry) = &self.cache.get(input.data, self.spec_id.clone())
+            && input.gas >= entry.gas_used()
         {
             self.increment_by_one_precompile_cache_hits();
             return entry.to_precompile_result(input.reservoir);
@@ -250,13 +250,13 @@ impl CachedPrecompileMetrics {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rsil_evm::{SilEvmFactory, Savm, SavmEnv, SavmFactory};
-    use rsil_revm::db::EmptyDB;
     use revm::{
         context::TxEnv,
         precompile::{PrecompileOutput, PrecompileStatus},
         primitives::hardfork::SpecId,
     };
+    use rsil_evm::{Savm, SavmEnv, SavmFactory, SilEvmFactory};
+    use rsil_revm::db::EmptyDB;
 
     #[test]
     fn test_precompile_cache_basic() {
@@ -354,8 +354,10 @@ mod tests {
         let precompile1_address = Address::with_last_byte(1);
         let precompile2_address = Address::with_last_byte(2);
 
-        savm.precompiles_mut().apply_precompile(&precompile1_address, |_| Some(wrapped_precompile1));
-        savm.precompiles_mut().apply_precompile(&precompile2_address, |_| Some(wrapped_precompile2));
+        savm.precompiles_mut()
+            .apply_precompile(&precompile1_address, |_| Some(wrapped_precompile1));
+        savm.precompiles_mut()
+            .apply_precompile(&precompile2_address, |_| Some(wrapped_precompile2));
 
         // first invocation of precompile1 (cache miss)
         let result1 = savm

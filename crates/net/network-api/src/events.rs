@@ -1,19 +1,19 @@
 //! API related to listening for network events.
 
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     message::RequestPair, snap::SnapProtocolMessage, BlockAccessLists, BlockBodies, BlockHeaders,
-    Capabilities, Cells, DisconnectReason, SilMessage, SilNetworkPrimitives, SilVersion,
-    GetBlockAccessLists, GetBlockBodies, GetBlockHeaders, GetCells, GetNodeData,
-    GetPooledTransactions, GetReceipts, GetReceipts70, NetworkPrimitives, NodeData,
-    PooledTransactions, Receipts, Receipts69, Receipts70, UnifiedStatus,
+    Capabilities, Cells, DisconnectReason, GetBlockAccessLists, GetBlockBodies, GetBlockHeaders,
+    GetCells, GetNodeData, GetPooledTransactions, GetReceipts, GetReceipts70, NetworkPrimitives,
+    NodeData, PooledTransactions, Receipts, Receipts69, Receipts70, SilMessage,
+    SilNetworkPrimitives, SilVersion, UnifiedStatus,
 };
-use rsil_sila_forks::ForkId;
 use rsil_network_p2p::{
     error::{RequestError, RequestResult},
     snap::client::SnapResponse,
 };
 use rsil_network_peers::{NodeRecord, PeerId};
 use rsil_network_types::{PeerAddr, PeerKind};
+use rsil_sila_forks::ForkId;
 use rsil_tokio_util::EventStream;
 use std::{
     fmt,

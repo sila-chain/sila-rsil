@@ -1,10 +1,10 @@
 use crate::primitives::alloy_primitives::{BlockNumber, StorageKey, StorageValue};
 use alloy_primitives::{Address, B256, U256};
 use core::ops::{Deref, DerefMut};
+use revm::{bytecode::Bytecode, state::AccountInfo, Database, DatabaseRef};
 use rsil_primitives_traits::Account;
 use rsil_storage_api::{AccountReader, BlockHashReader, BytecodeReader, StateProvider};
 use rsil_storage_errors::provider::{ProviderError, ProviderResult};
-use revm::{bytecode::Bytecode, state::AccountInfo, Database, DatabaseRef};
 
 /// A helper trait responsible for providing state necessary for SAVM execution.
 ///
@@ -268,7 +268,7 @@ mod tests {
 
         fn basic_ref(&self, address: Address) -> Result<Option<AccountInfo>, Self::Error> {
             if self.fail_account_reads {
-                return Err(ProviderError::UnsupportedProvider)
+                return Err(ProviderError::UnsupportedProvider);
             }
 
             self.account_reads.fetch_add(1, Ordering::Relaxed);
@@ -277,7 +277,7 @@ mod tests {
 
         fn code_by_hash_ref(&self, code_hash: B256) -> Result<Bytecode, Self::Error> {
             if self.fail_bytecode_reads {
-                return Err(ProviderError::UnsupportedProvider)
+                return Err(ProviderError::UnsupportedProvider);
             }
 
             self.bytecode_reads.fetch_add(1, Ordering::Relaxed);

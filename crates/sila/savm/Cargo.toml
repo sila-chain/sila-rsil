@@ -30,7 +30,7 @@ alloy-rpc-types-engine.workspace = true
 
 metrics = { workspace = true, optional = true }
 rsil-metrics = { workspace = true, optional = true }
-revmc = { workspace = true, features = ["alloy-savm"], optional = true }
+revmc = { workspace = true, features = ["alloy-evm"], optional = true }
 
 [dev-dependencies]
 rsil-testing-utils.workspace = true

@@ -10,12 +10,12 @@ use alloy_eips::{BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockHash, TxHash, B256};
 use derive_more::Constructor;
 use rsil_chain_state::{BlockState, ExecutedBlock};
-use rsil_sila_primitives::Receipt;
 use rsil_evm::{ConfigureEvm, SavmEnvFor};
 use rsil_primitives_traits::{
     Block, BlockTy, IndexedTx, NodePrimitives, ReceiptTy, RecoveredBlock, SealedHeader,
 };
 use rsil_rpc_convert::{RpcConvert, RpcTypes};
+use rsil_sila_primitives::Receipt;
 
 /// Configured [`rsil_evm::SavmEnv`] for a pending block.
 #[derive(Debug, Clone, Constructor)]

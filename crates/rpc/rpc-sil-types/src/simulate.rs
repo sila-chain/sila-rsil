@@ -15,9 +15,15 @@ use alloy_rpc_types_eth::{
     BlockId, BlockOverrides, BlockTransactionsKind,
 };
 use jsonrpsee_types::{error::INTERNAL_ERROR_CODE, ErrorObject};
+use revm::{
+    context::Block,
+    context_interface::result::ExecutionResult,
+    primitives::{Address, Bytes, TxKind, U256},
+    Database,
+};
 use rsil_evm::{
     execute::{BlockBuilder, BlockBuilderOutcome, BlockExecutor},
-    Savm, HaltReasonFor,
+    HaltReasonFor, Savm,
 };
 use rsil_primitives_traits::{
     BlockBody as _, BlockTy, NodePrimitives, Recovered, RecoveredBlock, SealedHeader,
@@ -25,12 +31,6 @@ use rsil_primitives_traits::{
 use rsil_rpc_convert::{RpcBlock, RpcConvert, RpcTxReq};
 use rsil_rpc_server_types::result::{block_id_to_str, rpc_err};
 use rsil_storage_api::{noop::NoopProvider, StateProvider};
-use revm::{
-    context::Block,
-    context_interface::result::ExecutionResult,
-    primitives::{Address, Bytes, TxKind, U256},
-    Database,
-};
 
 /// Fallback seconds added between simulated block timestamps when neither the user nor the chain
 /// hint provides a value.
@@ -272,9 +272,9 @@ pub fn apply_precompile_overrides(
     for (source, dest) in &moves {
         if source == dest {
             if precompiles.get(source).is_none() {
-                return Err(SilSimulateError::NotAPrecompile(*source))
+                return Err(SilSimulateError::NotAPrecompile(*source));
             }
-            return Err(SilSimulateError::MovePrecompileToSelf(*source))
+            return Err(SilSimulateError::MovePrecompileToSelf(*source));
         }
     }
 
@@ -349,7 +349,7 @@ where
             };
 
             if exceeds_gas_limit {
-                return Err(SilApiError::other(SilSimulateError::BlockGasLimitExceeded))
+                return Err(SilApiError::other(SilSimulateError::BlockGasLimitExceeded));
             }
         }
 
@@ -387,7 +387,7 @@ where
         let gas_used = gas_output.tx_gas_used();
         if let Some(remaining_call_gas_limit) = remaining_call_gas_limit.as_mut() {
             if gas_used > *remaining_call_gas_limit {
-                return Err(SilApiError::other(SilSimulateError::GasLimitReached))
+                return Err(SilApiError::other(SilSimulateError::GasLimitReached));
             }
             *remaining_call_gas_limit -= gas_used;
         }
@@ -587,8 +587,8 @@ mod tests {
         state::{AccountOverride, StateOverride},
         BlockOverrides, TransactionRequest,
     };
-    use rsil_primitives_traits::SealedHeader;
     use revm::precompile::Precompiles;
+    use rsil_primitives_traits::SealedHeader;
 
     #[test]
     fn nonce_max_value_error_uses_internal_error_code() {
@@ -674,7 +674,7 @@ mod tests {
         let parent = parent_at(5, 100);
         let blocks = vec![block_with_number(8)];
 
-        let out = sanitize_chain(blocks, &parent, Chain::sila-mainnet().id(), 256).unwrap();
+        let out = sanitize_chain(blocks, &parent, Chain::sila_mainnet().id(), 256).unwrap();
         assert_eq!(out.len(), 3);
 
         let numbers: Vec<u64> = out
@@ -698,7 +698,7 @@ mod tests {
         let blocks: Vec<SimBlock<TransactionRequest>> =
             vec![SimBlock::default(), SimBlock::default()];
 
-        let out = sanitize_chain(blocks, &parent, Chain::sila-mainnet().id(), 256).unwrap();
+        let out = sanitize_chain(blocks, &parent, Chain::sila_mainnet().id(), 256).unwrap();
         assert_eq!(out.len(), 2);
 
         let overrides = out[0].block_overrides.as_ref().unwrap();
@@ -750,16 +750,18 @@ mod tests {
     #[test]
     fn sanitize_chain_rejects_non_increasing_number() {
         let parent = parent_at(10, 100);
-        let err = sanitize_chain(vec![block_with_number(10)], &parent, Chain::sila-mainnet().id(), 256)
-            .unwrap_err();
+        let err =
+            sanitize_chain(vec![block_with_number(10)], &parent, Chain::sila_mainnet().id(), 256)
+                .unwrap_err();
         assert!(matches!(err, SilApiError::Other(_)));
     }
 
     #[test]
     fn sanitize_chain_enforces_max_blocks() {
         let parent = parent_at(0, 0);
-        let err = sanitize_chain(vec![block_with_number(257)], &parent, Chain::sila-mainnet().id(), 256)
-            .unwrap_err();
+        let err =
+            sanitize_chain(vec![block_with_number(257)], &parent, Chain::sila_mainnet().id(), 256)
+                .unwrap_err();
         assert!(matches!(err, SilApiError::Other(_)));
     }
 }

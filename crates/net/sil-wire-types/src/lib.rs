@@ -15,10 +15,10 @@ mod status;
 pub use status::{Status, StatusBuilder, StatusEth69, StatusMessage, UnifiedStatus};
 
 pub mod version;
-pub use version::{SilVersion, ProtocolVersion};
+pub use version::{ProtocolVersion, SilVersion};
 
 pub mod message;
-pub use message::{SilMessage, SilMessageID, ProtocolMessage};
+pub use message::{ProtocolMessage, SilMessage, SilMessageID};
 
 pub mod header;
 pub use header::*;
@@ -54,5 +54,5 @@ pub mod snap;
 pub use snap::*;
 
 /// re-export for convenience
-pub use alloy_eips::sip1898::{BlockHashOrNumber, HashOrNumber};
-pub use alloy_eips::sip2718::Encodable2718;
+pub use alloy_sips::eip1898::{BlockHashOrNumber, HashOrNumber};
+pub use alloy_sips::eip2718::Encodable2718;

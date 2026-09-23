@@ -1,16 +1,16 @@
 use crate::{
-    errors::{SilHandshakeError, SilStreamError, P2PStreamError},
+    errors::{P2PStreamError, SilHandshakeError, SilStreamError},
     message::MAX_MESSAGE_SIZE,
     CanDisconnect,
 };
 use bytes::{Bytes, BytesMut};
 use futures::{Sink, SinkExt, Stream};
 use rsil_eth_wire_types::{
-    DisconnectReason, SilMessage, SilNetworkPrimitives, ProtocolMessage, StatusMessage,
+    DisconnectReason, ProtocolMessage, SilMessage, SilNetworkPrimitives, StatusMessage,
     UnifiedStatus,
 };
-use rsil_sila_forks::ForkFilter;
 use rsil_primitives_traits::GotExpected;
+use rsil_sila_forks::ForkFilter;
 use std::{fmt::Debug, future::Future, pin::Pin, time::Duration};
 use tokio::time::timeout;
 use tokio_stream::StreamExt;
@@ -173,8 +173,8 @@ where
         }
 
         // Ensure peer's total difficulty is reasonable
-        if let StatusMessage::Legacy(s) = &their_status_message &&
-            s.total_difficulty.bit_len() > 160
+        if let StatusMessage::Legacy(s) = &their_status_message
+            && s.total_difficulty.bit_len() > 160
         {
             unauth
                 .disconnect(DisconnectReason::ProtocolBreach)

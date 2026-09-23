@@ -5,9 +5,9 @@
 use alloy_consensus::transaction::TxHashRef;
 use alloy_primitives::B256;
 use alloy_rpc_types_eth::TransactionInfo;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_primitives_traits::{NodePrimitives, Recovered, SignedTransaction};
 use rsil_rpc_convert::{RpcConvert, RpcTransaction};
+use rsil_sila_primitives::TransactionSigned;
 
 /// Represents from where a transaction was fetched.
 #[derive(Debug, Clone, Eq, PartialEq)]

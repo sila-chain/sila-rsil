@@ -1,15 +1,16 @@
 use alloy_consensus::{
-    EnvKzgSettings, SilaTxEnvelope, SidecarBuilder, SimpleCoder, TxEip4844Variant, TxEnvelope,
+    EnvKzgSettings, EthereumTxEnvelope as SilaTxEnvelope, SidecarBuilder, SimpleCoder,
+    TxEip4844Variant, TxEnvelope,
 };
-use alloy_eips::{sip7594::BlobTransactionSidecarVariant, sip7702::SignedAuthorization};
 use alloy_network::{
-    sip2718::Encodable2718, Sila, SilaWallet, NetworkTransactionBuilder,
-    TransactionBuilder4844,
+    eip2718::Encodable2718, Ethereum as Sila, EthereumWallet as SilaWallet,
+    NetworkTransactionBuilder, TransactionBuilder4844,
 };
 use alloy_primitives::{hex, Address, Bytes, TxKind, B256, U256};
 use alloy_rpc_types_eth::{Authorization, TransactionInput, TransactionRequest};
 use alloy_signer::SignerSync;
 use alloy_signer_local::PrivateKeySigner;
+use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};
 use eyre::Ok;
 
 /// Helper for transaction operations
@@ -119,7 +120,7 @@ impl TransactionTestContext {
         let mut builder = SidecarBuilder::<SimpleCoder>::new();
         builder.ingest(b"dummy blob");
         let sidecar: alloy_consensus::BlobTransactionSidecar = builder.build()?;
-        tx.set_blob_sidecar(alloy_eips::sip7594::BlobTransactionSidecarVariant::Sip4844(sidecar));
+        tx.set_blob_sidecar(alloy_sips::eip7594::BlobTransactionSidecarVariant::Eip4844(sidecar));
         tx.set_max_fee_per_blob_gas(15e9 as u128);
 
         let signed = Self::sign_tx(wallet, tx).await;
@@ -129,9 +130,7 @@ impl TransactionTestContext {
     /// Signs an arbitrary [`TransactionRequest`] using the provided wallet
     pub async fn sign_tx(wallet: PrivateKeySigner, tx: TransactionRequest) -> TxEnvelope {
         let signer = SilaWallet::from(wallet);
-        <TransactionRequest as NetworkTransactionBuilder<Sila>>::build(tx, &signer)
-            .await
-            .unwrap()
+        <TransactionRequest as NetworkTransactionBuilder<Sila>>::build(tx, &signer).await.unwrap()
     }
 
     /// Creates a tx with blob sidecar and sign it, returning bytes
@@ -170,7 +169,7 @@ impl TransactionTestContext {
         let proof_setting = EnvKzgSettings::Default;
 
         match tx {
-            SilaTxEnvelope::Sip4844(signed) => match signed.tx() {
+            SilaTxEnvelope::Eip4844(signed) => match signed.tx() {
                 TxEip4844Variant::TxEip4844WithSidecar(tx) => {
                     tx.validate_blob(proof_setting.get()).unwrap();
                     tx.sidecar.versioned_hashes().collect()

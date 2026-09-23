@@ -10,8 +10,13 @@ use alloy_eips::{
 };
 use alloy_evm::block::BlockValidationError;
 use alloy_primitives::{b256, fixed_bytes, keccak256, Bytes, TxKind, B256, U256};
-use rsil_chainspec::{ChainSpecBuilder, SilaHardfork, ForkCondition, SILA_MAINNET};
-use rsil_sila_primitives::{Block, BlockBody, Transaction};
+use revm::{
+    database::{CacheDB, EmptyDB, TransitionState},
+    primitives::address,
+    state::{AccountInfo, Bytecode, SavmState},
+    Database,
+};
+use rsil_chainspec::{ChainSpecBuilder, ForkCondition, SilaHardfork, SILA_MAINNET};
 use rsil_evm::{
     execute::{BasicBlockExecutor, Executor},
     ConfigureEvm,
@@ -21,13 +26,8 @@ use rsil_execution_types::BlockExecutionResult;
 use rsil_primitives_traits::{
     crypto::secp256k1::public_key_to_address, Block as _, RecoveredBlock,
 };
+use rsil_sila_primitives::{Block, BlockBody, Transaction};
 use rsil_testing_utils::generators::{self, sign_tx_with_key_pair};
-use revm::{
-    database::{CacheDB, EmptyDB, TransitionState},
-    primitives::address,
-    state::{AccountInfo, Bytecode, SavmState},
-    Database,
-};
 use std::sync::{mpsc, Arc};
 
 fn create_database_with_beacon_root_contract() -> CacheDB<EmptyDB> {
@@ -371,7 +371,9 @@ fn sip_2935_pre_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // ensure that the block hash was *not* written to storage, since this is before the fork
     // was activated
@@ -406,7 +408,9 @@ fn sip_2935_fork_activation_genesis() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // ensure that the block hash was *not* written to storage, since there are no blocks
     // preceding genesis
@@ -450,7 +454,9 @@ fn sip_2935_fork_activation_within_window_bounds() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the hash for the ancestor of the fork activation block should be present
     assert!(
@@ -502,7 +508,9 @@ fn sip_2935_fork_activation_outside_window_bounds() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the hash for the ancestor of the fork activation block should be present
     assert!(
@@ -534,7 +542,9 @@ fn sip_2935_state_transition_inside_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // nothing should be written as the genesis has no ancestors
     //
@@ -562,7 +572,9 @@ fn sip_2935_state_transition_inside_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the block hash of genesis should now be in storage, but not block 1
     assert!(
@@ -593,7 +605,9 @@ fn sip_2935_state_transition_inside_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the block hash of genesis and block 1 should now be in storage, but not block 2
     assert!(

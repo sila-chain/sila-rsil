@@ -1,4 +1,4 @@
-use rsil_chainspec::{ChainSpec, DEV, HOLESKY, HOODI, SILA_MAINNET, SEPOLIA};
+use rsil_chainspec::{ChainSpec, DEV, HOLESKY, HOODI, SEPOLIA, SILA_MAINNET};
 use rsil_cli::chainspec::{parse_genesis, ChainSpecParser};
 use std::sync::Arc;
 

@@ -149,7 +149,7 @@ mod swarm;
 mod trusted_peers_resolver;
 
 pub use rsil_eth_wire::{DisconnectReason, HelloMessageWithProtocols};
-pub use rsil_eth_wire_types::{primitives, SilNetworkPrimitives, NetworkPrimitives};
+pub use rsil_eth_wire_types::{primitives, NetworkPrimitives, SilNetworkPrimitives};
 pub use rsil_network_api::{
     events, BlockDownloaderProvider, DiscoveredEvent, DiscoveryEvent, NetworkEvent,
     NetworkEventListenerProvider, NetworkInfo, PeerRequest, PeerRequestSender, Peers, PeersInfo,
@@ -157,9 +157,9 @@ pub use rsil_network_api::{
 pub use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState};
 pub use rsil_network_types::{PeersConfig, SessionsConfig};
 pub use session::{
-    ActiveSessionHandle, ActiveSessionMessage, Direction, SilRlpxConnection, PeerInfo,
-    PendingSessionEvent, PendingSessionHandle, PendingSessionHandshakeError, SessionCommand,
-    SessionEvent, SessionId, SessionManager,
+    ActiveSessionHandle, ActiveSessionMessage, Direction, PeerInfo, PendingSessionEvent,
+    PendingSessionHandle, PendingSessionHandshakeError, SessionCommand, SessionEvent, SessionId,
+    SessionManager, SilRlpxConnection,
 };
 
 pub use builder::NetworkBuilder;

@@ -54,5 +54,5 @@ pub mod snap;
 pub use snap::*;
 
 /// re-export for convenience
-pub use alloy_eips::sip1898::{BlockHashOrNumber, HashOrNumber};
-pub use alloy_eips::sip2718::Encodable2718;
+pub use alloy_sips::eip1898::{BlockHashOrNumber, HashOrNumber};
+pub use alloy_sips::eip2718::Encodable2718;

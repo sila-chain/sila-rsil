@@ -17,7 +17,7 @@ use crate::{
     },
     e2s::{error::E2sError, types::Entry},
 };
-use alloy_consensus::{Block, BlockBody, Sip658Value, Header, TxType};
+use alloy_consensus::{Block, BlockBody, Eip658Value, Header, TxType};
 use alloy_primitives::{Log, B256, U256};
 use alloy_rlp::{Decodable, Encodable, RlpDecodable, RlpEncodable};
 use sha2::{Digest, Sha256};
@@ -245,7 +245,7 @@ impl DecodeCompressedRlp for CompressedSlimReceipts {
 ///
 /// Per the spec, the slim form is the 4-element RLP list
 /// `[tx-type, post-state-or-status, cumulative-gas, logs]` with **no bloom filter** (the bloom is
-/// recomputable from the logs). This is a thin wrapper over alloy's field types: [`Sip658Value`]
+/// recomputable from the logs). This is a thin wrapper over alloy's field types: [`Eip658Value`]
 /// captures both the pre-Byzantium 32-byte post-state root and the post-Byzantium boolean status,
 /// so a single type decodes receipts across every fork.
 #[derive(Debug, Clone, PartialEq, Eq, RlpEncodable, RlpDecodable)]
@@ -253,7 +253,7 @@ pub struct SlimReceipt {
     /// Transaction type (SIP-2718).
     pub tx_type: TxType,
     /// Post-state root (pre-Byzantium) or success status (post-Byzantium).
-    pub status: Sip658Value,
+    pub status: Eip658Value,
     /// Cumulative gas used in the block up to and including this transaction.
     pub cumulative_gas_used: u64,
     /// Logs emitted by the transaction.
@@ -617,7 +617,7 @@ impl BlockTuple {
 mod tests {
     use super::*;
     use crate::test_utils::{create_header, create_test_receipt, create_test_receipts};
-    use alloy_eips::sip4895::Withdrawals;
+    use alloy_sips::eip4895::Withdrawals;
     use alloy_primitives::{Bytes, U256};
     use rsil_sila_primitives::{Receipt, TxType};
 
@@ -749,7 +749,7 @@ mod tests {
 
     #[test]
     fn test_single_receipt_compression_roundtrip() {
-        let test_receipt = create_test_receipt(TxType::Sip1559, true, 21000, 2);
+        let test_receipt = create_test_receipt(TxType::Eip1559, true, 21000, 2);
 
         // Compress the receipt
         let compressed_receipts = CompressedSlimReceipts::from_encodable(&test_receipt)
@@ -781,7 +781,7 @@ mod tests {
         // Spec: CompressedSlimReceipts.data = snappyFramed(rlp([tx-type, status, cumulative-gas,
         // logs])), with no bloom filter. Prove the inner RLP of `SilaReceipt` is exactly that
         // 4-element list, byte for byte.
-        let receipt = create_test_receipt(TxType::Sip1559, true, 21000, 2);
+        let receipt = create_test_receipt(TxType::Eip1559, true, 21000, 2);
 
         let compressed = CompressedSlimReceipts::from_encodable(&receipt).unwrap();
         let actual_rlp = compressed.decompress().unwrap();
@@ -808,14 +808,14 @@ mod tests {
         // post-state root, proving a single `SlimReceipt` type round-trips across forks.
         let receipts = vec![
             SlimReceipt {
-                tx_type: TxType::Sip1559,
-                status: Sip658Value::Sip658(true),
+                tx_type: TxType::Eip1559,
+                status: Eip658Value::Eip658(true),
                 cumulative_gas_used: 21000,
                 logs: vec![],
             },
             SlimReceipt {
                 tx_type: TxType::Legacy,
-                status: Sip658Value::PostState(B256::repeat_byte(0xab)),
+                status: Eip658Value::PostState(B256::repeat_byte(0xab)),
                 cumulative_gas_used: 42000,
                 logs: vec![],
             },

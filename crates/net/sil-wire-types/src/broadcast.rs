@@ -3,7 +3,7 @@
 use crate::{SilMessage, SilVersion, NetworkPrimitives};
 use alloc::{sync::Arc, vec::Vec};
 use alloy_consensus::transaction::TxHashRef;
-use alloy_eips::sip2718::Typed2718;
+use alloy_sips::eip2718::Typed2718;
 use alloy_primitives::{
     bytes::BufMut,
     map::{B256Map, B256Set},
@@ -1350,7 +1350,7 @@ impl InMemorySize for NewPooledTransactionHashes {
 mod tests {
     use super::*;
     use alloy_consensus::{transaction::TxHashRef, Typed2718};
-    use alloy_eips::sip2718::Encodable2718;
+    use alloy_sips::eip2718::Encodable2718;
     use alloy_primitives::{b256, hex, Bytes, Signature, U256};
     use alloy_rlp::{RlpDecodable, RlpEncodable};
     use proptest::prelude::*;

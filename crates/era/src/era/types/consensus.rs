@@ -29,7 +29,7 @@
 //! ```
 use crate::e2s::{error::E2sError, types::Entry};
 use alloy_consensus::Block;
-use alloy_eips::sip2718::Decodable2718;
+use alloy_sips::eip2718::Decodable2718;
 use alloy_rpc_types_beacon::block::{
     SignedBeaconBlockAltair, SignedBeaconBlockBellatrix, SignedBeaconBlockCapella,
     SignedBeaconBlockDeneb, SignedBeaconBlockElectra, SignedBeaconBlockPhase0,

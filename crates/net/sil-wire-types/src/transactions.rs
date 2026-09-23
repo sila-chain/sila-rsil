@@ -3,7 +3,7 @@
 use crate::broadcast::decode_list_with_memory_budget;
 use alloc::vec::Vec;
 use alloy_consensus::transaction::{PooledTransaction, TxHashRef};
-use alloy_eips::sip7594::Cell;
+use alloy_sips::eip7594::Cell;
 use alloy_primitives::{B128, B256};
 use alloy_rlp::{Decodable, RlpDecodable, RlpDecodableWrapper, RlpEncodable, RlpEncodableWrapper};
 use derive_more::{Constructor, Deref, IntoIterator};
@@ -357,7 +357,7 @@ mod tests {
                 ),
             ),
             TransactionSigned::new_unhashed(
-                Transaction::Sip1559(TxEip1559 {
+                Transaction::Eip1559(TxEip1559 {
                     chain_id: 4,
                     nonce: 26u64,
                     max_priority_fee_per_gas: 1500000000,
@@ -496,7 +496,7 @@ mod tests {
                 ),
             ),
             TransactionSigned::new_unhashed(
-                Transaction::Sip1559(TxEip1559 {
+                Transaction::Eip1559(TxEip1559 {
                     chain_id: 4,
                     nonce: 26u64,
                     max_priority_fee_per_gas: 1500000000,

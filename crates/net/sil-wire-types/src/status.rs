@@ -1,6 +1,6 @@
 use crate::{BlockRangeUpdate, SilVersion};
 use alloy_chains::{Chain, NamedChain};
-use alloy_hardforks::{SilaHardfork, ForkId, Head};
+use alloy_hardforks::{EthereumHardfork as SilaHardfork, ForkId, Head};
 use alloy_primitives::{hex, B256, U256};
 use alloy_rlp::{BufMut, Encodable, RlpDecodable, RlpEncodable};
 use core::fmt::{Debug, Display};
@@ -473,7 +473,7 @@ mod tests {
     use crate::{BlockRangeUpdate, SilVersion, Status, StatusEth69, StatusMessage, UnifiedStatus};
     use alloy_consensus::constants::MAINNET_GENESIS_HASH;
     use alloy_genesis::Genesis;
-    use alloy_hardforks::{SilaHardfork, ForkHash, ForkId, Head};
+    use alloy_hardforks::{EthereumHardfork as SilaHardfork, ForkHash, ForkId, Head};
     use alloy_primitives::{b256, hex, B256, U256};
     use alloy_rlp::{Decodable, Encodable};
     use rand::Rng;
@@ -775,7 +775,7 @@ mod tests {
             (SilaHardfork::Byzantium, ForkCondition::Block(3)),
             (SilaHardfork::MuirGlacier, ForkCondition::Block(5)),
             (SilaHardfork::London, ForkCondition::Block(8)),
-            (SilaHardfork::SilaShanghai, ForkCondition::Timestamp(13)),
+            (SilaHardfork::Shanghai, ForkCondition::Timestamp(13)),
         ];
 
         let mut chainspec = ChainSpec::builder().genesis(genesis).chain(Chain::from_id(1337));

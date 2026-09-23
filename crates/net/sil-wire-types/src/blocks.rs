@@ -3,7 +3,7 @@
 
 use crate::HeadersDirection;
 use alloc::vec::Vec;
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::B256;
 use alloy_rlp::{RlpDecodable, RlpDecodableWrapper, RlpEncodable, RlpEncodableWrapper};
 use derive_more::{Deref, IntoIterator};
@@ -127,7 +127,7 @@ mod tests {
         HeadersDirection,
     };
     use alloy_consensus::{Header, TxLegacy};
-    use alloy_eips::BlockHashOrNumber;
+    use alloy_sips::BlockHashOrNumber;
     use alloy_primitives::{hex, Signature, TxKind, U256};
     use alloy_rlp::{Decodable, Encodable};
     use rsil_sila_primitives::{BlockBody, Transaction, TransactionSigned};

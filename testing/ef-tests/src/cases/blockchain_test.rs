@@ -1,4 +1,4 @@
-//! Test runners for `BlockchainTests` in <https://github.com/sila-chain/tests>
+//! Test runners for `BlockchainTests` in <https://github.com/sila-chain/sila-tests>
 
 use crate::{
     models::{BlockchainTest, ForkSpec},
@@ -371,7 +371,7 @@ pub fn should_skip(path: &Path) -> bool {
     matches!(
         name,
         // funky test with `bigint 0x00` value in json :) not possible to happen on sila-mainnet and require
-        // custom json parser. https://github.com/sila-chain/tests/issues/971
+        // custom json parser. https://github.com/sila-chain/sila-tests/issues/971
         | "ValueOverflow.json"
         | "ValueOverflowParis.json"
 
@@ -389,7 +389,7 @@ pub fn should_skip(path: &Path) -> bool {
         | "HighGasPriceParis.json"
 
         // Skip test where basefee/accesslist/difficulty is present but it shouldn't be supported in
-        // London/Berlin/TheMerge. https://github.com/sila-chain/tests/blob/5b7e1ab3ffaf026d99d20b17bb30f533a2c80c8b/GeneralStateTests/stExample/sip1559.json#L130
+        // London/Berlin/TheMerge. https://github.com/sila-chain/sila-tests/blob/5b7e1ab3ffaf026d99d20b17bb30f533a2c80c8b/GeneralStateTests/stExample/sip1559.json#L130
         // It is expected to not execute these tests.
         | "accessListExample.json"
         | "basefeeExample.json"

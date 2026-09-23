@@ -1,10 +1,10 @@
 //! Contains types required for building a payload.
 
 use alloc::{sync::Arc, vec::Vec};
-use alloy_eips::{
-    sip4844::BlobTransactionSidecar,
-    sip7594::{BlobTransactionSidecarEip7594, BlobTransactionSidecarVariant},
-    sip7685::Requests,
+use alloy_sips::{
+    eip4844::BlobTransactionSidecar,
+    eip7594::{BlobTransactionSidecarEip7594, BlobTransactionSidecarVariant},
+    eip7685::Requests,
 };
 use alloy_primitives::{Bytes, U256};
 use alloy_rpc_types_engine::{

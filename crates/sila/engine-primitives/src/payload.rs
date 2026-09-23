@@ -384,10 +384,10 @@ impl BlobSidecars {
     /// opposite type.
     pub fn push_sidecar_variant(&mut self, sidecar: BlobTransactionSidecarVariant) {
         match sidecar {
-            BlobTransactionSidecarVariant::Sip4844(sidecar) => {
+            BlobTransactionSidecarVariant::Eip4844(sidecar) => {
                 self.push_eip4844_sidecar(sidecar);
             }
-            BlobTransactionSidecarVariant::Sip7594(sidecar) => {
+            BlobTransactionSidecarVariant::Eip7594(sidecar) => {
                 self.push_eip7594_sidecar(sidecar);
             }
         }

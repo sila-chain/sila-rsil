@@ -781,17 +781,17 @@ mod tests {
         let d_sender = address!("0x000000000000000000000000000000000000000d");
 
         // create a chain of transactions by sender A, B, C
-        let mut tx_set = MockTransactionSet::dependent(a_sender, 0, 4, TxType::Sip1559);
+        let mut tx_set = MockTransactionSet::dependent(a_sender, 0, 4, TxType::Eip1559);
         let a = tx_set.clone().into_vec();
 
-        let b = MockTransactionSet::dependent(b_sender, 0, 3, TxType::Sip1559).into_vec();
+        let b = MockTransactionSet::dependent(b_sender, 0, 3, TxType::Eip1559).into_vec();
         tx_set.extend(b.clone());
 
         // C has the same number of txs as B
-        let c = MockTransactionSet::dependent(c_sender, 0, 3, TxType::Sip1559).into_vec();
+        let c = MockTransactionSet::dependent(c_sender, 0, 3, TxType::Eip1559).into_vec();
         tx_set.extend(c.clone());
 
-        let d = MockTransactionSet::dependent(d_sender, 0, 1, TxType::Sip1559).into_vec();
+        let d = MockTransactionSet::dependent(d_sender, 0, 1, TxType::Eip1559).into_vec();
         tx_set.extend(d.clone());
 
         // add all the transactions to the pool
@@ -830,10 +830,10 @@ mod tests {
         let d = address!("0x000000000000000000000000000000000000000d");
 
         // Create transaction chains for senders A, B, C, and D.
-        let a_txs = MockTransactionSet::sequential_transactions_by_sender(a, 4, TxType::Sip1559);
-        let b_txs = MockTransactionSet::sequential_transactions_by_sender(b, 3, TxType::Sip1559);
-        let c_txs = MockTransactionSet::sequential_transactions_by_sender(c, 3, TxType::Sip1559);
-        let d_txs = MockTransactionSet::sequential_transactions_by_sender(d, 1, TxType::Sip1559);
+        let a_txs = MockTransactionSet::sequential_transactions_by_sender(a, 4, TxType::Eip1559);
+        let b_txs = MockTransactionSet::sequential_transactions_by_sender(b, 3, TxType::Eip1559);
+        let c_txs = MockTransactionSet::sequential_transactions_by_sender(c, 3, TxType::Eip1559);
+        let d_txs = MockTransactionSet::sequential_transactions_by_sender(d, 1, TxType::Eip1559);
 
         // Set up expected pending transactions.
         let expected_pending = vec![
@@ -1061,9 +1061,9 @@ mod tests {
         // sender C (external) - 2 transactions
 
         // Create transaction chains for senders A, B, C
-        let a_txs = MockTransactionSet::sequential_transactions_by_sender(a, 11, TxType::Sip1559);
-        let b_txs = MockTransactionSet::sequential_transactions_by_sender(b, 2, TxType::Sip1559);
-        let c_txs = MockTransactionSet::sequential_transactions_by_sender(c, 2, TxType::Sip1559);
+        let a_txs = MockTransactionSet::sequential_transactions_by_sender(a, 11, TxType::Eip1559);
+        let b_txs = MockTransactionSet::sequential_transactions_by_sender(b, 2, TxType::Eip1559);
+        let c_txs = MockTransactionSet::sequential_transactions_by_sender(c, 2, TxType::Eip1559);
 
         // create local txs for sender A
         for tx in a_txs.into_vec() {
@@ -1100,7 +1100,7 @@ mod tests {
         let mut f = MockTransactionFactory::default();
         let mut pool = PendingPool::new(MockOrdering::default());
         let sender = address!("0x00000000000000000000000000000000000000aa");
-        let txs = MockTransactionSet::dependent(sender, 0, 3, TxType::Sip1559).into_vec();
+        let txs = MockTransactionSet::dependent(sender, 0, 3, TxType::Eip1559).into_vec();
         for tx in txs {
             pool.add_transaction(f.validated_arc(tx), 0);
         }
@@ -1118,7 +1118,7 @@ mod tests {
         let mut f = MockTransactionFactory::default();
         let mut pool = PendingPool::new(MockOrdering::default());
         let sender = address!("0x00000000000000000000000000000000000000bb");
-        let txs = MockTransactionSet::dependent(sender, 0, 4, TxType::Sip1559).into_vec();
+        let txs = MockTransactionSet::dependent(sender, 0, 4, TxType::Eip1559).into_vec();
         for tx in txs {
             pool.add_transaction(f.validated_arc(tx), 0);
         }
@@ -1140,7 +1140,7 @@ mod tests {
         let mut f = MockTransactionFactory::default();
         let mut pool = PendingPool::new(MockOrdering::default());
         let sender = address!("0x00000000000000000000000000000000000000cc");
-        let txs = MockTransactionSet::dependent(sender, 0, 1, TxType::Sip1559).into_vec();
+        let txs = MockTransactionSet::dependent(sender, 0, 1, TxType::Eip1559).into_vec();
         for tx in txs {
             pool.add_transaction(f.validated_arc(tx), 0);
         }

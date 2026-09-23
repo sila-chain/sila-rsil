@@ -628,8 +628,8 @@ rstest = "0.26.1"
 test-case = "3"
 
 # ssz encoding
-sila_ssz = { package = "ethereum_ssz", version = "0.10.4" }
-sila_ssz_derive = { package = "ethereum_ssz_derive", version = "0.10.4" }
+ethereum_ssz = "0.10.4"
+ethereum_ssz_derive = "0.10.4"
 
 # allocators
 jemalloc_pprof = { version = "0.8", default-features = false }

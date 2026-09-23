@@ -6,7 +6,7 @@ use crate::{
     traits::{PoolTransaction, TransactionOrigin},
     PriceBumpConfig,
 };
-use alloy_eips::{sip7594::BlobTransactionSidecarVariant, sip7702::SignedAuthorization};
+use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};
 use alloy_primitives::{Address, TxHash, B256, U256};
 use futures_util::future::Either;
 use rsil_primitives_traits::{Block, Recovered, SealedBlock};

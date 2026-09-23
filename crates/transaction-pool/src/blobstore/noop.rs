@@ -1,7 +1,7 @@
 use crate::blobstore::{BlobStore, BlobStoreCleanupStat, BlobStoreError};
-use alloy_eips::{
-    sip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
-    sip7594::{BlobTransactionSidecarVariant, Cell},
+use alloy_sips::{
+    eip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
+    eip7594::{BlobTransactionSidecarVariant, Cell},
 };
 use alloy_primitives::{TxHash, B128, B256};
 use std::sync::Arc;

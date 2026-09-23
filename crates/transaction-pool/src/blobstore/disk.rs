@@ -1,11 +1,11 @@
 //! A simple diskstore for blobs
 
 use crate::blobstore::{BlobStore, BlobStoreCleanupStat, BlobStoreError, BlobStoreSize};
-use alloy_eips::{
+use alloy_sips::{
     merge::EPOCH_SLOTS,
-    sip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
-    sip7594::{BlobCellMask, BlobTransactionSidecarVariant, Cell},
-    sip7840::BlobParams,
+    eip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
+    eip7594::{BlobCellMask, BlobTransactionSidecarVariant, Cell},
+    eip7840::BlobParams,
 };
 use alloy_primitives::{map::B256Set, TxHash, B128, B256};
 use parking_lot::{Mutex, RwLock};
@@ -834,9 +834,9 @@ pub enum OpenDiskFileBlobStore {
 #[cfg(test)]
 mod tests {
     use alloy_consensus::BlobTransactionSidecar;
-    use alloy_eips::{
-        sip4844::{kzg_to_versioned_hash, Blob, BlobAndProofV2, Bytes48},
-        sip7594::{
+    use alloy_sips::{
+        eip4844::{kzg_to_versioned_hash, Blob, BlobAndProofV2, Bytes48},
+        eip7594::{
             BlobTransactionSidecarEip7594, BlobTransactionSidecarVariant, CELLS_PER_EXT_BLOB,
         },
     };
@@ -855,7 +855,7 @@ mod tests {
         (0..num)
             .map(|_| {
                 let tx = TxHash::random_with(&mut rng);
-                let blob = BlobTransactionSidecarVariant::Sip4844(BlobTransactionSidecar {
+                let blob = BlobTransactionSidecarVariant::Eip4844(BlobTransactionSidecar {
                     blobs: vec![],
                     commitments: vec![],
                     proofs: vec![],
@@ -876,7 +876,7 @@ mod tests {
             BlobAndProofV2 { blob: Box::new(Blob::default()), proofs: cell_proofs.clone() };
         let sidecar = BlobTransactionSidecarEip7594::new(vec![blob], vec![commitment], cell_proofs);
 
-        (BlobTransactionSidecarVariant::Sip7594(sidecar), versioned_hash, expected)
+        (BlobTransactionSidecarVariant::Eip7594(sidecar), versioned_hash, expected)
     }
 
     #[test]
@@ -944,7 +944,7 @@ mod tests {
         let result = store.get(tx).unwrap();
         assert_eq!(
             result,
-            Some(Arc::new(BlobTransactionSidecarVariant::Sip4844(BlobTransactionSidecar {
+            Some(Arc::new(BlobTransactionSidecarVariant::Eip4844(BlobTransactionSidecar {
                 blobs: vec![],
                 commitments: vec![],
                 proofs: vec![]
@@ -971,7 +971,7 @@ mod tests {
             let result = store.get(tx).unwrap();
             assert_eq!(
                 result,
-                Some(Arc::new(BlobTransactionSidecarVariant::Sip4844(BlobTransactionSidecar {
+                Some(Arc::new(BlobTransactionSidecarVariant::Eip4844(BlobTransactionSidecar {
                     blobs: vec![],
                     commitments: vec![],
                     proofs: vec![]

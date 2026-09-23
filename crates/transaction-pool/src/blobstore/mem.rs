@@ -1,7 +1,7 @@
 use crate::blobstore::{BlobStore, BlobStoreCleanupStat, BlobStoreError, BlobStoreSize};
-use alloy_eips::{
-    sip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
-    sip7594::{BlobCellMask, BlobTransactionSidecarVariant, Cell},
+use alloy_sips::{
+    eip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
+    eip7594::{BlobCellMask, BlobTransactionSidecarVariant, Cell},
 };
 use alloy_primitives::{map::B256Map, B128, B256};
 use parking_lot::RwLock;
@@ -295,9 +295,9 @@ fn insert_size(
 mod tests {
     use super::*;
     use alloy_consensus::BlobTransactionSidecar;
-    use alloy_eips::{
-        sip4844::{kzg_to_versioned_hash, Blob, BlobAndProofV2, Bytes48},
-        sip7594::{
+    use alloy_sips::{
+        eip4844::{kzg_to_versioned_hash, Blob, BlobAndProofV2, Bytes48},
+        eip7594::{
             BlobTransactionSidecarEip7594, BlobTransactionSidecarVariant, CELLS_PER_EXT_BLOB,
         },
     };
@@ -313,7 +313,7 @@ mod tests {
             BlobAndProofV2 { blob: Box::new(Blob::default()), proofs: cell_proofs.clone() };
         let sidecar = BlobTransactionSidecarEip7594::new(vec![blob], vec![commitment], cell_proofs);
 
-        (BlobTransactionSidecarVariant::Sip7594(sidecar), versioned_hash, expected)
+        (BlobTransactionSidecarVariant::Eip7594(sidecar), versioned_hash, expected)
     }
 
     fn sip4844_single_blob_sidecar() -> (BlobTransactionSidecarVariant, B256) {
@@ -327,7 +327,7 @@ mod tests {
             proofs: vec![proof],
         };
 
-        (BlobTransactionSidecarVariant::Sip4844(sidecar), versioned_hash)
+        (BlobTransactionSidecarVariant::Eip4844(sidecar), versioned_hash)
     }
 
     #[test]

@@ -61,22 +61,22 @@ use crate::{
     AddedTransactionOutcome, AllTransactionsEvents,
 };
 use alloy_consensus::{error::ValueError, transaction::TxHashRef, BlockHeader, Signed, Typed2718};
-use alloy_eips::{
-    sip2718::{Decodable2718, Encodable2718, WithEncoded},
-    sip2930::AccessList,
-    sip4844::{
+use alloy_sips::{
+    eip2718::{Decodable2718, Encodable2718, WithEncoded},
+    eip2930::AccessList,
+    eip4844::{
         env_settings::KzgSettings, BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1,
         BlobTransactionValidationError,
     },
-    sip7594::BlobTransactionSidecarVariant,
-    sip7702::SignedAuthorization,
+    eip7594::BlobTransactionSidecarVariant,
+    eip7702::SignedAuthorization,
 };
 use alloy_primitives::{
     map::{AddressSet, B256Map},
     Address, Bytes, TxHash, TxKind, B128, B256, U256,
 };
 use futures_util::{ready, Stream};
-use rsil_eth_wire_types::HandleMempoolData;
+use rsil_sil_wire_types::HandleMempoolData;
 use rsil_execution_types::ChangedAccount;
 use rsil_primitives_traits::{Block, InMemorySize, Recovered, SealedBlock, SignedTransaction};
 use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
@@ -1919,10 +1919,10 @@ impl<Tx: PoolTransaction> Stream for NewSubpoolTransactionStream<Tx> {
 mod tests {
     use super::*;
     use alloy_consensus::{
-        SignableTransaction, SilaTxEnvelope, TxEip1559, TxEip2930, TxEip4844, TxEip7702,
+        SignableTransaction, EthereumTxEnvelope as SilaTxEnvelope, TxEip1559, TxEip2930, TxEip4844, TxEip7702,
         TxEnvelope, TxLegacy,
     };
-    use alloy_eips::sip4844::DATA_GAS_PER_BLOB;
+    use alloy_sips::eip4844::DATA_GAS_PER_BLOB;
     use alloy_primitives::Signature;
 
     #[test]
@@ -2031,7 +2031,7 @@ mod tests {
     #[test]
     fn test_eth_pooled_transaction_new_eip4844() {
         // Create an SIP-4844 transaction with specific parameters
-        let tx = SilaTxEnvelope::Sip4844(
+        let tx = SilaTxEnvelope::Eip4844(
             TxEip4844 {
                 max_fee_per_gas: 10,
                 gas_limit: 1000,
@@ -2057,7 +2057,7 @@ mod tests {
     #[test]
     fn test_eth_pooled_transaction_new_eip7702() {
         // Init an SIP-7702 transaction with specific parameters
-        let tx = SilaTxEnvelope::<TxEip4844>::Sip7702(
+        let tx = SilaTxEnvelope::<TxEip4844>::Eip7702(
             TxEip7702 {
                 max_fee_per_gas: 10,
                 gas_limit: 1000,

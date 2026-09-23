@@ -1,6 +1,6 @@
 use crate::{PoolTransaction, SilPooledTransaction};
 use alloy_consensus::{SignableTransaction, TxEip1559, TxEip4844, TxLegacy};
-use alloy_eips::{sip1559::MIN_PROTOCOL_BASE_FEE, sip2718::Encodable2718, sip2930::AccessList};
+use alloy_sips::{eip1559::MIN_PROTOCOL_BASE_FEE, eip2718::Encodable2718, eip2930::AccessList};
 use alloy_primitives::{Address, Bytes, TxKind, B256, U256};
 use rand::{Rng, RngCore};
 use rsil_chainspec::SILA_MAINNET;

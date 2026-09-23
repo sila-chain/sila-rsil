@@ -9,7 +9,7 @@ use crate::{
 };
 use futures_util::{lock::Mutex, StreamExt};
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{HeaderTy, SealedBlock};
 use rsil_storage_api::BlockReaderIdExt;
 use rsil_tasks::Runtime;

@@ -1,9 +1,9 @@
 use alloy_consensus::{
-    EnvKzgSettings, SilaTxEnvelope, SidecarBuilder, SimpleCoder, TxEip4844Variant, TxEnvelope,
+    EnvKzgSettings, EthereumTxEnvelope as SilaTxEnvelope, SidecarBuilder, SimpleCoder, TxEip4844Variant, TxEnvelope,
 };
-use alloy_eips::{sip7594::BlobTransactionSidecarVariant, sip7702::SignedAuthorization};
+use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};
 use alloy_network::{
-    sip2718::Encodable2718, Sila, SilaWallet, NetworkTransactionBuilder,
+    eip2718::Encodable2718, Ethereum as Sila, EthereumWallet as SilaWallet, NetworkTransactionBuilder,
     TransactionBuilder4844,
 };
 use alloy_primitives::{hex, Address, Bytes, TxKind, B256, U256};
@@ -119,7 +119,7 @@ impl TransactionTestContext {
         let mut builder = SidecarBuilder::<SimpleCoder>::new();
         builder.ingest(b"dummy blob");
         let sidecar: alloy_consensus::BlobTransactionSidecar = builder.build()?;
-        tx.set_blob_sidecar(alloy_eips::sip7594::BlobTransactionSidecarVariant::Sip4844(sidecar));
+        tx.set_blob_sidecar(alloy_sips::eip7594::BlobTransactionSidecarVariant::Eip4844(sidecar));
         tx.set_max_fee_per_blob_gas(15e9 as u128);
 
         let signed = Self::sign_tx(wallet, tx).await;

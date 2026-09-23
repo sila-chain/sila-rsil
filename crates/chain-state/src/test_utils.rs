@@ -3,7 +3,7 @@ use crate::{
     CanonStateSubscriptions,
 };
 use alloy_consensus::{Header, SignableTransaction, TxEip1559, TxReceipt, EMPTY_ROOT_HASH};
-use alloy_eips::sip1559::{SILA_BLOCK_GAS_LIMIT_30M, INITIAL_BASE_FEE};
+use alloy_sips::eip1559::{ETHEREUM_BLOCK_GAS_LIMIT_30M as SILA_BLOCK_GAS_LIMIT_30M, INITIAL_BASE_FEE};
 use alloy_primitives::{map::B256HashMap, Address, BlockNumber, B256, U256};
 use alloy_signer::SignerSync;
 use alloy_signer_local::PrivateKeySigner;

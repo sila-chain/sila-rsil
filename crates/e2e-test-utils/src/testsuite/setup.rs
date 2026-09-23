@@ -10,7 +10,7 @@ use rsil_sila_primitives::Block;
 use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState};
 use rsil_node_api::{EngineTypes, NodeTypes, PayloadTypes, TreeConfig};
 use rsil_node_core::primitives::RecoveredBlock;
-use revm::state::SavmState;
+use revm::state::EvmState as SavmState;
 use std::{marker::PhantomData, path::Path, sync::Arc};
 use tokio::{
     sync::mpsc,

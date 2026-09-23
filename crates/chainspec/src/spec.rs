@@ -1,5 +1,5 @@
-pub use alloy_eips::sip1559::BaseFeeParams;
-use alloy_evm::sil::spec::SilExecutorSpec;
+pub use alloy_sips::sip1559::BaseFeeParams;
+use alloy_savm::sil::spec::SilExecutorSpec;
 
 use crate::{
     constants::{MAINNET_DEPOSIT_CONTRACT, MAINNET_PRUNE_DELETE_LIMIT},
@@ -26,7 +26,7 @@ use alloy_consensus::{
     },
     Header,
 };
-use alloy_eips::{
+use alloy_sips::{
     sip1559::INITIAL_BASE_FEE, sip7685::EMPTY_REQUESTS_HASH, sip7840::BlobParams,
     sip7892::BlobScheduleBlobParams, sip7928::EMPTY_BLOCK_ACCESS_LIST_HASH,
 };
@@ -1299,8 +1299,8 @@ mod tests {
     use super::*;
     use alloy_chains::Chain;
     use alloy_consensus::constants::ETH_TO_WEI;
-    use alloy_eips::{sip4844::BLOB_TX_MIN_BLOB_GASPRICE, sip7840::BlobParams};
-    use alloy_evm::block::calc::{base_block_reward, block_reward};
+    use alloy_sips::{sip4844::BLOB_TX_MIN_BLOB_GASPRICE, sip7840::BlobParams};
+    use alloy_savm::block::calc::{base_block_reward, block_reward};
     use alloy_genesis::{ChainConfig, GenesisAccount};
     use alloy_primitives::{b256, hex};
     use alloy_trie::{TrieAccount, EMPTY_ROOT_HASH};

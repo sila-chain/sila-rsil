@@ -1,4 +1,4 @@
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 use alloy_primitives::{BlockNumber, B256};
 
 /// Current status of the blockchain's head.

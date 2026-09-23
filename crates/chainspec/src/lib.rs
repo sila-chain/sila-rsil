@@ -25,7 +25,7 @@ pub use alloy_chains::{Chain, ChainKind, NamedChain};
 /// Re-export for convenience
 pub use rsil_sila_forks::*;
 
-pub use alloy_evm::SavmLimitParams;
+pub use alloy_savm::SavmLimitParams;
 pub use api::SilChainSpec;
 pub use info::ChainInfo;
 #[cfg(any(test, feature = "test-utils"))]
@@ -143,7 +143,7 @@ mod tests {
     fn test_centralized_base_fee_calculation() {
         use crate::{ChainSpec, SilChainSpec};
         use alloy_consensus::Header;
-        use alloy_eips::sip1559::INITIAL_BASE_FEE;
+        use alloy_sips::sip1559::INITIAL_BASE_FEE;
 
         fn parent_header() -> Header {
             Header {

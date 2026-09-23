@@ -1,7 +1,7 @@
 use crate::{ChainSpec, DepositContract};
 use alloc::{boxed::Box, vec::Vec};
 use alloy_chains::Chain;
-use alloy_eips::{calc_next_block_base_fee, sip1559::BaseFeeParams, sip7840::BlobParams};
+use alloy_sips::{calc_next_block_base_fee, sip1559::BaseFeeParams, sip7840::BlobParams};
 use alloy_genesis::Genesis;
 use alloy_primitives::{B256, U256};
 use core::fmt::{Debug, Display};

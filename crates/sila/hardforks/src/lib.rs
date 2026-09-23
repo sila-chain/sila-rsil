@@ -24,7 +24,10 @@ mod display;
 mod hardforks;
 
 pub use alloy_hardforks::*;
-pub use alloy_hardforks::EthereumHardfork as SilaHardfork;
+pub use alloy_hardforks::{
+    ethereum as sila, mainnet as sila_mainnet, EthereumHardfork as SilaHardfork,
+    EthereumHardforks as SilaHardforks,
+};
 
 pub use display::DisplayHardforks;
 pub use hardforks::*;

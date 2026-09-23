@@ -1,9 +1,9 @@
 # Ensures that `Compact` codec changes are backwards compatible.
 #
-# 1) checkout the upstream v2.4.0 authority used for the original Sila snapshot
+# 1) checkout the original Sila v2.4.0 identity snapshot authority
 # 2) randomly generate and serialize to disk many different type vectors with `Compact`
 # 3) checkout the Sila PR
-# 4) deserialize the upstream-compatible vectors with Rsil
+# 4) deserialize the baseline Sila-compatible vectors with current Rsil
 
 on:
   pull_request:
@@ -35,19 +35,19 @@ jobs:
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           cache-on-failure: true
-      - name: Checkout upstream v2.4.0 compatibility authority
+      - name: Checkout original Sila v2.4.0 compatibility authority
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          repository: paradigmxyz/reth
-          ref: v2.4.0
+          repository: sila-chain/sila-rsil
+          ref: eee6b78c5fcf74454693c05c6a35faa3a7a832f9
           persist-credentials: false
-      - name: Generate upstream compact vectors
-        run: cargo run --bin reth --features "dev" -- test-vectors compact --write
+      - name: Generate baseline Sila compact vectors
+        run: cargo run --bin rsil --features "dev" -- test-vectors compact --write
       - name: Checkout PR
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           clean: false
           persist-credentials: false
-      # Read and decode the v2.4.0 authority vectors with the Sila identity build.
+      # Read and decode the original Sila snapshot vectors with the current Sila build.
       - name: Read vectors
         run: cargo run --bin rsil --features "dev" -- test-vectors compact --read

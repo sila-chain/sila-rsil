@@ -1,5 +1,5 @@
 use alloy_consensus::TxType;
-use alloy_savm::sil::receipt_builder::{ReceiptBuilder, ReceiptBuilderCtx};
+use alloy_savm::eth::receipt_builder::{ReceiptBuilder, ReceiptBuilderCtx};
 use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_savm::Savm;
 

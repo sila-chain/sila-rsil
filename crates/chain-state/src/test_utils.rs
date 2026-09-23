@@ -113,7 +113,7 @@ impl<N: NodePrimitives> TestBlockBuilder<N> {
         let mut rng = rand::rng();
 
         let mock_tx = |nonce: u64| -> Recovered<_> {
-            let tx = Transaction::Sip1559(TxEip1559 {
+            let tx = Transaction::Eip1559(TxEip1559 {
                 chain_id: self.chain_spec.chain.id(),
                 nonce,
                 gas_limit: MIN_TRANSACTION_GAS,
@@ -176,7 +176,7 @@ impl<N: NodePrimitives> TestBlockBuilder<N> {
             )]),
             // use the number as the timestamp so it is monotonically increasing
             timestamp: number +
-                SilaHardfork::SilaCancun.activation_timestamp(self.chain_spec.chain).unwrap(),
+                SilaHardfork::Cancun.activation_timestamp(self.chain_spec.chain).unwrap(),
             withdrawals_root: Some(calculate_withdrawals_root(&[])),
             blob_gas_used: Some(0),
             excess_blob_gas: Some(0),

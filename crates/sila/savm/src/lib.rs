@@ -20,8 +20,11 @@ extern crate alloc;
 use alloc::{borrow::Cow, sync::Arc};
 use alloy_consensus::Header;
 use alloy_savm::{
-    sil::{SilBlockExecutionCtx, SilBlockExecutorFactory},
-    SilEvmFactory, FromRecoveredTx, FromTxWithEncoded,
+    eth::{
+        EthBlockExecutionCtx as SilBlockExecutionCtx,
+        EthBlockExecutorFactory as SilBlockExecutorFactory,
+    },
+    EthEvmFactory as SilEvmFactory, FromRecoveredTx, FromTxWithEncoded,
 };
 #[cfg(feature = "jit")]
 use core::any::Any;
@@ -29,7 +32,7 @@ use core::{convert::Infallible, fmt::Debug};
 use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
 use rsil_sila_primitives::{Block, SilPrimitives, TransactionSigned};
 use rsil_savm::{
-    sil::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, SavmEnv, SavmFactory,
+    eth::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, SavmEnv, SavmFactory,
     JitBackend, NextBlockEnvAttributes, TransactionEnvMut,
 };
 use rsil_primitives_traits::{SealedBlock, SealedHeader};
@@ -50,10 +53,10 @@ use {
     revm::context_interface::block::BlobExcessGasAndPrice,
 };
 
-pub use alloy_savm::SilEvm;
+pub use alloy_savm::EthEvm as SilEvm;
 
 mod config;
-use alloy_savm::sil::spec::SilExecutorSpec;
+use alloy_savm::eth::spec::EthExecutorSpec as SilExecutorSpec;
 pub use config::{revm_spec, revm_spec_by_timestamp_and_block_number};
 use rsil_sila_forks::Hardforks;
 

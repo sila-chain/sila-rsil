@@ -13,7 +13,7 @@ extern crate alloc;
 
 use alloc::{fmt::Debug, sync::Arc};
 use alloy_consensus::{constants::MAXIMUM_EXTRA_DATA_SIZE, EMPTY_OMMER_ROOT_HASH};
-use alloy_sips::sip7840::BlobParams;
+use alloy_sips::eip7840::BlobParams;
 use alloy_primitives::B256;
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
 use rsil_consensus::{
@@ -296,7 +296,7 @@ where
 mod tests {
     use super::*;
     use alloy_consensus::Header;
-    use alloy_sips::sip7685::EMPTY_REQUESTS_HASH;
+    use alloy_sips::eip7685::EMPTY_REQUESTS_HASH;
     use alloy_primitives::B256;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
     use rsil_consensus_common::validation::validate_against_parent_gas_limit;

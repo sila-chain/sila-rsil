@@ -1,4 +1,4 @@
-# Runs `sila/hive` tests.
+# Runs `sila-chain/sila-hive` tests.
 
 name: hive
 

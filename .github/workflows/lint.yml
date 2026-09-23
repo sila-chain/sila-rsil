@@ -196,18 +196,30 @@ jobs:
     name: fmt
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          persist-credentials: false
+          persist-credentials: true
       - uses: rui314/setup-mold@9c9c13bf4c3f1adef0cc596abc155580bcb04444 # v1
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: rustfmt
       - uses: mozilla-actions/sccache-action@9e7fa8a12102821edf02ca5dbea1acd0f89a2696 # v0.0.10
-      - name: Run fmt
+      - name: Apply fmt
+        run: cargo fmt --all
+      - name: Commit tracked formatting changes
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          git config user.name "sila-ci"
+          git config user.email "sila-ci@users.noreply.github.com"
+          git add -u
+          if ! git diff --cached --quiet; then
+            git commit -m "style: apply rustfmt"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
+      - name: Verify fmt
         run: cargo fmt --all --check
 
   udeps:

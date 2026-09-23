@@ -1,6 +1,6 @@
 //! Canonical chain state notification trait and types.
 
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 use derive_more::{Deref, DerefMut};
 use rsil_execution_types::{BlockReceipts, Chain};
 use rsil_primitives_traits::{NodePrimitives, RecoveredBlock, SealedHeader};

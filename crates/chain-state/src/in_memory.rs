@@ -5,7 +5,7 @@ use crate::{
     ChainInfoTracker, MemoryOverlayStateProvider,
 };
 use alloy_consensus::{transaction::TransactionMeta, BlockHeader};
-use alloy_eips::{BlockHashOrNumber, BlockNumHash};
+use alloy_sips::{BlockHashOrNumber, BlockNumHash};
 use alloy_primitives::{map::B256Map, BlockNumber, TxHash, B256};
 use parking_lot::RwLock;
 use rsil_chainspec::ChainInfo;
@@ -974,7 +974,7 @@ impl<N: NodePrimitives<SignedTx: SignedTransaction>> NewCanonicalChain<N> {
 mod tests {
     use super::*;
     use crate::test_utils::TestBlockBuilder;
-    use alloy_eips::sip7685::Requests;
+    use alloy_sips::sip7685::Requests;
     use alloy_primitives::{Address, BlockNumber, Bytes, StorageKey, StorageValue};
     use rand::Rng;
     use rsil_errors::ProviderResult;

@@ -1,7 +1,7 @@
 use alloy_consensus::TxType;
-use alloy_evm::sil::receipt_builder::{ReceiptBuilder, ReceiptBuilderCtx};
+use alloy_savm::sil::receipt_builder::{ReceiptBuilder, ReceiptBuilderCtx};
 use rsil_sila_primitives::{Receipt, TransactionSigned};
-use rsil_evm::Savm;
+use rsil_savm::Savm;
 
 /// A builder that operates on Rsil primitive types, specifically [`TransactionSigned`] and
 /// [`Receipt`].

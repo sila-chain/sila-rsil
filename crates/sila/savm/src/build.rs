@@ -3,11 +3,11 @@ use alloy_consensus::{
     proofs::{self, calculate_receipt_root},
     Block, BlockBody, BlockHeader, Header, TxReceipt, EMPTY_OMMER_ROOT_HASH,
 };
-use alloy_eips::{sip4895::Withdrawals, merge::BEACON_NONCE};
-use alloy_evm::{block::BlockExecutorFactory, sil::SilBlockExecutionCtx};
+use alloy_sips::{sip4895::Withdrawals, merge::BEACON_NONCE};
+use alloy_savm::{block::BlockExecutorFactory, sil::SilBlockExecutionCtx};
 use alloy_primitives::{Bloom, B256};
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
-use rsil_evm::execute::{BlockAssembler, BlockAssemblerInput, BlockExecutionError};
+use rsil_savm::execute::{BlockAssembler, BlockAssemblerInput, BlockExecutionError};
 use rsil_execution_types::BlockExecutionResult;
 use rsil_primitives_traits::{logs_bloom as calculate_logs_bloom, Receipt, SignedTransaction};
 use revm::context::Block as _;
@@ -95,7 +95,7 @@ impl<ChainSpec: SilChainSpec + SilaHardforks> SilBlockAssembler<ChainSpec> {
                 // for the first post-fork block, both parent.blob_gas_used and
                 // parent.excess_blob_gas are evaluated as 0
                 Some(
-                    alloy_eips::sip7840::BlobParams::cancun()
+                    alloy_sips::sip7840::BlobParams::cancun()
                         .next_block_excess_blob_gas_osaka(0, 0, 0),
                 )
             };

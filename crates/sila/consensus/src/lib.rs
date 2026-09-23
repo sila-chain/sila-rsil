@@ -13,7 +13,7 @@ extern crate alloc;
 
 use alloc::{fmt::Debug, sync::Arc};
 use alloy_consensus::{constants::MAXIMUM_EXTRA_DATA_SIZE, EMPTY_OMMER_ROOT_HASH};
-use alloy_eips::sip7840::BlobParams;
+use alloy_sips::sip7840::BlobParams;
 use alloy_primitives::B256;
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
 use rsil_consensus::{
@@ -195,7 +195,7 @@ where
                     .as_secs();
 
                 if header.timestamp() >
-                    present_timestamp + alloy_eips::merge::ALLOWED_FUTURE_BLOCK_TIME_SECONDS
+                    present_timestamp + alloy_sips::merge::ALLOWED_FUTURE_BLOCK_TIME_SECONDS
                 {
                     return Err(ConsensusError::TimestampIsInFuture {
                         timestamp: header.timestamp(),
@@ -296,7 +296,7 @@ where
 mod tests {
     use super::*;
     use alloy_consensus::Header;
-    use alloy_eips::sip7685::EMPTY_REQUESTS_HASH;
+    use alloy_sips::sip7685::EMPTY_REQUESTS_HASH;
     use alloy_primitives::B256;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
     use rsil_consensus_common::validation::validate_against_parent_gas_limit;

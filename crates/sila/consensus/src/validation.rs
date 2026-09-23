@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
 use alloy_consensus::{proofs::calculate_receipt_root, BlockHeader, TxReceipt};
-use alloy_eips::Encodable2718;
+use alloy_sips::Encodable2718;
 use alloy_primitives::{Bloom, Bytes, B256};
 use rsil_chainspec::SilaHardforks;
 use rsil_consensus::ConsensusError;

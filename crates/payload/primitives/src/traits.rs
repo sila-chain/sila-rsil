@@ -2,7 +2,7 @@
 
 use crate::PayloadBuilderError;
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
-use alloy_eips::{sip4895::Withdrawal, sip7685::Requests};
+use alloy_sips::{sip4895::Withdrawal, sip7685::Requests};
 use alloy_primitives::{Bytes, B256, U256};
 use alloy_rlp::Encodable;
 use alloy_rpc_types_engine::{PayloadAttributes as SilPayloadAttributes, PayloadId};
@@ -226,7 +226,7 @@ pub fn payload_id(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eips::sip4895::Withdrawal;
+    use alloy_sips::sip4895::Withdrawal;
     use alloy_primitives::{Address, B64};
     use core::str::FromStr;
 

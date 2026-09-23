@@ -1,5 +1,5 @@
 use alloy_consensus::BlockHeader;
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 use alloy_primitives::BlockNumber;
 use parking_lot::RwLock;
 use rsil_chainspec::ChainInfo;

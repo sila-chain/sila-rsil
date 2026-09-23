@@ -142,7 +142,7 @@ pub static SILA_MAINNET: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     spec.into()
 });
 
-/// The SilaSepolia spec
+/// The `SilaSepolia` spec
 pub static SEPOLIA: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     let genesis = serde_json::from_str(include_str!("../res/genesis/sepolia.json"))
         .expect("Can't deserialize SilaSepolia genesis json");
@@ -177,7 +177,7 @@ pub static SEPOLIA: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     spec.into()
 });
 
-/// The SilaHolesky spec
+/// The `SilaHolesky` spec
 pub static HOLESKY: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     let genesis = serde_json::from_str(include_str!("../res/genesis/holesky.json"))
         .expect("Can't deserialize SilaHolesky genesis json");
@@ -563,7 +563,7 @@ impl<H: BlockHeader> ChainSpec<H> {
         self.genesis.timestamp
     }
 
-    /// Returns the final total difficulty if the SilaParis hardfork is known.
+    /// Returns the final total difficulty if the `SilaParis` hardfork is known.
     pub fn get_final_paris_total_difficulty(&self) -> Option<U256> {
         self.paris_block_and_final_difficulty.map(|(_, final_difficulty)| final_difficulty)
     }
@@ -1041,7 +1041,7 @@ impl ChainSpecBuilder {
         self
     }
 
-    /// Enable the SilaParis hardfork at the given TTD.
+    /// Enable the `SilaParis` hardfork at the given TTD.
     ///
     /// Does not set the merge netsplit block.
     pub fn paris_at_ttd(self, ttd: U256, activation_block_number: BlockNumber) -> Self {
@@ -1148,7 +1148,7 @@ impl ChainSpecBuilder {
         self
     }
 
-    /// Enable SilaParis at genesis.
+    /// Enable `SilaParis` at genesis.
     pub fn paris_activated(mut self) -> Self {
         self = self.grayglacier_activated();
         self.hardforks.insert(
@@ -1162,54 +1162,54 @@ impl ChainSpecBuilder {
         self
     }
 
-    /// Enable SilaShanghai at genesis.
+    /// Enable `SilaShanghai` at genesis.
     pub fn shanghai_activated(mut self) -> Self {
         self = self.paris_activated();
         self.hardforks.insert(SilaHardfork::Shanghai, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaCancun at genesis.
+    /// Enable `SilaCancun` at genesis.
     pub fn cancun_activated(mut self) -> Self {
         self = self.shanghai_activated();
         self.hardforks.insert(SilaHardfork::Cancun, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaPrague at genesis.
+    /// Enable `SilaPrague` at genesis.
     pub fn prague_activated(mut self) -> Self {
         self = self.cancun_activated();
         self.hardforks.insert(SilaHardfork::Prague, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaPrague at the given timestamp.
+    /// Enable `SilaPrague` at the given timestamp.
     pub fn with_prague_at(mut self, timestamp: u64) -> Self {
         self.hardforks.insert(SilaHardfork::Prague, ForkCondition::Timestamp(timestamp));
         self
     }
 
-    /// Enable SilaOsaka at genesis.
+    /// Enable `SilaOsaka` at genesis.
     pub fn osaka_activated(mut self) -> Self {
         self = self.prague_activated();
         self.hardforks.insert(SilaHardfork::Osaka, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaOsaka at the given timestamp.
+    /// Enable `SilaOsaka` at the given timestamp.
     pub fn with_osaka_at(mut self, timestamp: u64) -> Self {
         self.hardforks.insert(SilaHardfork::Osaka, ForkCondition::Timestamp(timestamp));
         self
     }
 
-    /// Enable SilaAmsterdam at genesis.
+    /// Enable `SilaAmsterdam` at genesis.
     pub fn amsterdam_activated(mut self) -> Self {
         self = self.osaka_activated();
         self.hardforks.insert(SilaHardfork::Amsterdam, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaAmsterdam at the given timestamp.
+    /// Enable `SilaAmsterdam` at the given timestamp.
     pub fn with_amsterdam_at(mut self, timestamp: u64) -> Self {
         self.hardforks.insert(SilaHardfork::Amsterdam, ForkCondition::Timestamp(timestamp));
         self

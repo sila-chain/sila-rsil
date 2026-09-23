@@ -60,7 +60,7 @@ pub trait SilChainSpec: Send + Sync + Unpin + Debug {
         self.chain().is_ethereum()
     }
 
-    /// Returns the final total difficulty if the SilaParis hardfork is known.
+    /// Returns the final total difficulty if the `SilaParis` hardfork is known.
     fn final_paris_total_difficulty(&self) -> Option<U256>;
 
     /// See [`calc_next_block_base_fee`].

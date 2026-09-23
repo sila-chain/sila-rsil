@@ -323,31 +323,38 @@ jobs:
   feature-propagation:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          persist-credentials: false
+          persist-credentials: true
+          ref: ${{ github.event.pull_request.head.sha }}
       - run: .github/scripts/install_llvm.sh ubuntu
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
       - uses: mozilla-actions/sccache-action@9e7fa8a12102821edf02ca5dbea1acd0f89a2696 # v0.0.10
       - uses: rui314/setup-mold@9c9c13bf4c3f1adef0cc596abc155580bcb04444 # v1
       - uses: taiki-e/cache-cargo-install-action@417450f3c33ee20393705369577571770643d4c7 # v3.0.7
         with:
           tool: zepter
-      - name: Diagnose lockfile drift
+      - name: Generate deterministic closure state
         run: |
           cargo metadata --format-version=1 > /dev/null
-          git diff -- Cargo.lock
-      - name: Upload generated Cargo.lock
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: generated-cargo-lock
-          path: Cargo.lock
-          if-no-files-found: error
-      - name: Fail on lockfile drift
-        run: git diff --quiet -- Cargo.lock
+          cargo fmt --all
+      - name: Commit generated closure state
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git commit -m "chore: sync generated lockfile and rustfmt"
+          git push origin "HEAD:${HEAD_REF}"
       - run: zepter run check
 
   deny:

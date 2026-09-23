@@ -54,7 +54,7 @@ pub mod test_utils;
 
 pub use alloy_savm::{
     block::{state_changes, system_calls, OnStateHook},
-    *,
+    Evm as Savm, EvmEnv as SavmEnv, EvmFactory as SavmFactory, *,
 };
 
 /// A complete configuration of SAVM for Rsil.
@@ -195,7 +195,7 @@ pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
         Transaction = TxTy<Self::Primitives>,
         Receipt = ReceiptTy<Self::Primitives>,
         ExecutionCtx<'a>: Debug + Send,
-        SavmFactory: SavmFactory<
+        EvmFactory: SavmFactory<
             Tx: TransactionEnvMut
                     + FromRecoveredTx<TxTy<Self::Primitives>>
                     + FromTxWithEncoded<TxTy<Self::Primitives>>,

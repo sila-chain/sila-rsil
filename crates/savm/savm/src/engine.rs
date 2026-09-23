@@ -1,6 +1,6 @@
 use crate::{execute::ExecutableTxFor, ConfigureEvm, SavmEnvFor, ExecutionCtxFor, TxEnvFor};
 use alloy_consensus::transaction::Either;
-use alloy_evm::{block::ExecutableTxParts, RecoveredTx};
+use alloy_savm::{block::ExecutableTxParts, RecoveredTx};
 use rayon::prelude::*;
 use rsil_primitives_traits::TxTy;
 

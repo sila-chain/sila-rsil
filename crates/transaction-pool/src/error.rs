@@ -357,10 +357,10 @@ impl InvalidPoolTransactionError {
                         // dynamic, but not used during validation
                         false
                     }
-                    InvalidTransactionError::Sip2930Disabled
-                    | InvalidTransactionError::Sip1559Disabled
-                    | InvalidTransactionError::Sip4844Disabled
-                    | InvalidTransactionError::Sip7702Disabled => {
+                    InvalidTransactionError::Eip2930Disabled
+                    | InvalidTransactionError::Eip1559Disabled
+                    | InvalidTransactionError::Eip4844Disabled
+                    | InvalidTransactionError::Eip7702Disabled => {
                         // settings
                         false
                     }

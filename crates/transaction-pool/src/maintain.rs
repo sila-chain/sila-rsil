@@ -20,7 +20,7 @@ use futures_util::{
     FutureExt, Stream, StreamExt,
 };
 use rsil_chain_state::CanonStateNotification;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
+use rsil_chainspec::{ChainSpecProvider, EthereumHardforks as _, SilChainSpec, SilaHardforks};
 use rsil_execution_types::ChangedAccount;
 use rsil_fs_util::FsPathError;
 use rsil_primitives_traits::{

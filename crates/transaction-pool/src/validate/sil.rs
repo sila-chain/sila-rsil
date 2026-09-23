@@ -28,7 +28,7 @@ use alloy_sips::{
 use alloy_primitives::U256;
 use alloy_rlp::Encodable;
 use revm::context_interface::Cfg;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
+use rsil_chainspec::{ChainSpecProvider, EthereumHardforks as _, SilChainSpec, SilaHardforks};
 use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{
     transaction::error::InvalidTransactionError, Account, BlockTy, GotExpected, HeaderTy,
@@ -462,19 +462,19 @@ where
         match transaction.ty() {
             // Accept only legacy transactions until SIP-2718/2930 activates
             EIP2930_TX_TYPE_ID if !self.sip2718 => {
-                return Err(InvalidTransactionError::Sip2930Disabled.into())
+                return Err(InvalidTransactionError::Eip2930Disabled.into())
             }
             // Reject dynamic fee transactions until SIP-1559 activates.
             EIP1559_TX_TYPE_ID if !self.sip1559 => {
-                return Err(InvalidTransactionError::Sip1559Disabled.into())
+                return Err(InvalidTransactionError::Eip1559Disabled.into())
             }
             // Reject blob transactions.
             EIP4844_TX_TYPE_ID if !self.sip4844 => {
-                return Err(InvalidTransactionError::Sip4844Disabled.into())
+                return Err(InvalidTransactionError::Eip4844Disabled.into())
             }
             // Reject SIP-7702 transactions.
             EIP7702_TX_TYPE_ID if !self.sip7702 => {
-                return Err(InvalidTransactionError::Sip7702Disabled.into())
+                return Err(InvalidTransactionError::Eip7702Disabled.into())
             }
             // Accept known transaction types when their respective fork is active
             LEGACY_TX_TYPE_ID | EIP2930_TX_TYPE_ID | EIP1559_TX_TYPE_ID | EIP4844_TX_TYPE_ID

@@ -61,16 +61,16 @@ macro_rules! set_value {
             MockTransaction::Legacy { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Sip1559 { $field, .. } => {
+            MockTransaction::Eip1559 { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Sip4844 { $field, .. } => {
+            MockTransaction::Eip4844 { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Sip2930 { $field, .. } => {
+            MockTransaction::Eip2930 { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Sip7702 { $field, .. } => {
+            MockTransaction::Eip7702 { $field, .. } => {
                 *$field = new_value;
             }
         }
@@ -82,10 +82,10 @@ macro_rules! set_value {
         let new_value = $field;
         match $this {
             MockTransaction::Legacy { ref mut $field, .. }
-            | MockTransaction::Sip1559 { ref mut $field, .. }
-            | MockTransaction::Sip4844 { ref mut $field, .. }
-            | MockTransaction::Sip2930 { ref mut $field, .. }
-            | MockTransaction::Sip7702 { ref mut $field, .. } => {
+            | MockTransaction::Eip1559 { ref mut $field, .. }
+            | MockTransaction::Eip4844 { ref mut $field, .. }
+            | MockTransaction::Eip2930 { ref mut $field, .. }
+            | MockTransaction::Eip7702 { ref mut $field, .. } => {
                 *$field = new_value;
             }
         }
@@ -99,10 +99,10 @@ macro_rules! get_value {
     ($this:tt => $field:ident) => {
         match $this {
             MockTransaction::Legacy { $field, .. }
-            | MockTransaction::Sip1559 { $field, .. }
-            | MockTransaction::Sip4844 { $field, .. }
-            | MockTransaction::Sip2930 { $field, .. }
-            | MockTransaction::Sip7702 { $field, .. } => $field,
+            | MockTransaction::Eip1559 { $field, .. }
+            | MockTransaction::Eip4844 { $field, .. }
+            | MockTransaction::Eip2930 { $field, .. }
+            | MockTransaction::Eip7702 { $field, .. } => $field,
         }
     };
 }
@@ -986,7 +986,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(gas_price) + value,
             }),
-            Transaction::Sip2930(TxEip2930 {
+            Transaction::Eip2930(TxEip2930 {
                 chain_id,
                 nonce,
                 gas_price,
@@ -1009,7 +1009,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(gas_price) + value,
             }),
-            Transaction::Sip1559(TxEip1559 {
+            Transaction::Eip1559(TxEip1559 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1034,7 +1034,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(max_fee_per_gas) + value,
             }),
-            Transaction::Sip4844(TxEip4844 {
+            Transaction::Eip4844(TxEip4844 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1064,7 +1064,7 @@ impl TryFrom<Recovered<TransactionSigned>> for MockTransaction {
                 size,
                 cost: U256::from(gas_limit) * U256::from(max_fee_per_gas) + value,
             }),
-            Transaction::Sip7702(TxEip7702 {
+            Transaction::Eip7702(TxEip7702 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1239,7 +1239,7 @@ impl From<MockTransaction> for Transaction {
                 input,
                 ..
             } => Self::Legacy(TxLegacy { chain_id, nonce, gas_price, gas_limit, to, value, input }),
-            MockTransaction::Sip2930 {
+            MockTransaction::Eip2930 {
                 chain_id,
                 nonce,
                 gas_price,
@@ -1249,7 +1249,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
                 ..
-            } => Self::Sip2930(TxEip2930 {
+            } => Self::Eip2930(TxEip2930 {
                 chain_id,
                 nonce,
                 gas_price,
@@ -1259,7 +1259,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
             }),
-            MockTransaction::Sip1559 {
+            MockTransaction::Eip1559 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1270,7 +1270,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
                 ..
-            } => Self::Sip1559(TxEip1559 {
+            } => Self::Eip1559(TxEip1559 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1281,7 +1281,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
             }),
-            MockTransaction::Sip4844 {
+            MockTransaction::Eip4844 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1294,7 +1294,7 @@ impl From<MockTransaction> for Transaction {
                 max_fee_per_blob_gas,
                 input,
                 ..
-            } => Self::Sip4844(TxEip4844 {
+            } => Self::Eip4844(TxEip4844 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1307,7 +1307,7 @@ impl From<MockTransaction> for Transaction {
                 max_fee_per_blob_gas,
                 input,
             }),
-            MockTransaction::Sip7702 {
+            MockTransaction::Eip7702 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1319,7 +1319,7 @@ impl From<MockTransaction> for Transaction {
                 input,
                 authorization_list,
                 ..
-            } => Self::Sip7702(TxEip7702 {
+            } => Self::Eip7702(TxEip7702 {
                 chain_id,
                 nonce,
                 gas_limit,

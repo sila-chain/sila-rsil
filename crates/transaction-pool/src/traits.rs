@@ -1579,7 +1579,7 @@ impl PoolTransaction for SilPooledTransaction {
         let encoded_length = tx.encode_2718_len();
         let (tx, signer) = tx.into_parts();
         match tx {
-            PooledTransactionVariant::Sip4844(tx) => {
+            PooledTransactionVariant::Eip4844(tx) => {
                 // include the blob sidecar
                 let (tx, sig, hash) = tx.into_parts();
                 let (tx, blob) = tx.into_parts();

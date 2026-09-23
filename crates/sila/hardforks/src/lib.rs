@@ -18,12 +18,13 @@
 extern crate alloc;
 
 /// Re-exported [SIP-2124](https://sips.sila.org/SIPS/sip-2124) forkid types.
-pub use alloy_eip2124::*;
+pub use alloy_sip2124::*;
 
 mod display;
 mod hardforks;
 
 pub use alloy_hardforks::*;
+pub use alloy_hardforks::EthereumHardfork as SilaHardfork;
 
 pub use display::DisplayHardforks;
 pub use hardforks::*;

@@ -25,16 +25,16 @@ pub static DEV_HARDFORKS: LazyLock<ChainHardforks> = LazyLock::new(|| {
         (SilaHardfork::Berlin.boxed(), ForkCondition::Block(0)),
         (SilaHardfork::London.boxed(), ForkCondition::Block(0)),
         (
-            SilaHardfork::SilaParis.boxed(),
+            SilaHardfork::Paris.boxed(),
             ForkCondition::TTD {
                 activation_block_number: 0,
                 fork_block: None,
                 total_difficulty: U256::ZERO,
             },
         ),
-        (SilaHardfork::SilaShanghai.boxed(), ForkCondition::Timestamp(0)),
-        (SilaHardfork::SilaCancun.boxed(), ForkCondition::Timestamp(0)),
-        (SilaHardfork::SilaPrague.boxed(), ForkCondition::Timestamp(0)),
-        (SilaHardfork::SilaOsaka.boxed(), ForkCondition::Timestamp(0)),
+        (SilaHardfork::Shanghai.boxed(), ForkCondition::Timestamp(0)),
+        (SilaHardfork::Cancun.boxed(), ForkCondition::Timestamp(0)),
+        (SilaHardfork::Prague.boxed(), ForkCondition::Timestamp(0)),
+        (SilaHardfork::Osaka.boxed(), ForkCondition::Timestamp(0)),
     ])
 });

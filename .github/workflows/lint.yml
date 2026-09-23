@@ -326,8 +326,11 @@ jobs:
       - uses: taiki-e/cache-cargo-install-action@417450f3c33ee20393705369577571770643d4c7 # v3.0.7
         with:
           tool: zepter
-      - name: Eagerly pull dependencies
-        run: cargo metadata --format-version=1 --locked > /dev/null
+      - name: Diagnose lockfile drift
+        run: |
+          cargo metadata --format-version=1 > /dev/null
+          git diff -- Cargo.lock
+          git diff --quiet -- Cargo.lock
       - run: zepter run check
 
   deny:

@@ -19,8 +19,8 @@ extern crate alloc;
 
 use crate::execute::{BasicBlockBuilder, Executor};
 use alloc::{string::String, vec::Vec};
-use alloy_eips::sip4895::Withdrawals;
-use alloy_evm::{
+use alloy_sips::eip4895::Withdrawals;
+use alloy_savm::{
     block::{BlockExecutorFactory, BlockExecutorFor},
     precompiles::PrecompilesMap,
 };
@@ -52,7 +52,7 @@ pub mod noop;
 /// test helpers for mocking executor
 pub mod test_utils;
 
-pub use alloy_evm::{
+pub use alloy_savm::{
     block::{state_changes, system_calls, OnStateHook},
     *,
 };
@@ -176,7 +176,7 @@ pub use alloy_evm::{
 ///
 /// [`ExecutionCtx`]: BlockExecutorFactory::ExecutionCtx
 /// [`NextBlockEnvCtx`]: ConfigureEvm::NextBlockEnvCtx
-/// [`BlockExecutor`]: alloy_evm::block::BlockExecutor
+/// [`BlockExecutor`]: alloy_savm::block::BlockExecutor
 #[auto_impl::auto_impl(&, Arc)]
 pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
     /// The primitives type used by the SAVM.
@@ -374,7 +374,7 @@ pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
 
     /// Creates a [`BlockBuilder`]. Should be used when building a new block.
     ///
-    /// Block builder wraps an inner [`alloy_evm::block::BlockExecutor`] and has a similar
+    /// Block builder wraps an inner [`alloy_savm::block::BlockExecutor`] and has a similar
     /// interface. Builder collects all of the executed transactions, and once
     /// [`BlockBuilder::finish`] is called, it invokes the configured [`BlockAssembler`] to
     /// create a block.

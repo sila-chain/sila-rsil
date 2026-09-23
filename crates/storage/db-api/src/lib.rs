@@ -60,6 +60,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 extern crate alloc;
+extern crate rsil_codecs as reth_codecs;
 
 /// Common types used throughout the abstraction.
 pub mod common;

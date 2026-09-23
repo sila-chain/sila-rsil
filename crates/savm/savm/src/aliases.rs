@@ -1,7 +1,7 @@
 //! Helper aliases when working with [`ConfigureEvm`] and the traits in this crate.
 
 use crate::ConfigureEvm;
-use alloy_evm::{
+use alloy_savm::{
     block::{BlockExecutorFactory, BlockExecutorFor},
     Database, SavmEnv, SavmFactory,
 };
@@ -36,7 +36,7 @@ pub type TxEnvFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::Tx;
 pub type ExecutionCtxFor<'a, Savm> =
     <<Savm as ConfigureEvm>::BlockExecutorFactory as BlockExecutorFactory>::ExecutionCtx<'a>;
 
-/// Helper to access [`alloy_evm::block::BlockExecutor`] for a given [`ConfigureEvm`].
+/// Helper to access [`alloy_savm::block::BlockExecutor`] for a given [`ConfigureEvm`].
 pub type BlockExecutorForEvm<'a, Savm, DB, I = NoOpInspector> =
     BlockExecutorFor<'a, <Savm as ConfigureEvm>::BlockExecutorFactory, &'a mut State<DB>, I>;
 

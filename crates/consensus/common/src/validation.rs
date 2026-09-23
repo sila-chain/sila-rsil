@@ -330,7 +330,7 @@ pub fn validate_against_parent_eip1559_base_fee<ChainSpec: SilChainSpec + SilaHa
             .sila_fork_activation(SilaHardfork::London)
             .transitions_at_block(header.number())
         {
-            alloy_eips::sip1559::INITIAL_BASE_FEE
+            alloy_sips::eip1559::INITIAL_BASE_FEE
         } else {
             chain_spec
                 .next_block_base_fee(parent, header.timestamp())

@@ -1,6 +1,6 @@
 //! Engine tree configuration.
 
-use alloy_eips::merge::EPOCH_SLOTS;
+use alloy_sips::merge::EPOCH_SLOTS;
 use core::time::Duration;
 
 /// Triggers persistence when the number of canonical blocks in memory exceeds this threshold.

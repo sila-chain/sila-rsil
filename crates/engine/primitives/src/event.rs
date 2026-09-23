@@ -3,7 +3,7 @@
 use crate::ForkchoiceStatus;
 use alloc::{boxed::Box, string::String};
 use alloy_consensus::BlockHeader;
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 use alloy_rpc_types_engine::ForkchoiceState;
 use core::{
     fmt::{Display, Formatter, Result},

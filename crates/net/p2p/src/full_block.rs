@@ -9,12 +9,12 @@ use crate::{
     BlockClient,
 };
 use alloy_consensus::BlockHeader;
-use alloy_eip7928::bal::RawBal;
+use alloy_sip7928::bal::RawBal;
 use alloy_primitives::{Bytes, Sealable, B256};
 use core::marker::PhantomData;
 use futures::FutureExt;
 use rsil_consensus::Consensus;
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     BlockAccessLists, HeadersDirection, NetworkPrimitives, SilNetworkPrimitives,
 };
 use rsil_network_peers::{PeerId, WithPeerId};

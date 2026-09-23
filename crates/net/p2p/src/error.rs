@@ -2,7 +2,7 @@ use std::ops::RangeInclusive;
 
 use super::headers::client::HeadersRequest;
 use alloy_consensus::BlockHeader;
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{BlockNumber, B256};
 use derive_more::{Display, Error};
 use rsil_consensus::ConsensusError;

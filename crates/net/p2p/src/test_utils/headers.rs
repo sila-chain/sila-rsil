@@ -12,7 +12,7 @@ use crate::{
 };
 use alloy_consensus::Header;
 use futures::{Future, FutureExt, Stream, StreamExt};
-use rsil_eth_wire_types::HeadersDirection;
+use rsil_sil_wire_types::HeadersDirection;
 use rsil_network_peers::{PeerId, WithPeerId};
 use rsil_primitives_traits::SealedHeader;
 use std::{

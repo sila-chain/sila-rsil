@@ -4,7 +4,7 @@ use crate::{download::DownloadClient, error::PeerRequestResult, priority::Priori
 use alloy_consensus::TxReceipt;
 use alloy_primitives::B256;
 use futures::Future;
-use rsil_eth_wire_types::Receipts70;
+use rsil_sil_wire_types::Receipts70;
 
 /// The receipts future type
 pub type ReceiptsFut<R = rsil_sila_primitives::Receipt> =

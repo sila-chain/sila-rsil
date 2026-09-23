@@ -1,6 +1,6 @@
 use super::error::HeadersDownloaderResult;
 use crate::error::{DownloadError, DownloadResult};
-use alloy_eips::{sip1898::BlockWithParent, BlockHashOrNumber};
+use alloy_sips::{sip1898::BlockWithParent, BlockHashOrNumber};
 use alloy_primitives::{Sealable, B256};
 use futures::Stream;
 use rsil_consensus::HeaderValidator;

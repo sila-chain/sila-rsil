@@ -3,7 +3,7 @@ use alloc::{vec, vec::Vec};
 use alloy_consensus::Header;
 use alloy_primitives::BlockNumber;
 use core::marker::PhantomData;
-use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
+use rsil_chainspec::{ChainSpecProvider, EthereumHardforks, SilaHardforks};
 use rsil_db_api::{
     cursor::{DbCursorRO, DbCursorRW},
     models::StoredBlockOmmers,

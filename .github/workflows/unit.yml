@@ -76,23 +76,23 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
-      - name: Checkout upstream ethereum/tests
+      - name: Checkout Sila tests
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          repository: ethereum/tests
-          ref: 81862e4848585a438d64f911a19b3825f0f4cd95
+          repository: sila-chain/sila-tests
+          ref: 4b2f6d209262384dc983b504e8d4c98e699746f5
           path: testing/ef-tests/sila-tests
           submodules: recursive
           fetch-depth: 1
           persist-credentials: false
-      - name: Download & extract EEST fixtures (public)
+      - name: Download & extract Sila execution fixtures
         shell: bash
         env:
-          EEST_TESTS_TAG: v4.5.0
+          SILA_FIXTURES_TAG: tests@v20.0.0
         run: |
           set -euo pipefail
           mkdir -p testing/ef-tests/execution-spec-tests
-          URL="https://github.com/ethereum/execution-spec-tests/releases/download/${EEST_TESTS_TAG}/fixtures_stable.tar.gz"
+          URL="https://github.com/sila-chain/execution-specs/releases/download/${SILA_FIXTURES_TAG}/fixtures.tar.gz"
           curl -L "$URL" | tar -xz --strip-components=1 -C testing/ef-tests/execution-spec-tests
       - uses: rui314/setup-mold@9c9c13bf4c3f1adef0cc596abc155580bcb04444 # v1
       - run: .github/scripts/install_llvm.sh ubuntu

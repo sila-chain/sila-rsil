@@ -1,6 +1,6 @@
 //! API related to listening for network events.
 
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     message::RequestPair, snap::SnapProtocolMessage, BlockAccessLists, BlockBodies, BlockHeaders,
     Capabilities, Cells, DisconnectReason, GetBlockAccessLists, GetBlockBodies, GetBlockHeaders,
     GetCells, GetNodeData, GetPooledTransactions, GetReceipts, GetReceipts70, NetworkPrimitives,

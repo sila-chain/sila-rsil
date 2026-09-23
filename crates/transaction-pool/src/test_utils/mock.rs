@@ -61,16 +61,16 @@ macro_rules! set_value {
             MockTransaction::Legacy { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Eip1559 { $field, .. } => {
+            MockTransaction::Sip1559 { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Eip4844 { $field, .. } => {
+            MockTransaction::Sip4844 { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Eip2930 { $field, .. } => {
+            MockTransaction::Sip2930 { $field, .. } => {
                 *$field = new_value;
             }
-            MockTransaction::Eip7702 { $field, .. } => {
+            MockTransaction::Sip7702 { $field, .. } => {
                 *$field = new_value;
             }
         }
@@ -82,10 +82,10 @@ macro_rules! set_value {
         let new_value = $field;
         match $this {
             MockTransaction::Legacy { ref mut $field, .. }
-            | MockTransaction::Eip1559 { ref mut $field, .. }
-            | MockTransaction::Eip4844 { ref mut $field, .. }
-            | MockTransaction::Eip2930 { ref mut $field, .. }
-            | MockTransaction::Eip7702 { ref mut $field, .. } => {
+            | MockTransaction::Sip1559 { ref mut $field, .. }
+            | MockTransaction::Sip4844 { ref mut $field, .. }
+            | MockTransaction::Sip2930 { ref mut $field, .. }
+            | MockTransaction::Sip7702 { ref mut $field, .. } => {
                 *$field = new_value;
             }
         }
@@ -99,10 +99,10 @@ macro_rules! get_value {
     ($this:tt => $field:ident) => {
         match $this {
             MockTransaction::Legacy { $field, .. }
-            | MockTransaction::Eip1559 { $field, .. }
-            | MockTransaction::Eip4844 { $field, .. }
-            | MockTransaction::Eip2930 { $field, .. }
-            | MockTransaction::Eip7702 { $field, .. } => $field,
+            | MockTransaction::Sip1559 { $field, .. }
+            | MockTransaction::Sip4844 { $field, .. }
+            | MockTransaction::Sip2930 { $field, .. }
+            | MockTransaction::Sip7702 { $field, .. } => $field,
         }
     };
 }
@@ -1239,7 +1239,7 @@ impl From<MockTransaction> for Transaction {
                 input,
                 ..
             } => Self::Legacy(TxLegacy { chain_id, nonce, gas_price, gas_limit, to, value, input }),
-            MockTransaction::Eip2930 {
+            MockTransaction::Sip2930 {
                 chain_id,
                 nonce,
                 gas_price,
@@ -1259,7 +1259,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
             }),
-            MockTransaction::Eip1559 {
+            MockTransaction::Sip1559 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1281,7 +1281,7 @@ impl From<MockTransaction> for Transaction {
                 access_list,
                 input,
             }),
-            MockTransaction::Eip4844 {
+            MockTransaction::Sip4844 {
                 chain_id,
                 nonce,
                 gas_limit,
@@ -1307,7 +1307,7 @@ impl From<MockTransaction> for Transaction {
                 max_fee_per_blob_gas,
                 input,
             }),
-            MockTransaction::Eip7702 {
+            MockTransaction::Sip7702 {
                 chain_id,
                 nonce,
                 gas_limit,

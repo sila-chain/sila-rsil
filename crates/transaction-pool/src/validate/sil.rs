@@ -16,20 +16,20 @@ use crate::{
 
 use alloy_consensus::{
     constants::{
-        LEGACY_TX_TYPE_ID, SIP1559_TX_TYPE_ID, SIP2930_TX_TYPE_ID, SIP4844_TX_TYPE_ID,
-        SIP7702_TX_TYPE_ID,
+        LEGACY_TX_TYPE_ID, EIP1559_TX_TYPE_ID, EIP2930_TX_TYPE_ID, EIP4844_TX_TYPE_ID,
+        EIP7702_TX_TYPE_ID,
     },
     BlockHeader,
 };
-use alloy_eips::{
-    sip1559::SILA_BLOCK_GAS_LIMIT_30M, sip4844::env_settings::EnvKzgSettings, sip7840::BlobParams,
+use alloy_sips::{
+    eip1559::ETHEREUM_BLOCK_GAS_LIMIT_30M as SILA_BLOCK_GAS_LIMIT_30M, eip4844::env_settings::EnvKzgSettings, eip7840::BlobParams,
     BlockId,
 };
 use alloy_primitives::U256;
 use alloy_rlp::Encodable;
 use revm::context_interface::Cfg;
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{
     transaction::error::InvalidTransactionError, Account, BlockTy, GotExpected, HeaderTy,
     SealedBlock,
@@ -461,24 +461,24 @@ where
         // Checks for tx_type
         match transaction.ty() {
             // Accept only legacy transactions until SIP-2718/2930 activates
-            SIP2930_TX_TYPE_ID if !self.sip2718 => {
+            EIP2930_TX_TYPE_ID if !self.sip2718 => {
                 return Err(InvalidTransactionError::Sip2930Disabled.into())
             }
             // Reject dynamic fee transactions until SIP-1559 activates.
-            SIP1559_TX_TYPE_ID if !self.sip1559 => {
+            EIP1559_TX_TYPE_ID if !self.sip1559 => {
                 return Err(InvalidTransactionError::Sip1559Disabled.into())
             }
             // Reject blob transactions.
-            SIP4844_TX_TYPE_ID if !self.sip4844 => {
+            EIP4844_TX_TYPE_ID if !self.sip4844 => {
                 return Err(InvalidTransactionError::Sip4844Disabled.into())
             }
             // Reject SIP-7702 transactions.
-            SIP7702_TX_TYPE_ID if !self.sip7702 => {
+            EIP7702_TX_TYPE_ID if !self.sip7702 => {
                 return Err(InvalidTransactionError::Sip7702Disabled.into())
             }
             // Accept known transaction types when their respective fork is active
-            LEGACY_TX_TYPE_ID | SIP2930_TX_TYPE_ID | SIP1559_TX_TYPE_ID | SIP4844_TX_TYPE_ID
-            | SIP7702_TX_TYPE_ID => {}
+            LEGACY_TX_TYPE_ID | EIP2930_TX_TYPE_ID | EIP1559_TX_TYPE_ID | EIP4844_TX_TYPE_ID
+            | EIP7702_TX_TYPE_ID => {}
 
             ty if !self.other_tx_types.bit(ty as usize) => {
                 return Err(InvalidTransactionError::TxTypeNotSupported.into())
@@ -1509,13 +1509,13 @@ mod tests {
         traits::PoolTransaction, CoinbaseTipOrdering, Pool, SilPooledTransaction, TransactionPool,
     };
     use alloy_consensus::Transaction;
-    use alloy_eips::{
-        sip2718::{Decodable2718, Encodable2718},
-        sip2930::{AccessList, AccessListItem},
+    use alloy_sips::{
+        eip2718::{Decodable2718, Encodable2718},
+        eip2930::{AccessList, AccessListItem},
     };
     use alloy_primitives::{hex, Address, B256, U256};
     use revm::primitives::sip3860::MAX_INITCODE_SIZE;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::SignedTransaction;
     use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
     use rsil_sila_primitives::PooledTransactionVariant;

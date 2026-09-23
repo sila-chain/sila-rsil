@@ -2,7 +2,7 @@
 
 use std::any::Any;
 
-use alloy_eips::sip4844::BlobTransactionValidationError;
+use alloy_sips::eip4844::BlobTransactionValidationError;
 use alloy_primitives::{Address, TxHash, U256};
 use rsil_primitives_traits::transaction::error::InvalidTransactionError;
 

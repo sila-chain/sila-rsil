@@ -14,13 +14,13 @@ use crate::{
     SilPoolTransaction, SilPooledTransaction, TransactionEvents, TransactionOrigin,
     TransactionPool, TransactionValidationOutcome, TransactionValidator, ValidPoolTransaction,
 };
-use alloy_eips::{
-    sip1559::SILA_BLOCK_GAS_LIMIT_30M,
-    sip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
-    sip7594::BlobTransactionSidecarVariant,
+use alloy_sips::{
+    eip1559::ETHEREUM_BLOCK_GAS_LIMIT_30M as SILA_BLOCK_GAS_LIMIT_30M,
+    eip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
+    eip7594::BlobTransactionSidecarVariant,
 };
 use alloy_primitives::{map::AddressSet, Address, TxHash, B128, B256, U256};
-use rsil_eth_wire_types::HandleMempoolData;
+use rsil_sil_wire_types::HandleMempoolData;
 use rsil_primitives_traits::Recovered;
 use std::{marker::PhantomData, sync::Arc};
 use tokio::sync::{mpsc, mpsc::Receiver};

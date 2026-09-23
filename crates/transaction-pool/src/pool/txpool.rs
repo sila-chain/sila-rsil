@@ -22,12 +22,12 @@ use crate::{
     ValidPoolTransaction, U256,
 };
 use alloy_consensus::constants::{
-    KECCAK_EMPTY, LEGACY_TX_TYPE_ID, SIP1559_TX_TYPE_ID, SIP2930_TX_TYPE_ID, SIP4844_TX_TYPE_ID,
-    SIP7702_TX_TYPE_ID,
+    KECCAK_EMPTY, LEGACY_TX_TYPE_ID, EIP1559_TX_TYPE_ID, EIP2930_TX_TYPE_ID, EIP4844_TX_TYPE_ID,
+    EIP7702_TX_TYPE_ID,
 };
-use alloy_eips::{
-    sip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M},
-    sip4844::BLOB_TX_MIN_BLOB_GASPRICE,
+use alloy_sips::{
+    eip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M},
+    eip4844::BLOB_TX_MIN_BLOB_GASPRICE,
 };
 #[cfg(test)]
 use alloy_primitives::Address;
@@ -2227,10 +2227,10 @@ impl TxTypeCounts {
     const fn counter_mut(&mut self, tx_type: u8) -> &mut u64 {
         match tx_type {
             LEGACY_TX_TYPE_ID => &mut self.legacy,
-            SIP2930_TX_TYPE_ID => &mut self.sip2930,
-            SIP1559_TX_TYPE_ID => &mut self.sip1559,
-            SIP4844_TX_TYPE_ID => &mut self.sip4844,
-            SIP7702_TX_TYPE_ID => &mut self.sip7702,
+            EIP2930_TX_TYPE_ID => &mut self.sip2930,
+            EIP1559_TX_TYPE_ID => &mut self.sip1559,
+            EIP4844_TX_TYPE_ID => &mut self.sip4844,
+            EIP7702_TX_TYPE_ID => &mut self.sip7702,
             _ => &mut self.other,
         }
     }
@@ -3804,7 +3804,7 @@ mod tests {
         pool.set_block_info(block_info);
 
         // 2 txs, that should put the pool over the size limit but not max txs
-        let a_txs = MockTransactionSet::dependent(a_sender, 0, 2, TxType::Sip4844)
+        let a_txs = MockTransactionSet::dependent(a_sender, 0, 2, TxType::Eip4844)
             .into_iter()
             .map(|mut tx| {
                 tx.set_size(default_limits.max_size / 2 + 1);
@@ -3842,7 +3842,7 @@ mod tests {
         pool.update_basefee(pool_base_fee, |_| {});
 
         // 2 txs, that should put the pool over the size limit but not max txs
-        let a_txs = MockTransactionSet::dependent(a_sender, 0, 3, TxType::Sip1559)
+        let a_txs = MockTransactionSet::dependent(a_sender, 0, 3, TxType::Eip1559)
             .into_iter()
             .map(|mut tx| {
                 tx.set_size(default_limits.max_size / 2 + 1);

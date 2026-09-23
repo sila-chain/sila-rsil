@@ -3,8 +3,8 @@ use crate::{
     pool::{NEW_TX_LISTENER_BUFFER_SIZE, PENDING_TX_LISTENER_BUFFER_SIZE},
     PoolSize, TransactionOrigin,
 };
-use alloy_consensus::constants::SIP4844_TX_TYPE_ID;
-use alloy_eips::sip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M};
+use alloy_consensus::constants::EIP4844_TX_TYPE_ID;
+use alloy_sips::eip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M};
 use alloy_primitives::{map::AddressSet, Address};
 use std::{ops::Mul, time::Duration};
 
@@ -197,7 +197,7 @@ impl PriceBumpConfig {
     /// Returns the price bump required to replace the given transaction type.
     #[inline]
     pub const fn price_bump(&self, tx_type: u8) -> u128 {
-        if tx_type == SIP4844_TX_TYPE_ID {
+        if tx_type == EIP4844_TX_TYPE_ID {
             return self.replace_blob_tx_price_bump;
         }
         self.default_price_bump

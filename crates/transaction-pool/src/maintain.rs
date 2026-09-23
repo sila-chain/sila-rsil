@@ -9,7 +9,7 @@ use crate::{
     TransactionOrigin,
 };
 use alloy_consensus::{transaction::TxHashRef, BlockHeader, Typed2718};
-use alloy_eips::{BlockNumberOrTag, Decodable2718, Encodable2718};
+use alloy_sips::{BlockNumberOrTag, Decodable2718, Encodable2718};
 use alloy_primitives::{
     map::{AddressSet, HashSet},
     Address, BlockHash, BlockNumber, Bytes,
@@ -555,7 +555,7 @@ pub async fn maintain_transaction_pool<N, Client, P, St>(
                                 };
                                 pool.delete_blob(tx_hash);
 
-                                let BlobTransactionSidecarVariant::Sip4844(sidecar) =
+                                let BlobTransactionSidecarVariant::Eip4844(sidecar) =
                                     Arc::unwrap_or_clone(sidecar)
                                 else {
                                     continue;
@@ -859,9 +859,9 @@ mod tests {
         blobstore::InMemoryBlobStore, validate::SilTransactionValidatorBuilder,
         CoinbaseTipOrdering, Pool, SilPooledTransaction, TransactionOrigin,
     };
-    use alloy_eips::sip2718::Decodable2718;
+    use alloy_sips::eip2718::Decodable2718;
     use alloy_primitives::{hex, U256};
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_fs_util as fs;
     use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
     use rsil_sila_primitives::PooledTransactionVariant;

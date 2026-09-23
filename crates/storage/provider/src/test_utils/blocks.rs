@@ -201,7 +201,7 @@ fn block1(number: BlockNumber) -> (RecoveredBlock<rsil_sila_primitives::Block>, 
             .state_storage(account1, HashMap::from_iter([(slot, (U256::ZERO, U256::from(10)))]))
             .build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip2930,
+            tx_type: TxType::Eip2930,
             success: true,
             cumulative_gas_used: 300,
             logs: vec![Log::new_unchecked(
@@ -255,7 +255,7 @@ fn block2(
             .revert_storage(number, account, Vec::from([(slot, U256::from(10))]))
             .build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: false,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(
@@ -318,7 +318,7 @@ fn block3(
     let execution_outcome = ExecutionOutcome::new(
         bundle_state_builder.build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: true,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(
@@ -401,7 +401,7 @@ fn block4(
     let execution_outcome = ExecutionOutcome::new(
         bundle_state_builder.build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: true,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(
@@ -481,7 +481,7 @@ fn block5(
     let execution_outcome = ExecutionOutcome::new(
         bundle_state_builder.build(),
         vec![vec![Receipt {
-            tx_type: TxType::Sip1559,
+            tx_type: TxType::Eip1559,
             success: true,
             cumulative_gas_used: 400,
             logs: vec![Log::new_unchecked(

@@ -203,7 +203,7 @@
 //! use rsil_transaction_pool::{TransactionValidationTaskExecutor, Pool, TransactionPool};
 //! use rsil_transaction_pool::blobstore::InMemoryBlobStore;
 //! use rsil_chainspec::SilaHardforks;
-//! use rsil_evm::ConfigureEvm;
+//! use rsil_savm::ConfigureEvm;
 //! use alloy_consensus::Header;
 //! async fn t<C, Savm>(client: C, evm_config: Savm)
 //! where
@@ -240,7 +240,7 @@
 //! use rsil_transaction_pool::{TransactionValidationTaskExecutor, Pool};
 //! use rsil_transaction_pool::blobstore::InMemoryBlobStore;
 //! use rsil_transaction_pool::maintain::{maintain_transaction_pool_future};
-//! use rsil_evm::ConfigureEvm;
+//! use rsil_savm::ConfigureEvm;
 //! use rsil_sila_primitives::SilPrimitives;
 //! use alloy_consensus::Header;
 //!
@@ -303,16 +303,16 @@ pub use crate::{
     },
 };
 use crate::{identifier::TransactionId, pool::PoolInner};
-use alloy_eips::{
-    sip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
-    sip7594::BlobTransactionSidecarVariant,
+use alloy_sips::{
+    eip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
+    eip7594::BlobTransactionSidecarVariant,
 };
 use alloy_primitives::{map::AddressSet, Address, TxHash, B128, B256, U256};
 use aquamarine as _;
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
-use rsil_eth_wire_types::HandleMempoolData;
-use rsil_evm::ConfigureEvm;
-use rsil_evm_sila::SilEvmConfig;
+use rsil_sil_wire_types::HandleMempoolData;
+use rsil_savm::ConfigureEvm;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_execution_types::ChangedAccount;
 use rsil_primitives_traits::{HeaderTy, Recovered};
 use rsil_storage_api::{BlockReaderIdExt, StateProviderFactory};
@@ -434,7 +434,7 @@ where
     ///     blobstore::InMemoryBlobStore, Pool, TransactionValidationTaskExecutor,
     /// };
     /// use rsil_chainspec::SilaHardforks;
-    /// use rsil_evm::ConfigureEvm;
+    /// use rsil_savm::ConfigureEvm;
     /// use alloy_consensus::Header;
     /// # fn t<C, Savm>(client: C, evm_config: Savm, runtime: Runtime)
     /// # where

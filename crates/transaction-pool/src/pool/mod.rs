@@ -93,10 +93,10 @@ use alloy_primitives::{
     Address, TxHash, B256,
 };
 use parking_lot::{Mutex, RwLock, RwLockReadGuard, RwLockWriteGuard};
-use rsil_eth_wire_types::HandleMempoolData;
+use rsil_sil_wire_types::HandleMempoolData;
 use rsil_execution_types::ChangedAccount;
 
-use alloy_eips::{sip7594::BlobTransactionSidecarVariant, Typed2718};
+use alloy_sips::{eip7594::BlobTransactionSidecarVariant, Typed2718};
 use rsil_primitives_traits::Recovered;
 use rustc_hash::FxHashMap;
 use std::{
@@ -1672,7 +1672,7 @@ mod tests {
         validate::ValidTransaction,
         BlockInfo, PoolConfig, SubPoolLimit, TransactionOrigin, TransactionValidationOutcome, U256,
     };
-    use alloy_eips::{sip4844::BlobTransactionSidecar, sip7594::BlobTransactionSidecarVariant};
+    use alloy_sips::{eip4844::BlobTransactionSidecar, eip7594::BlobTransactionSidecarVariant};
     use alloy_primitives::Address;
     use std::{fs, path::PathBuf};
 
@@ -1702,7 +1702,7 @@ mod tests {
         };
 
         // Generate a BlobTransactionSidecar from the blobs.
-        let sidecar = BlobTransactionSidecarVariant::Sip4844(
+        let sidecar = BlobTransactionSidecarVariant::Eip4844(
             BlobTransactionSidecar::try_from_blobs_hex(blobs).unwrap(),
         );
 

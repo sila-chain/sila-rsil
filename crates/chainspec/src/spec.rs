@@ -1602,7 +1602,7 @@ Post-merge hard forks (timestamp based):
                     SilaHardfork::Prague,
                     ForkId {
                         hash: ForkHash(hex!("0xc376cf8b")),
-                        next: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                     },
                 ),
             ],
@@ -1749,19 +1749,19 @@ Post-merge hard forks (timestamp based):
                     Head { number: 20000004, timestamp: 1746612311, ..Default::default() },
                     ForkId {
                         hash: ForkHash(hex!("0xc376cf8b")),
-                        next: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                     },
                 ),
                 // SilaOsaka block
                 (
                     Head {
                         number: 20000004,
-                        timestamp: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        timestamp: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                         ..Default::default()
                     },
                     ForkId {
                         hash: ForkHash(hex!("0x5167e2a6")),
-                        next: sila-mainnet::MAINNET_BPO1_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_BPO1_TIMESTAMP,
                     },
                 ),
             ],
@@ -2073,19 +2073,19 @@ Post-merge hard forks (timestamp based):
                     Head { number: 20000004, timestamp: 1746612311, ..Default::default() },
                     ForkId {
                         hash: ForkHash(hex!("0xc376cf8b")),
-                        next: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                     },
                 ),
                 // SilaOsaka block
                 (
                     Head {
                         number: 20000004,
-                        timestamp: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        timestamp: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                         ..Default::default()
                     },
                     ForkId {
                         hash: ForkHash(hex!("0x5167e2a6")),
-                        next: sila-mainnet::MAINNET_BPO1_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_BPO1_TIMESTAMP,
                     },
                 ),
             ],

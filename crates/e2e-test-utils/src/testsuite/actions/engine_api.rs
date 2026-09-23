@@ -93,7 +93,7 @@ where
                     TransactionSigned,
                 >::block_by_number(
                     source_rpc,
-                    alloy_eips::BlockNumberOrTag::Number(self.block_number),
+                    alloy_sips::BlockNumberOrTag::Number(self.block_number),
                     true, // include transactions
                 )
                 .await

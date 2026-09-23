@@ -1,7 +1,7 @@
 //! Test setup utilities for configuring the initial state.
 
 use crate::{testsuite::Environment, E2ETestSetupBuilder, NodeBuilderHelper};
-use alloy_eips::BlockNumberOrTag;
+use alloy_sips::BlockNumberOrTag;
 use alloy_primitives::B256;
 use alloy_rpc_types_engine::{ForkchoiceState, PayloadAttributes};
 use eyre::{eyre, Result};

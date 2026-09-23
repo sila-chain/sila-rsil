@@ -170,7 +170,7 @@ impl TransactionTestContext {
         let proof_setting = EnvKzgSettings::Default;
 
         match tx {
-            SilaTxEnvelope::Sip4844(signed) => match signed.tx() {
+            SilaTxEnvelope::Eip4844(signed) => match signed.tx() {
                 TxEip4844Variant::TxEip4844WithSidecar(tx) => {
                     tx.validate_blob(proof_setting.get()).unwrap();
                     tx.sidecar.versioned_hashes().collect()

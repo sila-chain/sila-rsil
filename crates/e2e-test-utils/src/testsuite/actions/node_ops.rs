@@ -83,7 +83,7 @@ where
                 Header,
                 TransactionSigned,
             >::block_by_number(
-                &node_a_client.rpc, alloy_eips::BlockNumberOrTag::Latest, false
+                &node_a_client.rpc, alloy_sips::BlockNumberOrTag::Latest, false
             )
             .await?
             .ok_or_else(|| eyre::eyre!("Failed to get latest block from node {}", self.node_a))?;
@@ -96,7 +96,7 @@ where
                 Header,
                 TransactionSigned,
             >::block_by_number(
-                &node_b_client.rpc, alloy_eips::BlockNumberOrTag::Latest, false
+                &node_b_client.rpc, alloy_sips::BlockNumberOrTag::Latest, false
             )
             .await?
             .ok_or_else(|| eyre::eyre!("Failed to get latest block from node {}", self.node_b))?;
@@ -292,7 +292,7 @@ where
                         TransactionSigned,
                     >::block_by_number(
                         &node_a_client.rpc,
-                        alloy_eips::BlockNumberOrTag::Latest,
+                        alloy_sips::BlockNumberOrTag::Latest,
                         false,
                     )
                     .await?
@@ -309,7 +309,7 @@ where
                         TransactionSigned,
                     >::block_by_number(
                         &node_b_client.rpc,
-                        alloy_eips::BlockNumberOrTag::Latest,
+                        alloy_sips::BlockNumberOrTag::Latest,
                         false,
                     )
                     .await?

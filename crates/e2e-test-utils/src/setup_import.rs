@@ -587,7 +587,7 @@ mod tests {
         let latest = node
             .inner
             .provider
-            .sealed_header_by_id(alloy_eips::BlockId::latest())
+            .sealed_header_by_id(alloy_sips::BlockId::latest())
             .expect("Failed to get latest header")
             .expect("No latest header found");
 

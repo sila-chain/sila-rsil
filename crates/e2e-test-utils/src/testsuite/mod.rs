@@ -62,7 +62,7 @@ where
     /// Get a block by number using the alloy provider
     pub async fn get_block_by_number(
         &self,
-        number: alloy_eips::BlockNumberOrTag,
+        number: alloy_sips::BlockNumberOrTag,
     ) -> Result<Option<alloy_rpc_types_eth::Block>> {
         self.provider
             .get_block_by_number(number)
@@ -72,7 +72,7 @@ where
 
     /// Check if the node is ready by attempting to get the latest block
     pub async fn is_ready(&self) -> bool {
-        self.get_block_by_number(alloy_eips::BlockNumberOrTag::Latest).await.is_ok()
+        self.get_block_by_number(alloy_sips::BlockNumberOrTag::Latest).await.is_ok()
     }
 }
 

@@ -1,7 +1,7 @@
 //! Utilities for creating and writing RLP test data
 
 use alloy_consensus::{constants::EMPTY_WITHDRAWALS, BlockHeader, Header};
-use alloy_eips::sip4895::Withdrawals;
+use alloy_sips::eip4895::Withdrawals;
 use alloy_primitives::{Address, B256, B64, U256};
 use alloy_rlp::Encodable;
 use rsil_chainspec::{ChainSpec, SilaHardforks};
@@ -72,7 +72,7 @@ pub fn generate_test_blocks(chain_spec: &ChainSpec, count: u64) -> Vec<SealedBlo
                     let last_block = blocks.last().unwrap();
                     (last_block.gas_used, last_block.gas_limit)
                 };
-                header.base_fee_per_gas = Some(alloy_eips::calc_next_block_base_fee(
+                header.base_fee_per_gas = Some(alloy_sips::calc_next_block_base_fee(
                     parent_gas_used,
                     parent_gas_limit,
                     parent_fee,

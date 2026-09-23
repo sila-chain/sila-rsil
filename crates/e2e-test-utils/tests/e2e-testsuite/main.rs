@@ -86,7 +86,7 @@ async fn test_apply_with_import() -> Result<()> {
             rsil_sila_primitives::TransactionSigned,
         >::block_by_number(
             &client.rpc,
-            alloy_eips::BlockNumberOrTag::Number(10),
+            alloy_sips::BlockNumberOrTag::Number(10),
             true, // Include full transaction details
         )
         .await;

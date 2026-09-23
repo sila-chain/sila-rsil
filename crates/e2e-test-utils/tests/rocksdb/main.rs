@@ -1,7 +1,7 @@
 //! E2E tests for `RocksDB` provider functionality.
 
 use alloy_consensus::BlockHeader;
-use alloy_eips::sip2718::Encodable2718;
+use alloy_sips::eip2718::Encodable2718;
 use alloy_primitives::{Address, Bytes, TxKind, B256, U256};
 use alloy_rpc_types_engine::PayloadAttributes;
 use alloy_rpc_types_eth::{Transaction, TransactionInput, TransactionReceipt, TransactionRequest};

@@ -1,6 +1,6 @@
-use alloy_consensus::{SilaTxEnvelope, TxEip4844Variant};
-use alloy_eips::sip7594::BlobTransactionSidecarVariant;
-use alloy_network::sip2718::Decodable2718;
+use alloy_consensus::{EthereumTxEnvelope as SilaTxEnvelope, TxEip4844Variant};
+use alloy_sips::eip7594::BlobTransactionSidecarVariant;
+use alloy_network::eip2718::Decodable2718;
 use alloy_primitives::{Bytes, B256};
 use rsil_chainspec::SilaHardforks;
 use rsil_node_api::{BlockTy, FullNodeComponents};

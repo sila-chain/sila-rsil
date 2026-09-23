@@ -82,7 +82,7 @@ where
                 Header,
                 TransactionSigned,
             >::block_by_number(
-                rpc_client, alloy_eips::BlockNumberOrTag::Latest, false
+                rpc_client, alloy_sips::BlockNumberOrTag::Latest, false
             )
             .await?;
 
@@ -391,7 +391,7 @@ where
                     Header,
                     TransactionSigned,
                 >::block_by_number(
-                    rpc_client, alloy_eips::BlockNumberOrTag::Latest, false
+                    rpc_client, alloy_sips::BlockNumberOrTag::Latest, false
                 )
                 .await?
                 .ok_or_else(|| eyre::eyre!("No latest block found from RPC"))?;
@@ -465,7 +465,7 @@ where
                 Header,
                 TransactionSigned,
             >::block_by_number(
-                rpc_client, alloy_eips::BlockNumberOrTag::Latest, false
+                rpc_client, alloy_sips::BlockNumberOrTag::Latest, false
             )
             .await?
             .ok_or_else(|| eyre::eyre!("No latest block found from RPC"))?;
@@ -576,7 +576,7 @@ where
                     Header,
                     TransactionSigned,
                 >::header_by_number(
-                    rpc_client, alloy_eips::BlockNumberOrTag::Latest
+                    rpc_client, alloy_sips::BlockNumberOrTag::Latest
                 )
                 .await?
                 .ok_or_else(|| eyre::eyre!("No latest header found from rpc"))?;

@@ -11,7 +11,7 @@ on:
         required: false
         type: string
       alloy_evm_branch:
-        description: 'Branch/rev for alloy-rs/savm (alloy-savm, alloy-op-savm) (leave empty to skip)'
+        description: 'Branch/rev for alloy-rs/evm (alloy-evm, alloy-op-evm) (leave empty to skip)'
         required: false
         type: string
       op_alloy_branch:
@@ -56,7 +56,7 @@ jobs:
             ARGS="$ARGS --alloy $ALLOY_BRANCH"
           fi
           if [ -n "$ALLOY_EVM_BRANCH" ]; then
-            ARGS="$ARGS --savm $ALLOY_EVM_BRANCH"
+            ARGS="$ARGS --evm $ALLOY_EVM_BRANCH"
           fi
           if [ -n "$OP_ALLOY_BRANCH" ]; then
             ARGS="$ARGS --op $OP_ALLOY_BRANCH"

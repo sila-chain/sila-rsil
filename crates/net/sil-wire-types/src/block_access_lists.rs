@@ -91,7 +91,7 @@ impl Decodable for BlockAccessLists {
 #[cfg(any(test, feature = "arbitrary"))]
 impl<'a> arbitrary::Arbitrary<'a> for BlockAccessLists {
     fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
-        let entries = Vec::<Option<Vec<alloy_eip7928::AccountChanges>>>::arbitrary(u)?
+        let entries = Vec::<Option<Vec<alloy_sip7928::AccountChanges>>>::arbitrary(u)?
             .into_iter()
             .map(|entry| {
                 let entry = entry?;

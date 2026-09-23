@@ -15,7 +15,7 @@ use crate::{
 use crate::{DBProvider, DatabaseProviderFactory, StorageChangeSetReader, StorageSettingsCache};
 use alloc::{boxed::Box, string::String, sync::Arc, vec::Vec};
 use alloy_consensus::transaction::TransactionMeta;
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{
     Address, BlockHash, BlockNumber, Bytes, StorageKey, StorageValue, TxHash, TxNumber, B256,
 };
@@ -161,15 +161,15 @@ impl<ChainSpec: SilChainSpec + 'static, N: Debug + Send + Sync + 'static> ChainS
 }
 
 impl<C: Send + Sync, N: NodePrimitives> BlockIdReader for NoopProvider<C, N> {
-    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 
-    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
+    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>> {
         Ok(None)
     }
 }

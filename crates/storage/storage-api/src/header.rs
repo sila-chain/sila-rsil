@@ -1,5 +1,5 @@
 use alloc::vec::Vec;
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{BlockHash, BlockNumber};
 use core::ops::RangeBounds;
 use rsil_primitives_traits::{BlockHeader, SealedHeader};

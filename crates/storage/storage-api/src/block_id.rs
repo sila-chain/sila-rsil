@@ -1,5 +1,5 @@
 use crate::BlockHashReader;
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockNumber, B256};
 use rsil_chainspec::ChainInfo;
 use rsil_storage_errors::provider::{ProviderError, ProviderResult};
@@ -104,13 +104,13 @@ pub trait BlockIdReader: BlockNumReader + Send + Sync {
     }
 
     /// Get the current pending block number and hash.
-    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>>;
+    fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>>;
 
     /// Get the current safe block number and hash.
-    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>>;
+    fn safe_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>>;
 
     /// Get the current finalized block number and hash.
-    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>>;
+    fn finalized_block_num_hash(&self) -> ProviderResult<Option<alloy_sips::BlockNumHash>>;
 
     /// Get the safe block number.
     fn safe_block_number(&self) -> ProviderResult<Option<BlockNumber>> {

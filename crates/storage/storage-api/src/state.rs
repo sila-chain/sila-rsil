@@ -4,7 +4,7 @@ use super::{
 };
 use alloc::boxed::Box;
 use alloy_consensus::constants::KECCAK_EMPTY;
-use alloy_eips::{BlockId, BlockNumberOrTag};
+use alloy_sips::{BlockId, BlockNumberOrTag};
 use alloy_primitives::{Address, BlockHash, BlockNumber, StorageKey, StorageValue, B256, U256};
 use auto_impl::auto_impl;
 use rsil_execution_types::ExecutionOutcome;

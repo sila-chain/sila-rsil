@@ -1,5 +1,5 @@
 use alloc::vec::Vec;
-use alloy_eips::BlockHashOrNumber;
+use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{BlockNumber, B256};
 use rsil_storage_errors::provider::ProviderResult;
 

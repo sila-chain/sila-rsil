@@ -1,6 +1,6 @@
 use crate::BlockIdReader;
 use alloc::vec::Vec;
-use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockNumber, TxHash, TxNumber};
 use core::ops::{RangeBounds, RangeInclusive};
 use rsil_primitives_traits::Receipt;

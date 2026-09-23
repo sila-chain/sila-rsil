@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use crate::common::{CliNodeComponents, CliNodeTypes};
 use clap::{Parser, Subcommand};
-use rsil_chainspec::{SilChainSpec, SilaHardforks, Hardforks};
+use rsil_chainspec::{Hardforks, SilChainSpec, SilaHardforks};
 use rsil_cli::chainspec::ChainSpecParser;
 use rsil_cli_runner::CliContext;
 

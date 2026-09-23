@@ -1,5 +1,5 @@
-use alloy_sips::eip4895::Withdrawals;
 use alloy_primitives::TxNumber;
+use alloy_sips::eip4895::Withdrawals;
 use core::ops::Range;
 
 /// Total number of transactions.

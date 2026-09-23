@@ -2,7 +2,7 @@
 #![allow(unused)]
 #![expect(clippy::too_many_arguments)]
 
-use alloy_network::{Sila, SilaWallet, NetworkWallet, TransactionBuilder};
+use alloy_network::{NetworkWallet, Sila, SilaWallet, TransactionBuilder};
 use alloy_primitives::{Address, TxHash, U256};
 use futures_util::StreamExt;
 use rsil_sila::{

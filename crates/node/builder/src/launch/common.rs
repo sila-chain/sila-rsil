@@ -494,8 +494,8 @@ where
         // size a distance-based prune target is only reached every 500k blocks. Unless a file size
         // is explicitly configured, derive one from the prune distance so retention tracks the
         // configured distance.
-        if blocks_per_file.get(StaticFileSegment::Receipts).is_none() &&
-            let Some(PruneMode::Distance(distance)) = prune_config.segments.receipts
+        if blocks_per_file.get(StaticFileSegment::Receipts).is_none()
+            && let Some(PruneMode::Distance(distance)) = prune_config.segments.receipts
         {
             blocks_per_file
                 .insert(StaticFileSegment::Receipts, blocks_per_file_for_prune_distance(distance));
@@ -984,9 +984,9 @@ where
     /// This checks for OP-SilaMainnet and ensures we have all the necessary data to progress (past
     /// bedrock height)
     fn ensure_chain_specific_db_checks(&self) -> ProviderResult<()> {
-        if self.chain_spec().is_optimism() &&
-            !self.is_dev() &&
-            self.chain_id() == Chain::optimism_mainnet()
+        if self.chain_spec().is_optimism()
+            && !self.is_dev()
+            && self.chain_id() == Chain::optimism_mainnet()
         {
             let latest = self.blockchain_db().last_block_number()?;
             // bedrock height
@@ -1183,8 +1183,8 @@ where
             while let Some(event) = engine_events.next().await {
                 use rsil_engine_primitives::ConsensusEngineEvent;
                 match event {
-                    ConsensusEngineEvent::ForkBlockAdded(executed, duration) |
-                    ConsensusEngineEvent::CanonicalBlockAdded(executed, duration) => {
+                    ConsensusEngineEvent::ForkBlockAdded(executed, duration)
+                    | ConsensusEngineEvent::CanonicalBlockAdded(executed, duration) => {
                         let block_hash = executed.recovered_block.num_hash().hash;
                         let block_number = executed.recovered_block.num_hash().number;
                         if let Err(e) = ethstats_for_events

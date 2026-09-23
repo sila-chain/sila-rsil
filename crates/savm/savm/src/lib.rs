@@ -19,19 +19,19 @@ extern crate alloc;
 
 use crate::execute::{BasicBlockBuilder, Executor};
 use alloc::{string::String, vec::Vec};
-use alloy_sips::eip4895::Withdrawals;
+use alloy_primitives::{Address, Bytes, B256};
 use alloy_savm::{
     block::{BlockExecutorFactory, BlockExecutorFor},
     precompiles::PrecompilesMap,
 };
-use alloy_primitives::{Address, Bytes, B256};
+use alloy_sips::eip4895::Withdrawals;
 use core::{error::Error, fmt::Debug};
 use execute::{BasicBlockExecutor, BlockAssembler, BlockBuilder};
+use revm::{database::State, primitives::hardfork::SpecId};
 use rsil_execution_errors::BlockExecutionError;
 use rsil_primitives_traits::{
     BlockTy, HeaderTy, NodePrimitives, ReceiptTy, SealedBlock, SealedHeader, TxTy,
 };
-use revm::{database::State, primitives::hardfork::SpecId};
 
 pub mod either;
 /// SAVM environment configuration.
@@ -217,7 +217,8 @@ pub trait ConfigureEvm: Clone + Debug + Send + Sync + Unpin {
     fn block_assembler(&self) -> &Self::BlockAssembler;
 
     /// Creates a new [`SavmEnv`] for the given header.
-    fn evm_env(&self, header: &HeaderTy<Self::Primitives>) -> Result<SavmEnvFor<Self>, Self::Error>;
+    fn evm_env(&self, header: &HeaderTy<Self::Primitives>)
+        -> Result<SavmEnvFor<Self>, Self::Error>;
 
     /// Returns the configured [`SavmEnv`] for `parent + 1` block.
     ///

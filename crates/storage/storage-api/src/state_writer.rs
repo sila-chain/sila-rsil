@@ -1,13 +1,13 @@
 use alloc::vec::Vec;
 use alloy_consensus::transaction::Either;
 use alloy_primitives::BlockNumber;
-use rsil_execution_types::{BlockExecutionOutput, ExecutionOutcome};
-use rsil_storage_errors::provider::ProviderResult;
-use rsil_trie_common::HashedPostStateSorted;
 use revm::database::{
     states::{PlainStateReverts, StateChangeset},
     BundleState, OriginalValuesKnown,
 };
+use rsil_execution_types::{BlockExecutionOutput, ExecutionOutcome};
+use rsil_storage_errors::provider::ProviderResult;
+use rsil_trie_common::HashedPostStateSorted;
 
 /// A helper type used as input to [`StateWriter`] for writing execution outcome for one or many
 /// blocks.

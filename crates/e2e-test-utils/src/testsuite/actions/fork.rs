@@ -8,9 +8,9 @@ use alloy_rpc_types_engine::{ForkchoiceState, PayloadAttributes};
 use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_node_api::{EngineTypes, PayloadTypes};
 use rsil_rpc_api::clients::SilApiClient;
+use rsil_sila_primitives::TransactionSigned;
 use std::marker::PhantomData;
 use tracing::debug;
 

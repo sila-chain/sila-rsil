@@ -3,8 +3,8 @@ use crate::{
     ReceiptProviderIdExt, TransactionVariant, TransactionsProvider,
 };
 use alloc::{sync::Arc, vec::Vec};
-use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockNumber, TxNumber, B256};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use core::ops::RangeInclusive;
 use rsil_primitives_traits::{Block as _, RecoveredBlock, SealedHeader, SealedOrRecoveredBlock};
 use rsil_storage_errors::provider::ProviderResult;

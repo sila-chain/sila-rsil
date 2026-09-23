@@ -42,13 +42,13 @@ use crate::{
 use futures::{Future, StreamExt};
 use parking_lot::Mutex;
 use rsil_chainspec::EnrForkIdEntry;
-use rsil_eth_wire::{DisconnectReason, SilNetworkPrimitives, NetworkPrimitives};
+use rsil_eth_wire::{DisconnectReason, NetworkPrimitives, SilNetworkPrimitives};
 use rsil_fs_util::{self as fs, FsPathError};
 use rsil_metrics::common::mpsc::MemoryBoundedSender;
 use rsil_network_api::{
     events::{PeerEvent, SessionInfo},
     test_utils::PeersHandle,
-    SilProtocolInfo, NetworkEvent, NetworkStatus, PeerInfo, PeerRequest,
+    NetworkEvent, NetworkStatus, PeerInfo, PeerRequest, SilProtocolInfo,
 };
 use rsil_network_peers::{NodeRecord, PeerId};
 use rsil_network_types::ReputationChangeKind;
@@ -496,8 +496,8 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
     /// Sends an event to the [`TransactionsManager`](crate::transactions::TransactionsManager) if
     /// configured.
     fn notify_tx_manager(&self, event: NetworkTransactionEvent<N>) {
-        if let Some(ref tx) = self.to_transactions_manager &&
-            let Err(e) = tx.try_send(event)
+        if let Some(ref tx) = self.to_transactions_manager
+            && let Err(e) = tx.try_send(event)
         {
             match e {
                 TrySendError::Full(_) => {
@@ -699,7 +699,7 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
                 if self.handle.mode().is_stake() {
                     // See [SIP-3675](https://sips.sila.org/SIPS/sip-3675#devp2p)
                     warn!(target: "net", "Peer performed block propagation, but it is not supported in proof of stake (SIP-3675)");
-                    return
+                    return;
                 }
                 let msg = NewBlockMessage { hash, block: Arc::new(block) };
                 self.swarm.state_mut().announce_new_block(msg);
@@ -1189,7 +1189,7 @@ impl<N: NetworkPrimitives> Future for NetworkManager<N> {
         if maybe_more_handle_messages || maybe_more_swarm_events {
             // make sure we're woken up again
             cx.waker().wake_by_ref();
-            return Poll::Pending
+            return Poll::Pending;
         }
 
         this.update_poll_metrics(start, poll_durations);

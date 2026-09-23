@@ -21,7 +21,7 @@ use alloy_rpc_types_engine::ExecutionData;
 use jsonrpsee::RpcModule;
 use parking_lot::Mutex;
 use rsil_chain_state::{CanonStateSubscriptions, StateTrieOverlayManager};
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks, Hardforks};
+use rsil_chainspec::{ChainSpecProvider, Hardforks, SilChainSpec, SilaHardforks};
 use rsil_node_api::{
     AddOnsContext, BlockTy, EngineApiValidator, EngineTypes, FullNodeComponents, FullNodeTypes,
     NodeAddOns, NodeTypes, PayloadTypes, PayloadValidator, PrimitivesTy, TreeConfig,
@@ -33,7 +33,7 @@ use rsil_node_core::{
 };
 use rsil_payload_builder::{PayloadBuilderHandle, PayloadStore};
 use rsil_rpc::{
-    sil::{core::SilRpcConverterFor, DevSigner, SilApiTypes, FullEthApiServer},
+    sil::{core::SilRpcConverterFor, DevSigner, FullEthApiServer, SilApiTypes},
     AdminApi,
 };
 use rsil_rpc_api::{sil::helpers::SilTransactions, IntoEngineApiRpcModule};

@@ -273,11 +273,11 @@ mod tests {
     use alloy_rpc_types_engine::PayloadAttributes;
     use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
     use rsil_db::mdbx::DatabaseArguments;
-    use rsil_sila_primitives::Block;
     use rsil_primitives_traits::SealedBlock;
     use rsil_provider::{
         test_utils::MockNodeTypesWithDB, BlockHashReader, BlockNumReader, BlockReaderIdExt,
     };
+    use rsil_sila_primitives::Block;
     use std::path::PathBuf;
 
     #[tokio::test]

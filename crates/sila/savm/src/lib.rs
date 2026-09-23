@@ -29,28 +29,28 @@ use alloy_savm::{
 #[cfg(feature = "jit")]
 use core::any::Any;
 use core::{convert::Infallible, fmt::Debug};
-use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
-use rsil_sila_primitives::{Block, SilPrimitives, TransactionSigned};
-use rsil_savm::{
-    eth::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, SavmEnv, SavmFactory,
-    JitBackend, NextBlockEnvAttributes, TransactionEnvMut,
-};
-use rsil_primitives_traits::{SealedBlock, SealedHeader};
 use revm::{context::BlockEnv, primitives::hardfork::SpecId};
+use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
+use rsil_primitives_traits::{SealedBlock, SealedHeader};
+use rsil_savm::{
+    eth::NextEvmEnvAttributes, precompiles::PrecompilesMap, ConfigureEvm, JitBackend,
+    NextBlockEnvAttributes, SavmEnv, SavmFactory, TransactionEnvMut,
+};
+use rsil_sila_primitives::{Block, SilPrimitives, TransactionSigned};
 
 #[cfg(feature = "std")]
 use rsil_savm::{ConfigureEngineEvm, ExecutableTxIterator};
 #[allow(unused_imports)]
 use {
-    alloy_sips::Decodable2718,
     alloy_primitives::{Bytes, U256},
     alloy_rpc_types_engine::ExecutionData,
-    rsil_chainspec::SilaHardforks,
-    rsil_savm::{SavmEnvFor, ExecutionCtxFor},
-    rsil_primitives_traits::{constants::MAX_TX_GAS_LIMIT_OSAKA, SignedTransaction, TxTy},
-    rsil_storage_errors::any::AnyError,
+    alloy_sips::Decodable2718,
     revm::context::CfgEnv,
     revm::context_interface::block::BlobExcessGasAndPrice,
+    rsil_chainspec::SilaHardforks,
+    rsil_primitives_traits::{constants::MAX_TX_GAS_LIMIT_OSAKA, SignedTransaction, TxTy},
+    rsil_savm::{ExecutionCtxFor, SavmEnvFor},
+    rsil_storage_errors::any::AnyError,
 };
 
 pub use alloy_savm::EthEvm as SilEvm;
@@ -280,7 +280,10 @@ where
         + Unpin
         + 'static,
 {
-    fn evm_env_for_payload(&self, payload: &ExecutionData) -> Result<SavmEnvFor<Self>, Self::Error> {
+    fn evm_env_for_payload(
+        &self,
+        payload: &ExecutionData,
+    ) -> Result<SavmEnvFor<Self>, Self::Error> {
         let timestamp = payload.payload.timestamp();
         let block_number = payload.payload.block_number();
 
@@ -364,14 +367,14 @@ mod tests {
     use super::*;
     use alloy_consensus::Header;
     use alloy_genesis::Genesis;
-    use rsil_chainspec::{Chain, ChainSpec};
-    use rsil_savm::{execute::ProviderError, SavmEnv};
     use revm::{
         context::{BlockEnv, CfgEnv},
         database::CacheDB,
         database_interface::EmptyDBTyped,
         inspector::NoOpInspector,
     };
+    use rsil_chainspec::{Chain, ChainSpec};
+    use rsil_savm::{execute::ProviderError, SavmEnv};
 
     #[test]
     fn test_fill_cfg_and_block_env() {

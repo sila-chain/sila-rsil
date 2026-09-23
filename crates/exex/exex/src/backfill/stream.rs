@@ -5,7 +5,6 @@ use futures::{
     stream::{FuturesOrdered, Stream},
     StreamExt,
 };
-use rsil_sila_primitives::SilPrimitives;
 use rsil_evm::{
     execute::{BlockExecutionError, BlockExecutionOutput},
     ConfigureEvm,
@@ -14,6 +13,7 @@ use rsil_node_api::NodePrimitives;
 use rsil_primitives_traits::RecoveredBlock;
 use rsil_provider::{BlockReader, Chain, StateProviderFactory};
 use rsil_prune_types::PruneModes;
+use rsil_sila_primitives::SilPrimitives;
 use rsil_stages_api::ExecutionStageThresholds;
 use rsil_tracing::tracing::debug;
 use std::{
@@ -108,7 +108,7 @@ where
                 // next.
                 self.push_front(job);
 
-                return Poll::Ready(Some(job_result))
+                return Poll::Ready(Some(job_result));
             };
         }
 
@@ -253,7 +253,6 @@ mod tests {
     use futures::StreamExt;
     use rsil_chainspec::{ChainSpec, SilaHardfork, MIN_TRANSACTION_GAS};
     use rsil_db_common::init::init_genesis;
-    use rsil_sila_primitives::{Block, BlockBody, Transaction};
     use rsil_evm_sila::SilEvmConfig;
     use rsil_primitives_traits::{
         crypto::secp256k1::public_key_to_address, Block as _, NodePrimitives,
@@ -263,6 +262,7 @@ mod tests {
         test_utils::create_test_provider_factory_with_chain_spec,
         ProviderFactory,
     };
+    use rsil_sila_primitives::{Block, BlockBody, Transaction};
     use rsil_stages_api::ExecutionStageThresholds;
     use rsil_testing_utils::{generators, generators::sign_tx_with_key_pair};
     use secp256k1::Keypair;
@@ -357,7 +357,10 @@ mod tests {
                     receipts_root: b256!(
                         "0xd3a6acf9a244d78b33831df95d472c4128ea85bf079a1d41e32ed0b7d2244c9e"
                     ),
-                    difficulty: chain_spec.fork(SilaHardfork::SilaParis).ttd().expect("SilaParis TTD"),
+                    difficulty: chain_spec
+                        .fork(SilaHardfork::SilaParis)
+                        .ttd()
+                        .expect("SilaParis TTD"),
                     number: i,
                     gas_limit: MIN_TRANSACTION_GAS,
                     gas_used: MIN_TRANSACTION_GAS,

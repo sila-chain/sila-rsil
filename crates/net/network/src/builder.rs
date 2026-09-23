@@ -12,7 +12,7 @@ use crate::{
     },
     NetworkHandle, NetworkManager,
 };
-use rsil_eth_wire::{SilNetworkPrimitives, NetworkPrimitives};
+use rsil_eth_wire::{NetworkPrimitives, SilNetworkPrimitives};
 use rsil_metrics::common::mpsc::memory_bounded_channel;
 use rsil_network_api::test_utils::PeersHandleProvider;
 use rsil_storage_api::BalProvider;

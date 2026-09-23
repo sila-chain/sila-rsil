@@ -64,7 +64,7 @@ impl BlobStoreCanonTracker {
             if *entry.key() <= finalized_block {
                 finalized.extend(entry.remove_entry().1);
             } else {
-                break
+                break;
             }
         }
 
@@ -90,9 +90,9 @@ mod tests {
     use super::*;
     use alloy_consensus::{Header, Signed};
     use alloy_primitives::Signature;
-    use rsil_sila_primitives::Transaction;
     use rsil_execution_types::Chain;
     use rsil_primitives_traits::{RecoveredBlock, SealedBlock, SealedHeader};
+    use rsil_sila_primitives::Transaction;
 
     #[test]
     fn test_finalized_tracker() {

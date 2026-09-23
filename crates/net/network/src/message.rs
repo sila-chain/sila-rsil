@@ -9,9 +9,9 @@ use alloy_primitives::{Bytes, B256};
 use futures::FutureExt;
 use rsil_eth_wire::{
     message::RequestPair, BlockBodies, BlockHeaders, BlockRangeUpdate, BroadcastPoolTransactions,
-    Cells, SilMessage, SilNetworkPrimitives, GetBlockAccessLists, GetBlockBodies, GetBlockHeaders,
-    GetReceipts, NetworkPrimitives, NewBlock, NewBlockHashes, NewBlockPayload,
-    NewPooledTransactionHashes, NodeData, PooledTransactions, Receipts, SharedTransactions,
+    Cells, GetBlockAccessLists, GetBlockBodies, GetBlockHeaders, GetReceipts, NetworkPrimitives,
+    NewBlock, NewBlockHashes, NewBlockPayload, NewPooledTransactionHashes, NodeData,
+    PooledTransactions, Receipts, SharedTransactions, SilMessage, SilNetworkPrimitives,
     Transactions,
 };
 use rsil_eth_wire_types::{snap::SnapProtocolMessage, RawCapabilityMessage};
@@ -92,11 +92,11 @@ impl<N: NetworkPrimitives> PeerMessage<N> {
     pub const fn is_broadcast(&self) -> bool {
         matches!(
             self,
-            Self::NewBlockHashes(_) |
-                Self::NewBlock(_) |
-                Self::SendTransactions(_) |
-                Self::SendBroadcastPoolTransactions(_) |
-                Self::PooledTransactions(_)
+            Self::NewBlockHashes(_)
+                | Self::NewBlock(_)
+                | Self::SendTransactions(_)
+                | Self::SendBroadcastPoolTransactions(_)
+                | Self::PooledTransactions(_)
         )
     }
 
@@ -108,10 +108,10 @@ impl<N: NetworkPrimitives> PeerMessage<N> {
             Self::SendTransactions(msg) => msg.len(),
             Self::SendBroadcastPoolTransactions(msg) => msg.len(),
             Self::PooledTransactions(msg) => msg.len(),
-            Self::NewBlock(_) |
-            Self::SilRequest(_) |
-            Self::BlockRangeUpdated(_) |
-            Self::Other(_) => 1,
+            Self::NewBlock(_)
+            | Self::SilRequest(_)
+            | Self::BlockRangeUpdated(_)
+            | Self::Other(_) => 1,
         }
     }
 }

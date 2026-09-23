@@ -3,7 +3,7 @@
 use alloy_primitives::{BlockHash, U256};
 use rsil_chainspec::{
     hardfork, make_genesis_header, BaseFeeParams, BaseFeeParamsKind, Chain, ChainHardforks,
-    ChainSpec, SilaHardfork, ForkCondition, Hardfork, Head, NamedChain,
+    ChainSpec, ForkCondition, Hardfork, Head, NamedChain, SilaHardfork,
 };
 use rsil_network_peers::NodeRecord;
 use rsil_primitives_traits::SealedHeader;

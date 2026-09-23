@@ -67,8 +67,8 @@ where
         // pre-merge history is dropped and then later tx lookup pruning is enabled) then we can
         // only prune from the lowest static file.
         if let Some(lowest_range) =
-            provider.static_file_provider().get_lowest_range(StaticFileSegment::Transactions) &&
-            input
+            provider.static_file_provider().get_lowest_range(StaticFileSegment::Transactions)
+            && input
                 .previous_checkpoint
                 .is_none_or(|checkpoint| checkpoint.block_number < Some(lowest_range.start()))
         {
@@ -91,7 +91,7 @@ where
             Some(range) => range,
             None => {
                 trace!(target: "pruner", "No transaction lookup entries to prune");
-                return Ok(SegmentOutput::done())
+                return Ok(SegmentOutput::done());
             }
         }
         .into_inner();
@@ -120,8 +120,8 @@ where
             });
         }
 
-        let tx_range = start..=
-            Some(end)
+        let tx_range = start
+            ..=Some(end)
                 .min(
                     input
                         .limiter
@@ -136,8 +136,8 @@ where
         let mut hashes = provider
             .static_file_provider()
             .transaction_hashes_by_range(
-                *tx_range.start()..
-                    tx_range_end
+                *tx_range.start()
+                    ..tx_range_end
                         .checked_add(1)
                         .ok_or(PrunerError::InconsistentData("Transaction range end overflow"))?,
             )?
@@ -155,7 +155,7 @@ where
         if hashes.len() != tx_count {
             return Err(PrunerError::InconsistentData(
                 "Unexpected number of transaction hashes retrieved by transaction number range",
-            ))
+            ));
         }
 
         let mut limiter = input.limiter;
@@ -245,8 +245,8 @@ impl TransactionLookup {
         let tx_range = start..=tx_range_end;
 
         let hashes = provider.static_file_provider().transaction_hashes_by_range(
-            *tx_range.start()..
-                tx_range_end
+            *tx_range.start()
+                ..tx_range_end
                     .checked_add(1)
                     .ok_or(PrunerError::InconsistentData("Transaction range end overflow"))?,
         )?;
@@ -256,7 +256,7 @@ impl TransactionLookup {
         if hashes.len() != tx_count {
             return Err(PrunerError::InconsistentData(
                 "Unexpected number of transaction hashes retrieved by transaction number range",
-            ))
+            ));
         }
 
         let mut limiter = input.limiter;
@@ -379,8 +379,8 @@ mod tests {
                 .map(|block| block.transaction_count())
                 .sum::<usize>()
                 .min(
-                    next_tx_number_to_prune as usize +
-                        input.limiter.deleted_entries_limit().unwrap(),
+                    next_tx_number_to_prune as usize
+                        + input.limiter.deleted_entries_limit().unwrap(),
                 )
                 .sub(1);
 

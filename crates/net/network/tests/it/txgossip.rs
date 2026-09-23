@@ -2,7 +2,6 @@
 use alloy_consensus::TxLegacy;
 use alloy_primitives::{Signature, U256};
 use futures::StreamExt;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_network::{
     test_utils::{NetworkEventStream, Testnet},
     transactions::config::{
@@ -12,6 +11,7 @@ use rsil_network::{
 };
 use rsil_network_api::{events::PeerEvent, PeerKind, PeersInfo};
 use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
+use rsil_sila_primitives::TransactionSigned;
 use rsil_transaction_pool::{
     test_utils::TransactionGenerator, AddedTransactionOutcome, PoolTransaction, TransactionPool,
 };
@@ -284,8 +284,8 @@ async fn test_sending_invalid_transactions() {
             NetworkEvent::Peer(PeerEvent::SessionClosed { peer_id, .. }) => {
                 assert_eq!(peer_id, *peer0.peer_id());
             }
-            NetworkEvent::ActivePeerSession { .. } |
-            NetworkEvent::Peer(PeerEvent::SessionEstablished { .. }) => {
+            NetworkEvent::ActivePeerSession { .. }
+            | NetworkEvent::Peer(PeerEvent::SessionEstablished { .. }) => {
                 panic!("unexpected SessionEstablished event")
             }
             NetworkEvent::Peer(PeerEvent::PeerAdded(_)) => {

@@ -1,13 +1,13 @@
-pub use alloy_sips::eip1559::BaseFeeParams;
 use alloy_savm::eth::spec::EthExecutorSpec as SilExecutorSpec;
+pub use alloy_sips::eip1559::BaseFeeParams;
 
 use crate::{
     constants::{MAINNET_DEPOSIT_CONTRACT, MAINNET_PRUNE_DELETE_LIMIT},
-    sila::SEPOLIA_PARIS_TTD,
-    holesky, hoodi, sila_mainnet,
-    sila_mainnet::{MAINNET_PARIS_BLOCK, MAINNET_PARIS_TTD},
-    sepolia,
+    holesky, hoodi, sepolia,
     sepolia::SEPOLIA_PARIS_BLOCK,
+    sila::SEPOLIA_PARIS_TTD,
+    sila_mainnet,
+    sila_mainnet::{MAINNET_PARIS_BLOCK, MAINNET_PARIS_TTD},
     SilChainSpec,
 };
 use alloc::{
@@ -26,21 +26,21 @@ use alloy_consensus::{
     },
     Header,
 };
+use alloy_genesis::{ChainConfig, Genesis};
+use alloy_primitives::{address, b256, Address, BlockNumber, B256, U256};
 use alloy_sips::{
     eip1559::INITIAL_BASE_FEE, eip7685::EMPTY_REQUESTS_HASH, eip7840::BlobParams,
     eip7892::BlobScheduleBlobParams, eip7928::EMPTY_BLOCK_ACCESS_LIST_HASH,
 };
-use alloy_genesis::{ChainConfig, Genesis};
-use alloy_primitives::{address, b256, Address, BlockNumber, B256, U256};
 use alloy_trie::root::state_root_ref_unhashed;
 use core::fmt::Debug;
 use derive_more::From;
-use rsil_sila_forks::{
-    ChainHardforks, DisplayHardforks, EthereumHardforks, ForkCondition, SilaHardfork,
-    ForkFilter, ForkFilterKey, ForkHash, ForkId, Hardfork, Hardforks, Head, DEV_HARDFORKS,
-};
 use rsil_network_peers::{holesky_nodes, hoodi_nodes, mainnet_nodes, sepolia_nodes, NodeRecord};
 use rsil_primitives_traits::{sync::LazyLock, BlockHeader, SealedHeader};
+use rsil_sila_forks::{
+    ChainHardforks, DisplayHardforks, EthereumHardforks, ForkCondition, ForkFilter, ForkFilterKey,
+    ForkHash, ForkId, Hardfork, Hardforks, Head, SilaHardfork, DEV_HARDFORKS,
+};
 
 /// Helper method building a [`Header`] given [`Genesis`] and [`ChainHardforks`].
 pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Header {
@@ -83,10 +83,8 @@ pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Hea
         .then_some(EMPTY_BLOCK_ACCESS_LIST_HASH);
 
     // If SilaAmsterdam is activated at genesis we set slot number to 0
-    let slot_number = hardforks
-        .fork(SilaHardfork::Amsterdam)
-        .active_at_timestamp(genesis.timestamp)
-        .then_some(0);
+    let slot_number =
+        hardforks.fork(SilaHardfork::Amsterdam).active_at_timestamp(genesis.timestamp).then_some(0);
 
     Header {
         number: genesis.number.unwrap_or_default(),
@@ -351,8 +349,8 @@ pub fn blob_params_to_schedule(
     let bpo_forks = SilaHardfork::bpo_variants();
     for (timestamp, blob_params) in &params.scheduled {
         for bpo_fork in bpo_forks {
-            if let ForkCondition::Timestamp(fork_ts) = hardforks.fork(bpo_fork) &&
-                fork_ts == *timestamp
+            if let ForkCondition::Timestamp(fork_ts) = hardforks.fork(bpo_fork)
+                && fork_ts == *timestamp
             {
                 schedule.insert(bpo_fork.name().to_lowercase(), *blob_params);
                 break;
@@ -544,7 +542,7 @@ impl<H: BlockHeader> ChainSpec<H> {
                 // given timestamp.
                 for (fork, params) in bf_params.iter().rev() {
                     if self.hardforks.is_fork_active_at_timestamp(fork.clone(), timestamp) {
-                        return *params
+                        return *params;
                     }
                 }
 
@@ -637,8 +635,8 @@ impl<H: BlockHeader> ChainSpec<H> {
             // We filter out TTD-based forks w/o a pre-known block since those do not show up in
             // the fork filter.
             Some(match condition {
-                ForkCondition::Block(block) |
-                ForkCondition::TTD { fork_block: Some(block), .. } => ForkFilterKey::Block(block),
+                ForkCondition::Block(block)
+                | ForkCondition::TTD { fork_block: Some(block), .. } => ForkFilterKey::Block(block),
                 ForkCondition::Timestamp(time) => ForkFilterKey::Time(time),
                 _ => return None,
             })
@@ -672,8 +670,8 @@ impl<H: BlockHeader> ChainSpec<H> {
         for (_, cond) in self.hardforks.forks_iter() {
             // handle block based forks and the sepolia merge netsplit block edge case (TTD
             // ForkCondition with Some(block))
-            if let ForkCondition::Block(block) |
-            ForkCondition::TTD { fork_block: Some(block), .. } = cond
+            if let ForkCondition::Block(block)
+            | ForkCondition::TTD { fork_block: Some(block), .. } = cond
             {
                 if head.number >= block {
                     // skip duplicated hardforks: hardforks enabled at genesis block
@@ -684,7 +682,7 @@ impl<H: BlockHeader> ChainSpec<H> {
                 } else {
                     // we can return here because this block fork is not active, so we set the
                     // `next` value
-                    return ForkId { hash: forkhash, next: block }
+                    return ForkId { hash: forkhash, next: block };
                 }
             }
         }
@@ -706,7 +704,7 @@ impl<H: BlockHeader> ChainSpec<H> {
                 // can safely return here because we have already handled all block forks and
                 // have handled all active timestamp forks, and set the next value to the
                 // timestamp that is known but not active yet
-                return ForkId { hash: forkhash, next: timestamp }
+                return ForkId { hash: forkhash, next: timestamp };
             }
         }
 
@@ -1299,10 +1297,10 @@ mod tests {
     use super::*;
     use alloy_chains::Chain;
     use alloy_consensus::constants::ETH_TO_WEI;
-    use alloy_sips::{eip4844::BLOB_TX_MIN_BLOB_GASPRICE, eip7840::BlobParams};
-    use alloy_savm::block::calc::{base_block_reward, block_reward};
     use alloy_genesis::{ChainConfig, GenesisAccount};
     use alloy_primitives::{b256, hex};
+    use alloy_savm::block::calc::{base_block_reward, block_reward};
+    use alloy_sips::{eip4844::BLOB_TX_MIN_BLOB_GASPRICE, eip7840::BlobParams};
     use alloy_trie::{TrieAccount, EMPTY_ROOT_HASH};
     use core::ops::Deref;
     use rsil_sila_forks::{ForkCondition, ForkHash, ForkId, Head};
@@ -1542,10 +1540,7 @@ Post-merge hard forks (timestamp based):
                     SilaHardfork::Homestead,
                     ForkId { hash: ForkHash(hex!("0x97c2c34c")), next: 1920000 },
                 ),
-                (
-                    SilaHardfork::Dao,
-                    ForkId { hash: ForkHash(hex!("0x91d1f948")), next: 2463000 },
-                ),
+                (SilaHardfork::Dao, ForkId { hash: ForkHash(hex!("0x91d1f948")), next: 2463000 }),
                 (
                     SilaHardfork::Tangerine,
                     ForkId { hash: ForkHash(hex!("0x7a64da13")), next: 2675000 },
@@ -2270,14 +2265,8 @@ Post-merge hard forks (timestamp based):
             chainspec.hardforks.get(SilaHardfork::MuirGlacier).unwrap(),
             ForkCondition::Block(0)
         );
-        assert_eq!(
-            chainspec.hardforks.get(SilaHardfork::Berlin).unwrap(),
-            ForkCondition::Block(0)
-        );
-        assert_eq!(
-            chainspec.hardforks.get(SilaHardfork::London).unwrap(),
-            ForkCondition::Block(0)
-        );
+        assert_eq!(chainspec.hardforks.get(SilaHardfork::Berlin).unwrap(), ForkCondition::Block(0));
+        assert_eq!(chainspec.hardforks.get(SilaHardfork::London).unwrap(), ForkCondition::Block(0));
         assert_eq!(
             chainspec.hardforks.get(SilaHardfork::ArrowGlacier).unwrap(),
             ForkCondition::Block(0)
@@ -2744,7 +2733,10 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn latest_eth_mainnet_fork_id() {
         // BPO2
-        assert_eq!(ForkId { hash: ForkHash(hex!("0x07c9462e")), next: 0 }, SILA_MAINNET.latest_fork_id())
+        assert_eq!(
+            ForkId { hash: ForkHash(hex!("0x07c9462e")), next: 0 },
+            SILA_MAINNET.latest_fork_id()
+        )
     }
 
     #[test]

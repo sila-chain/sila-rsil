@@ -16,4 +16,4 @@ mod client;
 mod providers;
 
 pub use client::{DebugConsensusClient, PayloadProvider};
-pub use providers::{SilaScanBlockProvider, RpcBlockProvider};
+pub use providers::{RpcBlockProvider, SilaScanBlockProvider};

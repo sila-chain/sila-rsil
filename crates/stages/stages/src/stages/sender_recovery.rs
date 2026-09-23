@@ -102,8 +102,8 @@ where
                 )
             })
             .transpose()?
-            .flatten() &&
-            target_prunable_block > input.checkpoint().block_number
+            .flatten()
+            && target_prunable_block > input.checkpoint().block_number
         {
             input.checkpoint = Some(StageCheckpoint::new(target_prunable_block));
 
@@ -125,7 +125,7 @@ where
         }
 
         if input.target_reached() {
-            return Ok(ExecOutput::done(input.checkpoint()))
+            return Ok(ExecOutput::done(input.checkpoint()));
         }
 
         let Some(range_output) =
@@ -144,7 +144,7 @@ where
                 checkpoint: StageCheckpoint::new(input.target())
                     .with_entities_stage_checkpoint(stage_checkpoint(provider)?),
                 done: true,
-            })
+            });
         };
         let end_block = *range_output.block_range.end();
 
@@ -175,7 +175,7 @@ where
                 while let Some((block, index)) = blocks_with_indices.peek() {
                     if index.contains_tx(tx) {
                         block_numbers.push(*block);
-                        return block_numbers
+                        return block_numbers;
                     }
                     blocks_with_indices.next();
                 }
@@ -295,7 +295,7 @@ where
                                     .into(),
                             ))
                         }
-                    }
+                    };
                 }
             };
 
@@ -365,7 +365,7 @@ where
                         // We exit early since we could not process this chunk.
                         let _ = recovered_senders_tx
                             .send(Err(Box::new(SenderRecoveryStageError::StageError(err.into()))));
-                        break
+                        break;
                     }
                 };
 
@@ -388,7 +388,7 @@ where
 
                         // Finish early
                         if is_err {
-                            break
+                            break;
                         }
                     }
                 });
@@ -469,13 +469,13 @@ mod tests {
     use alloy_primitives::{BlockNumber, B256};
     use assert_matches::assert_matches;
     use rsil_db_api::{cursor::DbCursorRO, models::StorageSettings};
-    use rsil_sila_primitives::{Block, TransactionSigned};
     use rsil_primitives_traits::{SealedBlock, SignerRecoverable};
     use rsil_provider::{
         providers::StaticFileWriter, BlockBodyIndicesProvider, DatabaseProviderFactory,
         PruneCheckpointWriter, StaticFileProviderFactory, TransactionsProvider,
     };
     use rsil_prune_types::{PruneCheckpoint, PruneMode};
+    use rsil_sila_primitives::{Block, TransactionSigned};
     use rsil_stages_api::StageUnitCheckpoint;
     use rsil_static_file_types::StaticFileSegment;
     use rsil_testing_utils::generators::{
@@ -800,7 +800,7 @@ mod tests {
                     let end_block = output.checkpoint.block_number;
 
                     if start_block > end_block {
-                        return Ok(())
+                        return Ok(());
                     }
 
                     let mut body_cursor =

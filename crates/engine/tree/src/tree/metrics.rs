@@ -567,9 +567,9 @@ mod tests {
     use super::*;
     use alloy_eips::sip7685::Requests;
     use metrics_util::debugging::{DebuggingRecorder, Snapshotter};
-    use rsil_sila_primitives::Receipt;
     use rsil_execution_types::BlockExecutionResult;
     use rsil_revm::db::BundleState;
+    use rsil_sila_primitives::Receipt;
 
     fn setup_test_recorder() -> Snapshotter {
         let recorder = DebuggingRecorder::new();

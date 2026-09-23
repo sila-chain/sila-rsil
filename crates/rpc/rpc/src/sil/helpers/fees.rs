@@ -2,10 +2,10 @@
 
 use rsil_rpc_convert::RpcConvert;
 use rsil_rpc_eth_api::{
-    helpers::{SilFees, LoadFee},
+    helpers::{LoadFee, SilFees},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{SilApiError, FeeHistoryCache, GasPriceOracle};
+use rsil_rpc_eth_types::{FeeHistoryCache, GasPriceOracle, SilApiError};
 use rsil_storage_api::ProviderHeader;
 
 use crate::SilApi;

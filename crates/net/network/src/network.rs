@@ -9,10 +9,9 @@ use parking_lot::Mutex;
 use rsil_discv4::{Discv4, NatResolver};
 use rsil_discv5::Discv5;
 use rsil_eth_wire::{
-    BlockRangeUpdate, BroadcastPoolTransactions, DisconnectReason, SilNetworkPrimitives,
-    NetworkPrimitives, NewPooledTransactionHashes, SharedTransactions,
+    BlockRangeUpdate, BroadcastPoolTransactions, DisconnectReason, NetworkPrimitives,
+    NewPooledTransactionHashes, SharedTransactions, SilNetworkPrimitives,
 };
-use rsil_sila_forks::Head;
 use rsil_network_api::{
     events::{NetworkPeersEvents, PeerEvent, PeerEventStream},
     test_utils::{PeersHandle, PeersHandleProvider},
@@ -23,6 +22,7 @@ use rsil_network_api::{
 use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState, SyncStateProvider};
 use rsil_network_peers::{NodeRecord, PeerId, TrustedPeer};
 use rsil_network_types::{PeerAddr, PeerKind, Reputation, ReputationChangeKind};
+use rsil_sila_forks::Head;
 use rsil_tokio_util::{EventSender, EventStream};
 use secp256k1::SecretKey;
 use std::{
@@ -472,7 +472,7 @@ impl<N: NetworkPrimitives> SyncStateProvider for NetworkHandle<N> {
     // used to guard the txpool
     fn is_initially_syncing(&self) -> bool {
         if self.inner.initial_sync_done.load(Ordering::Relaxed) {
-            return false
+            return false;
         }
         self.inner.is_syncing.load(Ordering::Relaxed)
     }

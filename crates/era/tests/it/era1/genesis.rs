@@ -4,7 +4,7 @@
 //! from different networks.
 
 use crate::{
-    EraTestDownloader, ERA1_MAINNET_FILES_NAMES, ERA1_SEPOLIA_FILES_NAMES, SILA_MAINNET, SEPOLIA,
+    EraTestDownloader, ERA1_MAINNET_FILES_NAMES, ERA1_SEPOLIA_FILES_NAMES, SEPOLIA, SILA_MAINNET,
 };
 use alloy_consensus::{BlockBody, Header};
 use rsil_era::{e2s::types::IndexEntry, era1::types::execution::CompressedBody};

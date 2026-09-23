@@ -25,15 +25,15 @@ use alloy_evm::{
 };
 use alloy_primitives::Address;
 use crossbeam_channel::{Receiver, Sender};
-use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, Database, SavmEnvFor, ExecutionCtxFor};
-use rsil_primitives_traits::ReceiptTy;
-use rsil_provider::BlockExecutionOutput;
-use rsil_tasks::Runtime;
 use revm::{
     context::{result::ResultAndState, Block},
     database::{states::bundle_state::BundleRetention, State},
     state::bal::Bal as RevmBal,
 };
+use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, Database, ExecutionCtxFor, SavmEnvFor};
+use rsil_primitives_traits::ReceiptTy;
+use rsil_provider::BlockExecutionOutput;
+use rsil_tasks::Runtime;
 use std::sync::Arc;
 
 use crate::tree::payload_processor::receipt_root_task::IndexedReceipt;
@@ -209,8 +209,8 @@ where
     DB: Database,
 {
     let built_bal = canonical_state.take_built_alloy_bal().expect("with_bal_builder set");
-    if tracing::enabled!(target: "engine::tree::payload_processor::bal", tracing::Level::DEBUG) &&
-        built_bal.as_slice() != received_bal.as_slice()
+    if tracing::enabled!(target: "engine::tree::payload_processor::bal", tracing::Level::DEBUG)
+        && built_bal.as_slice() != received_bal.as_slice()
     {
         let rebuilt = compute_block_access_list_hash(built_bal.as_slice());
         let expected = compute_block_access_list_hash(received_bal.as_slice());
@@ -304,15 +304,15 @@ mod tests {
         sip7002::{WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS, WITHDRAWAL_REQUEST_PREDEPLOY_CODE},
     };
     use alloy_primitives::{keccak256, B256, U256};
-    use rsil_sila_primitives::{Block, BlockBody, Receipt, TransactionSigned};
-    use rsil_evm_sila::SilEvmConfig;
-    use rsil_primitives_traits::{Block as _, Recovered, SealedBlock};
-    use rsil_revm::db::BundleState;
-    use rsil_tasks::Runtime;
     use revm::{
         database::{CacheDB, EmptyDB},
         state::{AccountInfo, Bytecode},
     };
+    use rsil_evm_sila::SilEvmConfig;
+    use rsil_primitives_traits::{Block as _, Recovered, SealedBlock};
+    use rsil_revm::db::BundleState;
+    use rsil_sila_primitives::{Block, BlockBody, Receipt, TransactionSigned};
+    use rsil_tasks::Runtime;
     use std::convert::Infallible;
 
     /// Wraps a `BlockAccessList` into an `Arc<DecodedBal>` by RLP-encoding the BAL.
@@ -568,8 +568,8 @@ mod tests {
         use alloy_consensus::TxLegacy;
         use alloy_primitives::TxKind;
         use rsil_chainspec::SILA_MAINNET;
-        use rsil_sila_primitives::Transaction;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
+        use rsil_sila_primitives::Transaction;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
         let evm_config = SilEvmConfig::sila_mainnet();
@@ -799,8 +799,8 @@ mod tests {
         use alloy_consensus::TxLegacy;
         use alloy_primitives::TxKind;
         use rsil_chainspec::SILA_MAINNET;
-        use rsil_sila_primitives::Transaction;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
+        use rsil_sila_primitives::Transaction;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
         let evm_config = SilEvmConfig::sila_mainnet();
@@ -846,8 +846,8 @@ mod tests {
         use alloy_evm::block::BlockValidationError;
         use alloy_primitives::TxKind;
         use rsil_chainspec::SILA_MAINNET;
-        use rsil_sila_primitives::Transaction;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
+        use rsil_sila_primitives::Transaction;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
         let evm_config = SilEvmConfig::sila_mainnet();
@@ -925,8 +925,8 @@ mod tests {
         use alloy_consensus::TxLegacy;
         use alloy_primitives::{keccak256, Bytes, TxKind};
         use rsil_chainspec::SILA_MAINNET;
-        use rsil_sila_primitives::Transaction;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
+        use rsil_sila_primitives::Transaction;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
         let evm_config = SilEvmConfig::sila_mainnet();
@@ -982,8 +982,8 @@ mod tests {
         use alloy_consensus::TxLegacy;
         use alloy_primitives::{keccak256, Bytes, TxKind};
         use rsil_chainspec::SILA_MAINNET;
-        use rsil_sila_primitives::Transaction;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
+        use rsil_sila_primitives::Transaction;
         use rsil_testing_utils::generators::{generate_key, rng, sign_tx_with_key_pair};
 
         let evm_config = SilEvmConfig::sila_mainnet();

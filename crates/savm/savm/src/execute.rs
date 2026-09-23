@@ -3,14 +3,18 @@
 use crate::{ConfigureEvm, Database, OnStateHook, TxEnvFor};
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
 use alloy_consensus::{BlockHeader, Header};
-use alloy_sip7928::{compute_block_access_list_hash, BlockAccessList};
-use alloy_sips::eip2718::WithEncoded;
+use alloy_primitives::{Address, B256};
 pub use alloy_savm::block::{BlockExecutor, BlockExecutorFactory, GasOutput};
 use alloy_savm::{
     block::{CommitChanges, ExecutableTxParts},
     Evm as Savm, EvmEnv as SavmEnv, EvmFactory as SavmFactory, RecoveredTx, ToTxEnv,
 };
-use alloy_primitives::{Address, B256};
+use alloy_sip7928::{compute_block_access_list_hash, BlockAccessList};
+use alloy_sips::eip2718::WithEncoded;
+use revm::{
+    database::{states::bundle_state::BundleRetention, BundleState, State},
+    state::bal::Bal,
+};
 pub use rsil_execution_errors::{
     BlockExecutionError, BlockValidationError, InternalBlockExecutionError,
 };
@@ -22,10 +26,6 @@ use rsil_primitives_traits::{
 use rsil_storage_api::StateProvider;
 pub use rsil_storage_errors::provider::ProviderError;
 use rsil_trie_common::{updates::TrieUpdates, HashedPostState};
-use revm::{
-    database::{states::bundle_state::BundleRetention, BundleState, State},
-    state::bal::Bal,
-};
 
 /// A type that knows how to execute a block. It is assumed to operate on a
 /// [`crate::Savm`] internally and use [`State`] as database.
@@ -669,7 +669,8 @@ pub trait ExecutableTxFor<Savm: ConfigureEvm>:
 }
 
 impl<T, Savm: ConfigureEvm> ExecutableTxFor<Savm> for T where
-    T: ExecutableTxParts<TxEnvFor<Savm>, TxTy<Savm::Primitives>> + RecoveredTx<TxTy<Savm::Primitives>>
+    T: ExecutableTxParts<TxEnvFor<Savm>, TxTy<Savm::Primitives>>
+        + RecoveredTx<TxTy<Savm::Primitives>>
 {
 }
 
@@ -725,8 +726,8 @@ impl<TxEnv, T: RecoveredTx<Tx>, Tx> ExecutableTxParts<TxEnv, Tx> for WithTxEnv<T
 mod tests {
     use super::*;
     use core::marker::PhantomData;
-    use rsil_sila_primitives::SilPrimitives;
     use revm::database::{CacheDB, EmptyDB};
+    use rsil_sila_primitives::SilPrimitives;
 
     #[derive(Clone, Debug, Default)]
     struct TestExecutorProvider;

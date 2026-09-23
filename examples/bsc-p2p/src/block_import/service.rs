@@ -228,9 +228,9 @@ mod tests {
     use rsil_chainspec::ChainInfo;
     use rsil_engine_primitives::{BeaconEngineMessage, OnForkChoiceUpdated};
     use rsil_eth_wire::NewBlock;
-    use rsil_sila_primitives::Block;
     use rsil_node_sila::SilEngineTypes;
     use rsil_provider::ProviderError;
+    use rsil_sila_primitives::Block;
     use std::{
         sync::Arc,
         task::{Context, Poll},

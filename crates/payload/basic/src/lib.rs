@@ -129,7 +129,7 @@ impl<Client, Builder> BasicPayloadJobGenerator<Client, Builder> {
     /// block.
     fn maybe_pre_cached(&self, parent: B256) -> Option<CachedReads> {
         if !self.config.pre_cache_state {
-            return None
+            return None;
         }
 
         self.pre_cached.as_ref().filter(|pc| pc.block == parent).map(|pc| pc.cached.clone())
@@ -213,7 +213,7 @@ where
     fn on_new_state<N: NodePrimitives>(&mut self, new_state: CanonStateNotification<N>) {
         if !self.config.pre_cache_state {
             self.pre_cached = None;
-            return
+            return;
         }
 
         let mut cached = CachedReads::default();
@@ -454,7 +454,7 @@ where
         // check if the deadline is reached
         if this.deadline.as_mut().poll(cx).is_ready() {
             trace!(target: "payload_builder", "payload building deadline reached");
-            return Poll::Ready(Ok(()))
+            return Poll::Ready(Ok(()));
         }
 
         loop {
@@ -490,13 +490,13 @@ where
                     }
                     Poll::Pending => {
                         this.pending_block = Some(fut);
-                        return Poll::Pending
+                        return Poll::Pending;
                     }
                 }
             }
 
             if this.best_payload.is_frozen() {
-                return Poll::Pending
+                return Poll::Pending;
             }
 
             // Wait for the next build interval tick.
@@ -679,25 +679,25 @@ where
         let this = self.get_mut();
 
         // check if there is a better payload before returning the best payload
-        if let Some(fut) = Pin::new(&mut this.maybe_better).as_pin_mut() &&
-            let Poll::Ready(res) = fut.poll(cx)
+        if let Some(fut) = Pin::new(&mut this.maybe_better).as_pin_mut()
+            && let Poll::Ready(res) = fut.poll(cx)
         {
             this.maybe_better = None;
             if let Ok(Some(payload)) = res.map(|out| out.into_payload()).inspect_err(
                 |err| warn!(target: "payload_builder", %err, "failed to resolve pending payload"),
             ) {
                 debug!(target: "payload_builder", "resolving better payload");
-                return Poll::Ready(Ok(payload))
+                return Poll::Ready(Ok(payload));
             }
         }
 
         if let Some(best) = this.best_payload.take() {
             debug!(target: "payload_builder", "resolving best payload");
-            return Poll::Ready(Ok(best))
+            return Poll::Ready(Ok(best));
         }
 
-        if let Some(fut) = Pin::new(&mut this.empty_payload).as_pin_mut() &&
-            let Poll::Ready(res) = fut.poll(cx)
+        if let Some(fut) = Pin::new(&mut this.empty_payload).as_pin_mut()
+            && let Poll::Ready(res) = fut.poll(cx)
         {
             this.empty_payload = None;
             return match res {
@@ -710,11 +710,11 @@ where
                     Poll::Ready(res)
                 }
                 Err(err) => Poll::Ready(Err(err.into())),
-            }
+            };
         }
 
         if this.is_empty() {
-            return Poll::Ready(Err(PayloadBuilderError::MissingPayload))
+            return Poll::Ready(Err(PayloadBuilderError::MissingPayload));
         }
 
         Poll::Pending

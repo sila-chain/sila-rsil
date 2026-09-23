@@ -6,7 +6,7 @@ use crate::common::{AccessRights, CliNodeComponents, CliNodeTypes, Environment, 
 use alloy_eips::BlockHashOrNumber;
 use alloy_primitives::Sealable;
 use clap::Parser;
-use rsil_chainspec::{SilChainSpec, SilaHardforks, Hardforks};
+use rsil_chainspec::{Hardforks, SilChainSpec, SilaHardforks};
 use rsil_cli::chainspec::ChainSpecParser;
 use rsil_cli_runner::CliContext;
 use rsil_cli_util::get_secret_key;
@@ -185,7 +185,7 @@ impl<C: ChainSpecParser<ChainSpec: SilChainSpec + Hardforks + SilaHardforks>> Co
                         match fetch_client.get_header(BlockHashOrNumber::Number(self.to)).await {
                             Ok(header) => {
                                 if let Some(header) = header.into_data() {
-                                    break header
+                                    break header;
                                 }
                             }
                             Err(error) if error.is_retryable() => {
@@ -244,8 +244,8 @@ impl<C: ChainSpecParser<ChainSpec: SilChainSpec + Hardforks + SilaHardforks>> Co
                                 config.stages.bodies.downloader_max_buffered_blocks_size_bytes,
                             )
                             .with_concurrent_requests_range(
-                                config.stages.bodies.downloader_min_concurrent_requests..=
-                                    config.stages.bodies.downloader_max_concurrent_requests,
+                                config.stages.bodies.downloader_min_concurrent_requests
+                                    ..=config.stages.bodies.downloader_max_concurrent_requests,
                             )
                             .build(fetch_client, consensus.clone(), provider_factory.clone()),
                     );
@@ -380,7 +380,7 @@ impl<C: ChainSpecParser<ChainSpec: SilChainSpec + Hardforks + SilaHardforks>> Co
             }
 
             if done {
-                break
+                break;
             }
         }
         info!(target: "rsil::cli", stage = %self.stage, time = ?start.elapsed(), "Finished stage");

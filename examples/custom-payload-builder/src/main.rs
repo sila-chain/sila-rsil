@@ -13,10 +13,10 @@
 
 use crate::generator::EmptyBlockPayloadJobGenerator;
 use rsil_basic_payload_builder::BasicPayloadJobGeneratorConfig;
+use rsil_payload_builder::{PayloadBuilderHandle, PayloadBuilderService};
 use rsil_sila::{
     chainspec::ChainSpec,
     cli::interface::Cli,
-    savm::primitives::{ConfigureEvm, NextBlockEnvAttributes},
     node::{
         api::{node::FullNodeTypes, NodeTypes},
         builder::{components::PayloadServiceBuilder, BuilderContext},
@@ -26,10 +26,10 @@ use rsil_sila::{
     },
     pool::{PoolTransaction, TransactionPool},
     provider::CanonStateSubscriptions,
+    savm::primitives::{ConfigureEvm, NextBlockEnvAttributes},
     SilPrimitives, TransactionSigned,
 };
 use rsil_sila_payload_builder::SilaBuilderConfig;
-use rsil_payload_builder::{PayloadBuilderHandle, PayloadBuilderService};
 
 pub mod generator;
 pub mod job;
@@ -98,9 +98,7 @@ fn main() {
                 .with_types::<SilaNode>()
                 // Configure the components of the node
                 // use default sila components but use our custom payload builder
-                .with_components(
-                    SilaNode::components().payload(CustomPayloadBuilder::default()),
-                )
+                .with_components(SilaNode::components().payload(CustomPayloadBuilder::default()))
                 .with_add_ons(SilaAddOns::default())
                 .launch()
                 .await?;

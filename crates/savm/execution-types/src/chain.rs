@@ -6,8 +6,8 @@ use alloy_consensus::{
     transaction::{Recovered, TxHashRef},
     BlockHeader, TxReceipt,
 };
-use alloy_sips::{eip1898::ForkBlock, BlockNumHash};
 use alloy_primitives::{map::HashSet, Address, BlockHash, BlockNumber, Log, TxHash};
+use alloy_sips::{eip1898::ForkBlock, BlockNumHash};
 use core::{fmt, ops::RangeInclusive};
 use rsil_primitives_traits::{
     transaction::signed::SignedTransaction, Block, BlockBody, IndexedTx, NodePrimitives,
@@ -157,13 +157,13 @@ impl<N: NodePrimitives> Chain<N> {
         block_number: BlockNumber,
     ) -> Option<ExecutionOutcome<N::Receipt>> {
         if self.tip().number() == block_number {
-            return Some(self.execution_outcome.clone())
+            return Some(self.execution_outcome.clone());
         }
 
         if self.blocks.contains_key(&block_number) {
             let mut execution_outcome = self.execution_outcome.clone();
             execution_outcome.revert_to(block_number);
-            return Some(execution_outcome)
+            return Some(execution_outcome);
         }
         None
     }
@@ -356,7 +356,7 @@ impl<N: NodePrimitives> Chain<N> {
         let chain_tip = self.tip();
         let other_fork_block = other.fork_block();
         if chain_tip.hash() != other_fork_block.hash {
-            return Err(other)
+            return Err(other);
         }
 
         // Insert blocks from other chain
@@ -511,8 +511,8 @@ pub(super) mod serde_bincode_compat {
     use alloy_primitives::{Address, BlockNumber, Bytes};
     use alloy_rlp::Decodable;
     use core::marker::PhantomData;
-    use rsil_sila_primitives::SilPrimitives;
     use rsil_primitives_traits::{NodePrimitives, SealedBlock};
+    use rsil_sila_primitives::SilPrimitives;
     use rsil_trie_common::ComputedTrieData;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_with::{DeserializeAs, SerializeAs};
@@ -699,8 +699,8 @@ mod tests {
     use super::*;
     use alloy_consensus::TxType;
     use alloy_primitives::{map::HashMap, Address, B256};
-    use rsil_sila_primitives::Receipt;
     use revm::{database::BundleState, state::AccountInfo};
+    use rsil_sila_primitives::Receipt;
 
     #[test]
     fn chain_append() {

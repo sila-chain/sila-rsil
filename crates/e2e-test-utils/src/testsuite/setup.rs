@@ -1,16 +1,16 @@
 //! Test setup utilities for configuring the initial state.
 
 use crate::{testsuite::Environment, E2ETestSetupBuilder, NodeBuilderHelper};
-use alloy_sips::BlockNumberOrTag;
 use alloy_primitives::B256;
 use alloy_rpc_types_engine::{ForkchoiceState, PayloadAttributes};
+use alloy_sips::BlockNumberOrTag;
 use eyre::{eyre, Result};
+use revm::state::EvmState as SavmState;
 use rsil_chainspec::ChainSpec;
-use rsil_sila_primitives::Block;
 use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState};
 use rsil_node_api::{EngineTypes, NodeTypes, PayloadTypes, TreeConfig};
 use rsil_node_core::primitives::RecoveredBlock;
-use revm::state::EvmState as SavmState;
+use rsil_sila_primitives::Block;
 use std::{marker::PhantomData, path::Path, sync::Arc};
 use tokio::{
     sync::mpsc,

@@ -10,9 +10,9 @@ use crate::{
     traits::{BestTransactionsAttributes, GetPooledTransactionLimit, NewBlobSidecar},
     validate::ValidTransaction,
     AddedTransactionOutcome, AllPoolTransactions, AllTransactionsEvents, BestTransactions,
-    BlockInfo, SilPoolTransaction, SilPooledTransaction, NewTransactionEvent, PoolResult, PoolSize,
-    PoolTransaction, PropagatedTransactions, TransactionEvents, TransactionOrigin, TransactionPool,
-    TransactionValidationOutcome, TransactionValidator, ValidPoolTransaction,
+    BlockInfo, NewTransactionEvent, PoolResult, PoolSize, PoolTransaction, PropagatedTransactions,
+    SilPoolTransaction, SilPooledTransaction, TransactionEvents, TransactionOrigin,
+    TransactionPool, TransactionValidationOutcome, TransactionValidator, ValidPoolTransaction,
 };
 use alloy_eips::{
     sip1559::SILA_BLOCK_GAS_LIMIT_30M,
@@ -361,7 +361,7 @@ impl<T: SilPoolTransaction> TransactionPool for NoopTransactionPool<T> {
         tx_hashes: Vec<TxHash>,
     ) -> Result<Vec<Arc<BlobTransactionSidecarVariant>>, BlobStoreError> {
         if tx_hashes.is_empty() {
-            return Ok(vec![])
+            return Ok(vec![]);
         }
         Err(BlobStoreError::MissingSidecar(tx_hashes[0]))
     }

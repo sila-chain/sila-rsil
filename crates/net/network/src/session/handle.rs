@@ -7,7 +7,7 @@ use crate::{
 };
 use rsil_ecies::ECIESError;
 use rsil_eth_wire::{
-    errors::SilStreamError, Capabilities, DisconnectReason, SilVersion, NetworkPrimitives,
+    errors::SilStreamError, Capabilities, DisconnectReason, NetworkPrimitives, SilVersion,
     UnifiedStatus,
 };
 use rsil_network_api::PeerInfo;

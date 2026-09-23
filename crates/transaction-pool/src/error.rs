@@ -342,14 +342,14 @@ impl InvalidPoolTransactionError {
                 // depend on dynamic environmental conditions and should not be assumed to have been
                 // intentionally caused by the sender
                 match err {
-                    InvalidTransactionError::InsufficientFunds { .. } |
-                    InvalidTransactionError::NonceNotConsistent { .. } => {
+                    InvalidTransactionError::InsufficientFunds { .. }
+                    | InvalidTransactionError::NonceNotConsistent { .. } => {
                         // transaction could just have arrived late/early
                         false
                     }
-                    InvalidTransactionError::GasTooLow |
-                    InvalidTransactionError::GasTooHigh |
-                    InvalidTransactionError::TipAboveFeeCap => {
+                    InvalidTransactionError::GasTooLow
+                    | InvalidTransactionError::GasTooHigh
+                    | InvalidTransactionError::TipAboveFeeCap => {
                         // these are technically not invalid
                         false
                     }
@@ -357,19 +357,19 @@ impl InvalidPoolTransactionError {
                         // dynamic, but not used during validation
                         false
                     }
-                    InvalidTransactionError::Sip2930Disabled |
-                    InvalidTransactionError::Sip1559Disabled |
-                    InvalidTransactionError::Sip4844Disabled |
-                    InvalidTransactionError::Sip7702Disabled => {
+                    InvalidTransactionError::Sip2930Disabled
+                    | InvalidTransactionError::Sip1559Disabled
+                    | InvalidTransactionError::Sip4844Disabled
+                    | InvalidTransactionError::Sip7702Disabled => {
                         // settings
                         false
                     }
-                    InvalidTransactionError::OldLegacyChainId |
-                    InvalidTransactionError::ChainIdMismatch |
-                    InvalidTransactionError::GasUintOverflow |
-                    InvalidTransactionError::TxTypeNotSupported |
-                    InvalidTransactionError::SignerAccountHasBytecode |
-                    InvalidTransactionError::GasLimitTooHigh => true,
+                    InvalidTransactionError::OldLegacyChainId
+                    | InvalidTransactionError::ChainIdMismatch
+                    | InvalidTransactionError::GasUintOverflow
+                    | InvalidTransactionError::TxTypeNotSupported
+                    | InvalidTransactionError::SignerAccountHasBytecode
+                    | InvalidTransactionError::GasLimitTooHigh => true,
                 }
             }
             Self::ExceedsGasLimit(_, _) => true,
@@ -415,9 +415,9 @@ impl InvalidPoolTransactionError {
                         // this is a malformed transaction and should not be sent over the network
                         true
                     }
-                    Sip4844PoolTransactionError::UnexpectedEip4844SidecarAfterOsaka |
-                    Sip4844PoolTransactionError::UnexpectedEip7594SidecarBeforeOsaka |
-                    Sip4844PoolTransactionError::Sip7594SidecarDisallowed => {
+                    Sip4844PoolTransactionError::UnexpectedEip4844SidecarAfterOsaka
+                    | Sip4844PoolTransactionError::UnexpectedEip7594SidecarBeforeOsaka
+                    | Sip4844PoolTransactionError::Sip7594SidecarDisallowed => {
                         // for now we do not want to penalize peers for broadcasting different
                         // sidecars
                         false
@@ -448,11 +448,11 @@ impl InvalidPoolTransactionError {
         matches!(
             self,
             Self::Sip4844(
-                Sip4844PoolTransactionError::MissingEip4844BlobSidecar |
-                    Sip4844PoolTransactionError::InvalidEip4844Blob(_) |
-                    Sip4844PoolTransactionError::UnexpectedEip7594SidecarBeforeOsaka |
-                    Sip4844PoolTransactionError::UnexpectedEip4844SidecarAfterOsaka |
-                    Sip4844PoolTransactionError::Sip7594SidecarDisallowed
+                Sip4844PoolTransactionError::MissingEip4844BlobSidecar
+                    | Sip4844PoolTransactionError::InvalidEip4844Blob(_)
+                    | Sip4844PoolTransactionError::UnexpectedEip7594SidecarBeforeOsaka
+                    | Sip4844PoolTransactionError::UnexpectedEip4844SidecarAfterOsaka
+                    | Sip4844PoolTransactionError::Sip7594SidecarDisallowed
             )
         )
     }
@@ -481,8 +481,8 @@ impl InvalidPoolTransactionError {
 
     /// Returns `true` if an import failed due to nonce gap.
     pub const fn is_nonce_gap(&self) -> bool {
-        matches!(self, Self::Consensus(InvalidTransactionError::NonceNotConsistent { .. })) ||
-            matches!(self, Self::Sip4844(Sip4844PoolTransactionError::Sip4844NonceGap))
+        matches!(self, Self::Consensus(InvalidTransactionError::NonceNotConsistent { .. }))
+            || matches!(self, Self::Sip4844(Sip4844PoolTransactionError::Sip4844NonceGap))
     }
 
     /// Returns the arbitrary error if it is [`InvalidPoolTransactionError::Other`]

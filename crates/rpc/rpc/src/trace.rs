@@ -18,6 +18,12 @@ use alloy_rpc_types_trace::{
 use async_trait::async_trait;
 use futures::StreamExt;
 use jsonrpsee::core::RpcResult;
+use revm::DatabaseCommit;
+use revm_inspectors::{
+    opcode::OpcodeGasInspector,
+    storage::StorageInspector,
+    tracing::{parity::populate_state_diff, TracingInspector, TracingInspectorConfig},
+};
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_evm::ConfigureEvm;
 use rsil_primitives_traits::{BlockBody, BlockHeader};
@@ -31,12 +37,6 @@ use rsil_rpc_eth_types::{error::SilApiError, utils::recover_raw_transaction, Sil
 use rsil_storage_api::{BlockNumReader, BlockReader};
 use rsil_tasks::pool::BlockingTaskGuard;
 use rsil_transaction_pool::{PoolPooledTx, PoolTransaction, TransactionPool};
-use revm::DatabaseCommit;
-use revm_inspectors::{
-    opcode::OpcodeGasInspector,
-    storage::StorageInspector,
-    tracing::{parity::populate_state_diff, TracingInspector, TracingInspectorConfig},
-};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::{AcquireError, OwnedSemaphorePermit};
@@ -223,7 +223,7 @@ where
     ) -> Result<Option<LocalizedTransactionTrace>, Sil::Error> {
         if indices.len() != 1 {
             // The OG impl failed if it gets more than a single index
-            return Ok(None)
+            return Ok(None);
         }
         self.trace_get_index(hash, indices[0]).await
     }
@@ -289,7 +289,7 @@ where
         let chain_spec = self.provider().chain_spec();
 
         if chain_spec.is_paris_active_at_block(header.number()) {
-            return Ok(None)
+            return Ok(None);
         }
 
         Ok(Some(base_block_reward_pre_merge(&chain_spec, header.number())))
@@ -377,7 +377,7 @@ where
             return Err(SilApiError::InvalidParams(
                 "invalid parameters: fromBlock cannot be greater than toBlock".to_string(),
             )
-            .into())
+            .into());
         }
 
         // ensure that the range is not too large, since every block in the range may be replayed
@@ -387,7 +387,7 @@ where
                 "Block range too large; currently limited to {} blocks",
                 self.inner.eth_config.max_trace_filter_blocks
             ))
-            .into())
+            .into());
         }
 
         let mut all_traces = Vec::new();
@@ -477,17 +477,17 @@ where
                 if let Some(traces) =
                     apply_trace_filter_pagination(&mut all_traces, &mut after, count)
                 {
-                    return Ok(traces)
+                    return Ok(traces);
                 }
             }
         }
 
         // If `after` is greater than or equal to the number of matched traces, it returns an
         // empty array.
-        if let Some(cutoff) = after.map(|a| a as usize) &&
-            cutoff >= all_traces.len()
+        if let Some(cutoff) = after.map(|a| a as usize)
+            && cutoff >= all_traces.len()
         {
-            return Ok(vec![])
+            return Ok(vec![]);
         }
 
         Ok(all_traces)
@@ -519,8 +519,8 @@ where
             .await?
             .map(|traces| traces.into_iter().flatten().collect::<Vec<_>>());
 
-        if let Some(traces) = traces.as_mut() &&
-            let Some(base_block_reward) = self.calculate_base_block_reward(block.header())?
+        if let Some(traces) = traces.as_mut()
+            && let Some(base_block_reward) = self.calculate_base_block_reward(block.header())?
         {
             traces.extend(self.extract_reward_traces(
                 block.header(),
@@ -652,8 +652,8 @@ fn apply_trace_filter_pagination(
     count: Option<u64>,
 ) -> Option<Vec<LocalizedTransactionTrace>> {
     // Skips the first `after` number of matching traces.
-    if let Some(cutoff) = after.map(|a| a as usize) &&
-        cutoff < all_traces.len()
+    if let Some(cutoff) = after.map(|a| a as usize)
+        && cutoff < all_traces.len()
     {
         all_traces.drain(..cutoff);
         // we removed the first `after` traces
@@ -661,13 +661,13 @@ fn apply_trace_filter_pagination(
     }
 
     // Return at most `count` traces after `after` has been consumed.
-    if after.is_none() &&
-        let Some(count) = count
+    if after.is_none()
+        && let Some(count) = count
     {
         let count = count as usize;
         if count < all_traces.len() {
             all_traces.truncate(count);
-            return Some(std::mem::take(all_traces))
+            return Some(std::mem::take(all_traces));
         }
     }
 

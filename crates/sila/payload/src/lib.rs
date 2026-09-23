@@ -12,6 +12,7 @@ use alloy_consensus::{BlockHeader, Transaction};
 use alloy_primitives::{Bytes, U256};
 use alloy_rlp::Encodable;
 use alloy_rpc_types_engine::PayloadAttributes as SilPayloadAttributes;
+use revm::context_interface::{Block as _, Cfg as _};
 use rsil_basic_payload_builder::{
     is_better_payload, BuildArguments, BuildOutcome, MissingPayloadBehaviour, PayloadBuilder,
     PayloadConfig,
@@ -19,11 +20,10 @@ use rsil_basic_payload_builder::{
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_consensus_common::validation::MAX_RLP_BLOCK_SIZE;
 use rsil_errors::{BlockExecutionError, BlockValidationError, ConsensusError};
-use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_evm::{
     block::TxResult,
     execute::{BlockBuilder, BlockBuilderOutcome},
-    ConfigureEvm, Savm, NextBlockEnvAttributes,
+    ConfigureEvm, NextBlockEnvAttributes, Savm,
 };
 use rsil_evm_sila::SilEvmConfig;
 use rsil_execution_cache::{CachedStateMetrics, CachedStateMetricsSource, CachedStateProvider};
@@ -32,13 +32,13 @@ use rsil_payload_builder_primitives::PayloadBuilderError;
 use rsil_payload_primitives::PayloadAttributes;
 use rsil_primitives_traits::transaction::error::InvalidTransactionError;
 use rsil_revm::{database::StateProviderDatabase, db::State};
+use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_storage_api::StateProviderFactory;
 use rsil_transaction_pool::{
-    error::{Sip4844PoolTransactionError, InvalidPoolTransactionError},
+    error::{InvalidPoolTransactionError, Sip4844PoolTransactionError},
     BestTransactions, BestTransactionsAttributes, PoolTransaction, TransactionPool,
     ValidPoolTransaction,
 };
-use revm::context_interface::{Block as _, Cfg as _};
 use std::sync::Arc;
 use tracing::{debug, trace, warn};
 
@@ -285,12 +285,12 @@ where
                     block_available_gas,
                 ),
             );
-            continue
+            continue;
         }
 
         // check if the job was cancelled, if so we can exit early
         if cancel.is_cancelled() {
-            return Ok(BuildOutcome::Cancelled)
+            return Ok(BuildOutcome::Cancelled);
         }
 
         // convert tx to a signed transaction
@@ -309,7 +309,7 @@ where
                     limit: MAX_RLP_BLOCK_SIZE,
                 },
             );
-            continue
+            continue;
         }
 
         // There's only limited amount of blob space available per block, so we need to check if
@@ -333,14 +333,14 @@ where
                         },
                     ),
                 );
-                continue
+                continue;
             }
 
             let blob_sidecar_result = 'sidecar: {
                 let Some(sidecar) =
                     pool.get_blob(*tx.hash()).map_err(PayloadBuilderError::other)?
                 else {
-                    break 'sidecar Err(Sip4844PoolTransactionError::MissingEip4844BlobSidecar)
+                    break 'sidecar Err(Sip4844PoolTransactionError::MissingEip4844BlobSidecar);
                 };
 
                 if is_osaka {
@@ -360,7 +360,7 @@ where
                 Ok(sidecar) => Some(sidecar),
                 Err(error) => {
                     best_txs.mark_invalid(&pool_tx, InvalidPoolTransactionError::Sip4844(error));
-                    continue
+                    continue;
                 }
             };
         }
@@ -390,7 +390,7 @@ where
                         ),
                     );
                 }
-                continue
+                continue;
             }
             // The executor is the source of truth for block gas availability. Keep this
             // non-fatal in case local builder accounting diverges from executor rules.
@@ -408,7 +408,7 @@ where
                         block_available_gas,
                     ),
                 );
-                continue
+                continue;
             }
             // this is an error that we should treat as fatal for this attempt
             Err(err) => return Err(PayloadBuilderError::savm(err)),
@@ -445,7 +445,7 @@ where
         // Release db
         drop(builder);
         // can skip building the block
-        return Ok(BuildOutcome::Aborted { fees: total_fees, cached_reads })
+        return Ok(BuildOutcome::Aborted { fees: total_fees, cached_reads });
     }
 
     let BlockBuilderOutcome { execution_result, block, block_access_list, .. } = if skip_state_root

@@ -35,7 +35,7 @@ pub use cache::{
     SilStateCache,
 };
 pub use capabilities::{SilCapabilities, SilCapabilitiesHead, SilCapabilitiesResource};
-pub use error::{SilApiError, SilResult, RevertError, RpcInvalidTransactionError, SignError};
+pub use error::{RevertError, RpcInvalidTransactionError, SignError, SilApiError, SilResult};
 pub use fee_history::{FeeHistoryCache, FeeHistoryCacheConfig, FeeHistoryEntry};
 pub use gas_oracle::{
     GasCap, GasPriceOracle, GasPriceOracleConfig, GasPriceOracleResult, RPC_DEFAULT_GAS_CAP,

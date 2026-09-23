@@ -18,14 +18,14 @@ use jsonrpsee::{
     rpc_params,
     types::error::ErrorCode,
 };
-use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_network_peers::NodeRecord;
 use rsil_rpc_api::{
     clients::{AdminApiClient, SilApiClient},
-    DebugApiClient, SilCallBundleApiClient, SilFilterApiClient, NetApiClient, OtterscanClient,
+    DebugApiClient, NetApiClient, OtterscanClient, SilCallBundleApiClient, SilFilterApiClient,
     TraceApiClient, Web3ApiClient,
 };
 use rsil_rpc_server_types::RsilRpcModule;
+use rsil_sila_primitives::{Receipt, TransactionSigned};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashSet;
@@ -33,8 +33,8 @@ use std::collections::HashSet;
 fn is_unimplemented(err: jsonrpsee::core::client::Error) -> bool {
     match err {
         jsonrpsee::core::client::Error::Call(error_obj) => {
-            error_obj.code() == ErrorCode::InternalError.code() &&
-                error_obj.message() == "unimplemented"
+            error_obj.code() == ErrorCode::InternalError.code()
+                && error_obj.message() == "unimplemented"
         }
         _ => false,
     }
@@ -1777,8 +1777,8 @@ async fn test_debug_db_get() {
     let match_error_msg = |err: jsonrpsee::core::client::Error, expected: String| -> bool {
         match err {
             jsonrpsee::core::client::Error::Call(error_obj) => {
-                error_obj.code() == ErrorCode::InvalidParams.code() &&
-                    error_obj.message() == expected
+                error_obj.code() == ErrorCode::InvalidParams.code()
+                    && error_obj.message() == expected
             }
             _ => false,
         }

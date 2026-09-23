@@ -17,6 +17,7 @@ use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 use core::fmt;
 use notify::{RecommendedWatcher, RecursiveMode, Watcher};
 use parking_lot::RwLock;
+use revm::database::BundleState;
 use rsil_chainspec::ChainInfo;
 use rsil_db::{init_db, mdbx::DatabaseArguments, DatabaseEnv};
 use rsil_db_api::{database::Database, models::StoredBlockBodyIndices};
@@ -35,7 +36,6 @@ use rsil_storage_api::{
 use rsil_storage_errors::provider::ProviderResult;
 use rsil_trie::HashedPostState;
 use rsil_trie_db::ChangesetCache;
-use revm::database::BundleState;
 use std::{
     ops::{RangeBounds, RangeInclusive},
     path::Path,

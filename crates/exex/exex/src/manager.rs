@@ -7,12 +7,12 @@ use futures::StreamExt;
 use itertools::Itertools;
 use metrics::Gauge;
 use rsil_chain_state::ForkChoiceStream;
-use rsil_sila_primitives::SilPrimitives;
 use rsil_evm::ConfigureEvm;
 use rsil_metrics::{metrics::Counter, Metrics};
 use rsil_node_api::NodePrimitives;
 use rsil_primitives_traits::SealedHeader;
 use rsil_provider::HeaderProvider;
+use rsil_sila_primitives::SilPrimitives;
 use rsil_tracing::tracing::{debug, warn};
 use std::{
     collections::VecDeque,
@@ -149,7 +149,7 @@ impl<N: NodePrimitives> ExExHandle<N> {
                         );
 
                         self.next_notification_id = notification_id + 1;
-                        return Poll::Ready(Ok(()))
+                        return Poll::Ready(Ok(()));
                     }
                 }
                 // Do not handle [ExExNotification::ChainReorged] and
@@ -499,9 +499,9 @@ where
                 }
 
                 this.push_notification(notification);
-                continue
+                continue;
             }
-            break
+            break;
         }
         let buffer_full = this.buffer.len() >= this.max_capacity;
 
@@ -516,11 +516,11 @@ where
                 .next_notification_id
                 .checked_sub(this.min_id)
                 .expect("exex expected notification ID outside the manager's range");
-            if let Some(notification) = this.buffer.get(notification_index) &&
-                let Poll::Ready(Err(err)) = exex.send(cx, notification)
+            if let Some(notification) = this.buffer.get(notification_index)
+                && let Poll::Ready(Err(err)) = exex.send(cx, notification)
             {
                 // The channel was closed, which is irrecoverable for the manager
-                return Poll::Ready(Err(err.into()))
+                return Poll::Ready(Err(err.into()));
             }
             min_id = min_id.min(exex.next_notification_id);
             this.exex_handles.push(exex);

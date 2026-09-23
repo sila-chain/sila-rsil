@@ -6,8 +6,8 @@ use crate::{
 };
 use alloy_primitives::B256;
 use futures::FutureExt;
-use rsil_sila_primitives::Receipt;
 use rsil_network_peers::PeerId;
+use rsil_sila_primitives::Receipt;
 use std::fmt::{Debug, Formatter};
 use tokio::sync::oneshot;
 

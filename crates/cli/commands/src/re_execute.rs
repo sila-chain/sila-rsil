@@ -8,7 +8,7 @@ use alloy_consensus::{transaction::TxHashRef, BlockHeader, TxReceipt};
 use alloy_primitives::{Address, B256, U256};
 use clap::Parser;
 use eyre::WrapErr;
-use rsil_chainspec::{SilChainSpec, SilaHardforks, Hardforks};
+use rsil_chainspec::{Hardforks, SilChainSpec, SilaHardforks};
 use rsil_cli::chainspec::ChainSpecParser;
 use rsil_cli_util::cancellation::CancellationToken;
 use rsil_consensus::FullConsensus;

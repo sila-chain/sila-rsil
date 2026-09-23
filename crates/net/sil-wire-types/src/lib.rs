@@ -15,10 +15,10 @@ mod status;
 pub use status::{Status, StatusBuilder, StatusEth69, StatusMessage, UnifiedStatus};
 
 pub mod version;
-pub use version::{SilVersion, ProtocolVersion};
+pub use version::{ProtocolVersion, SilVersion};
 
 pub mod message;
-pub use message::{SilMessage, SilMessageID, ProtocolMessage};
+pub use message::{ProtocolMessage, SilMessage, SilMessageID};
 
 pub mod header;
 pub use header::*;

@@ -1,6 +1,6 @@
 use crate::BlockHashReader;
-use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockNumber, B256};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use rsil_chainspec::ChainInfo;
 use rsil_storage_errors::provider::{ProviderError, ProviderResult};
 

@@ -6,10 +6,12 @@ use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_primitives::B256;
 use alloy_rpc_types_eth::{BlockId, TransactionInfo};
 use futures::Future;
+use revm::{context::Block, context_interface::result::ResultAndState};
+use revm_inspectors::tracing::{TracingInspector, TracingInspectorConfig};
 use rsil_errors::{ProviderError, RsilError};
 use rsil_evm::{
-    block::BlockExecutor, savm::SavmFactoryExt, tracing::TracingCtx, ConfigureEvm, Database, Savm,
-    SavmEnvFor, SavmFor, HaltReasonFor, InspectorFor, TxEnvFor,
+    block::BlockExecutor, savm::SavmFactoryExt, tracing::TracingCtx, ConfigureEvm, Database,
+    HaltReasonFor, InspectorFor, Savm, SavmEnvFor, SavmFor, TxEnvFor,
 };
 use rsil_primitives_traits::{BlockBody, Recovered, RecoveredBlock};
 use rsil_revm::{
@@ -18,8 +20,6 @@ use rsil_revm::{
 };
 use rsil_rpc_eth_types::cache::db::StateCacheDb;
 use rsil_storage_api::{ProviderBlock, ProviderTx};
-use revm::{context::Block, context_interface::result::ResultAndState};
-use revm_inspectors::tracing::{TracingInspector, TracingInspectorConfig};
 use std::sync::Arc;
 
 /// Executes CPU heavy tasks.
@@ -273,7 +273,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
 
             if block.body().transactions().is_empty() {
                 // nothing to trace
-                return Ok(Some(Vec::new()))
+                return Ok(Some(Vec::new()));
             }
 
             // replay all transactions of the block

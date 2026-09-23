@@ -133,8 +133,8 @@ use rsil_engine_primitives::{
 };
 use rsil_errors::{BlockExecutionError, ProviderResult};
 use rsil_evm::{
-    block::BlockExecutor, execute::ExecutableTxFor, ConfigureEvm, SavmEnvFor, ExecutionCtxFor,
-    OnStateHook, SpecFor,
+    block::BlockExecutor, execute::ExecutableTxFor, ConfigureEvm, ExecutionCtxFor, OnStateHook,
+    SavmEnvFor, SpecFor,
 };
 use rsil_execution_cache::{CacheFillMode, CacheStats, SavedCache};
 use rsil_payload_primitives::{
@@ -496,7 +496,7 @@ where
                     Ok(val) => val,
                     Err(e) => {
                         let block = validated_block.try_into_inner().expect("sole handle")?;
-                        return Err(InsertBlockError::new(block, e.into()).into())
+                        return Err(InsertBlockError::new(block, e.into()).into());
                     }
                 }
             };
@@ -524,7 +524,7 @@ where
                 return Err(validated_block
                     .try_into_inner()
                     .expect("sole handle")
-                    .expect_err("Err result checked"))
+                    .expect_err("Err result checked"));
             }
         }
 
@@ -539,7 +539,7 @@ where
                 validated_block.try_into_inner().expect("sole handle")?,
                 ProviderError::HeaderNotFound(parent_hash.into()).into(),
             )
-            .into())
+            .into());
         };
         drop(_enter);
 
@@ -833,7 +833,7 @@ where
             if err.is_validation_error() {
                 self.on_invalid_block(&parent_block, &block, &output, None, ctx.state_mut());
             }
-            return Err(InsertBlockError::new(block.into_sealed_block(), err).into())
+            return Err(InsertBlockError::new(block.into_sealed_block(), err).into());
         }
 
         self.metrics.block_validation.record_state_root(&trie_output, root_elapsed.as_secs_f64());
@@ -859,7 +859,7 @@ where
                 )
                 .into(),
             )
-            .into())
+            .into());
         }
 
         let timing_stats = state_provider_stats.filter(|_| slow_block_enabled).map(|stats| {
@@ -1320,7 +1320,7 @@ where
         ) {
             // call post-block hook
             self.on_invalid_block(parent_block, block, output, None, ctx.state_mut());
-            return Err(err.into())
+            return Err(err.into());
         }
         drop(_enter);
 
@@ -1394,7 +1394,7 @@ where
                 self.provider.clone(),
                 historical,
                 Some(blocks),
-            )))
+            )));
         }
 
         // Check if the block is persisted
@@ -1402,7 +1402,7 @@ where
             debug!(target: "engine::tree::payload_validator", %hash, number = %header.number(), "found canonical state for block in database, creating provider builder");
             // For persisted blocks, we create a builder that will fetch state directly from the
             // database
-            return Ok(Some(StateProviderBuilder::new(self.provider.clone(), hash, None)))
+            return Ok(Some(StateProviderBuilder::new(self.provider.clone(), hash, None)));
         }
 
         debug!(target: "engine::tree::payload_validator", %hash, "no canonical state found for block");
@@ -1420,7 +1420,7 @@ where
     ) {
         if state.invalid_headers.get(&block.hash()).is_some() {
             // we already marked this block as invalid
-            return
+            return;
         }
         self.invalid_block_hook.on_invalid_block(parent_header, block, output, trie_updates);
     }
@@ -1559,9 +1559,9 @@ where
             .sum();
 
         // Total time spent fetching state during execution
-        let state_read_duration = provider_stats.total_account_fetch_latency() +
-            provider_stats.total_storage_fetch_latency() +
-            provider_stats.total_code_fetch_latency();
+        let state_read_duration = provider_stats.total_account_fetch_latency()
+            + provider_stats.total_storage_fetch_latency()
+            + provider_stats.total_code_fetch_latency();
 
         // SIP-7702 delegation tracking from bytecode changes
         // Count new SIP-7702 bytecodes as delegations set
@@ -1813,7 +1813,7 @@ where
                     %parent_hash,
                     "failed to prepare payload-builder state-root provider"
                 );
-                return None
+                return None;
             }
         };
         let overlay_factory = OverlayStateProviderFactory::new(

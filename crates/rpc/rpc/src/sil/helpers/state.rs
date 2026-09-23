@@ -3,7 +3,7 @@
 use crate::SilApi;
 use rsil_rpc_convert::RpcConvert;
 use rsil_rpc_eth_api::{
-    helpers::{SilState, LoadPendingBlock, LoadState},
+    helpers::{LoadPendingBlock, LoadState, SilState},
     RpcNodeCore,
 };
 use rsil_rpc_eth_types::SilApiError;

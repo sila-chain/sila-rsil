@@ -4,29 +4,30 @@ use super::constants::DEFAULT_MAX_TX_INPUT_BYTES;
 use crate::{
     blobstore::BlobStore,
     error::{
-        Sip4844PoolTransactionError, Sip7702PoolTransactionError, InvalidPoolTransactionError,
+        InvalidPoolTransactionError, Sip4844PoolTransactionError, Sip7702PoolTransactionError,
     },
     metrics::TxPoolValidationMetrics,
     traits::TransactionOrigin,
     validate::ValidTransaction,
-    Address, BlobTransactionSidecarVariant, SilBlobTransactionSidecar, SilPoolTransaction,
-    LocalTransactionConfig, TransactionValidationOutcome, TransactionValidationTaskExecutor,
+    Address, BlobTransactionSidecarVariant, LocalTransactionConfig, SilBlobTransactionSidecar,
+    SilPoolTransaction, TransactionValidationOutcome, TransactionValidationTaskExecutor,
     TransactionValidator,
 };
 
 use alloy_consensus::{
     constants::{
-        SIP1559_TX_TYPE_ID, SIP2930_TX_TYPE_ID, SIP4844_TX_TYPE_ID, SIP7702_TX_TYPE_ID,
-        LEGACY_TX_TYPE_ID,
+        LEGACY_TX_TYPE_ID, SIP1559_TX_TYPE_ID, SIP2930_TX_TYPE_ID, SIP4844_TX_TYPE_ID,
+        SIP7702_TX_TYPE_ID,
     },
     BlockHeader,
 };
 use alloy_eips::{
-    sip1559::SILA_BLOCK_GAS_LIMIT_30M, sip4844::env_settings::EnvKzgSettings,
-    sip7840::BlobParams, BlockId,
+    sip1559::SILA_BLOCK_GAS_LIMIT_30M, sip4844::env_settings::EnvKzgSettings, sip7840::BlobParams,
+    BlockId,
 };
 use alloy_primitives::U256;
 use alloy_rlp::Encodable;
+use revm::context_interface::Cfg;
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_evm::ConfigureEvm;
 use rsil_primitives_traits::{
@@ -38,7 +39,6 @@ use rsil_storage_api::{
     StateProviderFactory,
 };
 use rsil_tasks::Runtime;
-use revm::context_interface::Cfg;
 use std::{
     fmt,
     marker::PhantomData,
@@ -477,8 +477,8 @@ where
                 return Err(InvalidTransactionError::Sip7702Disabled.into())
             }
             // Accept known transaction types when their respective fork is active
-            LEGACY_TX_TYPE_ID | SIP2930_TX_TYPE_ID | SIP1559_TX_TYPE_ID | SIP4844_TX_TYPE_ID |
-            SIP7702_TX_TYPE_ID => {}
+            LEGACY_TX_TYPE_ID | SIP2930_TX_TYPE_ID | SIP1559_TX_TYPE_ID | SIP4844_TX_TYPE_ID
+            | SIP7702_TX_TYPE_ID => {}
 
             ty if !self.other_tx_types.bit(ty as usize) => {
                 return Err(InvalidTransactionError::TxTypeNotSupported.into())
@@ -490,7 +490,7 @@ where
         // Reject transactions with a nonce equal to U64::max according to SIP-2681
         let tx_nonce = transaction.nonce();
         if tx_nonce == u64::MAX {
-            return Err(InvalidPoolTransactionError::Sip2681)
+            return Err(InvalidPoolTransactionError::Sip2681);
         }
 
         // Reject transactions over defined size to prevent DOS attacks
@@ -509,7 +509,7 @@ where
                 return Err(InvalidPoolTransactionError::OversizedData {
                     size: tx_size,
                     limit: self.max_tx_input_bytes,
-                })
+                });
             }
         } else {
             // ensure the size of the non-blob transaction
@@ -518,7 +518,7 @@ where
                 return Err(InvalidPoolTransactionError::OversizedData {
                     size: tx_size,
                     limit: self.max_tx_input_bytes,
-                })
+                });
             }
         }
 
@@ -536,22 +536,22 @@ where
             return Err(InvalidPoolTransactionError::ExceedsGasLimit(
                 transaction_gas_limit,
                 block_gas_limit,
-            ))
+            ));
         }
 
         // Check individual transaction gas limit if configured
-        if let Some(max_tx_gas_limit) = self.max_tx_gas_limit &&
-            transaction_gas_limit > max_tx_gas_limit
+        if let Some(max_tx_gas_limit) = self.max_tx_gas_limit
+            && transaction_gas_limit > max_tx_gas_limit
         {
             return Err(InvalidPoolTransactionError::MaxTxGasLimitExceeded(
                 transaction_gas_limit,
                 max_tx_gas_limit,
-            ))
+            ));
         }
 
         // Ensure max_priority_fee_per_gas (if SIP1559) is less than max_fee_per_gas if any.
         if transaction.max_priority_fee_per_gas() > Some(transaction.max_fee_per_gas()) {
-            return Err(InvalidTransactionError::TipAboveFeeCap.into())
+            return Err(InvalidTransactionError::TipAboveFeeCap.into());
         }
 
         // determine whether the transaction should be treated as local
@@ -568,7 +568,7 @@ where
                         return Err(InvalidPoolTransactionError::ExceedsFeeCap {
                             max_tx_fee_wei: max_tx_fee_wei.saturating_to(),
                             tx_fee_cap_wei,
-                        })
+                        });
                     }
                 }
             }
@@ -576,32 +576,32 @@ where
 
         // Drop non-local transactions with a fee lower than the configured fee for acceptance into
         // the pool.
-        if !is_local &&
-            transaction.is_dynamic_fee() &&
-            transaction.max_priority_fee_per_gas() < self.minimum_priority_fee
+        if !is_local
+            && transaction.is_dynamic_fee()
+            && transaction.max_priority_fee_per_gas() < self.minimum_priority_fee
         {
             return Err(InvalidPoolTransactionError::PriorityFeeBelowMinimum {
                 minimum_priority_fee: self
                     .minimum_priority_fee
                     .expect("minimum priority fee is expected inside if statement"),
-            })
+            });
         }
 
         // Checks for chainid
-        if let Some(chain_id) = transaction.chain_id() &&
-            chain_id != self.chain_id()
+        if let Some(chain_id) = transaction.chain_id()
+            && chain_id != self.chain_id()
         {
-            return Err(InvalidTransactionError::ChainIdMismatch.into())
+            return Err(InvalidTransactionError::ChainIdMismatch.into());
         }
 
         if transaction.is_eip7702() {
             // SilaPrague fork is required for 7702 txs
             if !self.fork_tracker.is_prague_activated() {
-                return Err(InvalidTransactionError::TxTypeNotSupported.into())
+                return Err(InvalidTransactionError::TxTypeNotSupported.into());
             }
 
             if transaction.authorization_list().is_none_or(|l| l.is_empty()) {
-                return Err(Sip7702PoolTransactionError::MissingEip7702AuthorizationList.into())
+                return Err(Sip7702PoolTransactionError::MissingEip7702AuthorizationList.into());
             }
         }
 
@@ -611,7 +611,7 @@ where
         if transaction.is_eip4844() {
             // SilaCancun fork is required for blob txs
             if !self.fork_tracker.is_cancun_activated() {
-                return Err(InvalidTransactionError::TxTypeNotSupported.into())
+                return Err(InvalidTransactionError::TxTypeNotSupported.into());
             }
 
             let blob_count = transaction.blob_count().unwrap_or(0);
@@ -619,7 +619,7 @@ where
                 // no blobs
                 return Err(InvalidPoolTransactionError::Sip4844(
                     Sip4844PoolTransactionError::NoEip4844Blobs,
-                ))
+                ));
             }
 
             let max_blob_count = self.fork_tracker.max_blob_count();
@@ -629,7 +629,7 @@ where
                         have: blob_count,
                         permitted: max_blob_count,
                     },
-                ))
+                ));
             }
         }
 
@@ -637,7 +637,7 @@ where
         let tx_gas_limit_cap =
             self.fork_tracker.tx_gas_limit_cap.load(std::sync::atomic::Ordering::Relaxed);
         if tx_gas_limit_cap > 0 && transaction.gas_limit() > tx_gas_limit_cap {
-            return Err(InvalidTransactionError::GasLimitTooHigh.into())
+            return Err(InvalidTransactionError::GasLimitTooHigh.into());
         }
 
         // Run additional stateless validation if configured
@@ -677,15 +677,15 @@ where
         };
 
         // Checks for nonce
-        if transaction.requires_nonce_check() &&
-            let Err(err) = self.validate_sender_nonce(&transaction, &account)
+        if transaction.requires_nonce_check()
+            && let Err(err) = self.validate_sender_nonce(&transaction, &account)
         {
-            return TransactionValidationOutcome::Invalid(transaction, err)
+            return TransactionValidationOutcome::Invalid(transaction, err);
         }
 
         // checks for max cost not exceedng account_balance
         if let Err(err) = self.validate_sender_balance(&transaction, &account) {
-            return TransactionValidationOutcome::Invalid(transaction, err)
+            return TransactionValidationOutcome::Invalid(transaction, err);
         }
 
         // heavy blob tx validation
@@ -695,10 +695,10 @@ where
         };
 
         // Run additional stateful validation if configured
-        if let Some(check) = &self.additional_stateful_validation &&
-            let Err(err) = check(origin, &transaction, &state)
+        if let Some(check) = &self.additional_stateful_validation
+            && let Err(err) = check(origin, &transaction, &state)
         {
-            return TransactionValidationOutcome::Invalid(transaction, err)
+            return TransactionValidationOutcome::Invalid(transaction, err);
         }
 
         let authorities = self.recover_authorities(&transaction);
@@ -749,7 +749,7 @@ where
             };
 
             if !is_eip7702 {
-                return Ok(Err(InvalidTransactionError::SignerAccountHasBytecode.into()))
+                return Ok(Err(InvalidTransactionError::SignerAccountHasBytecode.into()));
             }
         }
         Ok(Ok(()))
@@ -768,7 +768,7 @@ where
                 tx: tx_nonce,
                 state: sender.nonce,
             }
-            .into())
+            .into());
         }
         Ok(())
     }
@@ -786,7 +786,7 @@ where
             return Err(InvalidTransactionError::InsufficientFunds(
                 GotExpected { got: sender.balance, expected }.into(),
             )
-            .into())
+            .into());
         }
         Ok(())
     }
@@ -804,7 +804,7 @@ where
             match transaction.take_blob() {
                 SilBlobTransactionSidecar::None => {
                     // this should not happen
-                    return Err(InvalidTransactionError::TxTypeNotSupported.into())
+                    return Err(InvalidTransactionError::TxTypeNotSupported.into());
                 }
                 SilBlobTransactionSidecar::Missing => {
                     // This can happen for re-injected blob transactions (on re-org), since the blob
@@ -816,7 +816,7 @@ where
                     } else {
                         return Err(InvalidPoolTransactionError::Sip4844(
                             Sip4844PoolTransactionError::MissingEip4844BlobSidecar,
-                        ))
+                        ));
                     }
                 }
                 SilBlobTransactionSidecar::Present(sidecar) => {
@@ -829,19 +829,19 @@ where
                             if sidecar.is_eip4844() {
                                 return Err(InvalidPoolTransactionError::Sip4844(
                                     Sip4844PoolTransactionError::UnexpectedEip4844SidecarAfterOsaka,
-                                ))
+                                ));
                             }
                         } else if sidecar.is_eip7594() && !self.allow_7594_sidecars() {
                             return Err(InvalidPoolTransactionError::Sip4844(
                                 Sip4844PoolTransactionError::UnexpectedEip7594SidecarBeforeOsaka,
-                            ))
+                            ));
                         }
                     } else {
                         // SIP-7594 disabled: always reject v1 sidecars, accept v0
                         if sidecar.is_eip7594() {
                             return Err(InvalidPoolTransactionError::Sip4844(
                                 Sip4844PoolTransactionError::Sip7594SidecarDisallowed,
-                            ))
+                            ));
                         }
                     }
 
@@ -849,7 +849,7 @@ where
                     if let Err(err) = transaction.validate_blob(&sidecar, self.kzg_settings.get()) {
                         return Err(InvalidPoolTransactionError::Sip4844(
                             Sip4844PoolTransactionError::InvalidEip4844Blob(err),
-                        ))
+                        ));
                     }
                     // Record the duration of successful blob validation as histogram
                     self.validation_metrics.blob_validation_duration.record(now.elapsed());
@@ -1506,7 +1506,7 @@ mod tests {
     use super::*;
     use crate::{
         blobstore::InMemoryBlobStore, error::PoolErrorKind, test_utils::TransactionBuilder,
-        traits::PoolTransaction, CoinbaseTipOrdering, SilPooledTransaction, Pool, TransactionPool,
+        traits::PoolTransaction, CoinbaseTipOrdering, Pool, SilPooledTransaction, TransactionPool,
     };
     use alloy_consensus::Transaction;
     use alloy_eips::{
@@ -1514,11 +1514,11 @@ mod tests {
         sip2930::{AccessList, AccessListItem},
     };
     use alloy_primitives::{hex, Address, B256, U256};
-    use rsil_sila_primitives::PooledTransactionVariant;
+    use revm::primitives::sip3860::MAX_INITCODE_SIZE;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_primitives_traits::SignedTransaction;
     use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
-    use revm::primitives::sip3860::MAX_INITCODE_SIZE;
+    use rsil_sila_primitives::PooledTransactionVariant;
 
     fn test_evm_config() -> SilEvmConfig {
         SilEvmConfig::sila_mainnet()

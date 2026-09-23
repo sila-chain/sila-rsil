@@ -28,9 +28,9 @@ use alloy_rpc_types::{
     Withdrawal,
 };
 use rsil_basic_payload_builder::{BuildArguments, BuildOutcome, PayloadBuilder, PayloadConfig};
+use rsil_payload_builder::{PayloadBuilderError, SilBuiltPayload};
 use rsil_sila::{
     chainspec::{Chain, ChainSpec, ChainSpecProvider},
-    savm::primitives::{ConfigureEvm, NextBlockEnvAttributes},
     node::{
         api::{
             payload::{EngineApiMessageVersion, EngineObjectValidationError, PayloadOrAttributes},
@@ -44,21 +44,18 @@ use rsil_sila::{
             BuilderContext, Node, NodeAdapter, NodeBuilder, PayloadBuilderConfig,
         },
         core::{args::RpcServerArgs, node_config::NodeConfig},
-        node::{
-            SilaConsensusBuilder, SilaExecutorBuilder, SilaNetworkBuilder,
-            SilaPoolBuilder,
-        },
+        node::{SilaConsensusBuilder, SilaExecutorBuilder, SilaNetworkBuilder, SilaPoolBuilder},
         SilaEthApiBuilder,
     },
     pool::{PoolTransaction, TransactionPool},
     primitives::{Block, SealedBlock},
     provider::{SilStorage, StateProviderFactory},
     rpc::types::engine::ExecutionPayload,
+    savm::primitives::{ConfigureEvm, NextBlockEnvAttributes},
     tasks::Runtime,
     SilPrimitives, TransactionSigned,
 };
 use rsil_sila_payload_builder::{SilaBuilderConfig, SilaExecutionPayloadValidator};
-use rsil_payload_builder::{SilBuiltPayload, PayloadBuilderError};
 use rsil_tracing::{RsilTracer, Tracer};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -204,7 +201,7 @@ impl EngineApiValidator<CustomEngineTypes> for CustomEngineValidator {
         if attributes.custom == 0 {
             return Err(EngineObjectValidationError::invalid_params(
                 CustomError::CustomFieldIsNotZero,
-            ))
+            ));
         }
 
         Ok(())
@@ -307,8 +304,7 @@ where
                 ctx.provider().clone(),
                 pool,
                 evm_config,
-                SilaBuilderConfig::new()
-                    .with_extra_data(ctx.payload_builder_config().extra_data()),
+                SilaBuilderConfig::new().with_extra_data(ctx.payload_builder_config().extra_data()),
             ),
         };
         Ok(payload_builder)

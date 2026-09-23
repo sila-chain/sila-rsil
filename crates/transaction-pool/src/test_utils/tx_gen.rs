@@ -1,11 +1,11 @@
-use crate::{SilPooledTransaction, PoolTransaction};
+use crate::{PoolTransaction, SilPooledTransaction};
 use alloy_consensus::{SignableTransaction, TxEip1559, TxEip4844, TxLegacy};
 use alloy_eips::{sip1559::MIN_PROTOCOL_BASE_FEE, sip2718::Encodable2718, sip2930::AccessList};
 use alloy_primitives::{Address, Bytes, TxKind, B256, U256};
 use rand::{Rng, RngCore};
 use rsil_chainspec::SILA_MAINNET;
-use rsil_sila_primitives::{Transaction, TransactionSigned};
 use rsil_primitives_traits::{crypto::secp256k1::sign_message, SignedTransaction};
+use rsil_sila_primitives::{Transaction, TransactionSigned};
 
 /// A generator for transactions for testing purposes.
 #[derive(Debug)]

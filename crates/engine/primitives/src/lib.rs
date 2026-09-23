@@ -22,9 +22,9 @@ use rsil_trie_common::HashedPostState;
 use serde::{de::DeserializeOwned, Serialize};
 
 // Re-export [`ExecutionPayload`] moved to `rsil_payload_primitives`
+pub use rsil_payload_primitives::ExecutionPayload;
 #[cfg(feature = "std")]
 pub use rsil_savm::{ConfigureEngineEvm, ConvertTx, ExecutableTxIterator, ExecutableTxTuple};
-pub use rsil_payload_primitives::ExecutionPayload;
 
 mod error;
 pub use error::*;

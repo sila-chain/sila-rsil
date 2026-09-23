@@ -12,8 +12,13 @@ use alloy_rpc_types_trace::{
 };
 use async_trait::async_trait;
 use jsonrpsee::{core::RpcResult, types::ErrorObjectOwned};
+use revm::context_interface::result::ExecutionResult;
+use revm_inspectors::{
+    tracing::{types::CallTraceNode, TracingInspectorConfig},
+    transfer::{TransferInspector, TransferKind},
+};
 use rsil_primitives_traits::TxTy;
-use rsil_rpc_api::{SilApiServer, OtterscanServer};
+use rsil_rpc_api::{OtterscanServer, SilApiServer};
 use rsil_rpc_convert::RpcTxReq;
 use rsil_rpc_eth_api::{
     helpers::{SilTransactions, TraceExt},
@@ -21,11 +26,6 @@ use rsil_rpc_eth_api::{
 };
 use rsil_rpc_eth_types::{utils::binary_search, SilApiError};
 use rsil_rpc_server_types::result::internal_rpc_err;
-use revm::context_interface::result::ExecutionResult;
-use revm_inspectors::{
-    tracing::{types::CallTraceNode, TracingInspectorConfig},
-    transfer::{TransferInspector, TransferKind},
-};
 
 const API_LEVEL: u64 = 8;
 
@@ -229,7 +229,7 @@ where
         if tx_len != receipts.len() {
             return Err(internal_rpc_err(
                 "the number of transactions does not match the number of receipts",
-            ))
+            ));
         }
 
         // make sure the block is full

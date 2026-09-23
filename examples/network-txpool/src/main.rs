@@ -10,10 +10,10 @@
 #![warn(unused_crate_dependencies)]
 
 use rsil_sila::{
-    network::{config::rng_secret_key, SilNetworkPrimitives, NetworkConfig, NetworkManager},
+    network::{config::rng_secret_key, NetworkConfig, NetworkManager, SilNetworkPrimitives},
     pool::{
-        blobstore::InMemoryBlobStore, test_utils::OkValidator, CoinbaseTipOrdering,
-        SilPooledTransaction, Pool, TransactionListenerKind, TransactionPool,
+        blobstore::InMemoryBlobStore, test_utils::OkValidator, CoinbaseTipOrdering, Pool,
+        SilPooledTransaction, TransactionListenerKind, TransactionPool,
     },
     provider::test_utils::NoopProvider,
     tasks::Runtime,

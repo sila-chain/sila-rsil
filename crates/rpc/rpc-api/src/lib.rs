@@ -23,9 +23,9 @@ mod mev;
 mod miner;
 mod net;
 mod otterscan;
+mod rpc;
 mod rsil;
 mod rsil_engine;
-mod rpc;
 mod testing;
 mod trace;
 mod txpool;
@@ -50,9 +50,9 @@ pub mod servers {
         miner::MinerApiServer,
         net::NetApiServer,
         otterscan::OtterscanServer,
+        rpc::RpcApiServer,
         rsil::RsilApiServer,
         rsil_engine::{RsilEngineApiServer, RsilNewPayloadInput, RsilPayloadStatus},
-        rpc::RpcApiServer,
         testing::TestingApiServer,
         trace::TraceApiServer,
         txpool::TxPoolApiServer,
@@ -60,8 +60,8 @@ pub mod servers {
         web3::Web3ApiServer,
     };
     pub use rsil_rpc_eth_api::{
-        self as sil, SilApiServer, SilBundleApiServer, SilCallBundleApiServer, SilConfigApiServer,
-        SilFilterApiServer, SilPubSubApiServer, L2EthApiExtServer,
+        self as sil, L2EthApiExtServer, SilApiServer, SilBundleApiServer, SilCallBundleApiServer,
+        SilConfigApiServer, SilFilterApiServer, SilPubSubApiServer,
     };
 }
 
@@ -82,9 +82,9 @@ pub mod clients {
         miner::MinerApiClient,
         net::NetApiClient,
         otterscan::OtterscanClient,
+        rpc::RpcApiClient,
         rsil::RsilApiClient,
         rsil_engine::RsilEngineApiClient,
-        rpc::RpcApiClient,
         testing::TestingApiClient,
         trace::TraceApiClient,
         txpool::TxPoolApiClient,
@@ -92,7 +92,7 @@ pub mod clients {
         web3::Web3ApiClient,
     };
     pub use rsil_rpc_eth_api::{
-        SilApiClient, SilBundleApiClient, SilCallBundleApiClient, SilConfigApiClient,
-        SilFilterApiClient, L2EthApiExtClient,
+        L2EthApiExtClient, SilApiClient, SilBundleApiClient, SilCallBundleApiClient,
+        SilConfigApiClient, SilFilterApiClient,
     };
 }

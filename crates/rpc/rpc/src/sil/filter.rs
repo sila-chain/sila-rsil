@@ -18,9 +18,9 @@ use jsonrpsee::{core::RpcResult, server::IdProvider};
 use rsil_errors::ProviderError;
 use rsil_primitives_traits::{NodePrimitives, SealedHeader};
 use rsil_rpc_eth_api::{
-    helpers::{SilBlocks, LoadReceipt},
-    EngineEthFilter, SilApiTypes, SilFilterApiServer, FullEthApiTypes, QueryLimits, RpcConvert,
-    RpcNodeCoreExt, RpcTransaction,
+    helpers::{LoadReceipt, SilBlocks},
+    EngineEthFilter, FullEthApiTypes, QueryLimits, RpcConvert, RpcNodeCoreExt, RpcTransaction,
+    SilApiTypes, SilFilterApiServer,
 };
 use rsil_rpc_eth_types::{
     logs_utils::{self, append_matching_block_logs, ProviderOrBlock},
@@ -233,7 +233,7 @@ where
 
             if filter.block > best_number {
                 // no new blocks since the last poll
-                return Ok(FilterChanges::Empty)
+                return Ok(FilterChanges::Empty);
             }
 
             // update filter
@@ -312,7 +312,7 @@ where
                 *inner_filter.clone()
             } else {
                 // Not a log filter
-                return Err(SilFilterError::FilterNotFound(id))
+                return Err(SilFilterError::FilterNotFound(id));
             }
         };
 
@@ -475,7 +475,7 @@ where
                 let Some((receipts, maybe_block)) =
                     self.eth_cache().get_receipts_and_maybe_block(block_hash).await?
                 else {
-                    return Err(ProviderError::HeaderNotFound(block_hash.into()).into())
+                    return Err(ProviderError::HeaderNotFound(block_hash.into()).into());
                 };
 
                 // Read number and timestamp from cached block or provider header
@@ -522,8 +522,8 @@ where
                     }
                     // Try to get pending block and receipts
                     if let Ok(Some(pending_block)) = self.eth_api.local_pending_block().await {
-                        if let BlockNumberOrTag::Number(to_block) = to_block &&
-                            to_block < pending_block.block.number()
+                        if let BlockNumberOrTag::Number(to_block) = to_block
+                            && to_block < pending_block.block.number()
                         {
                             // this block range is empty based on the user input
                             return Ok(Vec::new());
@@ -561,8 +561,8 @@ where
                     .flatten();
 
                 // Return error if toBlock exceeds current head
-                if let Some(t) = to &&
-                    t > info.best_number
+                if let Some(t) = to
+                    && t > info.best_number
                 {
                     return Err(SilFilterError::BlockRangeExceedsHead {
                         requested: t,
@@ -570,8 +570,8 @@ where
                     });
                 }
 
-                if let Some(f) = from &&
-                    f > info.best_number
+                if let Some(f) = from
+                    && f > info.best_number
                 {
                     // start block higher than local head, can return empty
                     return Ok(Vec::new());
@@ -632,13 +632,13 @@ where
 
         // perform boundary checks first
         if to_block < from_block {
-            return Err(SilFilterError::InvalidBlockRangeParams)
+            return Err(SilFilterError::InvalidBlockRangeParams);
         }
 
         if let Some(max_blocks_per_filter) =
             limits.max_blocks_per_filter.filter(|limit| to_block - from_block > *limit)
         {
-            return Err(SilFilterError::QueryExceedsMaxBlocks(max_blocks_per_filter))
+            return Err(SilFilterError::QueryExceedsMaxBlocks(max_blocks_per_filter));
         }
 
         let (tx, rx) = oneshot::channel();
@@ -683,7 +683,7 @@ where
 
             while let Some(header) = headers_iter.next() {
                 if !filter.matches_bloom(header.logs_bloom()) {
-                    continue
+                    continue;
                 }
 
                 let current_number = header.number();
@@ -733,9 +733,9 @@ where
             // size check but only if range is multiple blocks, so we always return all
             // logs of a single block
             let is_multi_block_range = from_block != to_block;
-            if let Some(max_logs_per_response) = limits.max_logs_per_response &&
-                is_multi_block_range &&
-                all_logs.len() > max_logs_per_response
+            if let Some(max_logs_per_response) = limits.max_logs_per_response
+                && is_multi_block_range
+                && all_logs.len() > max_logs_per_response
             {
                 let retry_to_block =
                     if num_hash.number == from_block { from_block } else { num_hash.number - 1 };
@@ -932,7 +932,7 @@ impl Iterator for BlockRangeInclusiveIter {
         let start = self.iter.next()?;
         let end = (start + self.step).min(self.end);
         if start > end {
-            return None
+            return None;
         }
         Some((start, end))
     }
@@ -987,10 +987,10 @@ impl From<SilFilterError> for jsonrpsee::types::error::ErrorObject<'static> {
                 rpc_error_with_code(jsonrpsee::types::error::INTERNAL_ERROR_CODE, err.to_string())
             }
             SilFilterError::SilAPIError(err) => err.into(),
-            err @ (SilFilterError::InvalidBlockRangeParams |
-            SilFilterError::QueryExceedsMaxBlocks(_) |
-            SilFilterError::QueryExceedsMaxResults { .. } |
-            SilFilterError::BlockRangeExceedsHead { .. }) => {
+            err @ (SilFilterError::InvalidBlockRangeParams
+            | SilFilterError::QueryExceedsMaxBlocks(_)
+            | SilFilterError::QueryExceedsMaxResults { .. }
+            | SilFilterError::BlockRangeExceedsHead { .. }) => {
                 rpc_error_with_code(jsonrpsee::types::error::INVALID_PARAMS_CODE, err.to_string())
             }
         }
@@ -1352,13 +1352,13 @@ mod tests {
     use alloy_primitives::FixedBytes;
     use rand::Rng;
     use rsil_chainspec::{ChainSpec, ChainSpecProvider};
-    use rsil_sila_primitives::TxType;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::test_utils::MockEthProvider;
     use rsil_rpc_convert::RpcConverter;
     use rsil_rpc_eth_api::node::RpcNodeCoreAdapter;
     use rsil_rpc_eth_types::receipt::SilReceiptConverter;
+    use rsil_sila_primitives::TxType;
     use rsil_tasks::Runtime;
     use rsil_testing_utils::generators;
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};

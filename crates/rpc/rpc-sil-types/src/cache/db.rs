@@ -3,11 +3,11 @@
 //! `rsil_rpc_eth_api::helpers::Call`.
 
 use alloy_primitives::{Address, B256, U256};
+use revm::database::{BundleState, State};
 use rsil_errors::ProviderResult;
 use rsil_revm::database::StateProviderDatabase;
 use rsil_storage_api::{BytecodeReader, HashedPostStateProvider, StateProvider, StateProviderBox};
 use rsil_trie::{HashedStorage, MultiProofTargets};
-use revm::database::{BundleState, State};
 
 /// Helper alias type for the state's [`State`]
 pub type StateCacheDb = State<StateProviderDatabase<StateProviderTraitObjWrapper>>;

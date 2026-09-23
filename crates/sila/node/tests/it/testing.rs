@@ -6,7 +6,6 @@ use alloy_rpc_types_eth::BlockNumberOrTag;
 use jsonrpsee_core::client::ClientT;
 use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
 use rsil_db::test_utils::create_test_rw_db;
-use rsil_sila_engine_primitives::SilPayloadAttributes;
 use rsil_node_builder::{NodeBuilder, NodeConfig};
 use rsil_node_core::{
     args::DatadirArgs,
@@ -14,7 +13,8 @@ use rsil_node_core::{
 };
 use rsil_node_sila::{node::SilaAddOns, SilaNode};
 use rsil_rpc_api::TestingBuildBlockRequestV1;
-use rsil_rpc_server_types::{RsilRpcModule, RpcModuleSelection};
+use rsil_rpc_server_types::{RpcModuleSelection, RsilRpcModule};
+use rsil_sila_engine_primitives::SilPayloadAttributes;
 use rsil_tasks::Runtime;
 use serde_json::Value;
 use std::{str::FromStr, sync::Arc};

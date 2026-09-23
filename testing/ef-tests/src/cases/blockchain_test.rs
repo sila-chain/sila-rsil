@@ -9,8 +9,6 @@ use rayon::iter::{IndexedParallelIterator, ParallelIterator};
 use rsil_chainspec::ChainSpec;
 use rsil_consensus::{Consensus, HeaderValidator};
 use rsil_db_common::init::{insert_genesis_hashes, insert_genesis_history, insert_genesis_state};
-use rsil_sila_consensus::{validate_block_post_execution, SilBeaconConsensus};
-use rsil_sila_primitives::Block;
 use rsil_evm::{execute::Executor, ConfigureEvm};
 use rsil_evm_sila::SilEvmConfig;
 use rsil_primitives_traits::{ParallelBridgeBuffered, RecoveredBlock, SealedBlock};
@@ -20,6 +18,8 @@ use rsil_provider::{
     StaticFileProviderFactory, StaticFileSegment, StaticFileWriter, StorageSettingsCache,
 };
 use rsil_revm::database::StateProviderDatabase;
+use rsil_sila_consensus::{validate_block_post_execution, SilBeaconConsensus};
+use rsil_sila_primitives::Block;
 use rsil_trie::{HashedPostState, KeccakKeyHasher, StateRoot};
 use rsil_trie_db::DatabaseStateRoot;
 use std::{
@@ -64,12 +64,12 @@ impl BlockchainTestCase {
     const fn excluded_fork(network: ForkSpec) -> bool {
         matches!(
             network,
-            ForkSpec::ByzantiumToConstantinopleAt5 |
-                ForkSpec::Constantinople |
-                ForkSpec::ConstantinopleFix |
-                ForkSpec::MergeEOF |
-                ForkSpec::MergeMeterInitCode |
-                ForkSpec::MergePush0
+            ForkSpec::ByzantiumToConstantinopleAt5
+                | ForkSpec::Constantinople
+                | ForkSpec::ConstantinopleFix
+                | ForkSpec::MergeEOF
+                | ForkSpec::MergeMeterInitCode
+                | ForkSpec::MergePush0
         )
     }
 

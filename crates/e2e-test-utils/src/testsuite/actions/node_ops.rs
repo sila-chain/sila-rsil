@@ -4,9 +4,9 @@ use crate::testsuite::{Action, Environment};
 use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_node_api::EngineTypes;
 use rsil_rpc_api::clients::SilApiClient;
+use rsil_sila_primitives::TransactionSigned;
 use std::time::Duration;
 use tokio::time::{sleep, timeout};
 use tracing::debug;
@@ -206,8 +206,8 @@ where
                 .copied()
                 .ok_or_else(|| eyre::eyre!("Block tag '{}' not found in registry", self.tag))?;
 
-            if let Some(expected_node) = self.expected_node_idx &&
-                node_idx != expected_node
+            if let Some(expected_node) = self.expected_node_idx
+                && node_idx != expected_node
             {
                 return Err(eyre::eyre!(
                     "Block tag '{}' came from node {} but expected node {}",

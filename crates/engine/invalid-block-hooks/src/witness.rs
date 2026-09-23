@@ -2,6 +2,14 @@ use alloy_consensus::BlockHeader;
 use alloy_primitives::{keccak256, Address, Bytes, B256, U256};
 use alloy_rpc_types_debug::ExecutionWitness;
 use pretty_assertions::Comparison;
+use revm::{
+    bytecode::Bytecode,
+    database::{
+        states::{reverts::AccountInfoRevert, StorageSlot},
+        AccountStatus, RevertToSlot,
+    },
+    state::AccountInfo,
+};
 use rsil_engine_primitives::InvalidBlockHook;
 use rsil_evm::{execute::Executor, ConfigureEvm};
 use rsil_primitives_traits::{NodePrimitives, RecoveredBlock, SealedHeader};
@@ -13,14 +21,6 @@ use rsil_revm::{
 use rsil_rpc_api::DebugApiClient;
 use rsil_tracing::tracing::warn;
 use rsil_trie::{updates::TrieUpdates, HashedStorage};
-use revm::{
-    bytecode::Bytecode,
-    database::{
-        states::{reverts::AccountInfoRevert, StorageSlot},
-        AccountStatus, RevertToSlot,
-    },
-    state::AccountInfo,
-};
 use serde::Serialize;
 use std::{collections::BTreeMap, fmt::Debug, fs::File, io::Write, path::PathBuf};
 
@@ -417,17 +417,17 @@ mod tests {
     use super::*;
     use alloy_eips::sip7685::Requests;
     use alloy_primitives::{map::HashMap, Address, Bytes, B256, U256};
+    use revm::database::states::reverts::AccountRevert;
     use rsil_chainspec::ChainSpec;
-    use rsil_sila_primitives::SilPrimitives;
     use rsil_evm_sila::SilEvmConfig;
     use rsil_provider::test_utils::MockEthProvider;
     use rsil_revm::db::{BundleAccount, BundleState};
-    use revm::database::states::reverts::AccountRevert;
+    use rsil_sila_primitives::SilPrimitives;
     use tempfile::TempDir;
 
+    use revm::bytecode::Bytecode;
     use rsil_revm::test_utils::StateProviderTest;
     use rsil_testing_utils::generators::{self, random_block, random_eoa_accounts, BlockParams};
-    use revm::bytecode::Bytecode;
 
     /// Creates a test `BundleState` with realistic accounts, contracts, and reverts
     fn create_bundle_state() -> BundleState {
@@ -738,8 +738,8 @@ mod tests {
 
         // Modify the state to create a mismatch
         let addr = Address::from([1u8; 20]);
-        if let Some(account) = modified_state.state.get_mut(&addr) &&
-            let Some(ref mut info) = account.info
+        if let Some(account) = modified_state.state.get_mut(&addr)
+            && let Some(ref mut info) = account.info
         {
             info.balance = U256::from(999);
         }

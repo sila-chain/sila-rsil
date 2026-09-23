@@ -31,18 +31,18 @@ pub mod trace;
 pub mod transaction;
 
 pub use bal::GetBlockAccessList;
-pub use block::{SilBlocks, LoadBlock};
+pub use block::{LoadBlock, SilBlocks};
 pub use blocking_task::SpawnBlocking;
 pub use call::{Call, SilCall};
-pub use fee::{SilFees, LoadFee};
+pub use fee::{LoadFee, SilFees};
 pub use pending_block::LoadPendingBlock;
 pub use receipt::LoadReceipt;
 pub use signer::SilSigner;
 pub use spec::SilApiSpec;
-pub use state::{SilState, LoadState};
+pub use state::{LoadState, SilState};
 pub use subscriptions::SilSubscriptions;
 pub use trace::Trace;
-pub use transaction::{SilTransactions, LoadTransaction};
+pub use transaction::{LoadTransaction, SilTransactions};
 
 use crate::FullEthApiTypes;
 

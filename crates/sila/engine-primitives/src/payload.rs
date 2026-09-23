@@ -1,11 +1,6 @@
 //! Contains types required for building a payload.
 
 use alloc::{sync::Arc, vec::Vec};
-use alloy_sips::{
-    eip4844::BlobTransactionSidecar,
-    eip7594::{BlobTransactionSidecarEip7594, BlobTransactionSidecarVariant},
-    eip7685::Requests,
-};
 use alloy_primitives::{Bytes, U256};
 use alloy_rpc_types_engine::{
     BlobsBundleV1, BlobsBundleV2, CancunPayloadFields, ExecutionData, ExecutionPayload,
@@ -14,9 +9,14 @@ use alloy_rpc_types_engine::{
     ExecutionPayloadSidecar, ExecutionPayloadV1, ExecutionPayloadV3, ExecutionPayloadV4,
     PraguePayloadFields,
 };
-use rsil_sila_primitives::SilPrimitives;
+use alloy_sips::{
+    eip4844::BlobTransactionSidecar,
+    eip7594::{BlobTransactionSidecarEip7594, BlobTransactionSidecarVariant},
+    eip7685::Requests,
+};
 use rsil_payload_primitives::BuiltPayload;
 use rsil_primitives_traits::{NodePrimitives, RecoveredBlock, SealedBlock};
+use rsil_sila_primitives::SilPrimitives;
 
 use crate::BuiltPayloadConversionError;
 

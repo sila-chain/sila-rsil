@@ -7,19 +7,19 @@ use crate::{
     NetworkHandle, NetworkManager,
 };
 use alloy_eips::BlockNumHash;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, Hardforks};
+use rsil_chainspec::{ChainSpecProvider, Hardforks, SilChainSpec};
 use rsil_discv4::{Discv4Config, Discv4ConfigBuilder, NatResolver, DEFAULT_DISCOVERY_ADDRESS};
 use rsil_discv5::NetworkStackId;
 use rsil_dns_discovery::DnsDiscoveryConfig;
 use rsil_eth_wire::{
     handshake::{SilHandshake, SilRlpxHandshake},
-    SilNetworkPrimitives, HelloMessage, HelloMessageWithProtocols, NetworkPrimitives,
+    HelloMessage, HelloMessageWithProtocols, NetworkPrimitives, SilNetworkPrimitives,
     UnifiedStatus,
 };
 use rsil_eth_wire_types::message::MAX_MESSAGE_SIZE;
-use rsil_sila_forks::{ForkFilter, Head};
 use rsil_network_peers::{mainnet_nodes, pk2id, sepolia_nodes, PeerId, TrustedPeer};
 use rsil_network_types::{PeersConfig, SessionsConfig};
+use rsil_sila_forks::{ForkFilter, Head};
 use rsil_storage_api::{
     noop::NoopProvider, BalProvider, BlockNumReader, BlockReader, HeaderProvider,
 };
@@ -714,9 +714,9 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
 
         // If default DNS config is used then we add the known dns network to bootstrap from
         if let Some(dns_networks) =
-            dns_discovery_config.as_mut().and_then(|c| c.bootstrap_dns_networks.as_mut()) &&
-            dns_networks.is_empty() &&
-            let Some(link) = chain_spec.chain().public_dns_network_protocol()
+            dns_discovery_config.as_mut().and_then(|c| c.bootstrap_dns_networks.as_mut())
+            && dns_networks.is_empty()
+            && let Some(link) = chain_spec.chain().public_dns_network_protocol()
         {
             dns_networks.insert(link.parse().expect("is valid DNS link entry"));
         }
@@ -781,7 +781,7 @@ mod tests {
     use alloy_genesis::Genesis;
     use alloy_primitives::U256;
     use rsil_chainspec::{
-        Chain, ChainSpecBuilder, SilaHardfork, ForkCondition, ForkId, SILA_MAINNET,
+        Chain, ChainSpecBuilder, ForkCondition, ForkId, SilaHardfork, SILA_MAINNET,
     };
     use rsil_discv5::build_local_enr;
     use rsil_dns_discovery::tree::LinkEntry;

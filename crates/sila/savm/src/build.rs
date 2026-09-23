@@ -3,14 +3,14 @@ use alloy_consensus::{
     proofs::{self, calculate_receipt_root},
     Block, BlockBody, BlockHeader, Header, TxReceipt, EMPTY_OMMER_ROOT_HASH,
 };
-use alloy_sips::{eip4895::Withdrawals, merge::BEACON_NONCE};
-use alloy_savm::{block::BlockExecutorFactory, eth::EthBlockExecutionCtx as SilBlockExecutionCtx};
 use alloy_primitives::{Bloom, B256};
+use alloy_savm::{block::BlockExecutorFactory, eth::EthBlockExecutionCtx as SilBlockExecutionCtx};
+use alloy_sips::{eip4895::Withdrawals, merge::BEACON_NONCE};
+use revm::context::Block as _;
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
-use rsil_savm::execute::{BlockAssembler, BlockAssemblerInput, BlockExecutionError};
 use rsil_execution_types::BlockExecutionResult;
 use rsil_primitives_traits::{logs_bloom as calculate_logs_bloom, Receipt, SignedTransaction};
-use revm::context::Block as _;
+use rsil_savm::execute::{BlockAssembler, BlockAssemblerInput, BlockExecutionError};
 
 /// Block builder for Sila.
 #[derive(Debug, Clone)]

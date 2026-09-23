@@ -1,7 +1,7 @@
 use crate::BlockIdReader;
 use alloc::vec::Vec;
-use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockNumber, TxHash, TxNumber};
+use alloy_sips::{BlockHashOrNumber, BlockId, BlockNumberOrTag};
 use core::ops::{RangeBounds, RangeInclusive};
 use rsil_primitives_traits::Receipt;
 use rsil_storage_errors::provider::ProviderResult;
@@ -73,7 +73,7 @@ pub trait ReceiptProviderIdExt: ReceiptProvider + BlockIdReader {
                 if let Some(num) = self.convert_block_number(num_tag)? {
                     BlockHashOrNumber::Number(num)
                 } else {
-                    return Ok(None)
+                    return Ok(None);
                 }
             }
         };

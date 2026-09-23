@@ -1,12 +1,12 @@
 //! Helper traits to wrap generic l1 errors, in network specific error type configured in
 //! `rsil_rpc_eth_api::SilApiTypes`.
 
-use crate::{simulate::SilSimulateError, SilApiError, RevertError};
+use crate::{simulate::SilSimulateError, RevertError, SilApiError};
 use alloy_primitives::Bytes;
-use rsil_errors::ProviderError;
-use rsil_evm::{ConfigureEvm, SavmErrorFor, HaltReasonFor};
-use rsil_revm::db::bal::SavmDatabaseError;
 use revm::{context::result::ExecutionResult, context_interface::result::HaltReason};
+use rsil_errors::ProviderError;
+use rsil_evm::{ConfigureEvm, HaltReasonFor, SavmErrorFor};
+use rsil_revm::db::bal::SavmDatabaseError;
 
 use super::RpcInvalidTransactionError;
 
@@ -60,7 +60,7 @@ pub trait AsEthApiError {
     /// [`RpcInvalidTransactionError::GasTooHigh`].
     fn is_gas_too_high(&self) -> bool {
         if let Some(err) = self.as_err() {
-            return err.is_gas_too_high()
+            return err.is_gas_too_high();
         }
 
         false
@@ -70,7 +70,7 @@ pub trait AsEthApiError {
     /// [`RpcInvalidTransactionError::GasTooLow`].
     fn is_gas_too_low(&self) -> bool {
         if let Some(err) = self.as_err() {
-            return err.is_gas_too_low()
+            return err.is_gas_too_low();
         }
 
         false

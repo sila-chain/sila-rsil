@@ -8,12 +8,12 @@ use alloy_primitives::{
 use alloy_consensus::Header;
 use alloy_eips::sip4895::{Withdrawal, Withdrawals};
 use alloy_primitives::Signature;
+use revm::{database::BundleState, state::AccountInfo};
 use rsil_db_api::{database::Database, models::StoredBlockBodyIndices, tables};
-use rsil_sila_primitives::{BlockBody, Receipt, Transaction, TransactionSigned, TxType};
 use rsil_node_types::NodeTypes;
 use rsil_primitives_traits::{Account, RecoveredBlock, SealedBlock, SealedHeader};
+use rsil_sila_primitives::{BlockBody, Receipt, Transaction, TransactionSigned, TxType};
 use rsil_trie::root::{state_root_unhashed, storage_root_unhashed};
-use revm::{database::BundleState, state::AccountInfo};
 use std::{str::FromStr, sync::LazyLock};
 
 /// Assert genesis block
@@ -185,9 +185,7 @@ fn bundle_state_root(execution_outcome: &ExecutionOutcome) -> B256 {
 }
 
 /// Block one that points to genesis
-fn block1(
-    number: BlockNumber,
-) -> (RecoveredBlock<rsil_sila_primitives::Block>, ExecutionOutcome) {
+fn block1(number: BlockNumber) -> (RecoveredBlock<rsil_sila_primitives::Block>, ExecutionOutcome) {
     // block changes
     let account1: Address = [0x60; 20].into();
     let account2: Address = [0x61; 20].into();

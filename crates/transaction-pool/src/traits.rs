@@ -77,9 +77,9 @@ use alloy_primitives::{
 };
 use futures_util::{ready, Stream};
 use rsil_eth_wire_types::HandleMempoolData;
-use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
 use rsil_execution_types::ChangedAccount;
 use rsil_primitives_traits::{Block, InMemorySize, Recovered, SealedBlock, SignedTransaction};
+use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
 use serde::{Deserialize, Serialize};
 use std::{
     fmt,
@@ -1381,7 +1381,7 @@ pub trait PoolTransaction:
     /// intermediate value when the raw representation can be converted directly into `Self`.
     fn recover_raw_transaction(data: &[u8]) -> Result<Self, RawPoolTransactionError> {
         if data.is_empty() {
-            return Err(RawPoolTransactionError::EmptyRawTransactionData)
+            return Err(RawPoolTransactionError::EmptyRawTransactionData);
         }
 
         let transaction = Self::Pooled::decode_2718_exact(data)
@@ -1892,7 +1892,7 @@ impl<Tx: PoolTransaction> NewSubpoolTransactionStream<Tx> {
         loop {
             let event = self.st.try_recv()?;
             if event.subpool == self.subpool {
-                return Ok(event)
+                return Ok(event);
             }
         }
     }
@@ -1906,7 +1906,7 @@ impl<Tx: PoolTransaction> Stream for NewSubpoolTransactionStream<Tx> {
             match ready!(self.st.poll_recv(cx)) {
                 Some(event) => {
                     if event.subpool == self.subpool {
-                        return Poll::Ready(Some(event))
+                        return Poll::Ready(Some(event));
                     }
                 }
                 None => return Poll::Ready(None),
@@ -1919,7 +1919,7 @@ impl<Tx: PoolTransaction> Stream for NewSubpoolTransactionStream<Tx> {
 mod tests {
     use super::*;
     use alloy_consensus::{
-        SilaTxEnvelope, SignableTransaction, TxEip1559, TxEip2930, TxEip4844, TxEip7702,
+        SignableTransaction, SilaTxEnvelope, TxEip1559, TxEip2930, TxEip4844, TxEip7702,
         TxEnvelope, TxLegacy,
     };
     use alloy_eips::sip4844::DATA_GAS_PER_BLOB;

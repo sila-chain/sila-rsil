@@ -38,7 +38,7 @@ pub use events::{
 };
 
 use rsil_eth_wire_types::{
-    capability::Capabilities, Capability, DisconnectReason, SilVersion, NetworkPrimitives,
+    capability::Capabilities, Capability, DisconnectReason, NetworkPrimitives, SilVersion,
     UnifiedStatus,
 };
 use rsil_network_p2p::sync::NetworkSyncUpdater;

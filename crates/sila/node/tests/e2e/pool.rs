@@ -14,9 +14,8 @@ use rsil_primitives_traits::Recovered;
 use rsil_provider::CanonStateSubscriptions;
 use rsil_tasks::Runtime;
 use rsil_transaction_pool::{
-    blobstore::InMemoryBlobStore, test_utils::OkValidator, BlockInfo, CoinbaseTipOrdering,
-    SilPooledTransaction, Pool, PoolTransaction, TransactionOrigin, TransactionPool,
-    TransactionPoolExt,
+    blobstore::InMemoryBlobStore, test_utils::OkValidator, BlockInfo, CoinbaseTipOrdering, Pool,
+    PoolTransaction, SilPooledTransaction, TransactionOrigin, TransactionPool, TransactionPoolExt,
 };
 use std::{sync::Arc, time::Duration};
 
@@ -146,19 +145,15 @@ async fn maintain_txpool_reorg() -> eyre::Result<()> {
 
     // build tx1 from wallet1
     let envelop1 = TransactionTestContext::transfer_tx(1, w1.clone()).await;
-    let tx1 = Recovered::new_unchecked(
-        SilaTxEnvelope::<TxEip4844>::from(envelop1.clone()),
-        w1.address(),
-    );
+    let tx1 =
+        Recovered::new_unchecked(SilaTxEnvelope::<TxEip4844>::from(envelop1.clone()), w1.address());
     let pooled_tx1 = SilPooledTransaction::new(tx1.clone(), 200);
     let tx_hash1 = *pooled_tx1.hash();
 
     // build tx2 from wallet2
     let envelop2 = TransactionTestContext::transfer_tx(1, w2.clone()).await;
-    let tx2 = Recovered::new_unchecked(
-        SilaTxEnvelope::<TxEip4844>::from(envelop2.clone()),
-        w2.address(),
-    );
+    let tx2 =
+        Recovered::new_unchecked(SilaTxEnvelope::<TxEip4844>::from(envelop2.clone()), w2.address());
     let pooled_tx2 = SilPooledTransaction::new(tx2.clone(), 200);
     let tx_hash2 = *pooled_tx2.hash();
 

@@ -44,7 +44,10 @@ pub type BlockExecutorForEvm<'a, Savm, DB, I = NoOpInspector> =
 pub type SavmEnvFor<Savm> = SavmEnv<SpecFor<Savm>, BlockEnvFor<Savm>>;
 
 /// Helper trait to bound [`Inspector`] for a [`ConfigureEvm`].
-pub trait InspectorFor<Savm: ConfigureEvm, DB: Database>: Inspector<SavmContextFor<Savm, DB>> {}
+pub trait InspectorFor<Savm: ConfigureEvm, DB: Database>:
+    Inspector<SavmContextFor<Savm, DB>>
+{
+}
 impl<T, Savm, DB> InspectorFor<Savm, DB> for T
 where
     Savm: ConfigureEvm,

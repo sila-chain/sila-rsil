@@ -1,10 +1,10 @@
 use alloc::{sync::Arc, vec::Vec};
+use alloy_primitives::{BlockHash, BlockNumber, Bytes};
 use alloy_sip7928::bal::DecodedBal;
 pub use alloy_sip7928::bal::RawBal;
 use alloy_sips::NumHash;
-use alloy_primitives::{BlockHash, BlockNumber, Bytes};
-use rsil_storage_errors::provider::ProviderResult;
 use revm::database::state::bal::Bal as RevmBal;
+use rsil_storage_errors::provider::ProviderResult;
 
 /// Notification emitted when a new BAL is inserted into the store.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -133,7 +133,7 @@ pub trait BalStore: Send + Sync + 'static {
             out.push(bal);
 
             if limit.exceeds(size) {
-                break
+                break;
             }
         }
         Ok(())
@@ -317,7 +317,7 @@ impl BalStore for NoopBalStore {
             out.push(None);
 
             if limit.exceeds(size) {
-                break
+                break;
             }
         }
         Ok(())

@@ -16,8 +16,8 @@ use rsil_e2e_test_utils::testsuite::{
     TestBuilder,
 };
 use rsil_engine_tree::tree::TreeConfig;
-use rsil_sila_engine_primitives::SilEngineTypes;
 use rsil_node_sila::SilaNode;
+use rsil_sila_engine_primitives::SilEngineTypes;
 use std::sync::Arc;
 
 /// Creates the standard setup for engine tree e2e tests.

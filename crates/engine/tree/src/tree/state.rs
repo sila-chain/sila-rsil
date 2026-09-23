@@ -6,7 +6,7 @@ use alloy_primitives::{
     map::{B256Map, B256Set},
     BlockNumber, B256,
 };
-use rsil_chain_state::{SilPrimitives, ExecutedBlock, StateTrieOverlayManager};
+use rsil_chain_state::{ExecutedBlock, SilPrimitives, StateTrieOverlayManager};
 use rsil_primitives_traits::{AlloyBlockHeader, NodePrimitives, SealedHeader};
 use std::{
     collections::{btree_map, hash_map, BTreeMap, VecDeque},
@@ -172,13 +172,13 @@ impl<N: NodePrimitives> TreeState<N> {
     pub fn is_canonical(&self, hash: B256) -> bool {
         let mut current_block = self.current_canonical_head.hash;
         if current_block == hash {
-            return true
+            return true;
         }
 
         while let Some(executed) = self.blocks_by_hash.get(&current_block) {
             current_block = executed.recovered_block().parent_hash();
             if current_block == hash {
-                return true
+                return true;
             }
         }
 
@@ -198,7 +198,7 @@ impl<N: NodePrimitives> TreeState<N> {
         // If the last persisted hash is not canonical, then we don't want to remove any canonical
         // blocks yet.
         if !self.is_canonical(last_persisted_hash) {
-            return
+            return;
         }
 
         // First, let's walk back the canonical chain and remove canonical blocks lower than the
@@ -359,19 +359,19 @@ impl<N: NodePrimitives> TreeState<N> {
         // If the second block's parent is the first block's hash, then it is a direct child
         // and we can return early.
         if second.parent == first.hash {
-            return true
+            return true;
         }
 
         // If the second block is lower than, or has the same block number, they are not
         // descendants.
         if second.block.number <= first.number {
-            return false
+            return false;
         }
 
         // iterate through parents of the second until we reach the number
         let Some(mut current_block) = self.blocks_by_hash.get(&second.parent) else {
             // If we can't find its parent in the tree, we can't continue, so return false
-            return false
+            return false;
         };
 
         while current_block.recovered_block().number() > first.number + 1 {
@@ -379,7 +379,7 @@ impl<N: NodePrimitives> TreeState<N> {
                 self.blocks_by_hash.get(&current_block.recovered_block().parent_hash())
             else {
                 // If we can't find its parent in the tree, we can't continue, so return false
-                return false
+                return false;
             };
 
             current_block = block;
@@ -498,11 +498,8 @@ mod tests {
     #[tokio::test]
     async fn test_tree_state_remove_before() {
         let start_num_hash = BlockNumHash::default();
-        let mut tree_state = TreeState::new(
-            start_num_hash,
-            EngineApiKind::Sila,
-            StateTrieOverlayManager::default(),
-        );
+        let mut tree_state =
+            TreeState::new(start_num_hash, EngineApiKind::Sila, StateTrieOverlayManager::default());
         let blocks: Vec<_> = TestBlockBuilder::sil().get_executed_blocks(1..6).collect();
 
         for block in &blocks {
@@ -552,11 +549,8 @@ mod tests {
     #[tokio::test]
     async fn test_tree_state_remove_before_finalized() {
         let start_num_hash = BlockNumHash::default();
-        let mut tree_state = TreeState::new(
-            start_num_hash,
-            EngineApiKind::Sila,
-            StateTrieOverlayManager::default(),
-        );
+        let mut tree_state =
+            TreeState::new(start_num_hash, EngineApiKind::Sila, StateTrieOverlayManager::default());
         let blocks: Vec<_> = TestBlockBuilder::sil().get_executed_blocks(1..6).collect();
 
         for block in &blocks {
@@ -606,11 +600,8 @@ mod tests {
     #[tokio::test]
     async fn test_tree_state_remove_before_lower_finalized() {
         let start_num_hash = BlockNumHash::default();
-        let mut tree_state = TreeState::new(
-            start_num_hash,
-            EngineApiKind::Sila,
-            StateTrieOverlayManager::default(),
-        );
+        let mut tree_state =
+            TreeState::new(start_num_hash, EngineApiKind::Sila, StateTrieOverlayManager::default());
         let blocks: Vec<_> = TestBlockBuilder::sil().get_executed_blocks(1..6).collect();
 
         for block in &blocks {

@@ -5,8 +5,7 @@ use alloy_consensus::Header;
 use alloy_eips::NumHash;
 use alloy_primitives::{BlockHash, BlockNumber, Bytes, B256};
 use rand::Rng;
-use rsil_eth_wire::{BlockAccessLists, SilVersion, GetBlockAccessLists, HeadersDirection};
-use rsil_sila_primitives::Block;
+use rsil_eth_wire::{BlockAccessLists, GetBlockAccessLists, HeadersDirection, SilVersion};
 use rsil_network::{
     eth_requests::{MAX_BLOCK_ACCESS_LISTS_SERVE, SOFT_RESPONSE_LIMIT},
     test_utils::{NetworkEventStream, PeerConfig, Testnet, TestnetHandle},
@@ -23,6 +22,7 @@ use rsil_provider::{
     test_utils::MockEthProvider, BalNotificationStream, BalStore, BalStoreHandle, InMemoryBalStore,
     ProviderError, ProviderResult, RawBal,
 };
+use rsil_sila_primitives::Block;
 use rsil_transaction_pool::test_utils::{TestPool, TransactionGenerator};
 use std::sync::Arc;
 use tokio::sync::oneshot;
@@ -756,7 +756,7 @@ fn raw_bal_with_len(len: usize) -> Bytes {
         let header_length = alloy_rlp::Header { list: true, payload_length }.length();
         let next_payload_length = len.checked_sub(header_length).unwrap();
         if next_payload_length == payload_length {
-            break
+            break;
         }
         payload_length = next_payload_length;
     }

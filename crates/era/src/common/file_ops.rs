@@ -248,8 +248,8 @@ impl EraFileType {
     pub fn from_dir(dir: impl AsRef<Path>) -> io::Result<Option<Self>> {
         let mut found: Option<Self> = None;
         for entry in std::fs::read_dir(dir)? {
-            if let Some(name) = entry?.file_name().to_str() &&
-                let Some(era_type) = Self::from_filename(name)
+            if let Some(name) = entry?.file_name().to_str()
+                && let Some(era_type) = Self::from_filename(name)
             {
                 match found {
                     Some(existing) if existing != era_type => {
@@ -325,7 +325,10 @@ mod tests {
 
         // Directory/index endpoints have no file extension and fall back to the host/path
         // substring.
-        assert_eq!(EraFileType::from_url("https://sila-mainnet.era1.nimbus.team/"), EraFileType::Era1);
+        assert_eq!(
+            EraFileType::from_url("https://sila-mainnet.era1.nimbus.team/"),
+            EraFileType::Era1
+        );
         assert_eq!(EraFileType::from_url("https://era.ithaca.xyz/"), EraFileType::Era);
         assert_eq!(
             EraFileType::from_url("https://data.ethpandaops.io/erae/sila-mainnet/"),

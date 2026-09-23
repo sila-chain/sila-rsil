@@ -1,6 +1,6 @@
 use alloy_primitives::{Address, B256, U256};
-use rsil_primitives_traits::{Account, Bytecode};
 use revm::database::{states::BundleState, BundleAccount};
+use rsil_primitives_traits::{Account, Bytecode};
 
 pub use alloy_savm::block::BlockExecutionResult;
 

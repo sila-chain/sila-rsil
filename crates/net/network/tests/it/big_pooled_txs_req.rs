@@ -1,6 +1,5 @@
 use alloy_primitives::{Signature, B256};
 use rsil_eth_wire::{GetPooledTransactions, PooledTransactions};
-use rsil_sila_primitives::TransactionSigned;
 use rsil_network::{
     test_utils::{NetworkEventStream, Testnet},
     NetworkEventListenerProvider, PeerRequest,
@@ -9,6 +8,7 @@ use rsil_network_api::{NetworkInfo, Peers};
 use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState};
 use rsil_primitives_traits::SignedTransaction;
 use rsil_provider::test_utils::MockEthProvider;
+use rsil_sila_primitives::TransactionSigned;
 use rsil_transaction_pool::{
     test_utils::{testing_pool, MockTransaction},
     TransactionPool,

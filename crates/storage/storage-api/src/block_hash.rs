@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
-use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{BlockNumber, B256};
+use alloy_sips::BlockHashOrNumber;
 use rsil_storage_errors::provider::ProviderResult;
 
 /// Client trait for fetching block hashes by number.

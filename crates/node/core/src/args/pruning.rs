@@ -121,18 +121,18 @@ impl PruneConfigKind {
         ChainSpec: SilaHardforks,
     {
         if config.is_default() {
-            return Self::Archive
+            return Self::Archive;
         }
 
         let full_config = PruningArgs { full: true, ..Default::default() }.prune_config(chain_spec);
         if full_config.as_ref() == Some(config) {
-            return Self::Full
+            return Self::Full;
         }
 
         let minimal_config =
             PruningArgs { minimal: true, ..Default::default() }.prune_config(chain_spec);
         if minimal_config.as_ref() == Some(config) {
-            return Self::Minimal
+            return Self::Minimal;
         }
 
         Self::Custom

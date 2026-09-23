@@ -1,12 +1,12 @@
 //! Utilities for creating and writing RLP test data
 
 use alloy_consensus::{constants::EMPTY_WITHDRAWALS, BlockHeader, Header};
-use alloy_sips::eip4895::Withdrawals;
 use alloy_primitives::{Address, B256, B64, U256};
 use alloy_rlp::Encodable;
+use alloy_sips::eip4895::Withdrawals;
 use rsil_chainspec::{ChainSpec, SilaHardforks};
-use rsil_sila_primitives::{Block, BlockBody};
 use rsil_primitives_traits::{Block as BlockTrait, SealedBlock};
+use rsil_sila_primitives::{Block, BlockBody};
 use std::{io::Write, path::Path};
 use tracing::debug;
 

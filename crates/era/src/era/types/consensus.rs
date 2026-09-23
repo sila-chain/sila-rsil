@@ -29,7 +29,6 @@
 //! ```
 use crate::e2s::{error::E2sError, types::Entry};
 use alloy_consensus::Block;
-use alloy_sips::eip2718::Decodable2718;
 use alloy_rpc_types_beacon::block::{
     SignedBeaconBlockAltair, SignedBeaconBlockBellatrix, SignedBeaconBlockCapella,
     SignedBeaconBlockDeneb, SignedBeaconBlockElectra, SignedBeaconBlockPhase0,
@@ -38,6 +37,7 @@ use alloy_rpc_types_engine::{
     CancunPayloadFields, ExecutionPayload, ExecutionPayloadSidecar, ExecutionPayloadV1,
     ExecutionPayloadV2, ExecutionPayloadV3, PraguePayloadFields,
 };
+use alloy_sips::eip2718::Decodable2718;
 use snap::{read::FrameDecoder, write::FrameEncoder};
 use ssz::Decode;
 use std::io::{Read, Write};
@@ -157,8 +157,8 @@ impl CompressedSignedBeaconBlock {
 
         // Pre-merge blocks carry no execution payload. Only skip a slot once it's confirmed to be a
         // valid pre-merge block; anything else is malformed data and must error rather than skip.
-        if SignedBeaconBlockPhase0::from_ssz_bytes(&ssz).is_ok() ||
-            SignedBeaconBlockAltair::from_ssz_bytes(&ssz).is_ok()
+        if SignedBeaconBlockPhase0::from_ssz_bytes(&ssz).is_ok()
+            || SignedBeaconBlockAltair::from_ssz_bytes(&ssz).is_ok()
         {
             return Ok(None);
         }
@@ -257,7 +257,7 @@ mod tests {
     use super::*;
     use alloy_primitives::B256;
     use alloy_rpc_types_beacon::{
-        block::{BeaconBlock, BeaconBlockBodyPhase0, Sil1Data, SignedBeaconBlock},
+        block::{BeaconBlock, BeaconBlockBodyPhase0, SignedBeaconBlock, Sil1Data},
         BlsSignature,
     };
     use rsil_sila_primitives::TransactionSigned;

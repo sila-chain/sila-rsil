@@ -14,13 +14,11 @@ use alloy_evm::{
         BlockExecutionError, BlockExecutionResult, BlockExecutor, BlockExecutorFactory,
         ExecutableTx, GasOutput, StateDB,
     },
-    sil::{SilBlockExecutionCtx, SilBlockExecutor, SilEvmContext, SilTxResult},
     precompiles::PrecompilesMap,
-    Database, SilEvm, SilEvmFactory, Savm, SavmFactory, FromRecoveredTx, FromTxWithEncoded,
+    sil::{SilBlockExecutionCtx, SilBlockExecutor, SilEvmContext, SilTxResult},
+    Database, FromRecoveredTx, FromTxWithEncoded, Savm, SavmFactory, SilEvm, SilEvmFactory,
 };
 use alloy_primitives::B256;
-use rsil_sila_primitives::{Receipt, TransactionSigned};
-use rsil_evm_sila::RsilReceiptBuilder;
 use revm::{
     context::{BlockEnv, TxEnv},
     context_interface::result::{EVMError, HaltReason},
@@ -29,6 +27,8 @@ use revm::{
     primitives::hardfork::SpecId,
     Inspector,
 };
+use rsil_evm_sila::RsilReceiptBuilder;
+use rsil_sila_primitives::{Receipt, TransactionSigned};
 use tracing::{debug, trace};
 
 // ---------------------------------------------------------------------------
@@ -195,7 +195,8 @@ where
         bal_index_bumper: Option<BalIndexBumper<DB>>,
         bal_index_setter: Option<BalIndexSetter<DB>>,
     ) -> Self {
-        let inner = SilBlockExecutor::new(savm, plan.segments[0].ctx.clone(), spec, receipt_builder);
+        let inner =
+            SilBlockExecutor::new(savm, plan.segments[0].ctx.clone(), spec, receipt_builder);
         Self {
             inner: Some(inner),
             plan,
@@ -432,16 +433,16 @@ where
         // the receipt root task (which reads receipts incrementally) sees
         // globally-correct values across all segments.
         let offset = self.gas_used_offset;
-        if offset > 0 &&
-            let Some(receipt) = self.inner_mut().receipts.last_mut()
+        if offset > 0
+            && let Some(receipt) = self.inner_mut().receipts.last_mut()
         {
             receipt.cumulative_gas_used += offset;
         }
 
         self.plan.tx_counter += 1;
 
-        while self.plan.next_segment < self.plan.segments.len() &&
-            self.plan.tx_counter == self.plan.segments[self.plan.next_segment].start_tx
+        while self.plan.next_segment < self.plan.segments.len()
+            && self.plan.tx_counter == self.plan.segments[self.plan.next_segment].start_tx
         {
             self.apply_segment_boundary().expect("must succeed");
         }

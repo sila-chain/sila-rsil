@@ -16,7 +16,7 @@ use crate::{
 use alloy_rpc_types_admin::SilProtocolInfo;
 use enr::{secp256k1::SecretKey, Enr};
 use rsil_eth_wire_types::{
-    DisconnectReason, SilNetworkPrimitives, NetworkPrimitives, ProtocolVersion,
+    DisconnectReason, NetworkPrimitives, ProtocolVersion, SilNetworkPrimitives,
 };
 use rsil_network_p2p::{sync::NetworkSyncUpdater, NoopFullBlockClient};
 use rsil_network_peers::NodeRecord;

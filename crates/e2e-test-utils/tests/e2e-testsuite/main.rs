@@ -91,8 +91,8 @@ async fn test_apply_with_import() -> Result<()> {
         )
         .await;
 
-        if let Ok(Some(block)) = block_result &&
-            block.header.number == 10
+        if let Ok(Some(block)) = block_result
+            && block.header.number == 10
         {
             debug!("Pipeline finished, block 10 is fully available");
             break;
@@ -371,14 +371,13 @@ async fn test_setup_builder_with_custom_tree_config() -> Result<()> {
             .build(),
     );
 
-    let (nodes, _wallet) = E2ETestSetupBuilder::<SilaNode, _>::new(1, chain_spec, |_| {
-        PayloadAttributes::default()
-    })
-    .with_tree_config_modifier(|config| {
-        config.with_persistence_threshold(0).with_memory_block_buffer_target(5)
-    })
-    .build()
-    .await?;
+    let (nodes, _wallet) =
+        E2ETestSetupBuilder::<SilaNode, _>::new(1, chain_spec, |_| PayloadAttributes::default())
+            .with_tree_config_modifier(|config| {
+                config.with_persistence_threshold(0).with_memory_block_buffer_target(5)
+            })
+            .build()
+            .await?;
 
     assert_eq!(nodes.len(), 1);
 

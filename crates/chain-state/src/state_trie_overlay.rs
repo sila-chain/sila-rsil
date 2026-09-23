@@ -4,7 +4,7 @@
 //! parent has not been persisted yet. [`StateTrieOverlayManager`] tracks those in-memory blocks and
 //! builds reusable flattened state trie overlays on demand.
 
-use crate::{SilPrimitives, ExecutedBlock, PreservedSparseTrie, PreservedTrieGuard};
+use crate::{ExecutedBlock, PreservedSparseTrie, PreservedTrieGuard, SilPrimitives};
 use alloy_primitives::B256;
 use parking_lot::Mutex;
 use rsil_metrics::{
@@ -143,7 +143,7 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
                     %parent_hash,
                     "state trie overlay block already inserted"
                 );
-                return
+                return;
             }
             Entry::Vacant(entry) => {
                 entry.insert(block);
@@ -168,12 +168,12 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
             "inserted block into state trie overlay manager"
         );
         if cached_parent_overlays.is_empty() {
-            return
+            return;
         }
 
         #[cfg(feature = "rayon")]
         let Some(worker_pool) = self.worker_pool.clone() else {
-            return
+            return;
         };
 
         #[cfg(not(feature = "rayon"))]
@@ -230,9 +230,9 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
             let overlays_before = self.overlays.len();
             let blocks = Arc::clone(&self.blocks);
             self.overlays.retain(|key, _| {
-                key.tip_hash != key.anchor_hash &&
-                    Self::anchor_for_parent_in(blocks.as_ref(), key.tip_hash, key.anchor_hash) ==
-                        Some(key.anchor_hash)
+                key.tip_hash != key.anchor_hash
+                    && Self::anchor_for_parent_in(blocks.as_ref(), key.tip_hash, key.anchor_hash)
+                        == Some(key.anchor_hash)
             });
             pruned_overlays = overlays_before.saturating_sub(self.overlays.len());
             span.record("pruned_overlays", pruned_overlays);
@@ -324,7 +324,7 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
                         Some(waiter.wait())
                     }
                 }
-            })
+            });
         }
         span.record("cache_reused", false);
 
@@ -338,7 +338,7 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
             blocks.push(block.clone());
 
             if parent_hash == anchor_hash {
-                break
+                break;
             }
             hash = parent_hash;
         }
@@ -432,7 +432,7 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
         preferred_anchor: B256,
     ) -> Option<B256> {
         if parent_hash == preferred_anchor {
-            return Some(preferred_anchor)
+            return Some(preferred_anchor);
         }
 
         let mut hash = parent_hash;
@@ -440,10 +440,10 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
         loop {
             let block_parent_hash = blocks.get(&hash)?.recovered_block().parent_hash();
             if block_parent_hash == preferred_anchor {
-                return Some(block_parent_hash)
+                return Some(block_parent_hash);
             }
             if !blocks.contains_key(&block_parent_hash) {
-                return Some(block_parent_hash)
+                return Some(block_parent_hash);
             }
             hash = block_parent_hash;
         }
@@ -463,7 +463,7 @@ impl<N: NodePrimitives> StateTrieOverlayManager<N> {
                 return Arc::new(worker_pool.install_fn(move || {
                     let _guard = compute_span.enter();
                     compute_overlay(compute_input, anchor_hash, &metrics)
-                }))
+                }));
             }
         }
 
@@ -673,7 +673,7 @@ fn extend_overlay(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{test_utils::TestBlockBuilder, SilPrimitives, ExecutedBlock};
+    use crate::{test_utils::TestBlockBuilder, ExecutedBlock, SilPrimitives};
     use alloy_primitives::U256;
     use rsil_primitives_traits::Account;
     use rsil_trie::{updates::TrieUpdatesSorted, ComputedTrieData, HashedPostState, HashedStorage};

@@ -1,7 +1,7 @@
 //! Implementation of the [`jsonrpsee`] generated [`SilApiServer`] trait. Handles RPC requests for
 //! the `eth_` namespace.
 use crate::{
-    helpers::{SilApiSpec, SilBlocks, SilCall, SilFees, SilState, SilTransactions, FullEthApi},
+    helpers::{FullEthApi, SilApiSpec, SilBlocks, SilCall, SilFees, SilState, SilTransactions},
     RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use alloy_dyn_abi::TypedData;
@@ -11,14 +11,14 @@ use alloy_primitives::{Address, Bytes, B256, B64, U256, U64};
 use alloy_rpc_types_eth::{
     simulate::{SimulatePayload, SimulatedBlock},
     state::{SavmOverrides, StateOverride},
-    BlockOverrides, Bundle, SIP1186AccountProofResponse, SilCallResponse, FeeHistory, Index,
+    BlockOverrides, Bundle, FeeHistory, Index, SIP1186AccountProofResponse, SilCallResponse,
     StateContext, SyncStatus, Work,
 };
 use alloy_serde::JsonStorageKey;
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use rsil_primitives_traits::TxTy;
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_types::{SilApiError, SilCapabilities, FillTransaction};
+use rsil_rpc_eth_types::{FillTransaction, SilApiError, SilCapabilities};
 use rsil_rpc_server_types::{result::internal_rpc_err, ToRpcResult};
 use serde_json::Value;
 use std::collections::HashMap;

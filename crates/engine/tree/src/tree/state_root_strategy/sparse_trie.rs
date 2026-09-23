@@ -730,8 +730,8 @@ where
         let mut tries_to_compute_roots: Vec<(B256, SendStorageTriePtr<S>)> =
             Vec::with_capacity(addresses_to_compute_roots.len());
         for address in addresses_to_compute_roots {
-            if let Some(trie) = self.trie.storage_tries_mut().get_mut(&address) &&
-                !trie.is_root_cached()
+            if let Some(trie) = self.trie.storage_tries_mut().get_mut(&address)
+                && !trie.is_root_cached()
             {
                 tries_to_compute_roots.push((address, SendStorageTriePtr(trie)));
             }
@@ -843,7 +843,7 @@ where
             // We need to keep iterating if any updates are being drained because that might
             // indicate that more pending account updates can be promoted.
             if num_promoted == 0 || !self.process_account_leaf_updates(false)? {
-                break
+                break;
             }
         }
 
@@ -852,7 +852,7 @@ where
 
     fn dispatch_pending_targets(&mut self) -> Result<(), StateRootTaskError> {
         if self.pending_targets.is_empty() {
-            return Ok(())
+            return Ok(());
         }
 
         let _span = trace_span!("dispatch_pending_targets").entered();
@@ -891,16 +891,16 @@ where
         );
 
         if let Some(error) = dispatch_error {
-            return Err(error)
+            return Err(error);
         }
 
         Ok(())
     }
 
     fn has_pending_sparse_trie_updates(&self) -> bool {
-        !self.account_updates.is_empty() ||
-            self.storage_updates.values().any(|updates| !updates.is_empty()) ||
-            !self.pending_account_updates.is_empty()
+        !self.account_updates.is_empty()
+            || self.storage_updates.values().any(|updates| !updates.is_empty())
+            || !self.pending_account_updates.is_empty()
     }
 
     /// Errors when pending trie updates remain but nothing can deliver them: no update
@@ -911,13 +911,13 @@ where
     /// the draining phase the updates channel is not read anymore and may hold ignored late
     /// hints that must not mask a stall.
     fn ensure_not_stalled(&self, updates_queued: bool) -> Result<(), StateRootTaskError> {
-        if self.finished_state_updates &&
-            !updates_queued &&
-            self.pending_updates == 0 &&
-            self.pending_targets.is_empty() &&
-            self.in_flight_proof_batches == 0 &&
-            self.proof_result_rx.is_empty() &&
-            self.has_pending_sparse_trie_updates()
+        if self.finished_state_updates
+            && !updates_queued
+            && self.pending_updates == 0
+            && self.pending_targets.is_empty()
+            && self.in_flight_proof_batches == 0
+            && self.proof_result_rx.is_empty()
+            && self.has_pending_sparse_trie_updates()
         {
             const MAX_STALLED_PROOF_TARGETS_TO_LOG: usize = 5;
 
@@ -958,7 +958,7 @@ where
                 "sparse trie task stalled: pending updates remain but no proof targets are queued or in flight"
             );
 
-            return Err(StateRootTaskError::Stalled)
+            return Err(StateRootTaskError::Stalled);
         }
 
         Ok(())
@@ -1027,9 +1027,9 @@ fn dispatch_with_chunking<T, I>(
     I: IntoIterator<Item = T>,
 {
     let has_full_chunks = chunking_len >= chunk_size.saturating_mul(2);
-    let should_chunk = chunking_len > max_targets_for_chunking ||
-        (has_full_chunks &&
-            (has_multiple_idle_account_workers || has_multiple_idle_storage_workers));
+    let should_chunk = chunking_len > max_targets_for_chunking
+        || (has_full_chunks
+            && (has_multiple_idle_account_workers || has_multiple_idle_storage_workers));
 
     if should_chunk && chunking_len > chunk_size {
         for chunk in chunker(items, chunk_size) {

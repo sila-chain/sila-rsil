@@ -28,7 +28,7 @@ use rsil_sila::{
         ProviderFactory,
     },
     rpc::{
-        builder::{RsilRpcModule, RpcModuleBuilder, RpcServerConfig, TransportRpcModuleConfig},
+        builder::{RpcModuleBuilder, RpcServerConfig, RsilRpcModule, TransportRpcModuleConfig},
         SilApiBuilder,
     },
     tasks::Runtime,

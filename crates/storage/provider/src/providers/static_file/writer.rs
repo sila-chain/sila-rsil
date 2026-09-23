@@ -166,10 +166,10 @@ impl<N: NodePrimitives> StaticFileWriters<N> {
             &self.storage_change_sets,
         ] {
             let writer = writer_lock.read();
-            if let Some(writer) = writer.as_ref() &&
-                writer.will_prune_on_commit()
+            if let Some(writer) = writer.as_ref()
+                && writer.will_prune_on_commit()
             {
-                return true
+                return true;
             }
         }
         false
@@ -530,8 +530,8 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
             return Ok(());
         }
 
-        if let Some(offset) = self.current_changeset_offset.take() &&
-            let Some(writer) = &mut self.changeset_offsets
+        if let Some(offset) = self.current_changeset_offset.take()
+            && let Some(writer) = &mut self.changeset_offsets
         {
             writer.append(&offset).map_err(ProviderError::other)?;
         }
@@ -813,8 +813,8 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
         // Handle changeset offset tracking for changeset segments
         if segment.is_change_based() {
             // Write previous block's offset if we have one
-            if let Some(offset) = self.current_changeset_offset.take() &&
-                let Some(writer) = &mut self.changeset_offsets
+            if let Some(offset) = self.current_changeset_offset.take()
+                && let Some(writer) = &mut self.changeset_offsets
             {
                 writer.append(&offset).map_err(ProviderError::other)?;
             }
@@ -861,7 +861,7 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
                 self.writer.user_header().segment(),
                 expected_block_number,
                 next_static_file_block,
-            ))
+            ));
         }
         Ok(())
     }
@@ -884,7 +884,7 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
 
         // If we're already at or before the target block, nothing to do
         if current_block_end <= last_block {
-            return Ok(())
+            return Ok(());
         }
 
         // Navigate to the correct file if the target block is in a previous file
@@ -993,15 +993,15 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
                 // * it's a tx-based segment AND `last_block` is lower than the first block of this
                 //   file's block range. Otherwise, having no rows simply means that this block
                 //   range has no transactions, but the file should remain.
-                if block_start != 0 &&
-                    (segment.is_headers() || last_block.is_some_and(|b| b < block_start))
+                if block_start != 0
+                    && (segment.is_headers() || last_block.is_some_and(|b| b < block_start))
                 {
                     self.delete_current_and_open_previous()?;
                 } else {
                     // Update `SegmentHeader`
                     self.writer.user_header_mut().prune(len);
                     self.writer.prune_rows(len as usize).map_err(ProviderError::other)?;
-                    break
+                    break;
                 }
 
                 remaining_rows -= len;
@@ -1099,7 +1099,7 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
                     self.writer.user_header().segment(),
                     tx_num,
                     next_tx,
-                ))
+                ));
             }
             self.writer.user_header_mut().increment_tx();
         } else {
@@ -1407,7 +1407,7 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
         if self.current_changeset_offset.is_none() {
             return Err(ProviderError::other(StaticFileWriterError::new(
                 "account changeset stream must be started before appending entries",
-            )))
+            )));
         }
 
         self.append_change(&change)
@@ -1471,7 +1471,7 @@ impl<N: NodePrimitives> StaticFileProviderRW<N> {
         if self.current_changeset_offset.is_none() {
             return Err(ProviderError::other(StaticFileWriterError::new(
                 "storage changeset stream must be started before appending entries",
-            )))
+            )));
         }
 
         self.append_change(&change)

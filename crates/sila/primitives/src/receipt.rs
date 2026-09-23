@@ -1,7 +1,7 @@
 use alloy_consensus::TxType;
 pub use alloy_consensus::{EthereumReceipt as SilaReceipt, TxTy};
-use alloy_sips::eip2718::Encodable2718;
 use alloy_primitives::B256;
+use alloy_sips::eip2718::Encodable2718;
 use rsil_primitives_traits::proofs::ordered_trie_root_with_encoder;
 
 /// Raw sila receipt.
@@ -25,11 +25,11 @@ mod tests {
     use super::*;
     use crate::TransactionSigned;
     use alloy_consensus::{ReceiptWithBloom, TxReceipt, TxType};
-    use alloy_sips::eip2718::Encodable2718;
     use alloy_primitives::{
         address, b256, bloom, bytes, hex_literal::hex, Address, Bloom, Bytes, Log, LogData,
     };
     use alloy_rlp::{Decodable, Encodable};
+    use alloy_sips::eip2718::Encodable2718;
     use rsil_codecs::Compact;
     use rsil_primitives_traits::proofs::{
         calculate_receipt_root, calculate_transaction_root, calculate_withdrawals_root,

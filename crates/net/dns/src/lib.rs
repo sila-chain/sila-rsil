@@ -22,8 +22,8 @@ use crate::{
 pub use config::DnsDiscoveryConfig;
 use enr::Enr;
 pub use error::ParseDnsEntryError;
-use rsil_sila_forks::{EnrForkIdEntry, ForkId};
 use rsil_network_peers::{pk2id, NodeRecord};
+use rsil_sila_forks::{EnrForkIdEntry, ForkId};
 use schnellru::{ByLength, LruMap};
 use secp256k1::SecretKey;
 use std::{
@@ -220,7 +220,7 @@ impl<R: Resolver> DnsDiscoveryService<R> {
             // already resolved
             let cached = ResolveEntryResult { entry: Some(Ok(entry)), link, hash, kind };
             self.on_resolved_entry(cached);
-            return
+            return;
         }
         self.queries.resolve_entry(link, hash, kind)
     }
@@ -295,7 +295,7 @@ impl<R: Resolver> DnsDiscoveryService<R> {
         loop {
             // drain buffered events first
             if let Some(event) = self.queued_events.pop_front() {
-                return Poll::Ready(event)
+                return Poll::Ready(event);
             }
 
             // process all incoming commands
@@ -348,7 +348,7 @@ impl<R: Resolver> DnsDiscoveryService<R> {
             }
 
             if !progress && self.queued_events.is_empty() {
-                return Poll::Pending
+                return Poll::Pending;
             }
         }
     }
@@ -414,7 +414,7 @@ mod tests {
     use data_encoding::BASE32_NOPAD;
     use enr::EnrKey;
     use rsil_chainspec::SILA_MAINNET;
-    use rsil_sila_forks::{SilaHardfork, ForkHash};
+    use rsil_sila_forks::{ForkHash, SilaHardfork};
     use secp256k1::rand::thread_rng;
     use std::{future::poll_fn, net::Ipv4Addr};
 

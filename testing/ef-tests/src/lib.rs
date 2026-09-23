@@ -7,8 +7,8 @@
 )]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-use rsil_revm as _;
 use revm as _;
+use rsil_revm as _;
 
 pub mod case;
 pub mod result;

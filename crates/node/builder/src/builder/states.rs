@@ -9,7 +9,7 @@ use crate::{
     components::{NodeComponents, NodeComponentsBuilder},
     hooks::NodeHooks,
     launch::LaunchNode,
-    rpc::{RsilRpcAddOns, RsilRpcServerHandles, RpcContext},
+    rpc::{RpcContext, RsilRpcAddOns, RsilRpcServerHandles},
     AddOns, ComponentsFor, FullNode,
 };
 
@@ -323,7 +323,6 @@ mod test {
     use crate::components::Components;
     use rsil_consensus::noop::NoopConsensus;
     use rsil_db_api::mock::DatabaseMock;
-    use rsil_sila_engine_primitives::SilEngineTypes;
     use rsil_evm::noop::NoopEvmConfig;
     use rsil_evm_sila::MockEvmConfig;
     use rsil_network::SilNetworkPrimitives;
@@ -332,6 +331,7 @@ mod test {
     use rsil_node_sila::SilaNode;
     use rsil_payload_builder::PayloadBuilderHandle;
     use rsil_provider::noop::NoopProvider;
+    use rsil_sila_engine_primitives::SilEngineTypes;
     use rsil_tasks::Runtime;
     use rsil_transaction_pool::noop::NoopTransactionPool;
 

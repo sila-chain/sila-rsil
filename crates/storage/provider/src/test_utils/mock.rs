@@ -24,13 +24,13 @@ use rsil_db_api::{
     mock::{DatabaseMock, TxMock},
     models::{AccountBeforeTx, StorageSettings, StoredBlockBodyIndices},
 };
-use rsil_sila_primitives::SilPrimitives;
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::{
     Account, Block, BlockBody, Bytecode, GotExpected, NodePrimitives, RecoveredBlock, SealedHeader,
     SignerRecoverable, StorageEntry,
 };
 use rsil_prune_types::{PruneCheckpoint, PruneModes, PruneSegment};
+use rsil_sila_primitives::SilPrimitives;
 use rsil_stages_types::{StageCheckpoint, StageId};
 use rsil_storage_api::{
     BlockBodyIndicesProvider, BytecodeReader, DBProvider, DatabaseProviderFactory,
@@ -421,7 +421,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> TransactionsProvider
                         excess_blob_gas: block.header().excess_blob_gas(),
                         timestamp: block.header().timestamp(),
                     };
-                    return Ok(Some((tx.clone(), meta)))
+                    return Ok(Some((tx.clone(), meta)));
                 }
             }
         }

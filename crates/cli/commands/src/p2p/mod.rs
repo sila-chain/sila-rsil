@@ -6,7 +6,7 @@ use crate::common::CliNodeTypes;
 use alloy_eips::BlockHashOrNumber;
 use backon::{ConstantBuilder, Retryable};
 use clap::{Parser, Subcommand};
-use rsil_chainspec::{SilChainSpec, SilaHardforks, Hardforks};
+use rsil_chainspec::{Hardforks, SilChainSpec, SilaHardforks};
 use rsil_cli::chainspec::ChainSpecParser;
 use rsil_cli_util::hash_or_num_value_parser;
 use rsil_config::Config;

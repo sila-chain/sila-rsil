@@ -39,9 +39,7 @@ impl<T> PayloadTypes for SilEngineTypes<T>
 where
     T: PayloadTypes<
         ExecutionData = ExecutionData,
-        BuiltPayload: BuiltPayload<
-            Primitives: NodePrimitives<Block = rsil_sila_primitives::Block>,
-        >,
+        BuiltPayload: BuiltPayload<Primitives: NodePrimitives<Block = rsil_sila_primitives::Block>>,
     >,
     ExecutionData: From<T::BuiltPayload>,
 {

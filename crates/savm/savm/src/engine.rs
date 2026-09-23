@@ -1,4 +1,4 @@
-use crate::{execute::ExecutableTxFor, ConfigureEvm, SavmEnvFor, ExecutionCtxFor, TxEnvFor};
+use crate::{execute::ExecutableTxFor, ConfigureEvm, ExecutionCtxFor, SavmEnvFor, TxEnvFor};
 use alloy_consensus::transaction::Either;
 use alloy_savm::{block::ExecutableTxParts, RecoveredTx};
 use rayon::prelude::*;
@@ -7,7 +7,8 @@ use rsil_primitives_traits::TxTy;
 /// [`ConfigureEvm`] extension providing methods for executing payloads.
 pub trait ConfigureEngineEvm<ExecutionData>: ConfigureEvm {
     /// Returns an [`crate::SavmEnv`] for the given payload.
-    fn evm_env_for_payload(&self, payload: &ExecutionData) -> Result<SavmEnvFor<Self>, Self::Error>;
+    fn evm_env_for_payload(&self, payload: &ExecutionData)
+        -> Result<SavmEnvFor<Self>, Self::Error>;
 
     /// Returns an [`ExecutionCtxFor`] for the given payload.
     fn context_for_payload<'a>(
@@ -134,7 +135,8 @@ impl<T, Savm: ConfigureEvm> ExecutableTxIterator<Savm> for T
 where
     T: ExecutableTxTuple<Tx: ExecutableTxFor<Savm, Recovered: Send + Sync>>,
 {
-    type Recovered = <T::Tx as ExecutableTxParts<TxEnvFor<Savm>, TxTy<Savm::Primitives>>>::Recovered;
+    type Recovered =
+        <T::Tx as ExecutableTxParts<TxEnvFor<Savm>, TxTy<Savm::Primitives>>>::Recovered;
 }
 
 /// Wraps `Either<L, R>` to implement both [`IntoParallelIterator`] and [`IntoIterator`],

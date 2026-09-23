@@ -53,8 +53,7 @@ impl<T: CanonStateSubscriptions> CanonStateSubscriptions for &T {
 /// A Stream of [`CanonStateNotification`].
 #[derive(Debug)]
 #[pin_project::pin_project]
-pub struct CanonStateNotificationStream<N: NodePrimitives = rsil_sila_primitives::SilPrimitives>
-{
+pub struct CanonStateNotificationStream<N: NodePrimitives = rsil_sila_primitives::SilPrimitives> {
     #[pin]
     st: BroadcastStream<CanonStateNotification<N>>,
 }
@@ -68,10 +67,10 @@ impl<N: NodePrimitives> Stream for CanonStateNotificationStream<N> {
                 Some(Ok(notification)) => Poll::Ready(Some(notification)),
                 Some(Err(err)) => {
                     debug!(%err, "canonical state notification stream lagging behind");
-                    continue
+                    continue;
                 }
                 None => Poll::Ready(None),
-            }
+            };
         }
     }
 }
@@ -254,9 +253,9 @@ mod tests {
     use super::*;
     use alloy_consensus::{BlockBody, SignableTransaction, TxLegacy};
     use alloy_primitives::{b256, Signature, B256};
-    use rsil_sila_primitives::{Receipt, TransactionSigned, TxType};
     use rsil_execution_types::ExecutionOutcome;
     use rsil_primitives_traits::SealedBlock;
+    use rsil_sila_primitives::{Receipt, TransactionSigned, TxType};
     use std::collections::BTreeMap;
 
     #[test]

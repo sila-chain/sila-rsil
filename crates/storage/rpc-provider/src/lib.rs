@@ -52,6 +52,7 @@ use rsil_provider::{
 };
 use rsil_prune_types::{PruneCheckpoint, PruneSegment};
 pub mod rpc_response;
+pub use rpc_response::{RpcResponseConverter, SilRpcConverter};
 use rsil_stages_types::{StageCheckpoint, StageId};
 use rsil_storage_api::{
     BlockBodyIndicesProvider, BlockReaderIdExt, BlockSource, DBProvider, NodePrimitivesProvider,
@@ -60,7 +61,6 @@ use rsil_storage_api::{
 use rsil_trie::{
     updates::TrieUpdates, AccountProof, HashedPostState, KeccakKeyHasher, MultiProof, TrieInput,
 };
-pub use rpc_response::{SilRpcConverter, RpcResponseConverter};
 use std::{
     collections::BTreeMap,
     future::{Future, IntoFuture},

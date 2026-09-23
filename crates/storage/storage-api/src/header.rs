@@ -1,6 +1,6 @@
 use alloc::vec::Vec;
-use alloy_sips::BlockHashOrNumber;
 use alloy_primitives::{BlockHash, BlockNumber};
+use alloy_sips::BlockHashOrNumber;
 use core::ops::RangeBounds;
 use rsil_primitives_traits::{BlockHeader, SealedHeader};
 use rsil_storage_errors::provider::ProviderResult;

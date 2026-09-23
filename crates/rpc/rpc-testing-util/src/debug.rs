@@ -15,8 +15,8 @@ use alloy_rpc_types_trace::{
 };
 use futures::{Stream, StreamExt};
 use jsonrpsee::core::client::Error as RpcError;
-use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_rpc_api::{clients::DebugApiClient, SilApiClient};
+use rsil_sila_primitives::{Receipt, TransactionSigned};
 
 const NOOP_TRACER: &str = include_str!("../assets/noop-tracer.js");
 const JS_TRACER_TEMPLATE: &str = include_str!("../assets/tracer-template.js");

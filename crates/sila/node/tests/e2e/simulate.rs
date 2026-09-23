@@ -23,14 +23,9 @@ async fn test_simulate_v1_explicit_gas_uses_remaining_block_gas() -> eyre::Resul
             .build(),
     );
 
-    let (mut nodes, wallet) = setup_engine::<SilaNode>(
-        1,
-        chain_spec,
-        false,
-        Default::default(),
-        eth_payload_attributes,
-    )
-    .await?;
+    let (mut nodes, wallet) =
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+            .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
         .wallet(SilaWallet::new(wallet.wallet_gen().swap_remove(0)))
@@ -62,14 +57,9 @@ async fn test_simulate_v1_no_fields_call_defaults_to_remaining_block_gas() -> ey
             .build(),
     );
 
-    let (mut nodes, wallet) = setup_engine::<SilaNode>(
-        1,
-        chain_spec,
-        false,
-        Default::default(),
-        eth_payload_attributes,
-    )
-    .await?;
+    let (mut nodes, wallet) =
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+            .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
         .wallet(SilaWallet::new(wallet.wallet_gen().swap_remove(0)))
@@ -111,14 +101,9 @@ async fn test_simulate_v1_blockhash_reads_prior_simulated_block() -> eyre::Resul
             .build(),
     );
 
-    let (mut nodes, wallet) = setup_engine::<SilaNode>(
-        1,
-        chain_spec,
-        false,
-        Default::default(),
-        eth_payload_attributes,
-    )
-    .await?;
+    let (mut nodes, wallet) =
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+            .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
         .wallet(SilaWallet::new(wallet.wallet_gen().swap_remove(0)))
@@ -166,14 +151,9 @@ async fn test_simulate_v1_explicit_gas_over_remaining_block_gas_errors() -> eyre
             .build(),
     );
 
-    let (mut nodes, wallet) = setup_engine::<SilaNode>(
-        1,
-        chain_spec,
-        false,
-        Default::default(),
-        eth_payload_attributes,
-    )
-    .await?;
+    let (mut nodes, wallet) =
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+            .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
         .wallet(SilaWallet::new(wallet.wallet_gen().swap_remove(0)))
@@ -279,14 +259,9 @@ async fn test_simulate_v1_too_many_blocks_error() -> eyre::Result<()> {
             .build(),
     );
 
-    let (mut nodes, wallet) = setup_engine::<SilaNode>(
-        1,
-        chain_spec,
-        false,
-        Default::default(),
-        eth_payload_attributes,
-    )
-    .await?;
+    let (mut nodes, wallet) =
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+            .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
         .wallet(SilaWallet::new(wallet.wallet_gen().swap_remove(0)))

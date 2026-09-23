@@ -13,6 +13,7 @@
 #![warn(unused_crate_dependencies)]
 
 use futures::StreamExt;
+use rsil_metrics::common::mpsc::memory_bounded_channel;
 use rsil_sila::{
     chainspec::DEV,
     network::{
@@ -29,7 +30,6 @@ use rsil_sila::{
     },
     tasks::Runtime,
 };
-use rsil_metrics::common::mpsc::memory_bounded_channel;
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {

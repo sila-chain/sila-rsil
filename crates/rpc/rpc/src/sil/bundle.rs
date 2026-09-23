@@ -6,19 +6,19 @@ use alloy_evm::env::BlockEnvironment;
 use alloy_primitives::{uint, Keccak256, U256};
 use alloy_rpc_types_mev::{SilCallBundle, SilCallBundleResponse, SilCallBundleTransactionResult};
 use jsonrpsee::core::RpcResult;
+use revm::{
+    context::Block, context_interface::result::ResultAndState, DatabaseCommit, DatabaseRef,
+};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_evm::{ConfigureEvm, Savm};
 use rsil_rpc_eth_api::{
-    helpers::{Call, SilTransactions, LoadPendingBlock},
-    SilCallBundleApiServer, FromEthApiError, FromEvmError,
+    helpers::{Call, LoadPendingBlock, SilTransactions},
+    FromEthApiError, FromEvmError, SilCallBundleApiServer,
 };
-use rsil_rpc_eth_types::{utils::recover_raw_transaction, SilApiError, RpcInvalidTransactionError};
+use rsil_rpc_eth_types::{utils::recover_raw_transaction, RpcInvalidTransactionError, SilApiError};
 use rsil_tasks::pool::BlockingTaskGuard;
 use rsil_transaction_pool::{
-    SilBlobTransactionSidecar, SilPoolTransaction, PoolPooledTx, PoolTransaction, TransactionPool,
-};
-use revm::{
-    context::Block, context_interface::result::ResultAndState, DatabaseCommit, DatabaseRef,
+    PoolPooledTx, PoolTransaction, SilBlobTransactionSidecar, SilPoolTransaction, TransactionPool,
 };
 use std::sync::Arc;
 
@@ -68,23 +68,23 @@ where
             return Err(SilApiError::InvalidParams(
                 SilBundleError::EmptyBundleTransactions.to_string(),
             )
-            .into())
+            .into());
         }
         if block_number == 0 {
             return Err(SilApiError::InvalidParams(
                 SilBundleError::BundleMissingBlockNumber.to_string(),
             )
-            .into())
+            .into());
         }
 
         // Validate gas limit against the configured call gas limit before any DB calls
         let call_gas_limit = self.inner.eth_api.call_gas_limit();
-        if let Some(gas_limit) = gas_limit &&
-            gas_limit > call_gas_limit
+        if let Some(gas_limit) = gas_limit
+            && gas_limit > call_gas_limit
         {
             return Err(
                 SilApiError::InvalidTransaction(RpcInvalidTransactionError::GasTooHigh).into()
-            )
+            );
         }
 
         let transactions = txs
@@ -126,7 +126,7 @@ where
                     SilBundleError::Sip4844BlobGasExceeded(blob_params.max_blob_gas_per_block())
                         .to_string(),
                 )
-                .into())
+                .into());
             }
         }
 

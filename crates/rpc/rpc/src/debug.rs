@@ -16,6 +16,8 @@ use async_trait::async_trait;
 use futures::Stream;
 use jsonrpsee::core::RpcResult;
 use parking_lot::RwLock;
+use revm::{database::states::bundle_state::BundleRetention, Database, DatabaseCommit};
+use revm_inspectors::tracing::{DebugInspector, TransactionContext};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_engine_primitives::ConsensusEngineEvent;
 use rsil_errors::RsilError;
@@ -42,8 +44,6 @@ use rsil_transaction_pool::TransactionPool;
 use rsil_trie_common::{
     updates::TrieUpdates, ExecutionWitnessMode, HashedPostState, HashedStorage,
 };
-use revm::{database::states::bundle_state::BundleRetention, Database, DatabaseCommit};
-use revm_inspectors::tracing::{DebugInspector, TransactionContext};
 use serde::{Deserialize, Serialize};
 use std::{collections::VecDeque, sync::Arc};
 use tokio::sync::{AcquireError, OwnedSemaphorePermit};
@@ -77,8 +77,8 @@ where
         // Spawn a task caching bad blocks
         executor.spawn_task(async move {
             while let Some(event) = stream.next().await {
-                if let ConsensusEngineEvent::InvalidBlock { block, error } = event &&
-                    let Ok(recovered) = RecoveredBlock::try_recover_sealed(*block)
+                if let ConsensusEngineEvent::InvalidBlock { block, error } = event
+                    && let Ok(recovered) = RecoveredBlock::try_recover_sealed(*block)
                 {
                     bad_block_store.insert(recovered, error);
                 }
@@ -347,7 +347,7 @@ where
                 tx_index,
                 block.transaction_count()
             ))
-            .into())
+            .into());
         }
 
         let evm_env = self.eth_api().evm_env_for_header(block.sealed_block().sealed_header())?;
@@ -395,7 +395,7 @@ where
         opts: Option<GethDebugTracingCallOptions>,
     ) -> Result<Vec<Vec<GethTrace>>, Sil::Error> {
         if bundles.is_empty() {
-            return Err(SilApiError::InvalidParams(String::from("bundles are empty.")).into())
+            return Err(SilApiError::InvalidParams(String::from("bundles are empty.")).into());
         }
 
         let StateContext { transaction_index, block_number } = state_context.unwrap_or_default();
@@ -463,7 +463,8 @@ where
                     while let Some(tx) = transactions.next() {
                         // apply state overrides only once, before the first transaction
                         let state_overrides = state_overrides.take();
-                        let overrides = SavmOverrides::new(state_overrides, block_overrides.clone());
+                        let overrides =
+                            SavmOverrides::new(state_overrides, block_overrides.clone());
 
                         let (evm_env, tx_env) =
                             eth_api.prepare_call_env(evm_env.clone(), tx, &mut db, overrides)?;
@@ -606,7 +607,7 @@ where
             return Err(SilApiError::InvalidParams(format!(
                 "tx_index {tx_index} out of bounds for block with {transaction_count} transactions"
             ))
-            .into())
+            .into());
         }
 
         self.eth_api()

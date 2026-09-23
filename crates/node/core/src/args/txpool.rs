@@ -1,7 +1,7 @@
 //! Transaction pool arguments
 
 use crate::cli::config::RsilTransactionPoolConfig;
-use alloy_eips::sip1559::{SILA_BLOCK_GAS_LIMIT_30M, MIN_PROTOCOL_BASE_FEE};
+use alloy_eips::sip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M};
 use alloy_primitives::Address;
 use clap::{builder::Resettable, Args};
 use rsil_cli_util::{parse_duration_from_secs_or_ms, parsers::format_duration_as_secs_or_ms};

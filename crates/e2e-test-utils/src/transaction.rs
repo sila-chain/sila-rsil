@@ -1,15 +1,16 @@
 use alloy_consensus::{
-    EnvKzgSettings, EthereumTxEnvelope as SilaTxEnvelope, SidecarBuilder, SimpleCoder, TxEip4844Variant, TxEnvelope,
+    EnvKzgSettings, EthereumTxEnvelope as SilaTxEnvelope, SidecarBuilder, SimpleCoder,
+    TxEip4844Variant, TxEnvelope,
 };
-use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};
 use alloy_network::{
-    eip2718::Encodable2718, Ethereum as Sila, EthereumWallet as SilaWallet, NetworkTransactionBuilder,
-    TransactionBuilder4844,
+    eip2718::Encodable2718, Ethereum as Sila, EthereumWallet as SilaWallet,
+    NetworkTransactionBuilder, TransactionBuilder4844,
 };
 use alloy_primitives::{hex, Address, Bytes, TxKind, B256, U256};
 use alloy_rpc_types_eth::{Authorization, TransactionInput, TransactionRequest};
 use alloy_signer::SignerSync;
 use alloy_signer_local::PrivateKeySigner;
+use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};
 use eyre::Ok;
 
 /// Helper for transaction operations
@@ -129,9 +130,7 @@ impl TransactionTestContext {
     /// Signs an arbitrary [`TransactionRequest`] using the provided wallet
     pub async fn sign_tx(wallet: PrivateKeySigner, tx: TransactionRequest) -> TxEnvelope {
         let signer = SilaWallet::from(wallet);
-        <TransactionRequest as NetworkTransactionBuilder<Sila>>::build(tx, &signer)
-            .await
-            .unwrap()
+        <TransactionRequest as NetworkTransactionBuilder<Sila>>::build(tx, &signer).await.unwrap()
     }
 
     /// Creates a tx with blob sidecar and sign it, returning bytes

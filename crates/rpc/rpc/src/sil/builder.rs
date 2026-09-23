@@ -11,8 +11,8 @@ use rsil_rpc_eth_api::{
 };
 use rsil_rpc_eth_types::{
     builder::config::PendingBlockKind, fee_history::fee_history_cache_new_blocks_task,
-    receipt::SilReceiptConverter, SilStateCache, SilStateCacheConfig, FeeHistoryCache,
-    FeeHistoryCacheConfig, ForwardConfig, GasCap, GasPriceOracle, GasPriceOracleConfig,
+    receipt::SilReceiptConverter, FeeHistoryCache, FeeHistoryCacheConfig, ForwardConfig, GasCap,
+    GasPriceOracle, GasPriceOracleConfig, SilStateCache, SilStateCacheConfig,
 };
 use rsil_rpc_server_types::constants::{
     DEFAULT_ETH_PROOF_WINDOW, DEFAULT_MAX_BLOCKING_IO_REQUEST, DEFAULT_MAX_SIMULATE_BLOCKS,

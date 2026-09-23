@@ -22,13 +22,13 @@ use assert_matches::assert_matches;
 use rsil_chain_state::{test_utils::TestBlockBuilder, BlockState, StateTrieOverlayManager};
 use rsil_chainspec::{ChainSpec, HOLESKY, SILA_MAINNET};
 use rsil_engine_primitives::{EngineApiValidator, ForkchoiceStatus, NoopInvalidBlockHook};
-use rsil_sila_consensus::SilBeaconConsensus;
-use rsil_sila_engine_primitives::{SilEngineTypes, SilPayloadAttributes};
-use rsil_sila_primitives::{Block, SilPrimitives};
 use rsil_evm_sila::MockEvmConfig;
 use rsil_payload_builder::PayloadServiceCommand;
 use rsil_primitives_traits::Block as _;
 use rsil_provider::{test_utils::MockEthProvider, BalStoreHandle, InMemoryBalStore, RawBal};
+use rsil_sila_consensus::SilBeaconConsensus;
+use rsil_sila_engine_primitives::{SilEngineTypes, SilPayloadAttributes};
+use rsil_sila_primitives::{Block, SilPrimitives};
 use rsil_tasks::spawn_os_thread;
 use rsil_trie_common::ComputedTrieData;
 use std::{
@@ -666,7 +666,8 @@ fn process_payload_attributes_shares_sparse_trie_during_validation_fallback() {
         .with_state_root_fallback(true)
         .with_share_sparse_trie_with_payload_builder(true);
     let blocks: Vec<_> = TestBlockBuilder::sil().get_executed_blocks(1..2).collect();
-    let mut test_harness = TestHarness::with_config(SILA_MAINNET.clone(), config).with_blocks(blocks);
+    let mut test_harness =
+        TestHarness::with_config(SILA_MAINNET.clone(), config).with_blocks(blocks);
     let head =
         test_harness.blocks.last().unwrap().recovered_block().clone_sealed_header().clone_header();
     let head_hash = test_harness.blocks.last().unwrap().recovered_block().hash();
@@ -1169,8 +1170,8 @@ async fn test_get_canonical_blocks_to_persist() {
     assert!(!blocks_to_persist.iter().any(|b| b.recovered_block().hash() == fork_block_hash));
 
     // check that the original block 4 is still included
-    assert!(blocks_to_persist.iter().any(|b| b.recovered_block().number == 4 &&
-        b.recovered_block().hash() == blocks[4].recovered_block().hash()));
+    assert!(blocks_to_persist.iter().any(|b| b.recovered_block().number == 4
+        && b.recovered_block().hash() == blocks[4].recovered_block().hash()));
 
     // check that if we advance persistence, the persistence action is the correct value
     test_harness.tree.advance_persistence().expect("advancing persistence should succeed");

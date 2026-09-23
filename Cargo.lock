@@ -1193,6 +1193,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "ark-ff"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7a806ac6c8307b929df4645776290a50ee2aac754ad09d8bdf73391309e43af"
+dependencies = [
+ "ark-ff-asm 0.6.0",
+ "ark-ff-macros 0.6.0",
+ "ark-serialize 0.6.0",
+ "ark-std 0.6.0",
+ "digest 0.10.7",
+ "educe",
+ "num-bigint",
+ "num-traits",
+ "zeroize",
+]
+
+[[package]]
 name = "ark-ff-asm"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1217,6 +1234,16 @@ name = "ark-ff-asm"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62945a2f7e6de02a31fe400aa489f0e0f5b2502e69f95f853adb82a96c7a6b60"
+dependencies = [
+ "quote",
+ "syn 2.0.118",
+]
+
+[[package]]
+name = "ark-ff-asm"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1479009684adc073dff49a1025d3a7065b317a9ead25aaaca38cdc70058ba8a2"
 dependencies = [
  "quote",
  "syn 2.0.118",
@@ -1252,6 +1279,19 @@ name = "ark-ff-macros"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09be120733ee33f7693ceaa202ca41accd5653b779563608f1234f78ae07c4b3"
+dependencies = [
+ "num-bigint",
+ "num-traits",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.118",
+]
+
+[[package]]
+name = "ark-ff-macros"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a0691ed21ef00ef89c1e9bda832eba493dda3ec2f8d892fb25b705f73f06bb8"
 dependencies = [
  "num-bigint",
  "num-traits",
@@ -1331,7 +1371,7 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f4d068aaf107ebcd7dfb52bc748f8030e0fc930ac8e360146ca54c1203088f7"
 dependencies = [
- "ark-serialize-derive",
+ "ark-serialize-derive 0.5.0",
  "ark-std 0.5.0",
  "arrayvec",
  "digest 0.10.7",
@@ -1339,10 +1379,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "ark-serialize"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a74dd304fd536fb95d0a328e72be759209cc496a9da094c5bc56e5fea4f9e86b"
+dependencies = [
+ "ark-serialize-derive 0.6.0",
+ "ark-std 0.6.0",
+ "digest 0.10.7",
+ "num-bigint",
+ "serde_with",
+]
+
+[[package]]
 name = "ark-serialize-derive"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "213888f660fddcca0d257e88e54ac05bca01885f258ccdf695bafd77031bb69d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.118",
+]
+
+[[package]]
+name = "ark-serialize-derive"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f153690697a2b91e5e1251ff98411ee5371500a111a0fd317a70e588eb300f9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1374,6 +1438,16 @@ name = "ark-std"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "246a225cc6131e9ee4f24619af0f19d67761fff15d7ccc22e42b80846e69449a"
+dependencies = [
+ "num-traits",
+ "rand 0.8.6",
+]
+
+[[package]]
+name = "ark-std"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "367c9c827ed431bff6868b7aa926e05b16eb46603cc8b6e768e4a5553fa1d155"
 dependencies = [
  "num-traits",
  "rand 0.8.6",
@@ -3213,22 +3287,22 @@ dependencies = [
  "alloy-primitives",
  "alloy-rlp",
  "rayon",
+ "reth-primitives-traits",
+ "revm",
  "rsil-chainspec",
  "rsil-consensus",
  "rsil-db",
  "rsil-db-api",
  "rsil-db-common",
- "rsil-sila-consensus",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "reth-primitives-traits",
  "rsil-provider",
  "rsil-revm",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-consensus",
+ "rsil-sila-primitives",
  "rsil-tracing",
  "rsil-trie",
  "rsil-trie-db",
- "revm",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
@@ -3462,20 +3536,20 @@ dependencies = [
  "alloy-rpc-types",
  "bytes",
  "futures",
+ "reth-primitives-traits",
  "rsil-chainspec",
  "rsil-discv4",
  "rsil-engine-primitives",
- "rsil-sil-wire",
- "rsil-sil-wire-types",
- "rsil-sila-forks",
- "rsil-sila-primitives",
  "rsil-network",
  "rsil-network-api",
  "rsil-network-peers",
  "rsil-node-sila",
  "rsil-payload-primitives",
- "reth-primitives-traits",
  "rsil-provider",
+ "rsil-sil-wire",
+ "rsil-sil-wire-types",
+ "rsil-sila-forks",
+ "rsil-sila-primitives",
  "rsil-tasks",
  "rsil-tracing",
  "secp256k1 0.30.0",
@@ -3533,25 +3607,12 @@ dependencies = [
  "alloy-rpc-types",
  "eyre",
  "rsil-basic-payload-builder",
+ "rsil-payload-builder",
  "rsil-sila",
  "rsil-sila-payload-builder",
- "rsil-payload-builder",
  "rsil-tracing",
  "serde",
  "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "example-custom-savm"
-version = "0.0.0"
-dependencies = [
- "alloy-evm",
- "alloy-genesis",
- "alloy-primitives",
- "eyre",
- "rsil-sila",
- "rsil-tracing",
  "tokio",
 ]
 
@@ -3585,9 +3646,9 @@ dependencies = [
  "eyre",
  "futures-util",
  "rsil-basic-payload-builder",
+ "rsil-payload-builder",
  "rsil-sila",
  "rsil-sila-payload-builder",
- "rsil-payload-builder",
  "tracing",
 ]
 
@@ -3616,6 +3677,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-custom-savm"
+version = "0.0.0"
+dependencies = [
+ "alloy-evm",
+ "alloy-genesis",
+ "alloy-primitives",
+ "eyre",
+ "rsil-sila",
+ "rsil-tracing",
+ "tokio",
+]
+
+[[package]]
 name = "example-custom-state-root"
 version = "0.0.0"
 dependencies = [
@@ -3624,12 +3698,12 @@ dependencies = [
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "eyre",
+ "reth-primitives-traits",
  "rsil-chain-state",
  "rsil-engine-tree",
- "rsil-sila",
- "rsil-savm",
- "reth-primitives-traits",
  "rsil-provider",
+ "rsil-savm",
+ "rsil-sila",
  "rsil-trie",
  "serde_json",
  "tokio",
@@ -3674,8 +3748,8 @@ dependencies = [
  "futures",
  "rsil-discv4",
  "rsil-ecies",
- "rsil-sila",
  "rsil-network-peers",
+ "rsil-sila",
  "secp256k1 0.30.0",
  "tokio",
 ]
@@ -3696,8 +3770,8 @@ version = "0.0.0"
 dependencies = [
  "eyre",
  "futures",
- "rsil-sila",
  "rsil-metrics",
+ "rsil-sila",
  "rsil-tracing",
  "tokio",
 ]
@@ -7538,315 +7612,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1e061d1b48cb8d38042de4ae0a7a6401009d6143dc80d2e2d6f31f0bdd6470c7"
 
 [[package]]
-name = "rsil"
-version = "2.4.0"
-dependencies = [
- "alloy-node-bindings",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types",
- "alloy-rpc-types-eth",
- "aquamarine",
- "backon",
- "clap",
- "rsil-chainspec",
- "rsil-cli-runner",
- "rsil-cli-util",
- "rsil-consensus",
- "rsil-consensus-common",
- "rsil-db",
- "rsil-sila-cli",
- "rsil-sila-payload-builder",
- "rsil-sila-primitives",
- "rsil-network",
- "rsil-network-api",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-node-metrics",
- "rsil-payload-builder",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-rpc",
- "rsil-rpc-api",
- "rsil-rpc-builder",
- "rsil-rpc-convert",
- "rsil-rpc-sil-types",
- "rsil-rpc-server-types",
- "rsil-tasks",
- "rsil-transaction-pool",
- "serde_json",
- "tar",
- "tempfile",
- "tokio",
- "toml",
- "tracing",
- "zstd",
-]
-
-[[package]]
-name = "rsil-basic-payload-builder"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "futures-core",
- "futures-util",
- "metrics",
- "rsil-chain-state",
- "rsil-execution-cache",
- "rsil-metrics",
- "rsil-payload-builder",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-revm",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-trie-parallel",
- "serde",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-bb"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-evm",
- "alloy-hardforks 0.4.7",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types",
- "async-trait",
- "clap",
- "crossbeam-channel",
- "derive_more",
- "eyre",
- "jsonrpsee",
- "metrics",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-cli-util",
- "rsil-consensus",
- "rsil-engine-primitives",
- "rsil-engine-tree",
- "rsil-errors",
- "rsil-sila-cli",
- "rsil-sila-consensus",
- "rsil-sila-forks",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-rpc-api",
- "rsil-rpc-engine-api",
- "rsil-storage-errors",
- "revm",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-chain-state"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-signer",
- "alloy-signer-local",
- "derive_more",
- "metrics",
- "parking_lot",
- "pin-project",
- "rand 0.9.4",
- "rayon",
- "rsil-chainspec",
- "rsil-errors",
- "rsil-sila-primitives",
- "rsil-execution-types",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-trie",
- "rsil-trie-sparse",
- "revm",
- "serde",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-chainspec"
-version = "2.4.0"
-dependencies = [
- "alloy-chains",
- "alloy-consensus",
- "alloy-eips",
- "alloy-evm",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-trie",
- "auto_impl",
- "derive_more",
- "rsil-sila-forks",
- "rsil-network-peers",
- "reth-primitives-traits",
- "serde_json",
-]
-
-[[package]]
-name = "rsil-cli"
-version = "2.4.0"
-dependencies = [
- "alloy-genesis",
- "clap",
- "eyre",
- "rsil-cli-runner",
- "rsil-db",
- "serde_json",
-]
-
-[[package]]
-name = "rsil-cli-commands"
-version = "2.4.0"
-dependencies = [
- "alloy-chains",
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "arbitrary",
- "backon",
- "blake3",
- "clap",
- "comfy-table",
- "crossterm",
- "eyre",
- "fdlimit",
- "futures",
- "human_bytes",
- "humantime",
- "itertools 0.14.0",
- "lz4",
- "metrics",
- "parking_lot",
- "proptest",
- "proptest-arbitrary-interop",
- "ratatui",
- "rayon",
- "reqwest",
- "rsil-chainspec",
- "rsil-cli",
- "rsil-cli-runner",
- "rsil-cli-util",
- "reth-codecs",
- "rsil-config",
- "rsil-consensus",
- "rsil-db",
- "rsil-db-api",
- "rsil-db-common",
- "rsil-discv4",
- "rsil-discv5",
- "rsil-downloaders",
- "rsil-ecies",
- "rsil-era",
- "rsil-era-downloader",
- "rsil-era-utils",
- "rsil-sil-wire",
- "rsil-sila-cli",
- "rsil-sila-primitives",
- "rsil-etl",
- "rsil-savm",
- "rsil-exex",
- "rsil-fs-util",
- "rsil-net-nat",
- "rsil-network",
- "rsil-network-p2p",
- "rsil-network-peers",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-events",
- "rsil-node-metrics",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune",
- "rsil-prune-types",
- "rsil-revm",
- "rsil-stages",
- "rsil-stages-types",
- "rsil-static-file",
- "rsil-static-file-types",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-trie",
- "rsil-trie-common",
- "rsil-trie-db",
- "secp256k1 0.30.0",
- "serde",
- "serde_json",
- "socket2",
- "tar",
- "tempfile",
- "tokio",
- "tokio-stream",
- "toml",
- "tracing",
- "url",
- "zstd",
-]
-
-[[package]]
-name = "rsil-cli-runner"
-version = "2.4.0"
-dependencies = [
- "rsil-tasks",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-cli-util"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "cfg-if",
- "eyre",
- "libc",
- "rand 0.8.6",
- "rand 0.9.4",
- "rsil-fs-util",
- "rsil-tracing",
- "secp256k1 0.30.0",
- "serde",
- "snmalloc-rs",
- "thiserror 2.0.18",
- "tikv-jemalloc-sys",
- "tikv-jemallocator",
- "tracy-client",
-]
-
-[[package]]
 name = "reth-codecs"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7876,1699 +7641,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.118",
-]
-
-[[package]]
-name = "rsil-config"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "eyre",
- "humantime-serde",
- "rsil-network-peers",
- "rsil-network-types",
- "rsil-prune-types",
- "rsil-stages-types",
- "rsil-static-file-types",
- "serde",
- "tempfile",
- "toml",
- "url",
-]
-
-[[package]]
-name = "rsil-consensus"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-primitives",
- "auto_impl",
- "rsil-execution-types",
- "reth-primitives-traits",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-consensus-common"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "rand 0.9.4",
- "rsil-chainspec",
- "rsil-consensus",
- "rsil-sila-primitives",
- "reth-primitives-traits",
-]
-
-[[package]]
-name = "rsil-consensus-debug-client"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-json-rpc",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types-engine",
- "alloy-transport",
- "auto_impl",
- "derive_more",
- "eyre",
- "futures",
- "reqwest",
- "rsil-node-api",
- "rsil-tracing",
- "ringbuffer",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "rsil-db"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "arbitrary",
- "assert_matches",
- "derive_more",
- "eyre",
- "libc",
- "metrics",
- "page_size",
- "parking_lot",
- "proptest",
- "quanta",
- "rsil-db-api",
- "rsil-fs-util",
- "rsil-libmdbx",
- "rsil-metrics",
- "rsil-nippy-jar",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-static-file-types",
- "rsil-storage-errors",
- "rsil-tracing",
- "rustc-hash",
- "serde",
- "serde_json",
- "strum 0.27.2",
- "sysinfo",
- "tempfile",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "rsil-db-api"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "arbitrary",
- "arrayvec",
- "bytes",
- "derive_more",
- "metrics",
- "modular-bitfield",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.9.4",
- "reth-codecs",
- "rsil-db-models",
- "rsil-sila-primitives",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-stages-types",
- "rsil-storage-errors",
- "rsil-trie-common",
- "roaring",
- "serde",
- "test-fuzz",
-]
-
-[[package]]
-name = "rsil-db-common"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-genesis",
- "alloy-primitives",
- "boyer-moore-magiclen",
- "eyre",
- "rsil-chainspec",
- "reth-codecs",
- "rsil-config",
- "rsil-db",
- "rsil-db-api",
- "rsil-etl",
- "rsil-execution-errors",
- "rsil-fs-util",
- "rsil-node-types",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-stages-types",
- "rsil-static-file-types",
- "rsil-tasks",
- "rsil-trie",
- "rsil-trie-db",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "rsil-db-models"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "arbitrary",
- "bytes",
- "modular-bitfield",
- "proptest",
- "proptest-arbitrary-interop",
- "reth-codecs",
- "reth-primitives-traits",
- "serde",
-]
-
-[[package]]
-name = "rsil-discv4"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "alloy-rlp",
- "assert_matches",
- "discv5",
- "enr",
- "itertools 0.14.0",
- "parking_lot",
- "rand 0.8.6",
- "rsil-sila-forks",
- "rsil-net-banlist",
- "rsil-net-nat",
- "rsil-network-peers",
- "rsil-tracing",
- "schnellru",
- "secp256k1 0.30.0",
- "serde",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-discv5"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "alloy-rlp",
- "derive_more",
- "discv5",
- "enr",
- "futures",
- "itertools 0.14.0",
- "metrics",
- "rand 0.8.6",
- "rand 0.9.4",
- "rsil-chainspec",
- "rsil-sila-forks",
- "rsil-metrics",
- "rsil-network-peers",
- "rsil-tracing",
- "secp256k1 0.30.0",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-dns-discovery"
-version = "2.4.0"
-dependencies = [
- "alloy-chains",
- "alloy-primitives",
- "alloy-rlp",
- "dashmap",
- "data-encoding",
- "enr",
- "hickory-resolver",
- "linked_hash_set",
- "rand 0.9.4",
- "rsil-chainspec",
- "rsil-sila-forks",
- "rsil-network-peers",
- "rsil-tokio-util",
- "rsil-tracing",
- "schnellru",
- "secp256k1 0.30.0",
- "serde",
- "serde_with",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-downloaders"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "assert_matches",
- "async-compression",
- "futures",
- "futures-util",
- "itertools 0.14.0",
- "metrics",
- "pin-project",
- "rand 0.9.4",
- "rayon",
- "rsil-chainspec",
- "rsil-config",
- "rsil-consensus",
- "rsil-sila-primitives",
- "rsil-metrics",
- "rsil-network-p2p",
- "rsil-network-peers",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tracing",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "rsil-e2e-test-utils"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-network",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rlp",
- "alloy-rpc-types-engine",
- "alloy-rpc-types-eth",
- "alloy-signer",
- "alloy-signer-local",
- "derive_more",
- "eyre",
- "futures-util",
- "jsonrpsee",
- "rsil-chainspec",
- "rsil-cli-commands",
- "rsil-config",
- "rsil-consensus",
- "rsil-db",
- "rsil-db-common",
- "rsil-engine-local",
- "rsil-engine-primitives",
- "rsil-sila-primitives",
- "rsil-network-api",
- "rsil-network-p2p",
- "rsil-network-peers",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-payload-builder",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-rpc-api",
- "rsil-rpc-builder",
- "rsil-rpc-sil-api",
- "rsil-rpc-server-types",
- "rsil-stages-types",
- "rsil-tasks",
- "rsil-tokio-util",
- "rsil-tracing",
- "revm",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-stream",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "rsil-ecies"
-version = "2.4.0"
-dependencies = [
- "aes",
- "alloy-primitives",
- "alloy-rlp",
- "byteorder",
- "cipher",
- "concat-kdf",
- "ctr",
- "digest 0.10.7",
- "futures",
- "hmac",
- "pin-project",
- "rand 0.8.6",
- "rsil-network-peers",
- "secp256k1 0.30.0",
- "sha2",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "rsil-engine-local"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "eyre",
- "futures-util",
- "rsil-chainspec",
- "rsil-engine-primitives",
- "rsil-sila-engine-primitives",
- "rsil-payload-builder",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-storage-api",
- "rsil-transaction-pool",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-engine-primitives"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "auto_impl",
- "futures",
- "rsil-chain-state",
- "rsil-errors",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-execution-errors",
- "rsil-execution-types",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-storage-api",
- "rsil-trie-common",
- "serde",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "rsil-engine-tree"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-evm",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-engine",
- "assert_matches",
- "crossbeam-channel",
- "derive_more",
- "eyre",
- "futures",
- "indexmap 2.14.0",
- "metrics",
- "metrics-util",
- "moka",
- "proptest",
- "rand 0.8.6",
- "rand 0.9.4",
- "rayon",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-consensus",
- "rsil-db",
- "rsil-db-common",
- "rsil-e2e-test-utils",
- "rsil-engine-primitives",
- "rsil-errors",
- "rsil-sila-consensus",
- "rsil-sila-engine-primitives",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-execution-cache",
- "rsil-execution-types",
- "rsil-exex-types",
- "rsil-metrics",
- "rsil-network-p2p",
- "rsil-node-sila",
- "rsil-payload-builder",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune",
- "rsil-prune-types",
- "rsil-revm",
- "rsil-stages",
- "rsil-stages-api",
- "rsil-static-file",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tracing",
- "rsil-trie",
- "rsil-trie-common",
- "rsil-trie-db",
- "rsil-trie-parallel",
- "rsil-trie-sparse",
- "revm",
- "schnellru",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-engine-util"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-engine",
- "eyre",
- "futures",
- "itertools 0.14.0",
- "pin-project",
- "rsil-chainspec",
- "rsil-engine-primitives",
- "rsil-engine-tree",
- "rsil-errors",
- "rsil-savm",
- "rsil-fs-util",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-revm",
- "rsil-storage-api",
- "serde",
- "serde_json",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "rsil-era"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-beacon",
- "alloy-rpc-types-engine",
- "ethereum_ssz",
- "ethereum_ssz_derive",
- "eyre",
- "rand 0.9.4",
- "reqwest",
- "rsil-era-downloader",
- "rsil-sila-primitives",
- "sha2",
- "snap",
- "tempfile",
- "test-case",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "rsil-era-downloader"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "bytes",
- "eyre",
- "futures",
- "futures-util",
- "reqwest",
- "rsil-era",
- "rsil-fs-util",
- "sha2",
- "tempfile",
- "test-case",
- "tokio",
-]
-
-[[package]]
-name = "rsil-era-utils"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rlp",
- "bytes",
- "eyre",
- "futures-util",
- "reqwest",
- "rsil-db-api",
- "rsil-db-common",
- "rsil-era",
- "rsil-era-downloader",
- "rsil-sila-primitives",
- "rsil-etl",
- "rsil-fs-util",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-stages-types",
- "rsil-storage-api",
- "tempfile",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "rsil-errors"
-version = "2.4.0"
-dependencies = [
- "rsil-consensus",
- "rsil-execution-errors",
- "rsil-storage-errors",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-sil-wire"
-version = "2.4.0"
-dependencies = [
- "alloy-chains",
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "arbitrary",
- "async-stream",
- "bytes",
- "derive_more",
- "futures",
- "pin-project",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.8.6",
- "rand 0.9.4",
- "reth-codecs",
- "rsil-ecies",
- "rsil-sil-wire-types",
- "rsil-sila-forks",
- "rsil-metrics",
- "rsil-network-peers",
- "reth-primitives-traits",
- "rsil-tracing",
- "secp256k1 0.30.0",
- "serde",
- "snap",
- "test-fuzz",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "rsil-sil-wire-types"
-version = "2.4.0"
-dependencies = [
- "alloy-chains",
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-genesis",
- "alloy-hardforks 0.4.7",
- "alloy-primitives",
- "alloy-rlp",
- "arbitrary",
- "bytes",
- "derive_more",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.9.4",
- "rsil-chainspec",
- "reth-codecs-derive",
- "rsil-sila-primitives",
- "reth-primitives-traits",
- "serde",
- "test-case",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-sila"
-version = "2.4.0"
-dependencies = [
- "alloy-rpc-types-engine",
- "alloy-rpc-types-eth",
- "rsil-chainspec",
- "rsil-cli-util",
- "reth-codecs",
- "rsil-consensus",
- "rsil-consensus-common",
- "rsil-db",
- "rsil-engine-local",
- "rsil-sil-wire",
- "rsil-sila-cli",
- "rsil-sila-consensus",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-exex",
- "rsil-network",
- "rsil-network-api",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-sila",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-rpc",
- "rsil-rpc-api",
- "rsil-rpc-builder",
- "rsil-rpc-sil-types",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-transaction-pool",
- "rsil-trie",
- "rsil-trie-db",
-]
-
-[[package]]
-name = "rsil-sila-cli"
-version = "2.4.0"
-dependencies = [
- "clap",
- "eyre",
- "rsil-chainspec",
- "rsil-cli",
- "rsil-cli-commands",
- "rsil-cli-runner",
- "rsil-db",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-node-metrics",
- "rsil-rpc-server-types",
- "rsil-tasks",
- "rsil-tracing",
- "tempfile",
- "tracing",
-]
-
-[[package]]
-name = "rsil-sila-consensus"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "rsil-chainspec",
- "rsil-consensus",
- "rsil-consensus-common",
- "rsil-sila-primitives",
- "rsil-execution-types",
- "reth-primitives-traits",
- "tracing",
-]
-
-[[package]]
-name = "rsil-sila-engine-primitives"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "rsil-engine-primitives",
- "rsil-sila-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-sila-forks"
-version = "2.4.0"
-dependencies = [
- "alloy-eip2124",
- "alloy-hardforks 0.4.7",
- "alloy-primitives",
- "arbitrary",
- "auto_impl",
- "once_cell",
- "rustc-hash",
-]
-
-[[package]]
-name = "rsil-sila-payload-builder"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-engine",
- "rsil-basic-payload-builder",
- "rsil-chainspec",
- "rsil-consensus-common",
- "rsil-errors",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-execution-cache",
- "rsil-payload-builder",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "rsil-payload-validator",
- "reth-primitives-traits",
- "rsil-revm",
- "rsil-storage-api",
- "rsil-transaction-pool",
- "revm",
- "tracing",
-]
-
-[[package]]
-name = "rsil-sila-primitives"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-eth",
- "arbitrary",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.9.4",
- "reth-codecs",
- "reth-primitives-traits",
- "reth-zstd-compressors",
- "serde",
- "serde_json",
- "serde_with",
-]
-
-[[package]]
-name = "rsil-etl"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "rayon",
- "rsil-db-api",
- "tempfile",
-]
-
-[[package]]
-name = "rsil-savm"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-evm",
- "alloy-primitives",
- "auto_impl",
- "derive_more",
- "futures-util",
- "metrics",
- "rayon",
- "rsil-sila-primitives",
- "rsil-execution-errors",
- "rsil-execution-types",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-storage-api",
- "rsil-storage-errors",
- "rsil-trie-common",
- "revm",
-]
-
-[[package]]
-name = "rsil-savm-sila"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-evm",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "metrics",
- "rsil-chainspec",
- "rsil-sila-forks",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-execution-types",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-storage-errors",
- "rsil-testing-utils",
- "revm",
- "revmc",
- "secp256k1 0.30.0",
-]
-
-[[package]]
-name = "rsil-execution-cache"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "fixed-cache",
- "metrics",
- "parking_lot",
- "rsil-errors",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-trie",
- "revm",
- "tracing",
-]
-
-[[package]]
-name = "rsil-execution-errors"
-version = "2.4.0"
-dependencies = [
- "alloy-evm",
- "alloy-primitives",
- "alloy-rlp",
- "nybbles",
- "rsil-storage-errors",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-execution-types"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-evm",
- "alloy-primitives",
- "alloy-rlp",
- "arbitrary",
- "bincode",
- "derive_more",
- "rand 0.9.4",
- "rsil-sila-primitives",
- "reth-primitives-traits",
- "rsil-trie-common",
- "revm",
- "serde",
- "serde_with",
-]
-
-[[package]]
-name = "rsil-exex"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-genesis",
- "alloy-primitives",
- "eyre",
- "futures",
- "itertools 0.14.0",
- "metrics",
- "parking_lot",
- "rand 0.9.4",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-config",
- "rsil-db-common",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-exex-types",
- "rsil-fs-util",
- "rsil-metrics",
- "rsil-node-api",
- "rsil-node-core",
- "rsil-payload-builder",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune-types",
- "rsil-revm",
- "rsil-stages-api",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tracing",
- "rsil-trie-common",
- "rmp-serde",
- "secp256k1 0.30.0",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tracing",
-]
-
-[[package]]
-name = "rsil-exex-test-utils"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "eyre",
- "futures-util",
- "rsil-chainspec",
- "rsil-config",
- "rsil-consensus",
- "rsil-db",
- "rsil-db-common",
- "rsil-sila-primitives",
- "rsil-savm-sila",
- "rsil-execution-types",
- "rsil-exex",
- "rsil-network",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-payload-builder",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-tasks",
- "rsil-transaction-pool",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "rsil-exex-types"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "arbitrary",
- "bincode",
- "rand 0.9.4",
- "rsil-chain-state",
- "rsil-sila-primitives",
- "rsil-execution-types",
- "reth-primitives-traits",
- "serde",
- "serde_with",
-]
-
-[[package]]
-name = "rsil-fs-util"
-version = "2.4.0"
-dependencies = [
- "serde",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-invalid-block-hooks"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-debug",
- "eyre",
- "futures",
- "jsonrpsee",
- "pretty_assertions",
- "rsil-chainspec",
- "rsil-engine-primitives",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-rpc-api",
- "rsil-testing-utils",
- "rsil-tracing",
- "rsil-trie",
- "revm",
- "serde",
- "serde_json",
- "tempfile",
-]
-
-[[package]]
-name = "rsil-ipc"
-version = "2.4.0"
-dependencies = [
- "bytes",
- "futures",
- "futures-util",
- "interprocess",
- "jsonrpsee",
- "pin-project",
- "rand 0.9.4",
- "rsil-tracing",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tower",
- "tracing",
-]
-
-[[package]]
-name = "rsil-libmdbx"
-version = "2.4.0"
-dependencies = [
- "bitflags 2.13.0",
- "byteorder",
- "crossbeam-queue",
- "dashmap",
- "derive_more",
- "parking_lot",
- "rsil-mdbx-sys",
- "smallvec",
- "tempfile",
- "thiserror 2.0.18",
- "tracing",
-]
-
-[[package]]
-name = "rsil-mdbx-sys"
-version = "2.4.0"
-dependencies = [
- "bindgen",
- "cc",
-]
-
-[[package]]
-name = "rsil-metrics"
-version = "2.4.0"
-dependencies = [
- "futures",
- "metrics",
- "metrics-derive",
- "reth-primitives-traits",
- "tokio",
- "tokio-util",
-]
-
-[[package]]
-name = "rsil-net-banlist"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "ipnet",
-]
-
-[[package]]
-name = "rsil-net-nat"
-version = "2.4.0"
-dependencies = [
- "futures-util",
- "if-addrs",
- "reqwest",
- "rsil-tracing",
- "serde_with",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-network"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rlp",
- "aquamarine",
- "auto_impl",
- "derive_more",
- "discv5",
- "enr",
- "futures",
- "itertools 0.14.0",
- "metrics",
- "parking_lot",
- "pin-project",
- "rand 0.8.6",
- "rand 0.9.4",
- "rayon",
- "rsil-chainspec",
- "rsil-consensus",
- "rsil-discv4",
- "rsil-discv5",
- "rsil-dns-discovery",
- "rsil-ecies",
- "rsil-sil-wire",
- "rsil-sil-wire-types",
- "rsil-sila-forks",
- "rsil-sila-primitives",
- "rsil-savm-sila",
- "rsil-fs-util",
- "rsil-metrics",
- "rsil-net-banlist",
- "rsil-network",
- "rsil-network-api",
- "rsil-network-p2p",
- "rsil-network-peers",
- "rsil-network-types",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-tokio-util",
- "rsil-tracing",
- "rsil-transaction-pool",
- "rustc-hash",
- "schnellru",
- "secp256k1 0.30.0",
- "serde",
- "smallvec",
- "socket2",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-util",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "rsil-network-api"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rpc-types-admin",
- "alloy-rpc-types-eth",
- "auto_impl",
- "derive_more",
- "enr",
- "futures",
- "rsil-sil-wire-types",
- "rsil-sila-forks",
- "rsil-network-p2p",
- "rsil-network-peers",
- "rsil-network-types",
- "rsil-tokio-util",
- "serde",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
-]
-
-[[package]]
-name = "rsil-network-p2p"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-primitives",
- "auto_impl",
- "derive_more",
- "futures",
- "parking_lot",
- "rsil-consensus",
- "rsil-sil-wire-types",
- "rsil-sila-primitives",
- "rsil-network-peers",
- "rsil-network-types",
- "reth-primitives-traits",
- "rsil-storage-errors",
- "test-case",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-network-peers"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "alloy-rlp",
- "enr",
- "rand 0.8.6",
- "rand 0.9.4",
- "secp256k1 0.30.0",
- "serde_json",
- "serde_with",
- "thiserror 2.0.18",
- "tokio",
- "url",
-]
-
-[[package]]
-name = "rsil-network-types"
-version = "2.4.0"
-dependencies = [
- "alloy-eip2124",
- "humantime-serde",
- "rsil-net-banlist",
- "rsil-network-peers",
- "serde",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "rsil-nippy-jar"
-version = "2.4.0"
-dependencies = [
- "anyhow",
- "bincode",
- "derive_more",
- "lz4_flex",
- "memmap2",
- "rand 0.9.4",
- "rsil-fs-util",
- "serde",
- "tempfile",
- "thiserror 2.0.18",
- "tracing",
- "zstd",
-]
-
-[[package]]
-name = "rsil-node-api"
-version = "2.4.0"
-dependencies = [
- "alloy-rpc-types-engine",
- "eyre",
- "rsil-basic-payload-builder",
- "rsil-consensus",
- "rsil-db-api",
- "rsil-engine-primitives",
- "rsil-savm",
- "rsil-network-api",
- "rsil-node-core",
- "rsil-node-types",
- "rsil-payload-builder",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "rsil-provider",
- "rsil-tasks",
- "rsil-tokio-util",
- "rsil-transaction-pool",
-]
-
-[[package]]
-name = "rsil-node-builder"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types",
- "alloy-rpc-types-engine",
- "aquamarine",
- "eyre",
- "fdlimit",
- "futures",
- "jsonrpsee",
- "parking_lot",
- "rayon",
- "rsil-basic-payload-builder",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-config",
- "rsil-consensus",
- "rsil-consensus-debug-client",
- "rsil-db",
- "rsil-db-api",
- "rsil-db-common",
- "rsil-downloaders",
- "rsil-engine-local",
- "rsil-engine-primitives",
- "rsil-engine-tree",
- "rsil-engine-util",
- "rsil-sila-engine-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-exex",
- "rsil-fs-util",
- "rsil-invalid-block-hooks",
- "rsil-network",
- "rsil-network-api",
- "rsil-network-p2p",
- "rsil-node-api",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-node-ethstats",
- "rsil-node-events",
- "rsil-node-metrics",
- "rsil-payload-builder",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune",
- "rsil-rpc",
- "rsil-rpc-api",
- "rsil-rpc-builder",
- "rsil-rpc-engine-api",
- "rsil-rpc-sil-types",
- "rsil-rpc-layer",
- "rsil-stages",
- "rsil-static-file",
- "rsil-tasks",
- "rsil-tokio-util",
- "rsil-tracing",
- "rsil-transaction-pool",
- "rsil-trie-db",
- "secp256k1 0.30.0",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-node-core"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "clap",
- "derive_more",
- "dirs-next",
- "eyre",
- "futures",
- "humantime",
- "ipnet",
- "proptest",
- "rand 0.9.4",
- "rsil-chainspec",
- "rsil-cli-util",
- "rsil-config",
- "rsil-consensus",
- "rsil-db",
- "rsil-discv4",
- "rsil-discv5",
- "rsil-engine-local",
- "rsil-engine-primitives",
- "rsil-sila-forks",
- "rsil-net-banlist",
- "rsil-net-nat",
- "rsil-network",
- "rsil-network-p2p",
- "rsil-network-peers",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-rpc-convert",
- "rsil-rpc-sil-types",
- "rsil-rpc-server-types",
- "rsil-stages-types",
- "rsil-storage-api",
- "rsil-storage-errors",
- "rsil-tasks",
- "rsil-tracing",
- "rsil-tracing-otlp",
- "rsil-transaction-pool",
- "secp256k1 0.30.0",
- "serde",
- "strum 0.27.2",
- "thiserror 2.0.18",
- "tokio",
- "toml",
- "tracing",
- "url",
- "vergen",
- "vergen-git2",
-]
-
-[[package]]
-name = "rsil-node-sila"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-contract",
- "alloy-eips",
- "alloy-genesis",
- "alloy-network",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types-beacon",
- "alloy-rpc-types-engine",
- "alloy-rpc-types-eth",
- "alloy-rpc-types-trace",
- "alloy-signer",
- "alloy-sol-types",
- "enr",
- "ethereum_ssz",
- "ethereum_ssz_derive",
- "eyre",
- "futures",
- "http-body-util",
- "jsonrpsee",
- "jsonrpsee-core",
- "rand 0.9.4",
- "reqwest",
- "rsil-chainspec",
- "rsil-db",
- "rsil-e2e-test-utils",
- "rsil-engine-local",
- "rsil-engine-primitives",
- "rsil-sila-consensus",
- "rsil-sila-engine-primitives",
- "rsil-sila-payload-builder",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-exex",
- "rsil-network",
- "rsil-node-api",
- "rsil-node-builder",
- "rsil-node-core",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-rpc",
- "rsil-rpc-api",
- "rsil-rpc-builder",
- "rsil-rpc-engine-api",
- "rsil-rpc-sil-api",
- "rsil-rpc-sil-types",
- "rsil-rpc-layer",
- "rsil-rpc-server-types",
- "rsil-stages-types",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tracing",
- "rsil-transaction-pool",
- "revm",
- "serde",
- "serde_json",
- "similar-asserts",
- "tempfile",
- "tokio",
- "tower",
-]
-
-[[package]]
-name = "rsil-node-ethstats"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "chrono",
- "futures-util",
- "rsil-chain-state",
- "rsil-network-api",
- "reth-primitives-traits",
- "rsil-storage-api",
- "rsil-transaction-pool",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tokio-tungstenite",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "rsil-node-events"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "derive_more",
- "futures",
- "humantime",
- "pin-project",
- "rsil-engine-primitives",
- "rsil-network-api",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-stages",
- "rsil-static-file-types",
- "rsil-storage-api",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-node-metrics"
-version = "2.4.0"
-dependencies = [
- "bytes",
- "eyre",
- "http",
- "http-body-util",
- "jemalloc_pprof",
- "jsonrpsee-server",
- "mappings",
- "metrics",
- "metrics-exporter-prometheus",
- "metrics-process",
- "metrics-util",
- "pprof_util",
- "procfs",
- "reqwest",
- "rsil-fs-util",
- "rsil-metrics",
- "rsil-tasks",
- "socket2",
- "tempfile",
- "tikv-jemalloc-ctl",
- "tokio",
- "tower",
- "tracing",
-]
-
-[[package]]
-name = "rsil-node-types"
-version = "2.4.0"
-dependencies = [
- "rsil-chainspec",
- "rsil-db-api",
- "rsil-engine-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
-]
-
-[[package]]
-name = "rsil-payload-builder"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rpc-types",
- "derive_more",
- "futures-util",
- "metrics",
- "rsil-chain-state",
- "rsil-sila-engine-primitives",
- "rsil-execution-cache",
- "rsil-metrics",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-trie-parallel",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-payload-builder-primitives"
-version = "2.4.0"
-dependencies = [
- "pin-project",
- "rsil-payload-primitives",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-payload-primitives"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-engine",
- "assert_matches",
- "auto_impl",
- "either",
- "rsil-chainspec",
- "rsil-errors",
- "rsil-execution-types",
- "reth-primitives-traits",
- "rsil-trie-common",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.18",
- "tokio",
-]
-
-[[package]]
-name = "rsil-payload-util"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "rsil-transaction-pool",
-]
-
-[[package]]
-name = "rsil-payload-validator"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-rpc-types-engine",
- "reth-primitives-traits",
 ]
 
 [[package]]
@@ -9605,523 +7677,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rsil-provider"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "assert_matches",
- "eyre",
- "itertools 0.14.0",
- "metrics",
- "notify",
- "parking_lot",
- "rand 0.9.4",
- "rayon",
- "rsil-chain-state",
- "rsil-chainspec",
- "reth-codecs",
- "rsil-db",
- "rsil-db-api",
- "rsil-errors",
- "rsil-sila-engine-primitives",
- "rsil-sila-primitives",
- "rsil-execution-types",
- "rsil-fs-util",
- "rsil-metrics",
- "rsil-nippy-jar",
- "rsil-node-types",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-stages-types",
- "rsil-static-file-types",
- "rsil-storage-api",
- "rsil-storage-errors",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tokio-util",
- "rsil-tracing",
- "rsil-trie",
- "rsil-trie-db",
- "revm",
- "rocksdb",
- "smallvec",
- "strum 0.27.2",
- "tempfile",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-prune"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "assert_matches",
- "itertools 0.14.0",
- "metrics",
- "rsil-config",
- "rsil-db",
- "rsil-db-api",
- "rsil-errors",
- "rsil-exex-types",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune-types",
- "rsil-stages",
- "rsil-stages-types",
- "rsil-static-file-types",
- "rsil-storage-api",
- "rsil-testing-utils",
- "rsil-tokio-util",
- "rsil-tracing",
- "rustc-hash",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-prune-db"
-version = "2.4.0"
-
-[[package]]
-name = "rsil-prune-types"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "arbitrary",
- "assert_matches",
- "derive_more",
- "modular-bitfield",
- "proptest",
- "proptest-arbitrary-interop",
- "reth-codecs",
- "serde",
- "serde_json",
- "strum 0.27.2",
- "thiserror 2.0.18",
- "toml",
- "tracing",
-]
-
-[[package]]
-name = "rsil-revm"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-debug",
- "rsil-sila-forks",
- "reth-primitives-traits",
- "rsil-storage-api",
- "rsil-storage-errors",
- "rsil-trie",
- "revm",
-]
-
-[[package]]
-name = "rsil-rpc"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-dyn-abi",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-evm",
- "alloy-genesis",
- "alloy-network",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-client",
- "alloy-rpc-types",
- "alloy-rpc-types-admin",
- "alloy-rpc-types-beacon",
- "alloy-rpc-types-debug",
- "alloy-rpc-types-engine",
- "alloy-rpc-types-eth",
- "alloy-rpc-types-mev",
- "alloy-rpc-types-trace",
- "alloy-rpc-types-txpool",
- "alloy-serde",
- "alloy-signer",
- "alloy-signer-local",
- "async-trait",
- "derive_more",
- "dyn-clone",
- "futures",
- "itertools 0.14.0",
- "jsonrpsee",
- "jsonrpsee-types",
- "parking_lot",
- "pin-project",
- "rand 0.9.4",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-consensus",
- "rsil-consensus-common",
- "rsil-db-api",
- "rsil-engine-primitives",
- "rsil-errors",
- "rsil-sila-engine-primitives",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-execution-types",
- "rsil-metrics",
- "rsil-network-api",
- "rsil-network-peers",
- "rsil-network-types",
- "rsil-node-api",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-revm",
- "rsil-rpc-api",
- "rsil-rpc-convert",
- "rsil-rpc-engine-api",
- "rsil-rpc-sil-api",
- "rsil-rpc-sil-types",
- "rsil-rpc-server-types",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-transaction-pool",
- "rsil-trie-common",
- "revm",
- "revm-inspectors",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
- "tracing-futures",
-]
-
-[[package]]
-name = "rsil-rpc-api"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-genesis",
- "alloy-json-rpc",
- "alloy-primitives",
- "alloy-rpc-types",
- "alloy-rpc-types-admin",
- "alloy-rpc-types-anvil",
- "alloy-rpc-types-beacon",
- "alloy-rpc-types-debug",
- "alloy-rpc-types-engine",
- "alloy-rpc-types-eth",
- "alloy-rpc-types-mev",
- "alloy-rpc-types-trace",
- "alloy-rpc-types-txpool",
- "alloy-serde",
- "jsonrpsee",
- "rsil-chain-state",
- "rsil-engine-primitives",
- "rsil-network-peers",
- "rsil-rpc-sil-api",
- "rsil-trie-common",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
-name = "rsil-rpc-api-testing-util"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-eth",
- "alloy-rpc-types-trace",
- "futures",
- "jsonrpsee",
- "jsonrpsee-http-client",
- "rsil-sila-primitives",
- "rsil-rpc-api",
- "rsil-rpc-sil-api",
- "serde_json",
- "similar-asserts",
- "tokio",
-]
-
-[[package]]
-name = "rsil-rpc-builder"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-network",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types-engine",
- "alloy-rpc-types-eth",
- "alloy-rpc-types-trace",
- "clap",
- "dyn-clone",
- "http",
- "jsonrpsee",
- "metrics",
- "pin-project",
- "reqwest",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-consensus",
- "rsil-engine-primitives",
- "rsil-sila-engine-primitives",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-ipc",
- "rsil-metrics",
- "rsil-network-api",
- "rsil-network-peers",
- "rsil-node-core",
- "rsil-node-sila",
- "rsil-payload-builder",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-rpc",
- "rsil-rpc-api",
- "rsil-rpc-engine-api",
- "rsil-rpc-sil-api",
- "rsil-rpc-sil-types",
- "rsil-rpc-layer",
- "rsil-rpc-server-types",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-tokio-util",
- "rsil-tracing",
- "rsil-transaction-pool",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tokio-util",
- "tower",
- "tower-http",
- "tracing",
-]
-
-[[package]]
-name = "rsil-rpc-convert"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-evm",
- "alloy-json-rpc",
- "alloy-network",
- "alloy-primitives",
- "alloy-rpc-types-eth",
- "auto_impl",
- "dyn-clone",
- "jsonrpsee-types",
- "rsil-savm",
- "reth-primitives-traits",
- "reth-rpc-traits",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-rpc-e2e-tests"
-version = "2.4.0"
-dependencies = [
- "alloy-genesis",
- "alloy-rpc-types-engine",
- "eyre",
- "futures-util",
- "jsonrpsee",
- "rsil-chainspec",
- "rsil-e2e-test-utils",
- "rsil-node-api",
- "rsil-node-sila",
- "rsil-rpc-api",
- "rsil-tracing",
- "serde_json",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-rpc-engine-api"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-engine",
- "assert_matches",
- "async-trait",
- "jsonrpsee-core",
- "jsonrpsee-types",
- "metrics",
- "rsil-chainspec",
- "rsil-engine-primitives",
- "rsil-sila-engine-primitives",
- "rsil-sila-primitives",
- "rsil-metrics",
- "rsil-network-api",
- "rsil-node-sila",
- "rsil-payload-builder",
- "rsil-payload-builder-primitives",
- "rsil-payload-primitives",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-rpc-api",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-transaction-pool",
- "serde",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-rpc-sil-api"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-dyn-abi",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-evm",
- "alloy-json-rpc",
- "alloy-network",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-eth",
- "alloy-rpc-types-mev",
- "alloy-serde",
- "async-trait",
- "auto_impl",
- "dyn-clone",
- "futures",
- "jsonrpsee",
- "jsonrpsee-types",
- "parking_lot",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-errors",
- "rsil-savm",
- "rsil-network-api",
- "rsil-node-api",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-revm",
- "rsil-rpc-convert",
- "rsil-rpc-sil-types",
- "rsil-rpc-server-types",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-transaction-pool",
- "rsil-trie-common",
- "revm",
- "revm-inspectors",
- "serde_json",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-rpc-sil-types"
-version = "2.4.0"
-dependencies = [
- "alloy-chains",
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-evm",
- "alloy-network",
- "alloy-primitives",
- "alloy-rpc-client",
- "alloy-rpc-types-eth",
- "alloy-serde",
- "alloy-sol-types",
- "alloy-transport",
- "derive_more",
- "futures",
- "itertools 0.14.0",
- "jsonrpsee-core",
- "jsonrpsee-types",
- "metrics",
- "rand 0.9.4",
- "reqwest",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-db-models",
- "rsil-errors",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-execution-types",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-revm",
- "rsil-rpc-convert",
- "rsil-rpc-server-types",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-transaction-pool",
- "rsil-trie",
- "revm",
- "revm-inspectors",
- "schnellru",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "rsil-rpc-layer"
-version = "2.4.0"
-dependencies = [
- "alloy-rpc-types-engine",
- "http",
- "http-body-util",
- "jsonrpsee",
- "jsonrpsee-http-client",
- "pin-project",
- "reqwest",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
-]
-
-[[package]]
-name = "rsil-rpc-server-types"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "jsonrpsee-core",
- "jsonrpsee-types",
- "rsil-errors",
- "rsil-network-api",
- "serde",
- "strum 0.27.2",
-]
-
-[[package]]
 name = "reth-rpc-traits"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -10134,516 +7689,6 @@ dependencies = [
  "alloy-signer",
  "reth-primitives-traits",
  "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-stages"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rlp",
- "assert_matches",
- "eyre",
- "futures-util",
- "itertools 0.14.0",
- "num-traits",
- "page_size",
- "paste",
- "rand 0.9.4",
- "rayon",
- "reqwest",
- "rsil-chainspec",
- "reth-codecs",
- "rsil-config",
- "rsil-consensus",
- "rsil-db",
- "rsil-db-api",
- "rsil-db-common",
- "rsil-downloaders",
- "rsil-era",
- "rsil-era-downloader",
- "rsil-era-utils",
- "rsil-sila-consensus",
- "rsil-sila-primitives",
- "rsil-etl",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-execution-types",
- "rsil-exex",
- "rsil-fs-util",
- "rsil-libmdbx",
- "rsil-network-p2p",
- "rsil-network-peers",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune",
- "rsil-prune-types",
- "rsil-revm",
- "rsil-stages-api",
- "rsil-static-file",
- "rsil-static-file-types",
- "rsil-storage-api",
- "rsil-storage-errors",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tracing",
- "rsil-trie",
- "rsil-trie-db",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-stages-api"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "aquamarine",
- "assert_matches",
- "auto_impl",
- "futures-util",
- "metrics",
- "rsil-chainspec",
- "reth-codecs",
- "rsil-consensus",
- "rsil-db",
- "rsil-db-api",
- "rsil-errors",
- "rsil-metrics",
- "rsil-network-p2p",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune",
- "rsil-stages-types",
- "rsil-static-file",
- "rsil-static-file-types",
- "rsil-tasks",
- "rsil-testing-utils",
- "rsil-tokio-util",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-stages-types"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "arbitrary",
- "bytes",
- "modular-bitfield",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.9.4",
- "reth-codecs",
- "rsil-trie-common",
- "serde",
-]
-
-[[package]]
-name = "rsil-static-file"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "assert_matches",
- "parking_lot",
- "rayon",
- "reth-codecs",
- "rsil-db-api",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune-types",
- "rsil-stages",
- "rsil-stages-types",
- "rsil-static-file-types",
- "rsil-storage-errors",
- "rsil-testing-utils",
- "rsil-tokio-util",
- "tempfile",
- "tracing",
-]
-
-[[package]]
-name = "rsil-static-file-types"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "clap",
- "derive_more",
- "fixed-map",
- "insta",
- "rsil-nippy-jar",
- "rsil-stages-types",
- "serde",
- "serde_json",
- "strum 0.27.2",
- "tempfile",
- "tracing",
-]
-
-[[package]]
-name = "rsil-storage-api"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eip7928",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rpc-types-engine",
- "auto_impl",
- "rsil-chainspec",
- "rsil-db-api",
- "rsil-db-models",
- "rsil-sila-primitives",
- "rsil-execution-types",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-stages-types",
- "rsil-storage-errors",
- "rsil-tokio-util",
- "rsil-trie-common",
- "revm",
- "serde_json",
- "tokio",
- "tokio-stream",
-]
-
-[[package]]
-name = "rsil-storage-errors"
-version = "2.4.0"
-dependencies = [
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "derive_more",
- "reth-codecs",
- "reth-primitives-traits",
- "rsil-prune-types",
- "rsil-static-file-types",
- "revm",
- "thiserror 2.0.18",
-]
-
-[[package]]
-name = "rsil-storage-rpc-provider"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-network",
- "alloy-primitives",
- "alloy-provider",
- "alloy-rpc-types",
- "alloy-rpc-types-engine",
- "dashmap",
- "rsil-chainspec",
- "rsil-db-api",
- "rsil-errors",
- "rsil-sila-primitives",
- "rsil-execution-types",
- "rsil-node-types",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-prune-types",
- "rsil-stages-types",
- "rsil-storage-api",
- "rsil-trie",
- "revm",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-tasks"
-version = "2.4.0"
-dependencies = [
- "crossbeam-utils",
- "dashmap",
- "futures-util",
- "libc",
- "metrics",
- "parking_lot",
- "pin-project",
- "rayon",
- "rsil-metrics",
- "thiserror 2.0.18",
- "thread-priority",
- "tokio",
- "tracing",
- "tracing-futures",
-]
-
-[[package]]
-name = "rsil-testing-utils"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rlp",
- "rand 0.8.6",
- "rand 0.9.4",
- "rsil-sila-primitives",
- "reth-primitives-traits",
- "secp256k1 0.30.0",
-]
-
-[[package]]
-name = "rsil-tokio-util"
-version = "2.4.0"
-dependencies = [
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-tracing"
-version = "2.4.0"
-dependencies = [
- "clap",
- "eyre",
- "rsil-tracing-otlp",
- "rolling-file",
- "tracing",
- "tracing-appender",
- "tracing-chrome",
- "tracing-journald",
- "tracing-logfmt",
- "tracing-samply",
- "tracing-subscriber 0.3.23",
- "tracing-tracy",
- "tracy-client",
-]
-
-[[package]]
-name = "rsil-tracing-otlp"
-version = "2.4.0"
-dependencies = [
- "base64 0.22.1",
- "clap",
- "eyre",
- "opentelemetry",
- "opentelemetry-appender-tracing",
- "opentelemetry-otlp",
- "opentelemetry-semantic-conventions",
- "opentelemetry_sdk",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber 0.3.23",
- "url",
-]
-
-[[package]]
-name = "rsil-transaction-pool"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "aquamarine",
- "assert_matches",
- "auto_impl",
- "bitflags 2.13.0",
- "codspeed-criterion-compat",
- "futures",
- "futures-util",
- "imbl",
- "metrics",
- "parking_lot",
- "paste",
- "pin-project",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.9.4",
- "rsil-chain-state",
- "rsil-chainspec",
- "rsil-sil-wire-types",
- "rsil-sila-primitives",
- "rsil-savm",
- "rsil-savm-sila",
- "rsil-execution-types",
- "rsil-fs-util",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-storage-api",
- "rsil-tasks",
- "rsil-tracing",
- "rsil-transaction-pool",
- "revm",
- "rustc-hash",
- "schnellru",
- "serde",
- "serde_json",
- "smallvec",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tokio-stream",
- "tracing",
-]
-
-[[package]]
-name = "rsil-trie"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-trie",
- "assert_matches",
- "auto_impl",
- "codspeed-criterion-compat",
- "itertools 0.14.0",
- "metrics",
- "parking_lot",
- "pretty_assertions",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.9.4",
- "rsil-execution-errors",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-stages-types",
- "rsil-storage-errors",
- "rsil-tracing",
- "rsil-trie-common",
- "rsil-trie-sparse",
- "tracing",
- "triehash",
-]
-
-[[package]]
-name = "rsil-trie-common"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-eips",
- "alloy-genesis",
- "alloy-primitives",
- "alloy-rlp",
- "alloy-rpc-types-eth",
- "alloy-serde",
- "alloy-trie",
- "arbitrary",
- "arrayvec",
- "bincode",
- "bytes",
- "derive_more",
- "hash-db",
- "itertools 0.14.0",
- "nybbles",
- "plain_hasher",
- "proptest",
- "proptest-arbitrary-interop",
- "rayon",
- "reth-codecs",
- "reth-primitives-traits",
- "revm",
- "serde",
- "serde_json",
- "serde_with",
-]
-
-[[package]]
-name = "rsil-trie-db"
-version = "2.4.0"
-dependencies = [
- "alloy-consensus",
- "alloy-primitives",
- "alloy-rlp",
- "metrics",
- "parking_lot",
- "proptest",
- "proptest-arbitrary-interop",
- "rsil-chainspec",
- "rsil-db",
- "rsil-db-api",
- "rsil-execution-errors",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-stages-types",
- "rsil-storage-api",
- "rsil-storage-errors",
- "rsil-trie",
- "rsil-trie-common",
- "revm",
- "serde_json",
- "similar-asserts",
- "tracing",
- "triehash",
-]
-
-[[package]]
-name = "rsil-trie-parallel"
-version = "2.4.0"
-dependencies = [
- "alloy-evm",
- "alloy-primitives",
- "alloy-rlp",
- "crossbeam-channel",
- "crossbeam-utils",
- "metrics",
- "rand 0.9.4",
- "rsil-chainspec",
- "rsil-sila-primitives",
- "rsil-execution-errors",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-provider",
- "rsil-storage-errors",
- "rsil-tasks",
- "rsil-trie",
- "rsil-trie-db",
- "rsil-trie-sparse",
- "revm",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "rsil-trie-sparse"
-version = "2.4.0"
-dependencies = [
- "alloy-primitives",
- "alloy-rlp",
- "alloy-trie",
- "arbitrary",
- "either",
- "itertools 0.14.0",
- "metrics",
- "pretty_assertions",
- "proptest",
- "proptest-arbitrary-interop",
- "rand 0.8.6",
- "rand 0.9.4",
- "rayon",
- "rsil-execution-errors",
- "rsil-metrics",
- "reth-primitives-traits",
- "rsil-tracing",
- "rsil-trie",
- "rsil-trie-common",
- "serde",
- "serde_json",
- "slotmap",
- "smallvec",
- "strum 0.27.2",
- "tracing",
 ]
 
 [[package]]
@@ -11130,6 +8175,3035 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "afab94fb28594581f62d981211a9a4d53cc8130bbcbbb89a0440d9b8e81a7746"
 
 [[package]]
+name = "rsil"
+version = "2.4.0"
+dependencies = [
+ "alloy-node-bindings",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types",
+ "alloy-rpc-types-eth",
+ "aquamarine",
+ "backon",
+ "clap",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-cli-runner",
+ "rsil-cli-util",
+ "rsil-consensus",
+ "rsil-consensus-common",
+ "rsil-db",
+ "rsil-network",
+ "rsil-network-api",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-metrics",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-rpc",
+ "rsil-rpc-api",
+ "rsil-rpc-builder",
+ "rsil-rpc-convert",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-types",
+ "rsil-sila-cli",
+ "rsil-sila-payload-builder",
+ "rsil-sila-primitives",
+ "rsil-tasks",
+ "rsil-transaction-pool",
+ "serde_json",
+ "tar",
+ "tempfile",
+ "tokio",
+ "toml",
+ "tracing",
+ "zstd",
+]
+
+[[package]]
+name = "rsil-basic-payload-builder"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "futures-core",
+ "futures-util",
+ "metrics",
+ "reth-primitives-traits",
+ "rsil-chain-state",
+ "rsil-execution-cache",
+ "rsil-metrics",
+ "rsil-payload-builder",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-revm",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-trie-parallel",
+ "serde",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-bb"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-hardforks 0.4.7",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types",
+ "async-trait",
+ "clap",
+ "crossbeam-channel",
+ "derive_more",
+ "eyre",
+ "jsonrpsee",
+ "metrics",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-cli-util",
+ "rsil-consensus",
+ "rsil-engine-primitives",
+ "rsil-engine-tree",
+ "rsil-errors",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-sila",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-rpc-api",
+ "rsil-rpc-engine-api",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-cli",
+ "rsil-sila-consensus",
+ "rsil-sila-forks",
+ "rsil-sila-primitives",
+ "rsil-storage-errors",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-chain-state"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-signer",
+ "alloy-signer-local",
+ "derive_more",
+ "metrics",
+ "parking_lot",
+ "pin-project",
+ "rand 0.9.4",
+ "rayon",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-errors",
+ "rsil-execution-types",
+ "rsil-metrics",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-trie",
+ "rsil-trie-sparse",
+ "serde",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-chainspec"
+version = "2.4.0"
+dependencies = [
+ "alloy-chains",
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-trie",
+ "auto_impl",
+ "derive_more",
+ "reth-primitives-traits",
+ "rsil-network-peers",
+ "rsil-sila-forks",
+ "serde_json",
+]
+
+[[package]]
+name = "rsil-cli"
+version = "2.4.0"
+dependencies = [
+ "alloy-genesis",
+ "clap",
+ "eyre",
+ "rsil-cli-runner",
+ "rsil-db",
+ "serde_json",
+]
+
+[[package]]
+name = "rsil-cli-commands"
+version = "2.4.0"
+dependencies = [
+ "alloy-chains",
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "arbitrary",
+ "backon",
+ "blake3",
+ "clap",
+ "comfy-table",
+ "crossterm",
+ "eyre",
+ "fdlimit",
+ "futures",
+ "human_bytes",
+ "humantime",
+ "itertools 0.14.0",
+ "lz4",
+ "metrics",
+ "parking_lot",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "ratatui",
+ "rayon",
+ "reqwest",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-cli",
+ "rsil-cli-runner",
+ "rsil-cli-util",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-db-common",
+ "rsil-discv4",
+ "rsil-discv5",
+ "rsil-downloaders",
+ "rsil-ecies",
+ "rsil-era",
+ "rsil-era-downloader",
+ "rsil-era-utils",
+ "rsil-etl",
+ "rsil-exex",
+ "rsil-fs-util",
+ "rsil-net-nat",
+ "rsil-network",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-events",
+ "rsil-node-metrics",
+ "rsil-provider",
+ "rsil-prune",
+ "rsil-prune-types",
+ "rsil-revm",
+ "rsil-savm",
+ "rsil-sil-wire",
+ "rsil-sila-cli",
+ "rsil-sila-primitives",
+ "rsil-stages",
+ "rsil-stages-types",
+ "rsil-static-file",
+ "rsil-static-file-types",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-trie",
+ "rsil-trie-common",
+ "rsil-trie-db",
+ "secp256k1 0.30.0",
+ "serde",
+ "serde_json",
+ "socket2",
+ "tar",
+ "tempfile",
+ "tokio",
+ "tokio-stream",
+ "toml",
+ "tracing",
+ "url",
+ "zstd",
+]
+
+[[package]]
+name = "rsil-cli-runner"
+version = "2.4.0"
+dependencies = [
+ "rsil-tasks",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-cli-util"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "cfg-if",
+ "eyre",
+ "libc",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "rsil-fs-util",
+ "rsil-tracing",
+ "secp256k1 0.30.0",
+ "serde",
+ "snmalloc-rs",
+ "thiserror 2.0.18",
+ "tikv-jemalloc-sys",
+ "tikv-jemallocator",
+ "tracy-client",
+]
+
+[[package]]
+name = "rsil-config"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "eyre",
+ "humantime-serde",
+ "rsil-network-peers",
+ "rsil-network-types",
+ "rsil-prune-types",
+ "rsil-stages-types",
+ "rsil-static-file-types",
+ "serde",
+ "tempfile",
+ "toml",
+ "url",
+]
+
+[[package]]
+name = "rsil-consensus"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-primitives",
+ "auto_impl",
+ "reth-primitives-traits",
+ "rsil-execution-types",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-consensus-common"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-sila-primitives",
+]
+
+[[package]]
+name = "rsil-consensus-debug-client"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-json-rpc",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types-engine",
+ "alloy-transport",
+ "auto_impl",
+ "derive_more",
+ "eyre",
+ "futures",
+ "reqwest",
+ "ringbuffer",
+ "rsil-node-api",
+ "rsil-tracing",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-db"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "arbitrary",
+ "assert_matches",
+ "derive_more",
+ "eyre",
+ "libc",
+ "metrics",
+ "page_size",
+ "parking_lot",
+ "proptest",
+ "quanta",
+ "reth-primitives-traits",
+ "rsil-db-api",
+ "rsil-fs-util",
+ "rsil-libmdbx",
+ "rsil-metrics",
+ "rsil-nippy-jar",
+ "rsil-prune-types",
+ "rsil-static-file-types",
+ "rsil-storage-errors",
+ "rsil-tracing",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "strum 0.27.2",
+ "sysinfo",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-db-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "arbitrary",
+ "arrayvec",
+ "bytes",
+ "derive_more",
+ "metrics",
+ "modular-bitfield",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.9.4",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "roaring",
+ "rsil-db-models",
+ "rsil-prune-types",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-storage-errors",
+ "rsil-trie-common",
+ "serde",
+ "test-fuzz",
+]
+
+[[package]]
+name = "rsil-db-common"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-genesis",
+ "alloy-primitives",
+ "boyer-moore-magiclen",
+ "eyre",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-config",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-etl",
+ "rsil-execution-errors",
+ "rsil-fs-util",
+ "rsil-node-types",
+ "rsil-provider",
+ "rsil-stages-types",
+ "rsil-static-file-types",
+ "rsil-tasks",
+ "rsil-trie",
+ "rsil-trie-db",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-db-models"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "arbitrary",
+ "bytes",
+ "modular-bitfield",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "serde",
+]
+
+[[package]]
+name = "rsil-discv4"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "alloy-rlp",
+ "assert_matches",
+ "discv5",
+ "enr",
+ "itertools 0.14.0",
+ "parking_lot",
+ "rand 0.8.6",
+ "rsil-net-banlist",
+ "rsil-net-nat",
+ "rsil-network-peers",
+ "rsil-sila-forks",
+ "rsil-tracing",
+ "schnellru",
+ "secp256k1 0.30.0",
+ "serde",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-discv5"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "alloy-rlp",
+ "derive_more",
+ "discv5",
+ "enr",
+ "futures",
+ "itertools 0.14.0",
+ "metrics",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "rsil-chainspec",
+ "rsil-metrics",
+ "rsil-network-peers",
+ "rsil-sila-forks",
+ "rsil-tracing",
+ "secp256k1 0.30.0",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-dns-discovery"
+version = "2.4.0"
+dependencies = [
+ "alloy-chains",
+ "alloy-primitives",
+ "alloy-rlp",
+ "dashmap",
+ "data-encoding",
+ "enr",
+ "hickory-resolver",
+ "linked_hash_set",
+ "rand 0.9.4",
+ "rsil-chainspec",
+ "rsil-network-peers",
+ "rsil-sila-forks",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "schnellru",
+ "secp256k1 0.30.0",
+ "serde",
+ "serde_with",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-downloaders"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "assert_matches",
+ "async-compression",
+ "futures",
+ "futures-util",
+ "itertools 0.14.0",
+ "metrics",
+ "pin-project",
+ "rand 0.9.4",
+ "rayon",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-metrics",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-provider",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tracing",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-e2e-test-utils"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rlp",
+ "alloy-rpc-types-engine",
+ "alloy-rpc-types-eth",
+ "alloy-signer",
+ "alloy-signer-local",
+ "derive_more",
+ "eyre",
+ "futures-util",
+ "jsonrpsee",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-cli-commands",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-db-common",
+ "rsil-engine-local",
+ "rsil-engine-primitives",
+ "rsil-network-api",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-rpc-api",
+ "rsil-rpc-builder",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-api",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-tasks",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "rsil-ecies"
+version = "2.4.0"
+dependencies = [
+ "aes",
+ "alloy-primitives",
+ "alloy-rlp",
+ "byteorder",
+ "cipher",
+ "concat-kdf",
+ "ctr",
+ "digest 0.10.7",
+ "futures",
+ "hmac",
+ "pin-project",
+ "rand 0.8.6",
+ "rsil-network-peers",
+ "secp256k1 0.30.0",
+ "sha2",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-engine-local"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "eyre",
+ "futures-util",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-engine-primitives",
+ "rsil-payload-builder",
+ "rsil-payload-primitives",
+ "rsil-sila-engine-primitives",
+ "rsil-storage-api",
+ "rsil-transaction-pool",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-engine-primitives"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "auto_impl",
+ "futures",
+ "reth-primitives-traits",
+ "rsil-chain-state",
+ "rsil-errors",
+ "rsil-execution-errors",
+ "rsil-execution-types",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-savm",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-trie-common",
+ "serde",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-engine-tree"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-engine",
+ "assert_matches",
+ "crossbeam-channel",
+ "derive_more",
+ "eyre",
+ "futures",
+ "indexmap 2.14.0",
+ "metrics",
+ "metrics-util",
+ "moka",
+ "proptest",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "rayon",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-db-common",
+ "rsil-e2e-test-utils",
+ "rsil-engine-primitives",
+ "rsil-errors",
+ "rsil-execution-cache",
+ "rsil-execution-types",
+ "rsil-exex-types",
+ "rsil-metrics",
+ "rsil-network-p2p",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-prune",
+ "rsil-prune-types",
+ "rsil-revm",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-consensus",
+ "rsil-sila-engine-primitives",
+ "rsil-sila-primitives",
+ "rsil-stages",
+ "rsil-stages-api",
+ "rsil-static-file",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tracing",
+ "rsil-trie",
+ "rsil-trie-common",
+ "rsil-trie-db",
+ "rsil-trie-parallel",
+ "rsil-trie-sparse",
+ "schnellru",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-engine-util"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-engine",
+ "eyre",
+ "futures",
+ "itertools 0.14.0",
+ "pin-project",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-engine-primitives",
+ "rsil-engine-tree",
+ "rsil-errors",
+ "rsil-fs-util",
+ "rsil-payload-primitives",
+ "rsil-revm",
+ "rsil-savm",
+ "rsil-storage-api",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-era"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-beacon",
+ "alloy-rpc-types-engine",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
+ "eyre",
+ "rand 0.9.4",
+ "reqwest",
+ "rsil-era-downloader",
+ "rsil-sila-primitives",
+ "sha2",
+ "snap",
+ "tempfile",
+ "test-case",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-era-downloader"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "bytes",
+ "eyre",
+ "futures",
+ "futures-util",
+ "reqwest",
+ "rsil-era",
+ "rsil-fs-util",
+ "sha2",
+ "tempfile",
+ "test-case",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-era-utils"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rlp",
+ "bytes",
+ "eyre",
+ "futures-util",
+ "reqwest",
+ "reth-primitives-traits",
+ "rsil-db-api",
+ "rsil-db-common",
+ "rsil-era",
+ "rsil-era-downloader",
+ "rsil-etl",
+ "rsil-fs-util",
+ "rsil-provider",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-storage-api",
+ "tempfile",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-errors"
+version = "2.4.0"
+dependencies = [
+ "rsil-consensus",
+ "rsil-execution-errors",
+ "rsil-storage-errors",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-etl"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "rayon",
+ "rsil-db-api",
+ "tempfile",
+]
+
+[[package]]
+name = "rsil-execution-cache"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "fixed-cache",
+ "metrics",
+ "parking_lot",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-errors",
+ "rsil-metrics",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-trie",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-execution-errors"
+version = "2.4.0"
+dependencies = [
+ "alloy-evm",
+ "alloy-primitives",
+ "alloy-rlp",
+ "nybbles",
+ "rsil-storage-errors",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-execution-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-primitives",
+ "alloy-rlp",
+ "arbitrary",
+ "bincode",
+ "derive_more",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-sila-primitives",
+ "rsil-trie-common",
+ "serde",
+ "serde_with",
+]
+
+[[package]]
+name = "rsil-exex"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-primitives",
+ "eyre",
+ "futures",
+ "itertools 0.14.0",
+ "metrics",
+ "parking_lot",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "rmp-serde",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-config",
+ "rsil-db-common",
+ "rsil-exex-types",
+ "rsil-fs-util",
+ "rsil-metrics",
+ "rsil-node-api",
+ "rsil-node-core",
+ "rsil-payload-builder",
+ "rsil-provider",
+ "rsil-prune-types",
+ "rsil-revm",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-primitives",
+ "rsil-stages-api",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tracing",
+ "rsil-trie-common",
+ "secp256k1 0.30.0",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-exex-test-utils"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "eyre",
+ "futures-util",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-db-common",
+ "rsil-execution-types",
+ "rsil-exex",
+ "rsil-network",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-provider",
+ "rsil-savm-sila",
+ "rsil-sila-primitives",
+ "rsil-tasks",
+ "rsil-transaction-pool",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-exex-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "arbitrary",
+ "bincode",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "rsil-chain-state",
+ "rsil-execution-types",
+ "rsil-sila-primitives",
+ "serde",
+ "serde_with",
+]
+
+[[package]]
+name = "rsil-fs-util"
+version = "2.4.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-invalid-block-hooks"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-debug",
+ "eyre",
+ "futures",
+ "jsonrpsee",
+ "pretty_assertions",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-engine-primitives",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-rpc-api",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-primitives",
+ "rsil-testing-utils",
+ "rsil-tracing",
+ "rsil-trie",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
+name = "rsil-ipc"
+version = "2.4.0"
+dependencies = [
+ "bytes",
+ "futures",
+ "futures-util",
+ "interprocess",
+ "jsonrpsee",
+ "pin-project",
+ "rand 0.9.4",
+ "rsil-tracing",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tower",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-libmdbx"
+version = "2.4.0"
+dependencies = [
+ "bitflags 2.13.0",
+ "byteorder",
+ "crossbeam-queue",
+ "dashmap",
+ "derive_more",
+ "parking_lot",
+ "rsil-mdbx-sys",
+ "smallvec",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-mdbx-sys"
+version = "2.4.0"
+dependencies = [
+ "bindgen",
+ "cc",
+]
+
+[[package]]
+name = "rsil-metrics"
+version = "2.4.0"
+dependencies = [
+ "futures",
+ "metrics",
+ "metrics-derive",
+ "reth-primitives-traits",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
+name = "rsil-net-banlist"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "ipnet",
+]
+
+[[package]]
+name = "rsil-net-nat"
+version = "2.4.0"
+dependencies = [
+ "futures-util",
+ "if-addrs",
+ "reqwest",
+ "rsil-tracing",
+ "serde_with",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-network"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rlp",
+ "aquamarine",
+ "auto_impl",
+ "derive_more",
+ "discv5",
+ "enr",
+ "futures",
+ "itertools 0.14.0",
+ "metrics",
+ "parking_lot",
+ "pin-project",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "rayon",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-discv4",
+ "rsil-discv5",
+ "rsil-dns-discovery",
+ "rsil-ecies",
+ "rsil-fs-util",
+ "rsil-metrics",
+ "rsil-net-banlist",
+ "rsil-network",
+ "rsil-network-api",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-network-types",
+ "rsil-provider",
+ "rsil-savm-sila",
+ "rsil-sil-wire",
+ "rsil-sil-wire-types",
+ "rsil-sila-forks",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "rsil-transaction-pool",
+ "rustc-hash",
+ "schnellru",
+ "secp256k1 0.30.0",
+ "serde",
+ "smallvec",
+ "socket2",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "rsil-network-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rpc-types-admin",
+ "alloy-rpc-types-eth",
+ "auto_impl",
+ "derive_more",
+ "enr",
+ "futures",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-network-types",
+ "rsil-sil-wire-types",
+ "rsil-sila-forks",
+ "rsil-tokio-util",
+ "serde",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+]
+
+[[package]]
+name = "rsil-network-p2p"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-primitives",
+ "auto_impl",
+ "derive_more",
+ "futures",
+ "parking_lot",
+ "reth-primitives-traits",
+ "rsil-consensus",
+ "rsil-network-peers",
+ "rsil-network-types",
+ "rsil-sil-wire-types",
+ "rsil-sila-primitives",
+ "rsil-storage-errors",
+ "test-case",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-network-peers"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "alloy-rlp",
+ "enr",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "secp256k1 0.30.0",
+ "serde_json",
+ "serde_with",
+ "thiserror 2.0.18",
+ "tokio",
+ "url",
+]
+
+[[package]]
+name = "rsil-network-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-eip2124",
+ "humantime-serde",
+ "rsil-net-banlist",
+ "rsil-network-peers",
+ "serde",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-nippy-jar"
+version = "2.4.0"
+dependencies = [
+ "anyhow",
+ "bincode",
+ "derive_more",
+ "lz4_flex",
+ "memmap2",
+ "rand 0.9.4",
+ "rsil-fs-util",
+ "serde",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tracing",
+ "zstd",
+]
+
+[[package]]
+name = "rsil-node-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-rpc-types-engine",
+ "eyre",
+ "rsil-basic-payload-builder",
+ "rsil-consensus",
+ "rsil-db-api",
+ "rsil-engine-primitives",
+ "rsil-network-api",
+ "rsil-node-core",
+ "rsil-node-types",
+ "rsil-payload-builder",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-savm",
+ "rsil-tasks",
+ "rsil-tokio-util",
+ "rsil-transaction-pool",
+]
+
+[[package]]
+name = "rsil-node-builder"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types",
+ "alloy-rpc-types-engine",
+ "aquamarine",
+ "eyre",
+ "fdlimit",
+ "futures",
+ "jsonrpsee",
+ "parking_lot",
+ "rayon",
+ "reth-primitives-traits",
+ "rsil-basic-payload-builder",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-consensus-debug-client",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-db-common",
+ "rsil-downloaders",
+ "rsil-engine-local",
+ "rsil-engine-primitives",
+ "rsil-engine-tree",
+ "rsil-engine-util",
+ "rsil-exex",
+ "rsil-fs-util",
+ "rsil-invalid-block-hooks",
+ "rsil-network",
+ "rsil-network-api",
+ "rsil-network-p2p",
+ "rsil-node-api",
+ "rsil-node-core",
+ "rsil-node-ethstats",
+ "rsil-node-events",
+ "rsil-node-metrics",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-provider",
+ "rsil-prune",
+ "rsil-rpc",
+ "rsil-rpc-api",
+ "rsil-rpc-builder",
+ "rsil-rpc-engine-api",
+ "rsil-rpc-layer",
+ "rsil-rpc-sil-types",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-engine-primitives",
+ "rsil-stages",
+ "rsil-static-file",
+ "rsil-tasks",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "rsil-transaction-pool",
+ "rsil-trie-db",
+ "secp256k1 0.30.0",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-node-core"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "clap",
+ "derive_more",
+ "dirs-next",
+ "eyre",
+ "futures",
+ "humantime",
+ "ipnet",
+ "proptest",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-cli-util",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-discv4",
+ "rsil-discv5",
+ "rsil-engine-local",
+ "rsil-engine-primitives",
+ "rsil-net-banlist",
+ "rsil-net-nat",
+ "rsil-network",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-prune-types",
+ "rsil-rpc-convert",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-types",
+ "rsil-sila-forks",
+ "rsil-stages-types",
+ "rsil-storage-api",
+ "rsil-storage-errors",
+ "rsil-tasks",
+ "rsil-tracing",
+ "rsil-tracing-otlp",
+ "rsil-transaction-pool",
+ "secp256k1 0.30.0",
+ "serde",
+ "strum 0.27.2",
+ "thiserror 2.0.18",
+ "tokio",
+ "toml",
+ "tracing",
+ "url",
+ "vergen",
+ "vergen-git2",
+]
+
+[[package]]
+name = "rsil-node-ethstats"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "chrono",
+ "futures-util",
+ "reth-primitives-traits",
+ "rsil-chain-state",
+ "rsil-network-api",
+ "rsil-storage-api",
+ "rsil-transaction-pool",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-tungstenite",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "rsil-node-events"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "derive_more",
+ "futures",
+ "humantime",
+ "pin-project",
+ "reth-primitives-traits",
+ "rsil-engine-primitives",
+ "rsil-network-api",
+ "rsil-prune-types",
+ "rsil-stages",
+ "rsil-static-file-types",
+ "rsil-storage-api",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-node-metrics"
+version = "2.4.0"
+dependencies = [
+ "bytes",
+ "eyre",
+ "http",
+ "http-body-util",
+ "jemalloc_pprof",
+ "jsonrpsee-server",
+ "mappings",
+ "metrics",
+ "metrics-exporter-prometheus",
+ "metrics-process",
+ "metrics-util",
+ "pprof_util",
+ "procfs",
+ "reqwest",
+ "rsil-fs-util",
+ "rsil-metrics",
+ "rsil-tasks",
+ "socket2",
+ "tempfile",
+ "tikv-jemalloc-ctl",
+ "tokio",
+ "tower",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-node-sila"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-contract",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types-beacon",
+ "alloy-rpc-types-engine",
+ "alloy-rpc-types-eth",
+ "alloy-rpc-types-trace",
+ "alloy-signer",
+ "alloy-sol-types",
+ "enr",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
+ "eyre",
+ "futures",
+ "http-body-util",
+ "jsonrpsee",
+ "jsonrpsee-core",
+ "rand 0.9.4",
+ "reqwest",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-db",
+ "rsil-e2e-test-utils",
+ "rsil-engine-local",
+ "rsil-engine-primitives",
+ "rsil-exex",
+ "rsil-network",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-rpc",
+ "rsil-rpc-api",
+ "rsil-rpc-builder",
+ "rsil-rpc-engine-api",
+ "rsil-rpc-layer",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-api",
+ "rsil-rpc-sil-types",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-consensus",
+ "rsil-sila-engine-primitives",
+ "rsil-sila-payload-builder",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tracing",
+ "rsil-transaction-pool",
+ "serde",
+ "serde_json",
+ "similar-asserts",
+ "tempfile",
+ "tokio",
+ "tower",
+]
+
+[[package]]
+name = "rsil-node-types"
+version = "2.4.0"
+dependencies = [
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-db-api",
+ "rsil-engine-primitives",
+ "rsil-payload-primitives",
+]
+
+[[package]]
+name = "rsil-payload-builder"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rpc-types",
+ "derive_more",
+ "futures-util",
+ "metrics",
+ "reth-primitives-traits",
+ "rsil-chain-state",
+ "rsil-execution-cache",
+ "rsil-metrics",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-sila-engine-primitives",
+ "rsil-trie-parallel",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-payload-builder-primitives"
+version = "2.4.0"
+dependencies = [
+ "pin-project",
+ "rsil-payload-primitives",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-payload-primitives"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-engine",
+ "assert_matches",
+ "auto_impl",
+ "either",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-errors",
+ "rsil-execution-types",
+ "rsil-trie-common",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.18",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-payload-util"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "rsil-transaction-pool",
+]
+
+[[package]]
+name = "rsil-payload-validator"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-rpc-types-engine",
+ "reth-primitives-traits",
+]
+
+[[package]]
+name = "rsil-provider"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "assert_matches",
+ "eyre",
+ "itertools 0.14.0",
+ "metrics",
+ "notify",
+ "parking_lot",
+ "rand 0.9.4",
+ "rayon",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "revm",
+ "rocksdb",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-errors",
+ "rsil-execution-types",
+ "rsil-fs-util",
+ "rsil-metrics",
+ "rsil-nippy-jar",
+ "rsil-node-types",
+ "rsil-prune-types",
+ "rsil-sila-engine-primitives",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-static-file-types",
+ "rsil-storage-api",
+ "rsil-storage-errors",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "rsil-trie",
+ "rsil-trie-db",
+ "smallvec",
+ "strum 0.27.2",
+ "tempfile",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-prune"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "assert_matches",
+ "itertools 0.14.0",
+ "metrics",
+ "reth-primitives-traits",
+ "rsil-config",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-errors",
+ "rsil-exex-types",
+ "rsil-metrics",
+ "rsil-provider",
+ "rsil-prune-types",
+ "rsil-stages",
+ "rsil-stages-types",
+ "rsil-static-file-types",
+ "rsil-storage-api",
+ "rsil-testing-utils",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "rustc-hash",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-prune-db"
+version = "2.4.0"
+
+[[package]]
+name = "rsil-prune-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "arbitrary",
+ "assert_matches",
+ "derive_more",
+ "modular-bitfield",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "reth-codecs",
+ "serde",
+ "serde_json",
+ "strum 0.27.2",
+ "thiserror 2.0.18",
+ "toml",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-revm"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-debug",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-sila-forks",
+ "rsil-storage-api",
+ "rsil-storage-errors",
+ "rsil-trie",
+]
+
+[[package]]
+name = "rsil-rpc"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-dyn-abi",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-genesis",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-client",
+ "alloy-rpc-types",
+ "alloy-rpc-types-admin",
+ "alloy-rpc-types-beacon",
+ "alloy-rpc-types-debug",
+ "alloy-rpc-types-engine",
+ "alloy-rpc-types-eth",
+ "alloy-rpc-types-mev",
+ "alloy-rpc-types-trace",
+ "alloy-rpc-types-txpool",
+ "alloy-serde",
+ "alloy-signer",
+ "alloy-signer-local",
+ "async-trait",
+ "derive_more",
+ "dyn-clone",
+ "futures",
+ "itertools 0.14.0",
+ "jsonrpsee",
+ "jsonrpsee-types",
+ "parking_lot",
+ "pin-project",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "revm",
+ "revm-inspectors",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-consensus-common",
+ "rsil-db-api",
+ "rsil-engine-primitives",
+ "rsil-errors",
+ "rsil-execution-types",
+ "rsil-metrics",
+ "rsil-network-api",
+ "rsil-network-peers",
+ "rsil-network-types",
+ "rsil-node-api",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-rpc-api",
+ "rsil-rpc-convert",
+ "rsil-rpc-engine-api",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-api",
+ "rsil-rpc-sil-types",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-engine-primitives",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-transaction-pool",
+ "rsil-trie-common",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "tracing-futures",
+]
+
+[[package]]
+name = "rsil-rpc-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-json-rpc",
+ "alloy-primitives",
+ "alloy-rpc-types",
+ "alloy-rpc-types-admin",
+ "alloy-rpc-types-anvil",
+ "alloy-rpc-types-beacon",
+ "alloy-rpc-types-debug",
+ "alloy-rpc-types-engine",
+ "alloy-rpc-types-eth",
+ "alloy-rpc-types-mev",
+ "alloy-rpc-types-trace",
+ "alloy-rpc-types-txpool",
+ "alloy-serde",
+ "jsonrpsee",
+ "rsil-chain-state",
+ "rsil-engine-primitives",
+ "rsil-network-peers",
+ "rsil-rpc-sil-api",
+ "rsil-trie-common",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-rpc-api-testing-util"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-eth",
+ "alloy-rpc-types-trace",
+ "futures",
+ "jsonrpsee",
+ "jsonrpsee-http-client",
+ "rsil-rpc-api",
+ "rsil-rpc-sil-api",
+ "rsil-sila-primitives",
+ "serde_json",
+ "similar-asserts",
+ "tokio",
+]
+
+[[package]]
+name = "rsil-rpc-builder"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types-engine",
+ "alloy-rpc-types-eth",
+ "alloy-rpc-types-trace",
+ "clap",
+ "dyn-clone",
+ "http",
+ "jsonrpsee",
+ "metrics",
+ "pin-project",
+ "reqwest",
+ "reth-primitives-traits",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-engine-primitives",
+ "rsil-ipc",
+ "rsil-metrics",
+ "rsil-network-api",
+ "rsil-network-peers",
+ "rsil-node-core",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-rpc",
+ "rsil-rpc-api",
+ "rsil-rpc-engine-api",
+ "rsil-rpc-layer",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-api",
+ "rsil-rpc-sil-types",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-engine-primitives",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-tokio-util",
+ "rsil-tracing",
+ "rsil-transaction-pool",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-util",
+ "tower",
+ "tower-http",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-rpc-convert"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-evm",
+ "alloy-json-rpc",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-rpc-types-eth",
+ "auto_impl",
+ "dyn-clone",
+ "jsonrpsee-types",
+ "reth-primitives-traits",
+ "reth-rpc-traits",
+ "rsil-savm",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-rpc-e2e-tests"
+version = "2.4.0"
+dependencies = [
+ "alloy-genesis",
+ "alloy-rpc-types-engine",
+ "eyre",
+ "futures-util",
+ "jsonrpsee",
+ "rsil-chainspec",
+ "rsil-e2e-test-utils",
+ "rsil-node-api",
+ "rsil-node-sila",
+ "rsil-rpc-api",
+ "rsil-tracing",
+ "serde_json",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-rpc-engine-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-engine",
+ "assert_matches",
+ "async-trait",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
+ "metrics",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-engine-primitives",
+ "rsil-metrics",
+ "rsil-network-api",
+ "rsil-node-sila",
+ "rsil-payload-builder",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-provider",
+ "rsil-rpc-api",
+ "rsil-sila-engine-primitives",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-transaction-pool",
+ "serde",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-rpc-layer"
+version = "2.4.0"
+dependencies = [
+ "alloy-rpc-types-engine",
+ "http",
+ "http-body-util",
+ "jsonrpsee",
+ "jsonrpsee-http-client",
+ "pin-project",
+ "reqwest",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-rpc-server-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
+ "rsil-errors",
+ "rsil-network-api",
+ "serde",
+ "strum 0.27.2",
+]
+
+[[package]]
+name = "rsil-rpc-sil-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-dyn-abi",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-json-rpc",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-eth",
+ "alloy-rpc-types-mev",
+ "alloy-serde",
+ "async-trait",
+ "auto_impl",
+ "dyn-clone",
+ "futures",
+ "jsonrpsee",
+ "jsonrpsee-types",
+ "parking_lot",
+ "reth-primitives-traits",
+ "revm",
+ "revm-inspectors",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-errors",
+ "rsil-network-api",
+ "rsil-node-api",
+ "rsil-prune-types",
+ "rsil-revm",
+ "rsil-rpc-convert",
+ "rsil-rpc-server-types",
+ "rsil-rpc-sil-types",
+ "rsil-savm",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-transaction-pool",
+ "rsil-trie-common",
+ "serde_json",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-rpc-sil-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-chains",
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-rpc-client",
+ "alloy-rpc-types-eth",
+ "alloy-serde",
+ "alloy-sol-types",
+ "alloy-transport",
+ "derive_more",
+ "futures",
+ "itertools 0.14.0",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
+ "metrics",
+ "rand 0.9.4",
+ "reqwest",
+ "reth-primitives-traits",
+ "revm",
+ "revm-inspectors",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-db-models",
+ "rsil-errors",
+ "rsil-execution-types",
+ "rsil-metrics",
+ "rsil-revm",
+ "rsil-rpc-convert",
+ "rsil-rpc-server-types",
+ "rsil-savm",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-transaction-pool",
+ "rsil-trie",
+ "schnellru",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "rsil-savm"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-primitives",
+ "auto_impl",
+ "derive_more",
+ "futures-util",
+ "metrics",
+ "rayon",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-execution-errors",
+ "rsil-execution-types",
+ "rsil-metrics",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-storage-errors",
+ "rsil-trie-common",
+]
+
+[[package]]
+name = "rsil-savm-sila"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-evm",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "metrics",
+ "reth-primitives-traits",
+ "revm",
+ "revmc",
+ "rsil-chainspec",
+ "rsil-execution-types",
+ "rsil-metrics",
+ "rsil-savm",
+ "rsil-sila-forks",
+ "rsil-sila-primitives",
+ "rsil-storage-errors",
+ "rsil-testing-utils",
+ "secp256k1 0.30.0",
+]
+
+[[package]]
+name = "rsil-sil-wire"
+version = "2.4.0"
+dependencies = [
+ "alloy-chains",
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "arbitrary",
+ "async-stream",
+ "bytes",
+ "derive_more",
+ "futures",
+ "pin-project",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-ecies",
+ "rsil-metrics",
+ "rsil-network-peers",
+ "rsil-sil-wire-types",
+ "rsil-sila-forks",
+ "rsil-tracing",
+ "secp256k1 0.30.0",
+ "serde",
+ "snap",
+ "test-fuzz",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tokio-util",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-sil-wire-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-chains",
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-hardforks 0.4.7",
+ "alloy-primitives",
+ "alloy-rlp",
+ "arbitrary",
+ "bytes",
+ "derive_more",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.9.4",
+ "reth-codecs-derive",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-sila-primitives",
+ "serde",
+ "test-case",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-sila"
+version = "2.4.0"
+dependencies = [
+ "alloy-rpc-types-engine",
+ "alloy-rpc-types-eth",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-cli-util",
+ "rsil-consensus",
+ "rsil-consensus-common",
+ "rsil-db",
+ "rsil-engine-local",
+ "rsil-exex",
+ "rsil-network",
+ "rsil-network-api",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-sila",
+ "rsil-provider",
+ "rsil-revm",
+ "rsil-rpc",
+ "rsil-rpc-api",
+ "rsil-rpc-builder",
+ "rsil-rpc-sil-types",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sil-wire",
+ "rsil-sila-cli",
+ "rsil-sila-consensus",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-transaction-pool",
+ "rsil-trie",
+ "rsil-trie-db",
+]
+
+[[package]]
+name = "rsil-sila-cli"
+version = "2.4.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "rsil-chainspec",
+ "rsil-cli",
+ "rsil-cli-commands",
+ "rsil-cli-runner",
+ "rsil-db",
+ "rsil-node-api",
+ "rsil-node-builder",
+ "rsil-node-core",
+ "rsil-node-metrics",
+ "rsil-node-sila",
+ "rsil-rpc-server-types",
+ "rsil-tasks",
+ "rsil-tracing",
+ "tempfile",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-sila-consensus"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-consensus-common",
+ "rsil-execution-types",
+ "rsil-sila-primitives",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-sila-engine-primitives"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "reth-primitives-traits",
+ "rsil-engine-primitives",
+ "rsil-payload-primitives",
+ "rsil-sila-primitives",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-sila-forks"
+version = "2.4.0"
+dependencies = [
+ "alloy-eip2124",
+ "alloy-hardforks 0.4.7",
+ "alloy-primitives",
+ "arbitrary",
+ "auto_impl",
+ "once_cell",
+ "rustc-hash",
+]
+
+[[package]]
+name = "rsil-sila-payload-builder"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-engine",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-basic-payload-builder",
+ "rsil-chainspec",
+ "rsil-consensus-common",
+ "rsil-errors",
+ "rsil-execution-cache",
+ "rsil-payload-builder",
+ "rsil-payload-builder-primitives",
+ "rsil-payload-primitives",
+ "rsil-payload-validator",
+ "rsil-revm",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-transaction-pool",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-sila-primitives"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-eth",
+ "arbitrary",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.9.4",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "reth-zstd-compressors",
+ "serde",
+ "serde_json",
+ "serde_with",
+]
+
+[[package]]
+name = "rsil-stages"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rlp",
+ "assert_matches",
+ "eyre",
+ "futures-util",
+ "itertools 0.14.0",
+ "num-traits",
+ "page_size",
+ "paste",
+ "rand 0.9.4",
+ "rayon",
+ "reqwest",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-config",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-db-common",
+ "rsil-downloaders",
+ "rsil-era",
+ "rsil-era-downloader",
+ "rsil-era-utils",
+ "rsil-etl",
+ "rsil-execution-types",
+ "rsil-exex",
+ "rsil-fs-util",
+ "rsil-libmdbx",
+ "rsil-network-p2p",
+ "rsil-network-peers",
+ "rsil-provider",
+ "rsil-prune",
+ "rsil-prune-types",
+ "rsil-revm",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sila-consensus",
+ "rsil-sila-primitives",
+ "rsil-stages-api",
+ "rsil-static-file",
+ "rsil-static-file-types",
+ "rsil-storage-api",
+ "rsil-storage-errors",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tracing",
+ "rsil-trie",
+ "rsil-trie-db",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-stages-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "aquamarine",
+ "assert_matches",
+ "auto_impl",
+ "futures-util",
+ "metrics",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-chainspec",
+ "rsil-consensus",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-errors",
+ "rsil-metrics",
+ "rsil-network-p2p",
+ "rsil-provider",
+ "rsil-prune",
+ "rsil-stages-types",
+ "rsil-static-file",
+ "rsil-static-file-types",
+ "rsil-tasks",
+ "rsil-testing-utils",
+ "rsil-tokio-util",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-stages-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "arbitrary",
+ "bytes",
+ "modular-bitfield",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.9.4",
+ "reth-codecs",
+ "rsil-trie-common",
+ "serde",
+]
+
+[[package]]
+name = "rsil-static-file"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "assert_matches",
+ "parking_lot",
+ "rayon",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "rsil-db-api",
+ "rsil-provider",
+ "rsil-prune-types",
+ "rsil-stages",
+ "rsil-stages-types",
+ "rsil-static-file-types",
+ "rsil-storage-errors",
+ "rsil-testing-utils",
+ "rsil-tokio-util",
+ "tempfile",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-static-file-types"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "clap",
+ "derive_more",
+ "fixed-map",
+ "insta",
+ "rsil-nippy-jar",
+ "rsil-stages-types",
+ "serde",
+ "serde_json",
+ "strum 0.27.2",
+ "tempfile",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-storage-api"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eip7928",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rpc-types-engine",
+ "auto_impl",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-db-api",
+ "rsil-db-models",
+ "rsil-execution-types",
+ "rsil-prune-types",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-storage-errors",
+ "rsil-tokio-util",
+ "rsil-trie-common",
+ "serde_json",
+ "tokio",
+ "tokio-stream",
+]
+
+[[package]]
+name = "rsil-storage-errors"
+version = "2.4.0"
+dependencies = [
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "derive_more",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-prune-types",
+ "rsil-static-file-types",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "rsil-storage-rpc-provider"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-network",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-rpc-types",
+ "alloy-rpc-types-engine",
+ "dashmap",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-db-api",
+ "rsil-errors",
+ "rsil-execution-types",
+ "rsil-node-types",
+ "rsil-provider",
+ "rsil-prune-types",
+ "rsil-sila-primitives",
+ "rsil-stages-types",
+ "rsil-storage-api",
+ "rsil-trie",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-tasks"
+version = "2.4.0"
+dependencies = [
+ "crossbeam-utils",
+ "dashmap",
+ "futures-util",
+ "libc",
+ "metrics",
+ "parking_lot",
+ "pin-project",
+ "rayon",
+ "rsil-metrics",
+ "thiserror 2.0.18",
+ "thread-priority",
+ "tokio",
+ "tracing",
+ "tracing-futures",
+]
+
+[[package]]
+name = "rsil-testing-utils"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rlp",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "rsil-sila-primitives",
+ "secp256k1 0.30.0",
+]
+
+[[package]]
+name = "rsil-tokio-util"
+version = "2.4.0"
+dependencies = [
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-tracing"
+version = "2.4.0"
+dependencies = [
+ "clap",
+ "eyre",
+ "rolling-file",
+ "rsil-tracing-otlp",
+ "tracing",
+ "tracing-appender",
+ "tracing-chrome",
+ "tracing-journald",
+ "tracing-logfmt",
+ "tracing-samply",
+ "tracing-subscriber 0.3.23",
+ "tracing-tracy",
+ "tracy-client",
+]
+
+[[package]]
+name = "rsil-tracing-otlp"
+version = "2.4.0"
+dependencies = [
+ "base64 0.22.1",
+ "clap",
+ "eyre",
+ "opentelemetry",
+ "opentelemetry-appender-tracing",
+ "opentelemetry-otlp",
+ "opentelemetry-semantic-conventions",
+ "opentelemetry_sdk",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber 0.3.23",
+ "url",
+]
+
+[[package]]
+name = "rsil-transaction-pool"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "aquamarine",
+ "assert_matches",
+ "auto_impl",
+ "bitflags 2.13.0",
+ "codspeed-criterion-compat",
+ "futures",
+ "futures-util",
+ "imbl",
+ "metrics",
+ "parking_lot",
+ "paste",
+ "pin-project",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chain-state",
+ "rsil-chainspec",
+ "rsil-execution-types",
+ "rsil-fs-util",
+ "rsil-metrics",
+ "rsil-provider",
+ "rsil-savm",
+ "rsil-savm-sila",
+ "rsil-sil-wire-types",
+ "rsil-sila-primitives",
+ "rsil-storage-api",
+ "rsil-tasks",
+ "rsil-tracing",
+ "rsil-transaction-pool",
+ "rustc-hash",
+ "schnellru",
+ "serde",
+ "serde_json",
+ "smallvec",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tokio-stream",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-trie"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-trie",
+ "assert_matches",
+ "auto_impl",
+ "codspeed-criterion-compat",
+ "itertools 0.14.0",
+ "metrics",
+ "parking_lot",
+ "pretty_assertions",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "rsil-execution-errors",
+ "rsil-metrics",
+ "rsil-stages-types",
+ "rsil-storage-errors",
+ "rsil-tracing",
+ "rsil-trie-common",
+ "rsil-trie-sparse",
+ "tracing",
+ "triehash",
+]
+
+[[package]]
+name = "rsil-trie-common"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-eips",
+ "alloy-genesis",
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-rpc-types-eth",
+ "alloy-serde",
+ "alloy-trie",
+ "arbitrary",
+ "arrayvec",
+ "bincode",
+ "bytes",
+ "derive_more",
+ "hash-db",
+ "itertools 0.14.0",
+ "nybbles",
+ "plain_hasher",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rayon",
+ "reth-codecs",
+ "reth-primitives-traits",
+ "revm",
+ "serde",
+ "serde_json",
+ "serde_with",
+]
+
+[[package]]
+name = "rsil-trie-db"
+version = "2.4.0"
+dependencies = [
+ "alloy-consensus",
+ "alloy-primitives",
+ "alloy-rlp",
+ "metrics",
+ "parking_lot",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-db",
+ "rsil-db-api",
+ "rsil-execution-errors",
+ "rsil-metrics",
+ "rsil-provider",
+ "rsil-stages-types",
+ "rsil-storage-api",
+ "rsil-storage-errors",
+ "rsil-trie",
+ "rsil-trie-common",
+ "serde_json",
+ "similar-asserts",
+ "tracing",
+ "triehash",
+]
+
+[[package]]
+name = "rsil-trie-parallel"
+version = "2.4.0"
+dependencies = [
+ "alloy-evm",
+ "alloy-primitives",
+ "alloy-rlp",
+ "crossbeam-channel",
+ "crossbeam-utils",
+ "metrics",
+ "rand 0.9.4",
+ "reth-primitives-traits",
+ "revm",
+ "rsil-chainspec",
+ "rsil-execution-errors",
+ "rsil-metrics",
+ "rsil-provider",
+ "rsil-sila-primitives",
+ "rsil-storage-errors",
+ "rsil-tasks",
+ "rsil-trie",
+ "rsil-trie-db",
+ "rsil-trie-sparse",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "rsil-trie-sparse"
+version = "2.4.0"
+dependencies = [
+ "alloy-primitives",
+ "alloy-rlp",
+ "alloy-trie",
+ "arbitrary",
+ "either",
+ "itertools 0.14.0",
+ "metrics",
+ "pretty_assertions",
+ "proptest",
+ "proptest-arbitrary-interop",
+ "rand 0.8.6",
+ "rand 0.9.4",
+ "rayon",
+ "reth-primitives-traits",
+ "rsil-execution-errors",
+ "rsil-metrics",
+ "rsil-tracing",
+ "rsil-trie",
+ "rsil-trie-common",
+ "serde",
+ "serde_json",
+ "slotmap",
+ "smallvec",
+ "strum 0.27.2",
+ "tracing",
+]
+
+[[package]]
 name = "ruint"
 version = "1.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11140,6 +11214,7 @@ dependencies = [
  "ark-ff 0.3.0",
  "ark-ff 0.4.2",
  "ark-ff 0.5.0",
+ "ark-ff 0.6.0",
  "bytes",
  "fastrlp 0.3.1",
  "fastrlp 0.4.0",

@@ -3,9 +3,9 @@
 use crate::broadcast::decode_list_with_memory_budget;
 use alloc::vec::Vec;
 use alloy_consensus::transaction::{PooledTransaction, TxHashRef};
-use alloy_sips::eip7594::Cell;
 use alloy_primitives::{B128, B256};
 use alloy_rlp::{Decodable, RlpDecodable, RlpDecodableWrapper, RlpEncodable, RlpEncodableWrapper};
+use alloy_sips::eip7594::Cell;
 use derive_more::{Constructor, Deref, IntoIterator};
 use rsil_codecs_derive::add_arbitrary_tests;
 use rsil_primitives_traits::InMemorySize;

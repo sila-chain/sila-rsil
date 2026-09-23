@@ -152,12 +152,8 @@ pub(crate) fn create_test_block_with_compressed_data(number: BlockNumber) -> Blo
     };
 
     // Create test receipt list with bloom
-    let receipts_list: Vec<ReceiptWithBloom> = vec![create_test_receipt_with_bloom(
-        rsil_sila_primitives::TxType::Legacy,
-        true,
-        21000,
-        0,
-    )];
+    let receipts_list: Vec<ReceiptWithBloom> =
+        vec![create_test_receipt_with_bloom(rsil_sila_primitives::TxType::Legacy, true, 21000, 0)];
 
     // Compressed test compressed
     let compressed_header = CompressedHeader::from_header(&header).unwrap();

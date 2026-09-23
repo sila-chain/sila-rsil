@@ -7,8 +7,8 @@ use alloy_evm::{
 };
 use alloy_primitives::Address;
 use crossbeam_channel::{Receiver, Sender};
-use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, Database, SavmEnvFor, ExecutionCtxFor};
 use revm::{database::State, state::bal::Bal as RevmBal};
+use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, Database, ExecutionCtxFor, SavmEnvFor};
 use std::sync::Arc;
 
 #[derive(Debug, thiserror::Error)]

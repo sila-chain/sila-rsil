@@ -14,8 +14,8 @@ use chainspec::{boot_nodes, bsc_chain_spec, head};
 use handshake::BscHandshake;
 use rsil_discv4::Discv4ConfigBuilder;
 use rsil_network::{
-    SilNetworkPrimitives, NetworkConfig, NetworkEvent, NetworkEventListenerProvider,
-    NetworkManager, PeersInfo,
+    NetworkConfig, NetworkEvent, NetworkEventListenerProvider, NetworkManager, PeersInfo,
+    SilNetworkPrimitives,
 };
 use rsil_network_api::events::{PeerEvent, SessionInfo};
 use rsil_provider::noop::NoopProvider;

@@ -35,11 +35,11 @@ jobs:
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
           cache-on-failure: true
-      - name: Checkout original Sila v2.4.0 compatibility authority
+      - name: Checkout pinned buildable Sila v2.4.0 compatibility authority
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: sila-chain/sila-rsil
-          ref: eee6b78c5fcf74454693c05c6a35faa3a7a832f9
+          ref: d90acb5d2661a06cf3575fcde3e7124763138ed7
           persist-credentials: false
       - name: Generate baseline Sila compact vectors
         run: cargo run --bin rsil --features "dev" -- test-vectors compact --write

@@ -3,7 +3,7 @@ version = "2.4.0"
 edition = "2024"
 rust-version = "1.95"
 license = "MIT OR Apache-2.0"
-homepage = "https://paradigmxyz.github.io/rsil"
+homepage = "https://github.com/sila-chain/sila-rsil"
 repository = "https://github.com/sila-chain/sila-rsil"
 exclude = [".github/"]
 

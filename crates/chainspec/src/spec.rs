@@ -36,7 +36,7 @@ use alloy_trie::root::state_root_ref_unhashed;
 use core::fmt::Debug;
 use derive_more::From;
 use rsil_sila_forks::{
-    ChainHardforks, DisplayHardforks, SilaHardfork, SilaHardforks, ForkCondition,
+    ChainHardforks, DisplayHardforks, EthereumHardforks, SilaHardfork, SilaHardforks, ForkCondition,
     ForkFilter, ForkFilterKey, ForkHash, ForkId, Hardfork, Hardforks, Head, DEV_HARDFORKS,
 };
 use rsil_network_peers::{holesky_nodes, hoodi_nodes, mainnet_nodes, sepolia_nodes, NodeRecord};
@@ -969,7 +969,7 @@ impl<H: BlockHeader> Hardforks for ChainSpec<H> {
     }
 }
 
-impl<H: BlockHeader> SilaHardforks for ChainSpec<H> {
+impl<H: BlockHeader> EthereumHardforks for ChainSpec<H> {
     fn ethereum_fork_activation(&self, fork: SilaHardfork) -> ForkCondition {
         self.fork(fork)
     }

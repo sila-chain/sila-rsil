@@ -1,7 +1,7 @@
 //! Collection of methods for block validation.
 
 use alloy_consensus::{BlockHeader as _, EMPTY_OMMER_ROOT_HASH};
-use alloy_eips::{sip4844::DATA_GAS_PER_BLOB, sip7840::BlobParams};
+use alloy_sips::{eip4844::DATA_GAS_PER_BLOB, eip7840::BlobParams};
 use alloy_primitives::B256;
 use rsil_chainspec::{SilChainSpec, SilaHardfork, SilaHardforks};
 use rsil_consensus::ConsensusError;
@@ -454,7 +454,7 @@ pub fn validate_against_parent_4844<H: BlockHeader>(
 mod tests {
     use super::*;
     use alloy_consensus::{BlockBody, Header, TxEip4844};
-    use alloy_eips::{sip4844::DATA_GAS_PER_BLOB, sip4895::Withdrawals};
+    use alloy_sips::{eip4844::DATA_GAS_PER_BLOB, eip4895::Withdrawals};
     use alloy_primitives::{Address, Bytes, Signature, U256};
     use rand::Rng;
     use rsil_chainspec::ChainSpecBuilder;

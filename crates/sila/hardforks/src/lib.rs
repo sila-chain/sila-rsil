@@ -26,8 +26,17 @@ mod hardforks;
 pub use alloy_hardforks::*;
 pub use alloy_hardforks::{
     ethereum as sila, mainnet as sila_mainnet, EthereumHardfork as SilaHardfork,
-    EthereumHardforks as SilaHardforks,
 };
+
+/// Sila-facing hardfork activation adapter over the real Alloy hardfork authority.
+pub trait SilaHardforks: alloy_hardforks::EthereumHardforks {
+    /// Returns the activation condition for the requested Sila hardfork.
+    fn sila_fork_activation(&self, fork: SilaHardfork) -> ForkCondition {
+        self.ethereum_fork_activation(fork)
+    }
+}
+
+impl<T> SilaHardforks for T where T: alloy_hardforks::EthereumHardforks + ?Sized {}
 
 pub use display::DisplayHardforks;
 pub use hardforks::*;

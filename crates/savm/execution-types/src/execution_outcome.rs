@@ -1,6 +1,6 @@
 use crate::{BlockExecutionOutput, BlockExecutionResult};
 use alloc::{vec, vec::Vec};
-use alloy_eips::sip7685::Requests;
+use alloy_sips::eip7685::Requests;
 use alloy_primitives::{
     logs_bloom,
     map::{AddressMap, B256Map, HashMap},
@@ -425,7 +425,7 @@ impl<T> From<(BlockExecutionOutput<T>, BlockNumber)> for ExecutionOutcome<T> {
 #[cfg(feature = "serde-bincode-compat")]
 pub(super) mod serde_bincode_compat {
     use alloc::{borrow::Cow, vec::Vec};
-    use alloy_eips::sip7685::Requests;
+    use alloy_sips::eip7685::Requests;
     use alloy_primitives::{BlockNumber, Bytes};
     use rsil_primitives_traits::Receipt;
     use revm::database::BundleState;

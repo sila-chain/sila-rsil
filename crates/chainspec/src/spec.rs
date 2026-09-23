@@ -548,7 +548,7 @@ impl<H: BlockHeader> ChainSpec<H> {
                     }
                 }
 
-                bf_params.first().map(|(_, params)| *params).unwrap_or_else(BaseFeeParams::sila)
+                bf_params.first().map(|(_, params)| *params).unwrap_or_else(BaseFeeParams::ethereum)
             }
         }
     }
@@ -783,9 +783,9 @@ impl<H: BlockHeader> ChainSpec<H> {
         use NamedChain as C;
 
         match self.chain.try_into().ok()? {
-            C::SilaMainnet => Some(mainnet_nodes()),
-            C::SilaSepolia => Some(sepolia_nodes()),
-            C::SilaHolesky => Some(holesky_nodes()),
+            C::Mainnet => Some(mainnet_nodes()),
+            C::Sepolia => Some(sepolia_nodes()),
+            C::Holesky => Some(holesky_nodes()),
             C::Hoodi => Some(hoodi_nodes()),
             _ => None,
         }
@@ -825,8 +825,8 @@ impl From<Genesis> for ChainSpec {
             (SilaHardfork::Frontier.boxed(), Some(0)),
             (SilaHardfork::Homestead.boxed(), genesis.config.homestead_block),
             (SilaHardfork::Dao.boxed(), genesis.config.dao_fork_block),
-            (SilaHardfork::Tangerine.boxed(), genesis.config.sip150_block),
-            (SilaHardfork::SpuriousDragon.boxed(), genesis.config.sip155_block),
+            (SilaHardfork::Tangerine.boxed(), genesis.config.eip150_block),
+            (SilaHardfork::SpuriousDragon.boxed(), genesis.config.eip155_block),
             (SilaHardfork::Byzantium.boxed(), genesis.config.byzantium_block),
             (SilaHardfork::Constantinople.boxed(), genesis.config.constantinople_block),
             (SilaHardfork::Petersburg.boxed(), genesis.config.petersburg_block),

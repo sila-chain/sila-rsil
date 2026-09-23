@@ -6,7 +6,7 @@ use alloy_consensus::{
     transaction::{Recovered, TxHashRef},
     BlockHeader, TxReceipt,
 };
-use alloy_eips::{sip1898::ForkBlock, BlockNumHash};
+use alloy_sips::{eip1898::ForkBlock, BlockNumHash};
 use alloy_primitives::{map::HashSet, Address, BlockHash, BlockNumber, Log, TxHash};
 use core::{fmt, ops::RangeInclusive};
 use rsil_primitives_traits::{

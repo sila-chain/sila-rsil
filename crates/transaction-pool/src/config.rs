@@ -4,7 +4,7 @@ use crate::{
     PoolSize, TransactionOrigin,
 };
 use alloy_consensus::constants::EIP4844_TX_TYPE_ID;
-use alloy_sips::eip1559::{MIN_PROTOCOL_BASE_FEE, SILA_BLOCK_GAS_LIMIT_30M};
+use alloy_sips::eip1559::{MIN_PROTOCOL_BASE_FEE, ETHEREUM_BLOCK_GAS_LIMIT_30M as SILA_BLOCK_GAS_LIMIT_30M};
 use alloy_primitives::{map::AddressSet, Address};
 use std::{ops::Mul, time::Duration};
 

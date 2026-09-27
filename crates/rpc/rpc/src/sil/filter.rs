@@ -1,4 +1,4 @@
-//! `eth_` `Filter` RPC handler implementation
+//! `sil_` `Filter` RPC handler implementation
 
 use alloy_consensus::BlockHeader;
 use alloy_sips::BlockNumberOrTag;
@@ -62,7 +62,7 @@ where
         filter: Filter,
         limits: QueryLimits,
     ) -> impl Future<Output = RpcResult<Vec<Log>>> + Send {
-        trace!(target: "rpc::sil", "Serving eth_getLogs");
+        trace!(target: "rpc::sil", "Serving sil_getLogs");
         self.logs_for_filter(filter, limits).map_err(|e| e.into())
     }
 }
@@ -90,7 +90,7 @@ const DEFAULT_PARALLEL_CONCURRENCY: usize = 4;
 
 /// `Sil` filter RPC implementation.
 ///
-/// This type handles `eth_` rpc requests related to filters (`eth_getLogs`).
+/// This type handles `sil_` rpc requests related to filters (`sil_getLogs`).
 pub struct SilFilter<Sil: SilApiTypes> {
     /// All nested fields bundled together
     inner: Arc<SilFilterInner<Sil>>,
@@ -127,14 +127,14 @@ where
     /// use rsil_rpc::{SilApi, SilFilter};
     /// use rsil_tasks::Runtime;
     /// use rsil_transaction_pool::noop::NoopTransactionPool;
-    /// let eth_api = SilApi::builder(
+    /// let sil_api = SilApi::builder(
     ///     NoopProvider::default(),
     ///     NoopTransactionPool::default(),
     ///     NoopNetwork::default(),
     ///     SilEvmConfig::sila_mainnet(),
     /// )
     /// .build();
-    /// let filter = SilFilter::new(eth_api, Default::default(), Runtime::test());
+    /// let filter = SilFilter::new(sil_api, Default::default(), Runtime::test());
     /// ```
     pub fn new(eth_api: Sil, config: SilFilterConfig, task_spawner: Runtime) -> Self {
         let SilFilterConfig { max_blocks_per_filter, max_logs_per_response, stale_filter_ttl } =
@@ -301,7 +301,7 @@ where
     ///
     /// Returns an error if no matching log filter exists.
     ///
-    /// Handler for `eth_getFilterLogs`
+    /// Handler for `sil_getFilterLogs`
     pub async fn filter_logs(&self, id: FilterId) -> Result<Vec<Log>, SilFilterError> {
         let filter = {
             let mut filters = self.inner.active_filters.inner.lock().await;
@@ -334,26 +334,26 @@ impl<Sil> SilFilterApiServer<RpcTransaction<Sil::NetworkTypes>> for SilFilter<Si
 where
     Sil: FullEthApiTypes + RpcNodeCoreExt + LoadReceipt + SilBlocks + 'static,
 {
-    /// Handler for `eth_newFilter`
+    /// Handler for `sil_newFilter`
     async fn new_filter(&self, filter: Filter) -> RpcResult<FilterId> {
-        trace!(target: "rpc::sil", "Serving eth_newFilter");
+        trace!(target: "rpc::sil", "Serving sil_newFilter");
         self.inner
             .install_filter(FilterKind::<RpcTransaction<Sil::NetworkTypes>>::Log(Box::new(filter)))
             .await
     }
 
-    /// Handler for `eth_newBlockFilter`
+    /// Handler for `sil_newBlockFilter`
     async fn new_block_filter(&self) -> RpcResult<FilterId> {
-        trace!(target: "rpc::sil", "Serving eth_newBlockFilter");
+        trace!(target: "rpc::sil", "Serving sil_newBlockFilter");
         self.inner.install_filter(FilterKind::<RpcTransaction<Sil::NetworkTypes>>::Block).await
     }
 
-    /// Handler for `eth_newPendingTransactionFilter`
+    /// Handler for `sil_newPendingTransactionFilter`
     async fn new_pending_transaction_filter(
         &self,
         kind: Option<PendingTransactionFilterKind>,
     ) -> RpcResult<FilterId> {
-        trace!(target: "rpc::sil", "Serving eth_newPendingTransactionFilter");
+        trace!(target: "rpc::sil", "Serving sil_newPendingTransactionFilter");
 
         let transaction_kind = match kind.unwrap_or_default() {
             PendingTransactionFilterKind::Hashes => {
@@ -377,12 +377,12 @@ where
         self.inner.install_filter(transaction_kind).await
     }
 
-    /// Handler for `eth_getFilterChanges`
+    /// Handler for `sil_getFilterChanges`
     async fn filter_changes(
         &self,
         id: FilterId,
     ) -> RpcResult<FilterChanges<RpcTransaction<Sil::NetworkTypes>>> {
-        trace!(target: "rpc::sil", "Serving eth_getFilterChanges");
+        trace!(target: "rpc::sil", "Serving sil_getFilterChanges");
         Ok(Self::filter_changes(self, id).await?)
     }
 
@@ -390,15 +390,15 @@ where
     ///
     /// Returns an error if no matching log filter exists.
     ///
-    /// Handler for `eth_getFilterLogs`
+    /// Handler for `sil_getFilterLogs`
     async fn filter_logs(&self, id: FilterId) -> RpcResult<Vec<Log>> {
-        trace!(target: "rpc::sil", "Serving eth_getFilterLogs");
+        trace!(target: "rpc::sil", "Serving sil_getFilterLogs");
         Ok(Self::filter_logs(self, id).await?)
     }
 
-    /// Handler for `eth_uninstallFilter`
+    /// Handler for `sil_uninstallFilter`
     async fn uninstall_filter(&self, id: FilterId) -> RpcResult<bool> {
-        trace!(target: "rpc::sil", "Serving eth_uninstallFilter");
+        trace!(target: "rpc::sil", "Serving sil_uninstallFilter");
         let mut filters = self.inner.active_filters.inner.lock().await;
         if filters.remove(&id).is_some() {
             trace!(target: "rpc::sil::filter", ?id, "uninstalled filter");
@@ -410,9 +410,9 @@ where
 
     /// Returns logs matching given filter object.
     ///
-    /// Handler for `eth_getLogs`
+    /// Handler for `sil_getLogs`
     async fn logs(&self, filter: Filter) -> RpcResult<Vec<Log>> {
-        trace!(target: "rpc::sil", "Serving eth_getLogs");
+        trace!(target: "rpc::sil", "Serving sil_getLogs");
         Ok(self.logs_for_filter(filter, self.inner.query_limits).await?)
     }
 }
@@ -968,7 +968,7 @@ pub enum SilFilterError {
         /// End block of the suggested retry range (last successfully processed block)
         to_block: u64,
     },
-    /// Error serving request in `eth_` namespace.
+    /// Error serving request in `sil_` namespace.
     #[error(transparent)]
     SilAPIError(#[from] SilApiError),
     /// Error thrown when a spawned task failed to deliver a response.

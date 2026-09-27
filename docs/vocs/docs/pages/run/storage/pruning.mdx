@@ -139,49 +139,49 @@ The following tables describe RPC methods available in the full node.
 
 | RPC / Segment                             | Note                                                       |
 | ----------------------------------------- | ---------------------------------------------------------- |
-| `eth_accounts`                            |                                                            |
-| `eth_blockNumber`                         |                                                            |
-| `eth_call`                                | Only for the last 10064 blocks                             |
-| `eth_chainId`                             |                                                            |
-| `eth_createAccessList`                    | Only for the last 10064 blocks                             |
-| `eth_estimateGas`                         | Only for the last 10064 blocks                             |
-| `eth_feeHistory`                          |                                                            |
-| `eth_gasPrice`                            |                                                            |
-| `eth_getBalance`                          | Only for the last 10064 blocks                             |
-| `eth_getBlockByHash`                      |                                                            |
-| `eth_getBlockByNumber`                    |                                                            |
-| `eth_getBlockReceipts`                    | Only for the last 10064 blocks                             |
-| `eth_getBlockTransactionCountByHash`      |                                                            |
-| `eth_getBlockTransactionCountByNumber`    |                                                            |
-| `eth_getCode`                             |                                                            |
-| `eth_getFilterChanges`                    |                                                            |
-| `eth_getFilterLogs`                       | Only for the last 10064 blocks                             |
-| `eth_getLogs`                             | Only for the last 10064 blocks                             |
-| `eth_getStorageAt`                        | Only for the last 10064 blocks                             |
-| `eth_getTransactionByBlockHashAndIndex`   |                                                            |
-| `eth_getTransactionByBlockNumberAndIndex` |                                                            |
-| `eth_getTransactionByHash`                |                                                            |
-| `eth_getTransactionCount`                 | Only for the last 10064 blocks                             |
-| `eth_getTransactionReceipt`               | Only for the last 10064 blocks                             |
-| `eth_getUncleByBlockHashAndIndex`         |                                                            |
-| `eth_getUncleByBlockNumberAndIndex`       |                                                            |
-| `eth_getUncleCountByBlockHash`            |                                                            |
-| `eth_getUncleCountByBlockNumber`          |                                                            |
-| `eth_maxPriorityFeePerGas`                |                                                            |
-| `eth_mining`                              |                                                            |
-| `eth_newBlockFilter`                      |                                                            |
-| `eth_newFilter`                           |                                                            |
-| `eth_newPendingTransactionFilter`         |                                                            |
-| `eth_protocolVersion`                     |                                                            |
-| `eth_sendRawTransaction`                  |                                                            |
-| `eth_sendTransaction`                     |                                                            |
-| `eth_sign`                                |                                                            |
-| `eth_signTransaction`                     |                                                            |
-| `eth_signTypedData`                       |                                                            |
-| `eth_subscribe`                           |                                                            |
-| `eth_syncing`                             |                                                            |
-| `eth_uninstallFilter`                     |                                                            |
-| `eth_unsubscribe`                         |                                                            |
+| `sil_accounts`                            |                                                            |
+| `sil_blockNumber`                         |                                                            |
+| `sil_call`                                | Only for the last 10064 blocks                             |
+| `sil_chainId`                             |                                                            |
+| `sil_createAccessList`                    | Only for the last 10064 blocks                             |
+| `sil_estimateGas`                         | Only for the last 10064 blocks                             |
+| `sil_feeHistory`                          |                                                            |
+| `sil_gasPrice`                            |                                                            |
+| `sil_getBalance`                          | Only for the last 10064 blocks                             |
+| `sil_getBlockByHash`                      |                                                            |
+| `sil_getBlockByNumber`                    |                                                            |
+| `sil_getBlockReceipts`                    | Only for the last 10064 blocks                             |
+| `sil_getBlockTransactionCountByHash`      |                                                            |
+| `sil_getBlockTransactionCountByNumber`    |                                                            |
+| `sil_getCode`                             |                                                            |
+| `sil_getFilterChanges`                    |                                                            |
+| `sil_getFilterLogs`                       | Only for the last 10064 blocks                             |
+| `sil_getLogs`                             | Only for the last 10064 blocks                             |
+| `sil_getStorageAt`                        | Only for the last 10064 blocks                             |
+| `sil_getTransactionByBlockHashAndIndex`   |                                                            |
+| `sil_getTransactionByBlockNumberAndIndex` |                                                            |
+| `sil_getTransactionByHash`                |                                                            |
+| `sil_getTransactionCount`                 | Only for the last 10064 blocks                             |
+| `sil_getTransactionReceipt`               | Only for the last 10064 blocks                             |
+| `sil_getUncleByBlockHashAndIndex`         |                                                            |
+| `sil_getUncleByBlockNumberAndIndex`       |                                                            |
+| `sil_getUncleCountByBlockHash`            |                                                            |
+| `sil_getUncleCountByBlockNumber`          |                                                            |
+| `sil_maxPriorityFeePerGas`                |                                                            |
+| `sil_mining`                              |                                                            |
+| `sil_newBlockFilter`                      |                                                            |
+| `sil_newFilter`                           |                                                            |
+| `sil_newPendingTransactionFilter`         |                                                            |
+| `sil_protocolVersion`                     |                                                            |
+| `sil_sendRawTransaction`                  |                                                            |
+| `sil_sendTransaction`                     |                                                            |
+| `sil_sign`                                |                                                            |
+| `sil_signTransaction`                     |                                                            |
+| `sil_signTypedData`                       |                                                            |
+| `sil_subscribe`                           |                                                            |
+| `sil_syncing`                             |                                                            |
+| `sil_uninstallFilter`                     |                                                            |
+| `sil_unsubscribe`                         |                                                            |
 
 #### `net` namespace
 
@@ -252,49 +252,49 @@ The following tables describe the requirements for prune segments, per RPC metho
 
 | RPC / Segment                             | Sender Recovery | Transaction Lookup | Receipts | Account History | Storage History |
 | ----------------------------------------- | --------------- | ------------------ | -------- | --------------- | --------------- |
-| `eth_accounts`                            | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_blockNumber`                         | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_call`                                | ✅              | ✅                 | ✅       | ❌              | ❌              |
-| `eth_chainId`                             | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_createAccessList`                    | ✅              | ✅                 | ✅       | ❌              | ❌              |
-| `eth_estimateGas`                         | ✅              | ✅                 | ✅       | ❌              | ❌              |
-| `eth_feeHistory`                          | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_gasPrice`                            | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getBalance`                          | ✅              | ✅                 | ✅       | ❌              | ✅              |
-| `eth_getBlockByHash`                      | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getBlockByNumber`                    | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getBlockReceipts`                    | ✅              | ✅                 | ❌       | ✅              | ✅              |
-| `eth_getBlockTransactionCountByHash`      | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getBlockTransactionCountByNumber`    | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getCode`                             | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getFilterChanges`                    | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getFilterLogs`                       | ✅              | ✅                 | ❌       | ✅              | ✅              |
-| `eth_getLogs`                             | ✅              | ✅                 | ❌       | ✅              | ✅              |
-| `eth_getStorageAt`                        | ✅              | ✅                 | ✅       | ✅              | ❌              |
-| `eth_getTransactionByBlockHashAndIndex`   | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getTransactionByBlockNumberAndIndex` | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getTransactionByHash`                | ✅              | ❌                 | ✅       | ✅              | ✅              |
-| `eth_getTransactionCount`                 | ✅              | ✅                 | ✅       | ❌              | ✅              |
-| `eth_getTransactionReceipt`               | ✅              | ❌                 | ❌       | ✅              | ✅              |
-| `eth_getUncleByBlockHashAndIndex`         | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getUncleByBlockNumberAndIndex`       | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getUncleCountByBlockHash`            | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_getUncleCountByBlockNumber`          | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_maxPriorityFeePerGas`                | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_mining`                              | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_newBlockFilter`                      | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_newFilter`                           | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_newPendingTransactionFilter`         | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_protocolVersion`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_sendRawTransaction`                  | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_sendTransaction`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_sign`                                | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_signTransaction`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_signTypedData`                       | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_subscribe`                           | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_syncing`                             | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_uninstallFilter`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
-| `eth_unsubscribe`                         | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_accounts`                            | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_blockNumber`                         | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_call`                                | ✅              | ✅                 | ✅       | ❌              | ❌              |
+| `sil_chainId`                             | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_createAccessList`                    | ✅              | ✅                 | ✅       | ❌              | ❌              |
+| `sil_estimateGas`                         | ✅              | ✅                 | ✅       | ❌              | ❌              |
+| `sil_feeHistory`                          | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_gasPrice`                            | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getBalance`                          | ✅              | ✅                 | ✅       | ❌              | ✅              |
+| `sil_getBlockByHash`                      | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getBlockByNumber`                    | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getBlockReceipts`                    | ✅              | ✅                 | ❌       | ✅              | ✅              |
+| `sil_getBlockTransactionCountByHash`      | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getBlockTransactionCountByNumber`    | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getCode`                             | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getFilterChanges`                    | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getFilterLogs`                       | ✅              | ✅                 | ❌       | ✅              | ✅              |
+| `sil_getLogs`                             | ✅              | ✅                 | ❌       | ✅              | ✅              |
+| `sil_getStorageAt`                        | ✅              | ✅                 | ✅       | ✅              | ❌              |
+| `sil_getTransactionByBlockHashAndIndex`   | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getTransactionByBlockNumberAndIndex` | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getTransactionByHash`                | ✅              | ❌                 | ✅       | ✅              | ✅              |
+| `sil_getTransactionCount`                 | ✅              | ✅                 | ✅       | ❌              | ✅              |
+| `sil_getTransactionReceipt`               | ✅              | ❌                 | ❌       | ✅              | ✅              |
+| `sil_getUncleByBlockHashAndIndex`         | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getUncleByBlockNumberAndIndex`       | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getUncleCountByBlockHash`            | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_getUncleCountByBlockNumber`          | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_maxPriorityFeePerGas`                | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_mining`                              | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_newBlockFilter`                      | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_newFilter`                           | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_newPendingTransactionFilter`         | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_protocolVersion`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_sendRawTransaction`                  | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_sendTransaction`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_sign`                                | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_signTransaction`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_signTypedData`                       | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_subscribe`                           | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_syncing`                             | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_uninstallFilter`                     | ✅              | ✅                 | ✅       | ✅              | ✅              |
+| `sil_unsubscribe`                         | ✅              | ✅                 | ✅       | ✅              | ✅              |
 
 #### `net` namespace
 

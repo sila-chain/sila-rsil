@@ -1,4 +1,4 @@
-//! Additional `eth_` RPC API for bundles.
+//! Additional `sil_` RPC API for bundles.
 //!
 //! See also <https://docs.flashbots.net/flashbots-auction/advanced/rpc-endpoint>
 
@@ -9,11 +9,11 @@ use alloy_rpc_types_mev::{
 };
 use jsonrpsee::proc_macros::rpc;
 
-/// A subset of the [SilBundleApi] API interface that only supports `eth_callBundle`.
+/// A subset of the [SilBundleApi] API interface that only supports `sil_callBundle`.
 #[cfg_attr(not(feature = "client"), rpc(server, namespace = "sil"))]
 #[cfg_attr(feature = "client", rpc(server, client, namespace = "sil"))]
 pub trait SilCallBundleApi {
-    /// `eth_callBundle` can be used to simulate a bundle against a specific block number,
+    /// `sil_callBundle` can be used to simulate a bundle against a specific block number,
     /// including simulating a bundle at the top of the next block.
     #[method(name = "callBundle")]
     async fn call_bundle(
@@ -28,12 +28,12 @@ pub trait SilCallBundleApi {
 #[cfg_attr(not(feature = "client"), rpc(server, namespace = "sil"))]
 #[cfg_attr(feature = "client", rpc(server, client, namespace = "sil"))]
 pub trait SilBundleApi {
-    /// `eth_sendBundle` can be used to send your bundles to the builder.
+    /// `sil_sendBundle` can be used to send your bundles to the builder.
     #[method(name = "sendBundle")]
     async fn send_bundle(&self, bundle: SilSendBundle)
         -> jsonrpsee::core::RpcResult<SilBundleHash>;
 
-    /// `eth_callBundle` can be used to simulate a bundle against a specific block number,
+    /// `sil_callBundle` can be used to simulate a bundle against a specific block number,
     /// including simulating a bundle at the top of the next block.
     #[method(name = "callBundle")]
     async fn call_bundle(
@@ -41,29 +41,29 @@ pub trait SilBundleApi {
         request: SilCallBundle,
     ) -> jsonrpsee::core::RpcResult<SilCallBundleResponse>;
 
-    /// `eth_cancelBundle` is used to prevent a submitted bundle from being included on-chain. See [bundle cancellations](https://docs.flashbots.net/flashbots-auction/advanced/bundle-cancellations) for more information.
+    /// `sil_cancelBundle` is used to prevent a submitted bundle from being included on-chain. See [bundle cancellations](https://docs.flashbots.net/flashbots-auction/advanced/bundle-cancellations) for more information.
     #[method(name = "cancelBundle")]
     async fn cancel_bundle(&self, request: SilCancelBundle) -> jsonrpsee::core::RpcResult<()>;
 
-    /// `eth_sendPrivateTransaction` is used to send a single transaction to Flashbots. Flashbots will attempt to build a block including the transaction for the next 25 blocks. See [Private Transactions](https://docs.flashbots.net/flashbots-protect/additional-documentation/sil-sendPrivateTransaction) for more info.
+    /// `sil_sendPrivateTransaction` is used to send a single transaction to Flashbots. Flashbots will attempt to build a block including the transaction for the next 25 blocks. See [Private Transactions](https://docs.flashbots.net/flashbots-protect/additional-documentation/sil-sendPrivateTransaction) for more info.
     #[method(name = "sendPrivateTransaction")]
     async fn send_private_transaction(
         &self,
         request: SilSendPrivateTransaction,
     ) -> jsonrpsee::core::RpcResult<B256>;
 
-    /// The `eth_sendPrivateRawTransaction` method can be used to send private transactions to
+    /// The `sil_sendPrivateRawTransaction` method can be used to send private transactions to
     /// the RPC endpoint. Private transactions are protected from frontrunning and kept
     /// private until included in a block. A request to this endpoint needs to follow
-    /// the standard `eth_sendRawTransaction`
+    /// the standard `sil_sendRawTransaction`
     #[method(name = "sendPrivateRawTransaction")]
     async fn send_private_raw_transaction(&self, bytes: Bytes) -> jsonrpsee::core::RpcResult<B256>;
 
-    /// The `eth_cancelPrivateTransaction` method stops private transactions from being
+    /// The `sil_cancelPrivateTransaction` method stops private transactions from being
     /// submitted for future blocks.
     ///
     /// A transaction can only be cancelled if the request is signed by the same key as the
-    /// `eth_sendPrivateTransaction` call submitting the transaction in first place.
+    /// `sil_sendPrivateTransaction` call submitting the transaction in first place.
     #[method(name = "cancelPrivateTransaction")]
     async fn cancel_private_transaction(
         &self,

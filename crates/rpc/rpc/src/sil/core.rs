@@ -1,5 +1,5 @@
 //! Implementation of the [`jsonrpsee`] generated [`SilApiServer`](crate::SilApi) trait
-//! Handles RPC requests for the `eth_` namespace.
+//! Handles RPC requests for the `sil_` namespace.
 
 use std::{sync::Arc, time::Duration};
 
@@ -52,7 +52,7 @@ pub type SilApiBuilderFor<N, NetworkT = Sila> = SilApiBuilder<N, SilRpcConverter
 
 /// `Sil` API implementation.
 ///
-/// This type provides the functionality for handling `eth_` related requests.
+/// This type provides the functionality for handling `sil_` related requests.
 /// These are implemented two-fold: Core functionality is implemented as
 /// [`SilApiSpec`](rsil_rpc_sil_api::helpers::SilApiSpec) trait. Additionally, the required server
 /// implementations (e.g. [`SilApiServer`](rsil_rpc_sil_api::SilApiServer)) are implemented
@@ -92,8 +92,8 @@ impl
     /// Creating an [`SilApi`] requires a few mandatory components:
     ///  - provider: The type responsible for fetching requested data from disk.
     ///  - transaction pool: To interact with the pool, submitting new transactions (e.g.
-    ///    `eth_sendRawTransactions`).
-    ///  - network: required to handle requests related to network state (e.g. `eth_syncing`).
+    ///    `sil_sendRawTransactions`).
+    ///  - network: required to handle requests related to network state (e.g. `sil_syncing`).
     ///  - savm config: Knows how create a new SAVM instance to transact,estimate,call,trace.
     ///
     /// # Create an instance with noop sila implementations
@@ -105,7 +105,7 @@ impl
     /// use rsil_provider::noop::NoopProvider;
     /// use rsil_rpc::SilApi;
     /// use rsil_transaction_pool::noop::NoopTransactionPool;
-    /// let eth_api = SilApi::builder(
+    /// let sil_api = SilApi::builder(
     ///     NoopProvider::default(),
     ///     NoopTransactionPool::default(),
     ///     NoopNetwork::default(),
@@ -231,11 +231,11 @@ pub struct SilApiInner<N: RpcNodeCore, Rpc: RpcConvert> {
     eth_cache: SilStateCache<N::Primitives>,
     /// The async gas oracle frontend for gas price suggestions
     gas_oracle: GasPriceOracle<N::Provider>,
-    /// Maximum gas limit for `eth_call` and call tracing RPC methods.
+    /// Maximum gas limit for `sil_call` and call tracing RPC methods.
     gas_cap: u64,
-    /// Maximum number of blocks for `eth_simulateV1`.
+    /// Maximum number of blocks for `sil_simulateV1`.
     max_simulate_blocks: u64,
-    /// Whether to compute state roots for `eth_simulateV1`.
+    /// Whether to compute state roots for `sil_simulateV1`.
     compute_state_root_for_eth_simulate: bool,
     /// The maximum number of blocks into the past for generating state proofs.
     eth_proof_window: u64,
@@ -253,7 +253,7 @@ pub struct SilApiInner<N: RpcNodeCore, Rpc: RpcConvert> {
     /// Guard for getproof calls
     blocking_task_guard: BlockingTaskGuard,
 
-    /// Semaphore to limit concurrent blocking IO requests (`eth_call`, `eth_estimateGas`, etc.)
+    /// Semaphore to limit concurrent blocking IO requests (`sil_call`, `sil_estimateGas`, etc.)
     blocking_io_request_semaphore: Arc<Semaphore>,
 
     /// Transaction broadcast channel
@@ -440,7 +440,7 @@ where
         self.max_simulate_blocks
     }
 
-    /// Returns whether state roots are computed for `eth_simulateV1`.
+    /// Returns whether state roots are computed for `sil_simulateV1`.
     #[inline]
     pub const fn compute_state_root_for_eth_simulate(&self) -> bool {
         self.compute_state_root_for_eth_simulate

@@ -452,7 +452,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
             self.buffer_hashes(hashes_to_request, None);
             return false;
         };
-        let conn_eth_version = peer.version;
+        let conn_sil_version = peer.version;
 
         // fill the request with more hashes pending fetch that have been announced by the peer.
         // the search for more hashes is done with respect to the given budget, which determines
@@ -479,7 +479,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
         trace!(target: "net::tx",
             peer_id=format!("{peer_id:#}"),
             hashes=?*hashes_to_request,
-            %conn_eth_version,
+            %conn_sil_version,
             "requesting hashes that were stored pending fetch from peer"
         );
 
@@ -490,7 +490,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
             trace!(target: "net::tx",
                 peer_id=format!("{peer_id:#}"),
                 ?failed_to_request_hashes,
-                %conn_eth_version,
+                %conn_sil_version,
                 "failed sending request to peer's session, buffering hashes"
             );
 
@@ -602,13 +602,13 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
         peer: &PeerMetadata<N>,
     ) -> Option<RequestTxHashes> {
         let peer_id: PeerId = peer.request_tx.peer_id;
-        let conn_eth_version = peer.version;
+        let conn_sil_version = peer.version;
 
         if self.active_peers.len() >= self.info.max_inflight_requests {
             trace!(target: "net::tx",
                 peer_id=format!("{peer_id:#}"),
                 hashes=?*new_announced_hashes,
-                %conn_eth_version,
+                %conn_sil_version,
                 max_inflight_transaction_requests=self.info.max_inflight_requests,
                 "limit for concurrent `GetPooledTransactions` requests reached, dropping request for hashes to peer"
             );
@@ -619,7 +619,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
             trace!(target: "net::tx",
                 peer_id=format!("{peer_id:#}"),
                 hashes=?*new_announced_hashes,
-                conn_eth_version=%conn_eth_version,
+                conn_sil_version=%conn_sil_version,
                 "failed to cache active peer in schnellru::LruMap, dropping request to peer"
             );
             return Some(new_announced_hashes);
@@ -629,7 +629,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
             trace!(target: "net::tx",
                 peer_id=format!("{peer_id:#}"),
                 hashes=?*new_announced_hashes,
-                %conn_eth_version,
+                %conn_sil_version,
                 max_concurrent_tx_reqs_per_peer=self.info.max_inflight_requests_per_peer,
                 "limit for concurrent `GetPooledTransactions` requests per peer reached"
             );

@@ -15,7 +15,7 @@ use crate::{
 };
 use alloy_primitives::bytes::{Bytes, BytesMut};
 use futures::{Sink, SinkExt, Stream, StreamExt};
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     snap::{SnapProtocolMessage, SnapVersion},
     RawCapabilityMessage,
 };
@@ -246,7 +246,7 @@ mod tests {
         test_utils::{connect_passthrough, eth_handshake, eth_hello},
         UnauthedP2PStream,
     };
-    use rsil_eth_wire_types::{
+    use rsil_sil_wire_types::{
         snap::{BlockAccessListsMessage, GetBlockAccessListsMessage},
         SilVersion,
     };
@@ -349,7 +349,7 @@ mod tests {
                 if let SilSnapMessage::Snap(SnapProtocolMessage::GetBlockAccessLists(req)) = msg {
                     let response = SnapProtocolMessage::BlockAccessLists(BlockAccessListsMessage {
                         request_id: req.request_id,
-                        block_access_lists: rsil_eth_wire_types::BlockAccessLists(vec![None]),
+                        block_access_lists: rsil_sil_wire_types::BlockAccessLists(vec![None]),
                     });
                     stream.send(SilSnapMessage::Snap(response)).await.unwrap();
                 }

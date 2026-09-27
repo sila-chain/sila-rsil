@@ -10,7 +10,7 @@ use crate::{
     rpc::{RpcContext, RsilRpcAddOns, RsilRpcServerHandles},
     BlockReaderFor, DebugNode, DebugNodeLauncher, EngineNodeLauncher, LaunchNode, Node,
 };
-use alloy_eips::sip4844::env_settings::EnvKzgSettings;
+use alloy_sips::eip4844::env_settings::EnvKzgSettings;
 use futures::Future;
 use rsil_chainspec::{Hardforks, SilChainSpec, SilaHardforks};
 use rsil_db_api::{database::Database, database_metrics::DatabaseMetrics};

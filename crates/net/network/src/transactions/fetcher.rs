@@ -47,7 +47,7 @@ use rsil_eth_wire::{
     DedupPayload, GetPooledTransactions, HandleMempoolData, HandleVersionedMempoolData,
     PartiallyValidData, RequestTxHashes, ValidAnnouncementData,
 };
-use rsil_eth_wire_types::{NetworkPrimitives, SilNetworkPrimitives};
+use rsil_sil_wire_types::{NetworkPrimitives, SilNetworkPrimitives};
 use rsil_network_api::PeerRequest;
 use rsil_network_p2p::error::{RequestError, RequestResult};
 use rsil_network_peers::PeerId;
@@ -1314,7 +1314,7 @@ mod test {
     };
     use alloy_rlp::Decodable;
     use derive_more::IntoIterator;
-    use rsil_eth_wire_types::SilVersion;
+    use rsil_sil_wire_types::SilVersion;
     use rsil_sila_primitives::TransactionSigned;
     use std::str::FromStr;
 

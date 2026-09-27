@@ -4,15 +4,15 @@
 use super::SpawnBlocking;
 use crate::{FromEthApiError, FromEvmError, RpcNodeCore, SilApiTypes};
 use alloy_consensus::{BlockHeader, Transaction};
-use alloy_eips::sip7840::BlobParams;
+use alloy_sips::eip7840::BlobParams;
 use alloy_primitives::{B256, U256};
-use alloy_rpc_types_eth::{BlockNumberOrTag, BlockOverrides};
+use alloy_rpc_types_sil::{BlockNumberOrTag, BlockOverrides};
 use futures::Future;
 use revm::context_interface::{Block, Cfg as _};
 use rsil_chain_state::{BlockState, ExecutedBlock};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_errors::{BlockExecutionError, BlockValidationError, ProviderError, RsilError};
-use rsil_evm::{
+use rsil_savm::{
     block::TxResult,
     execute::{BlockBuilder, BlockBuilderOutcome, BlockExecutionOutput},
     ConfigureEvm, NextBlockEnvAttributes, Savm, SavmEnvFor,

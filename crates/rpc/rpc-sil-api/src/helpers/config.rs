@@ -5,12 +5,12 @@ use alloy_eips::{
     sip7840::BlobParams,
     sip7910::{SilConfig, SilForkConfig, SystemContract},
 };
-use alloy_evm::precompiles::Precompile;
+use alloy_savm::precompiles::Precompile;
 use alloy_primitives::Address;
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use rsil_chainspec::{ChainSpecProvider, Hardforks, Head, SilChainSpec, SilaHardforks};
 use rsil_errors::{ProviderError, RsilError};
-use rsil_evm::{precompiles::PrecompilesMap, ConfigureEvm, Savm};
+use rsil_savm::{precompiles::PrecompilesMap, ConfigureEvm, Savm};
 use rsil_node_api::NodePrimitives;
 use rsil_primitives_traits::header::HeaderMut;
 use rsil_revm::db::EmptyDB;

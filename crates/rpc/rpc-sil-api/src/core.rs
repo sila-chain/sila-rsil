@@ -8,7 +8,7 @@ use alloy_dyn_abi::TypedData;
 use alloy_eips::{sip2930::AccessListResult, BlockId, BlockNumberOrTag};
 use alloy_json_rpc::RpcObject;
 use alloy_primitives::{Address, Bytes, B256, B64, U256, U64};
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     simulate::{SimulatePayload, SimulatedBlock},
     state::{SavmOverrides, StateOverride},
     BlockOverrides, Bundle, FeeHistory, Index, SIP1186AccountProofResponse, SilCallResponse,
@@ -318,7 +318,7 @@ pub trait SilApi<
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<Option<alloy_rpc_types_eth::Account>>;
+    ) -> RpcResult<Option<alloy_rpc_types_sil::Account>>;
 
     /// Introduced in SIP-1559, returns suggestion for the priority for dynamic fee transactions.
     #[method(name = "maxPriorityFeePerGas")]
@@ -423,7 +423,7 @@ pub trait SilApi<
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<alloy_rpc_types_eth::AccountInfo>;
+    ) -> RpcResult<alloy_rpc_types_sil::AccountInfo>;
 
     /// Returns the SIP-7928 block access list for a block by hash.
     #[method(name = "getBlockAccessListByBlockHash")]
@@ -831,7 +831,7 @@ where
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<Option<alloy_rpc_types_eth::Account>> {
+    ) -> RpcResult<Option<alloy_rpc_types_sil::Account>> {
         trace!(target: "rpc::sil", "Serving eth_getAccount");
         Ok(SilState::get_account(self, address, block).await?)
     }
@@ -959,7 +959,7 @@ where
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<alloy_rpc_types_eth::AccountInfo> {
+    ) -> RpcResult<alloy_rpc_types_sil::AccountInfo> {
         trace!(target: "rpc::sil", "Serving eth_getAccountInfo");
         Ok(SilState::get_account_info(self, address, block).await?)
     }

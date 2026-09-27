@@ -2,10 +2,10 @@
 
 use super::{Call, LoadPendingBlock};
 use crate::{AsEthApiError, FromEthApiError, IntoEthApiError};
-use alloy_evm::overrides::{apply_block_overrides, apply_state_overrides};
+use alloy_savm::overrides::{apply_block_overrides, apply_state_overrides};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{TxKind, U256};
-use alloy_rpc_types_eth::{state::SavmOverrides, BlockId};
+use alloy_rpc_types_sil::{state::SavmOverrides, BlockId};
 use futures::Future;
 use revm::{
     context::Block,
@@ -14,7 +14,7 @@ use revm::{
 };
 use rsil_chainspec::MIN_TRANSACTION_GAS;
 use rsil_errors::ProviderError;
-use rsil_evm::{
+use rsil_savm::{
     env::BlockEnvironment, ConfigureEvm, Database, Savm, SavmEnvFor, SavmFor, TransactionEnvMut,
     TxEnvFor,
 };

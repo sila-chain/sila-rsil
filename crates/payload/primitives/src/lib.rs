@@ -687,8 +687,8 @@ mod tests {
         // SilaOsaka activates at timestamp 1000
         let osaka_activation = 1000;
         let chain_spec = ChainSpecBuilder::sila_mainnet()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(0))
-            .with_fork(SilaHardfork::SilaOsaka, ForkCondition::Timestamp(osaka_activation))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(0))
+            .with_fork(SilaHardfork::Osaka, ForkCondition::Timestamp(osaka_activation))
             .build();
 
         // SilaOsaka is Active + V4 + GetPayload

@@ -15,7 +15,7 @@ use alloy_rpc_types_engine::{
     ExecutionPayloadV1, ExecutionPayloadV3, ExecutionPayloadV4, ForkchoiceState, ForkchoiceUpdated,
     PayloadId, PayloadStatus,
 };
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     state::StateOverride, BlockOverrides, Filter, Log, SIP1186AccountProofResponse, SyncStatus,
 };
 use alloy_serde::JsonStorageKey;

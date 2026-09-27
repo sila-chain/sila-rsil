@@ -323,8 +323,8 @@ mod test {
     use crate::components::Components;
     use rsil_consensus::noop::NoopConsensus;
     use rsil_db_api::mock::DatabaseMock;
-    use rsil_evm::noop::NoopEvmConfig;
-    use rsil_evm_sila::MockEvmConfig;
+    use rsil_savm::noop::NoopEvmConfig;
+    use rsil_savm_sila::MockEvmConfig;
     use rsil_network::SilNetworkPrimitives;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_node_api::FullNodeTypesAdapter;

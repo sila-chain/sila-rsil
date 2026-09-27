@@ -8,11 +8,11 @@ use crate::{
     helpers::estimate::EstimateCall, FromEvmError, FullEthApiTypes, RpcBlock, RpcNodeCore,
 };
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
-use alloy_eips::sip2930::AccessListResult;
-use alloy_evm::overrides::{apply_block_overrides, apply_state_overrides, OverrideBlockHashes};
+use alloy_sips::eip2930::AccessListResult;
+use alloy_savm::overrides::{apply_block_overrides, apply_state_overrides, OverrideBlockHashes};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{Bytes, B256, U256};
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     simulate::{SimBlock, SimulatePayload, SimulatedBlock},
     state::{SavmOverrides, StateOverride},
     BlockId, Bundle, SilCallResponse, StateContext, TransactionInfo,
@@ -26,7 +26,7 @@ use revm::{
 use revm_inspectors::{access_list::AccessListInspector, transfer::TransferInspector};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_errors::{ProviderError, RsilError};
-use rsil_evm::{
+use rsil_savm::{
     block::BlockExecutor, env::BlockEnvironment, execute::BlockBuilder, ConfigureEvm,
     HaltReasonFor, InspectorFor, Savm, SavmEnvFor, TransactionEnvMut, TxEnvFor,
 };
@@ -554,7 +554,7 @@ pub trait Call:
         _evm_env: &SavmEnvFor<Self::Savm>,
         tx_env: &TxEnvFor<Self::Savm>,
     ) -> Result<u64, Self::Error> {
-        alloy_evm::call::caller_gas_allowance(&mut db, tx_env).map_err(Self::Error::from_eth_err)
+        alloy_savm::call::caller_gas_allowance(&mut db, tx_env).map_err(Self::Error::from_eth_err)
     }
 
     /// Executes the closure with the state that corresponds to the given [`BlockId`].
@@ -590,7 +590,7 @@ pub trait Call:
         Ok(res)
     }
 
-    /// Executes the [`rsil_evm::SavmEnv`] against the given [Database] without committing state
+    /// Executes the [`rsil_savm::SavmEnv`] against the given [Database] without committing state
     /// changes.
     fn transact_with_inspector<DB, I>(
         &self,
@@ -666,7 +666,7 @@ pub trait Call:
     /// Prepares the state and env for the given [`RpcTxReq`] at the given [`BlockId`] and
     /// executes the closure on a new task returning the result of the closure.
     ///
-    /// This returns the configured [`rsil_evm::SavmEnv`] for the given [`RpcTxReq`] at
+    /// This returns the configured [`rsil_savm::SavmEnv`] for the given [`RpcTxReq`] at
     /// the given [`BlockId`] and with configured call settings: `prepare_call_env`.
     ///
     /// This is primarily used by `eth_call`.
@@ -807,7 +807,7 @@ pub trait Call:
 
     ///
     /// All `TxEnv` fields are derived from the given [`RpcTxReq`], if fields are
-    /// `None`, they fall back to the [`rsil_evm::SavmEnv`]'s settings.
+    /// `None`, they fall back to the [`rsil_savm::SavmEnv`]'s settings.
     fn create_txn_env(
         &self,
         evm_env: &SavmEnvFor<Self::Savm>,
@@ -826,7 +826,7 @@ pub trait Call:
         Ok(self.converter().tx_env(request, evm_env)?)
     }
 
-    /// Prepares the [`rsil_evm::SavmEnv`] for execution of calls.
+    /// Prepares the [`rsil_savm::SavmEnv`] for execution of calls.
     ///
     /// Does not commit any changes to the underlying database.
     ///

@@ -38,7 +38,7 @@ pub use tokio_util::codec::{
 pub use crate::{
     disconnect::CanDisconnect,
     eth_snap::{SilSnapMessage, SilSnapStream},
-    ethstream::{SilStream, SilStreamInner, UnauthedEthStream},
+    ethstream::{SilStream, SilStreamInner, UnauthedSilStream},
     hello::{HelloMessage, HelloMessageBuilder, HelloMessageWithProtocols},
     p2pstream::{
         DisconnectP2P, P2PMessage, P2PMessageID, P2PStream, UnauthedP2PStream, HANDSHAKE_TIMEOUT,

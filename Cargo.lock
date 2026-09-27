@@ -282,8 +282,8 @@ dependencies = [
  "c-kzg",
  "derive_more",
  "either",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "serde",
  "serde_with",
  "sha2",
@@ -647,8 +647,8 @@ dependencies = [
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "derive_more",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "serde",
  "serde_json",
  "serde_with",
@@ -683,8 +683,8 @@ dependencies = [
  "alloy-serde",
  "arbitrary",
  "derive_more",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "jsonwebtoken",
  "rand 0.8.6",
  "serde",
@@ -3456,7 +3456,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_ssz"
+name = "ethereum_ssz"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e462875ad8693755ea8913d6e905715c76ea4836e2254e18c9cf0f7a8f8c2a13"
@@ -3471,7 +3471,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_ssz_derive"
+name = "ethereum_ssz_derive"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "daf022360bdbe9456eda5f35718a50476d5b2a0d51a97ed4eae27420737a6fba"
@@ -9017,8 +9017,8 @@ dependencies = [
  "alloy-rlp",
  "alloy-rpc-types-beacon",
  "alloy-rpc-types-engine",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "eyre",
  "rand 0.9.4",
  "reqwest",
@@ -9764,8 +9764,8 @@ dependencies = [
  "alloy-signer",
  "alloy-sol-types",
  "enr",
- "sila_ssz",
- "sila_ssz_derive",
+ "ethereum_ssz",
+ "ethereum_ssz_derive",
  "eyre",
  "futures",
  "http-body-util",
@@ -12978,7 +12978,7 @@ checksum = "f7fd51aa83d2eb83b04570808430808b5d24fdbf479a4d5ac5dee4a2e2dd2be4"
 dependencies = [
  "alloy-primitives",
  "sila_hashing",
- "sila_ssz",
+ "ethereum_ssz",
  "smallvec",
  "typenum",
 ]

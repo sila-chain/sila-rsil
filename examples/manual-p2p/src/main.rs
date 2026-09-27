@@ -20,7 +20,7 @@ use rsil_sila::{
     network::{
         config::rng_secret_key,
         sil_wire::{
-            HelloMessage, P2PStream, SilMessage, SilStream, UnauthedEthStream, UnauthedP2PStream,
+            HelloMessage, P2PStream, SilMessage, SilStream, UnauthedSilStream, UnauthedP2PStream,
             UnifiedStatus,
         },
         SilNetworkPrimitives,
@@ -31,7 +31,7 @@ use std::sync::LazyLock;
 use tokio::net::TcpStream;
 
 type AuthedP2PStream = P2PStream<ECIESStream<TcpStream>>;
-type AuthedEthStream = SilStream<P2PStream<ECIESStream<TcpStream>>, SilNetworkPrimitives>;
+type AuthedSilStream = SilStream<P2PStream<ECIESStream<TcpStream>>, SilNetworkPrimitives>;
 
 pub static MAINNET_BOOT_NODES: LazyLock<Vec<NodeRecord>> = LazyLock::new(mainnet_nodes);
 
@@ -65,7 +65,7 @@ async fn main() -> eyre::Result<()> {
                     }
                 };
 
-                let (eth_stream, their_status) = match handshake_eth(p2p_stream).await {
+                let (sil_stream, their_status) = match handshake_sil(p2p_stream).await {
                     Ok(s) => s,
                     Err(e) => {
                         println!("Failed SIL handshake with peer {}, {}", peer.address, e);
@@ -78,7 +78,7 @@ async fn main() -> eyre::Result<()> {
                     peer.address, peer.tcp_port, their_hello.client_version, their_status.version
                 );
 
-                snoop(peer, eth_stream).await;
+                snoop(peer, sil_stream).await;
             }
         });
     }
@@ -101,9 +101,9 @@ async fn handshake_p2p(
 }
 
 // Perform a SIL Wire handshake with a peer
-async fn handshake_eth(
+async fn handshake_sil(
     p2p_stream: AuthedP2PStream,
-) -> eyre::Result<(AuthedEthStream, UnifiedStatus)> {
+) -> eyre::Result<(AuthedSilStream, UnifiedStatus)> {
     let fork_filter = SILA_MAINNET.fork_filter(Head {
         timestamp: SILA_MAINNET.fork(SilaHardfork::Shanghai).as_timestamp().unwrap(),
         ..Default::default()
@@ -119,14 +119,14 @@ async fn handshake_eth(
         version: p2p_stream.shared_capabilities().sil()?.version().try_into()?,
         ..unified_status
     };
-    let eth_unauthed = UnauthedEthStream::new(p2p_stream);
-    Ok(eth_unauthed.handshake(status, fork_filter).await?)
+    let sil_unauthed = UnauthedSilStream::new(p2p_stream);
+    Ok(sil_unauthed.handshake(status, fork_filter).await?)
 }
 
 // Snoop by greedily capturing all broadcasts that the peer emits
 // note: this node cannot handle request so it will be disconnected by peer when challenged
-async fn snoop(peer: NodeRecord, mut eth_stream: AuthedEthStream) {
-    while let Some(Ok(update)) = eth_stream.next().await {
+async fn snoop(peer: NodeRecord, mut sil_stream: AuthedSilStream) {
+    while let Some(Ok(update)) = sil_stream.next().await {
         match update {
             SilMessage::NewPooledTransactionHashes66(txs) => {
                 println!("Got {} new tx hashes from peer {}", txs.len(), peer.address);

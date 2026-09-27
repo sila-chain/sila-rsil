@@ -6,12 +6,12 @@ use crate::tree::{
     CachedStateCacheMetrics, CachedStateMetrics, CachedStateMetricsSource, ExecutionCache,
     ExecutionEnv, PayloadExecutionCache, SavedCache, StateProviderBuilder, TreeConfig,
 };
-use alloy_eips::sip1898::BlockWithParent;
+use alloy_sips::eip1898::BlockWithParent;
 use alloy_primitives::B256;
 use crossbeam_channel::{Receiver as CrossbeamReceiver, Sender as CrossbeamSender};
 use prewarm::PrewarmMetrics;
 use rayon::prelude::*;
-use rsil_evm::{
+use rsil_savm::{
     block::ExecutableTxParts,
     execute::{ExecutableTxFor, WithTxEnv},
     ConfigureEvm, ConvertTx, ExecutableTxIterator, ExecutableTxTuple, SpecFor, TxEnvFor,
@@ -619,11 +619,11 @@ mod tests {
         PayloadExecutionCache, SavedCache, TreeConfig,
     };
     use alloy_consensus::constants::KECCAK_EMPTY;
-    use alloy_eips::sip1898::{BlockNumHash, BlockWithParent};
+    use alloy_sips::eip1898::{BlockNumHash, BlockWithParent};
     use alloy_primitives::{Address, B256, U256};
     use revm::state::AccountInfo;
     use rsil_chainspec::ChainSpec;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_execution_cache::CachedStatus;
     use rsil_revm::db::BundleState;
     use std::sync::Arc;

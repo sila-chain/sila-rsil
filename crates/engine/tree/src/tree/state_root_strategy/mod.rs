@@ -56,7 +56,7 @@ use alloy_primitives::B256;
 use crossbeam_channel::Receiver as CrossbeamReceiver;
 use rsil_chain_state::{ExecutedBlock, PreservedSparseTrie, StateTrieOverlayManager};
 use rsil_errors::ProviderResult;
-use rsil_evm::{ConfigureEvm, OnStateHook};
+use rsil_savm::{ConfigureEvm, OnStateHook};
 use rsil_primitives_traits::{
     AlloyBlockHeader, FastInstant as Instant, NodePrimitives, RecoveredBlock,
 };
@@ -1208,8 +1208,8 @@ mod tests {
     use rsil_chain_state::{test_utils::TestBlockBuilder, StateTrieOverlayManager};
     use rsil_chainspec::ChainSpec;
     use rsil_db_common::init::init_genesis;
-    use rsil_evm::OnStateHook;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm::OnStateHook;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::{Account, StorageEntry};
     use rsil_provider::{
         providers::{BlockchainProvider, OverlayBuilder, OverlayStateProviderFactory},

@@ -19,11 +19,11 @@ use crate::tree::{
 };
 use alloy_consensus::transaction::TxHashRef;
 use alloy_eip7928::bal::DecodedBal;
-use alloy_eips::sip4895::Withdrawal;
+use alloy_sips::eip4895::Withdrawal;
 use alloy_primitives::{keccak256, B256, U256};
 use metrics::{Counter, Gauge, Histogram};
 use rayon::prelude::*;
-use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, RecoveredTx, Savm, SavmFor, SpecFor};
+use rsil_savm::{execute::ExecutableTxFor, ConfigureEvm, RecoveredTx, Savm, SavmFor, SpecFor};
 use rsil_metrics::Metrics;
 use rsil_primitives_traits::{Account, FastInstant as Instant, NodePrimitives};
 use rsil_provider::{

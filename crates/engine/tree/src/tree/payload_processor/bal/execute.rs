@@ -19,7 +19,7 @@ use alloy_eip7928::{
     bal::{Bal as AlloyBal, DecodedBal},
     compute_block_access_list_hash, BlockAccessList,
 };
-use alloy_evm::{
+use alloy_savm::{
     block::{BlockExecutionError, BlockExecutor, BlockValidationError, TxResult},
     Savm,
 };
@@ -30,7 +30,7 @@ use revm::{
     database::{states::bundle_state::BundleRetention, State},
     state::bal::Bal as RevmBal,
 };
-use rsil_evm::{execute::ExecutableTxFor, ConfigureEvm, Database, ExecutionCtxFor, SavmEnvFor};
+use rsil_savm::{execute::ExecutableTxFor, ConfigureEvm, Database, ExecutionCtxFor, SavmEnvFor};
 use rsil_primitives_traits::ReceiptTy;
 use rsil_provider::BlockExecutionOutput;
 use rsil_tasks::Runtime;
@@ -308,7 +308,7 @@ mod tests {
         database::{CacheDB, EmptyDB},
         state::{AccountInfo, Bytecode},
     };
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::{Block as _, Recovered, SealedBlock};
     use rsil_revm::db::BundleState;
     use rsil_sila_primitives::{Block, BlockBody, Receipt, TransactionSigned};
@@ -375,7 +375,7 @@ mod tests {
             gas_limit,
             parent_beacon_block_root: Some(B256::ZERO),
             withdrawals_root: Some(alloy_consensus::EMPTY_ROOT_HASH),
-            requests_hash: Some(alloy_eips::sip7685::EMPTY_REQUESTS_HASH),
+            requests_hash: Some(alloy_sips::eip7685::EMPTY_REQUESTS_HASH),
             excess_blob_gas: Some(0),
             blob_gas_used: Some(0),
             block_access_list_hash: Some(header_bal_hash),
@@ -684,7 +684,7 @@ mod tests {
         bundle_state: BundleState,
         receipts: Vec<rsil_sila_primitives::Receipt>,
         gas_used: u64,
-        requests: alloy_eips::sip7685::Requests,
+        requests: alloy_sips::eip7685::Requests,
     }
 
     /// Runs the block through the serial path and captures its full output.
@@ -843,7 +843,7 @@ mod tests {
         // commit loop must still reject tx2 because tx1's committed gas leaves too little
         // block gas for tx2's gas limit.
         use alloy_consensus::TxLegacy;
-        use alloy_evm::block::BlockValidationError;
+        use alloy_savm::block::BlockValidationError;
         use alloy_primitives::TxKind;
         use rsil_chainspec::SILA_MAINNET;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;

@@ -306,7 +306,7 @@ mod tests {
     use super::*;
     use crate::test_utils::insert_headers_into_client;
     use alloy_consensus::Header;
-    use alloy_eips::sip1559::SILA_BLOCK_GAS_LIMIT_30M;
+    use alloy_sips::eip1559::SILA_BLOCK_GAS_LIMIT_30M;
     use assert_matches::assert_matches;
     use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
     use rsil_network_p2p::test_utils::TestFullBlockClient;

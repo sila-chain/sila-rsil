@@ -6,7 +6,7 @@ use alloy_primitives::{
 };
 use moka::policy::EvictionPolicy;
 use revm::precompile::{PrecompileId, PrecompileOutput, PrecompileResult};
-use rsil_evm::precompiles::{DynPrecompile, Precompile, PrecompileInput};
+use rsil_savm::precompiles::{DynPrecompile, Precompile, PrecompileInput};
 use rsil_primitives_traits::dashmap::DashMap;
 use std::{hash::Hash, sync::Arc};
 use tracing::error;
@@ -255,7 +255,7 @@ mod tests {
         precompile::{PrecompileOutput, PrecompileStatus},
         primitives::hardfork::SpecId,
     };
-    use rsil_evm::{Savm, SavmEnv, SavmFactory, SilEvmFactory};
+    use rsil_savm::{Savm, SavmEnv, SavmFactory, SilEvmFactory};
     use rsil_revm::db::EmptyDB;
 
     #[test]

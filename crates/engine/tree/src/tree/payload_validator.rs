@@ -107,7 +107,7 @@ use crate::tree::{
 use alloy_consensus::transaction::{Either, TxHashRef};
 use alloy_eip7928::{bal::DecodedBal, compute_block_access_list_hash, BlockAccessList};
 use alloy_eips::{sip1898::BlockWithParent, sip4895::Withdrawal, NumHash};
-use alloy_evm::Savm;
+use alloy_savm::Savm;
 use alloy_primitives::{
     map::{AddressMap, B256Set},
     B256,
@@ -132,7 +132,7 @@ use rsil_engine_primitives::{
     ConfigureEngineEvm, ExecutableTxIterator, ExecutionPayload, InvalidBlockHook, PayloadValidator,
 };
 use rsil_errors::{BlockExecutionError, ProviderResult};
-use rsil_evm::{
+use rsil_savm::{
     block::BlockExecutor, execute::ExecutableTxFor, ConfigureEvm, ExecutionCtxFor, OnStateHook,
     SavmEnvFor, SpecFor,
 };
@@ -1199,8 +1199,8 @@ where
         has_bal: bool,
     ) -> Result<(E, Vec<Address>), BlockExecutionError>
     where
-        E: BlockExecutor<Receipt = N::Receipt, Savm: alloy_evm::Savm<DB = &'a mut State<DB>>>,
-        Tx: alloy_evm::block::ExecutableTx<E> + alloy_evm::RecoveredTx<InnerTx>,
+        E: BlockExecutor<Receipt = N::Receipt, Savm: alloy_savm::Savm<DB = &'a mut State<DB>>>,
+        Tx: alloy_savm::block::ExecutableTx<E> + alloy_savm::RecoveredTx<InnerTx>,
         InnerTx: TxHashRef,
         DB: revm::Database + 'a,
         Err: core::error::Error + Send + Sync + 'static,
@@ -1234,7 +1234,7 @@ where
             self.metrics.record_transaction_wait(wait_start.elapsed());
 
             let tx = tx_result.map_err(BlockExecutionError::other)?;
-            let tx_signer = *<Tx as alloy_evm::RecoveredTx<InnerTx>>::signer(&tx);
+            let tx_signer = *<Tx as alloy_savm::RecoveredTx<InnerTx>>::signer(&tx);
 
             senders.push(tx_signer);
 

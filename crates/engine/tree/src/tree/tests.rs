@@ -9,7 +9,7 @@ use crate::{
 };
 use rsil_trie_db::ChangesetCache;
 
-use alloy_eips::sip1898::BlockWithParent;
+use alloy_sips::eip1898::BlockWithParent;
 use alloy_primitives::{
     map::{B256Map, B256Set},
     Bytes, B256,
@@ -22,7 +22,7 @@ use assert_matches::assert_matches;
 use rsil_chain_state::{test_utils::TestBlockBuilder, BlockState, StateTrieOverlayManager};
 use rsil_chainspec::{ChainSpec, HOLESKY, SILA_MAINNET};
 use rsil_engine_primitives::{EngineApiValidator, ForkchoiceStatus, NoopInvalidBlockHook};
-use rsil_evm_sila::MockEvmConfig;
+use rsil_savm_sila::MockEvmConfig;
 use rsil_payload_builder::PayloadServiceCommand;
 use rsil_primitives_traits::Block as _;
 use rsil_provider::{test_utils::MockEthProvider, BalStoreHandle, InMemoryBalStore, RawBal};

@@ -11,7 +11,7 @@ use revm::{
     state::AccountInfo,
 };
 use rsil_engine_primitives::InvalidBlockHook;
-use rsil_evm::{execute::Executor, ConfigureEvm};
+use rsil_savm::{execute::Executor, ConfigureEvm};
 use rsil_primitives_traits::{NodePrimitives, RecoveredBlock, SealedHeader};
 use rsil_provider::{BlockExecutionOutput, StateProvider, StateProviderBox, StateProviderFactory};
 use rsil_revm::{
@@ -415,11 +415,11 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eips::sip7685::Requests;
+    use alloy_sips::eip7685::Requests;
     use alloy_primitives::{map::HashMap, Address, Bytes, B256, U256};
     use revm::database::states::reverts::AccountRevert;
     use rsil_chainspec::ChainSpec;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_provider::test_utils::MockEthProvider;
     use rsil_revm::db::{BundleAccount, BundleState};
     use rsil_sila_primitives::SilPrimitives;

@@ -1,5 +1,5 @@
 use metrics::Histogram;
-use rsil_eth_wire::DisconnectReason;
+use rsil_sil_wire::DisconnectReason;
 use rsil_metrics::{
     metrics::{Counter, Gauge},
     Metrics,
@@ -256,7 +256,7 @@ pub struct TransactionsManagerMetrics {
 #[derive(Metrics)]
 #[metrics(scope = "network")]
 pub struct TransactionFetcherMetrics {
-    /// Currently active outgoing [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions)
+    /// Currently active outgoing [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions)
     /// requests.
     pub(crate) inflight_transaction_requests: Gauge,
     /// Number of inflight requests at which the
@@ -265,7 +265,7 @@ pub struct TransactionFetcherMetrics {
     /// measure.
     pub(crate) capacity_inflight_requests: Counter,
     /// Hashes in currently active outgoing
-    /// [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) requests.
+    /// [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) requests.
     pub(crate) hashes_inflight_transaction_requests: Gauge,
     /// How often we failed to send a request to the peer because the channel was full.
     pub(crate) egress_peer_channel_full: Counter,
@@ -274,7 +274,7 @@ pub struct TransactionFetcherMetrics {
     /// Total number of fetched transactions.
     pub(crate) fetched_transactions: Counter,
     /// Total number of transactions that were received in
-    /// [`PooledTransactions`](rsil_eth_wire::PooledTransactions) responses, that weren't
+    /// [`PooledTransactions`](rsil_sil_wire::PooledTransactions) responses, that weren't
     /// requested.
     pub(crate) unsolicited_transactions: Counter,
     /* ================ SEARCH DURATION ================ */

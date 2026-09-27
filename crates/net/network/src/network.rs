@@ -8,7 +8,7 @@ use futures::StreamExt;
 use parking_lot::Mutex;
 use rsil_discv4::{Discv4, NatResolver};
 use rsil_discv5::Discv5;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     BlockRangeUpdate, BroadcastPoolTransactions, DisconnectReason, NetworkPrimitives,
     NewPooledTransactionHashes, SharedTransactions, SilNetworkPrimitives,
 };
@@ -494,7 +494,7 @@ impl<N: NetworkPrimitives> NetworkSyncUpdater for NetworkHandle<N> {
     }
 
     /// Updates the advertised block range.
-    fn update_block_range(&self, update: rsil_eth_wire::BlockRangeUpdate) {
+    fn update_block_range(&self, update: rsil_sil_wire::BlockRangeUpdate) {
         self.send_message(NetworkHandleMessage::InternalBlockRangeUpdate(update));
     }
 }

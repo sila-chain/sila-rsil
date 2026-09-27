@@ -26,7 +26,7 @@ use alloy_eips::merge::EPOCH_SLOTS;
 use alloy_primitives::Sealable;
 use futures::{stream::Fuse, SinkExt, StreamExt};
 use metrics::{Counter, Gauge};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::{SilHandshakeError, SilStreamError},
     message::{MessageError, SilBroadcastMessage},
     Capabilities, DisconnectP2P, DisconnectReason, NetworkPrimitives, NewBlockPayload, SilMessage,
@@ -1316,7 +1316,7 @@ mod tests {
     use futures::task::noop_waker;
     use rsil_chainspec::SILA_MAINNET;
     use rsil_ecies::stream::ECIESStream;
-    use rsil_eth_wire::{
+    use rsil_sil_wire::{
         handshake::SilHandshake, protocol::Protocol, GetBlockAccessLists, GetBlockBodies,
         HelloMessageWithProtocols, P2PStream, SilNetworkPrimitives, SilStream, StatusBuilder,
         UnauthedEthStream, UnauthedP2PStream, UnifiedStatus,
@@ -1508,7 +1508,7 @@ mod tests {
     }
 
     /// Returns a [`SessionBuilder`] whose hello also advertises `snap/2`, so the negotiated
-    /// session ends up on an [`SilSnapStream`](rsil_eth_wire::SilSnapStream) connection instead
+    /// session ends up on an [`SilSnapStream`](rsil_sil_wire::SilSnapStream) connection instead
     /// of a plain `sil`-only one.
     fn snap_session_builder() -> SessionBuilder {
         let mut builder = SessionBuilder::default();

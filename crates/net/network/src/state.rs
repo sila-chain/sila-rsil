@@ -15,7 +15,7 @@ use alloy_primitives::{
     B256,
 };
 use rand::seq::SliceRandom;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     BlockHashNumber, Capabilities, DisconnectReason, GetReceipts70, NetworkPrimitives,
     NewBlockHashes, NewBlockPayload, SilNetworkPrimitives, UnifiedStatus,
 };
@@ -684,7 +684,7 @@ mod tests {
     };
     use alloy_consensus::Header;
     use alloy_primitives::B256;
-    use rsil_eth_wire::{BlockBodies, Capabilities, Capability, SilNetworkPrimitives, SilVersion};
+    use rsil_sil_wire::{BlockBodies, Capabilities, Capability, SilNetworkPrimitives, SilVersion};
     use rsil_network_api::PeerRequestSender;
     use rsil_network_p2p::{bodies::client::BodiesClient, error::RequestError};
     use rsil_network_peers::PeerId;

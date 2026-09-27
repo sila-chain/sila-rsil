@@ -7,7 +7,7 @@ use crate::types::{BlockAccessLists, Receipts69, Receipts70};
 use alloy_consensus::{BlockHeader, ReceiptWithBloom};
 use alloy_primitives::{Bytes, B256};
 use futures::FutureExt;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     message::RequestPair, BlockBodies, BlockHeaders, BlockRangeUpdate, BroadcastPoolTransactions,
     Cells, GetBlockAccessLists, GetBlockBodies, GetBlockHeaders, GetReceipts, NetworkPrimitives,
     NewBlock, NewBlockHashes, NewBlockPayload, NewPooledTransactionHashes, NodeData,

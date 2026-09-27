@@ -18,7 +18,7 @@ use alloy_primitives::map::{FbBuildHasher, HashMap};
 use counter::SessionCounter;
 use futures::{future::Either, io, FutureExt, StreamExt};
 use rsil_ecies::{stream::ECIESStream, ECIESError};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::SilStreamError, handshake::SilRlpxHandshake, multiplex::RlpxProtocolMultiplexer,
     BlockRangeUpdate, Capabilities, DisconnectReason, HelloMessageWithProtocols, NetworkPrimitives,
     SilSnapStream, SilStream, SilVersion, UnauthedP2PStream, UnifiedStatus, HANDSHAKE_TIMEOUT,

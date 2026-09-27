@@ -6,7 +6,7 @@ use crate::{
     PendingSessionHandshakeError,
 };
 use rsil_ecies::ECIESError;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::SilStreamError, Capabilities, DisconnectReason, NetworkPrimitives, SilVersion,
     UnifiedStatus,
 };

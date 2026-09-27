@@ -2,7 +2,7 @@
 
 use futures::{Sink, SinkExt, Stream, StreamExt};
 use rsil_ecies::stream::ECIESStream;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::{P2PStreamError, SilStreamError},
     message::SilBroadcastMessage,
     multiplex::{ProtocolProxy, RlpxSatelliteStream},

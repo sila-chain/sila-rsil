@@ -10,7 +10,7 @@ use alloy_primitives::map::{hash_map::Entry, FbBuildHasher, HashMap, HashSet};
 use futures::StreamExt;
 
 use rand::Rng;
-use rsil_eth_wire::{errors::SilStreamError, DisconnectReason};
+use rsil_sil_wire::{errors::SilStreamError, DisconnectReason};
 use rsil_net_banlist::BanList;
 use rsil_network_api::test_utils::{PeerCommand, PeersHandle};
 use rsil_network_peers::{NodeRecord, PeerId, TrustedPeer};
@@ -1502,7 +1502,7 @@ fn jitter_rotation_interval(mean: Duration) -> Duration {
 #[cfg(test)]
 mod tests {
     use alloy_primitives::B512;
-    use rsil_eth_wire::{
+    use rsil_sil_wire::{
         errors::{P2PHandshakeError, P2PStreamError, SilHandshakeError, SilStreamError},
         DisconnectReason,
     };
@@ -3312,9 +3312,9 @@ mod tests {
             peers.on_active_session_dropped(
                 &socket_addr,
                 &peer,
-                &SilStreamError::InvalidMessage(rsil_eth_wire::message::MessageError::Invalid(
-                    rsil_eth_wire::SilVersion::Sil68,
-                    rsil_eth_wire::SilMessageID::Status,
+                &SilStreamError::InvalidMessage(rsil_sil_wire::message::MessageError::Invalid(
+                    rsil_sil_wire::SilVersion::Sil68,
+                    rsil_sil_wire::SilMessageID::Status,
                 )),
             );
 

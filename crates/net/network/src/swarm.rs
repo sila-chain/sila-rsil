@@ -7,7 +7,7 @@ use crate::{
     state::{NetworkState, SessionActivation, StateAction},
 };
 use futures::Stream;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::SilStreamError, Capabilities, DisconnectReason, NetworkPrimitives,
     SilNetworkPrimitives, SilVersion, UnifiedStatus,
 };

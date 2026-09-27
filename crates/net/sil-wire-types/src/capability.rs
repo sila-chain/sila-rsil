@@ -96,37 +96,37 @@ impl Capability {
     }
 
     /// Returns the [`SilVersion::Sil66`] capability.
-    pub const fn eth_66() -> Self {
+    pub const fn sil_66() -> Self {
         Self::sil(SilVersion::Sil66)
     }
 
     /// Returns the [`SilVersion::Sil67`] capability.
-    pub const fn eth_67() -> Self {
+    pub const fn sil_67() -> Self {
         Self::sil(SilVersion::Sil67)
     }
 
     /// Returns the [`SilVersion::Sil68`] capability.
-    pub const fn eth_68() -> Self {
+    pub const fn sil_68() -> Self {
         Self::sil(SilVersion::Sil68)
     }
 
     /// Returns the [`SilVersion::Sil69`] capability.
-    pub const fn eth_69() -> Self {
+    pub const fn sil_69() -> Self {
         Self::sil(SilVersion::Sil69)
     }
 
     /// Returns the [`SilVersion::Sil70`] capability.
-    pub const fn eth_70() -> Self {
+    pub const fn sil_70() -> Self {
         Self::sil(SilVersion::Sil70)
     }
 
     /// Returns the [`SilVersion::Sil71`] capability.
-    pub const fn eth_71() -> Self {
+    pub const fn sil_71() -> Self {
         Self::sil(SilVersion::Sil71)
     }
 
     /// Returns the [`SilVersion::Sil72`] capability.
-    pub const fn eth_72() -> Self {
+    pub const fn sil_72() -> Self {
         Self::sil(SilVersion::Sil72)
     }
 
@@ -137,56 +137,56 @@ impl Capability {
 
     /// Whether this is sil v66 protocol.
     #[inline]
-    pub fn is_eth_v66(&self) -> bool {
+    pub fn is_sil_v66(&self) -> bool {
         self.name == "sil" && self.version == 66
     }
 
     /// Whether this is sil v67.
     #[inline]
-    pub fn is_eth_v67(&self) -> bool {
+    pub fn is_sil_v67(&self) -> bool {
         self.name == "sil" && self.version == 67
     }
 
     /// Whether this is sil v68.
     #[inline]
-    pub fn is_eth_v68(&self) -> bool {
+    pub fn is_sil_v68(&self) -> bool {
         self.name == "sil" && self.version == 68
     }
 
     /// Whether this is sil v69.
     #[inline]
-    pub fn is_eth_v69(&self) -> bool {
+    pub fn is_sil_v69(&self) -> bool {
         self.name == "sil" && self.version == 69
     }
 
     /// Whether this is sil v70.
     #[inline]
-    pub fn is_eth_v70(&self) -> bool {
+    pub fn is_sil_v70(&self) -> bool {
         self.name == "sil" && self.version == 70
     }
 
     /// Whether this is sil v71.
     #[inline]
-    pub fn is_eth_v71(&self) -> bool {
+    pub fn is_sil_v71(&self) -> bool {
         self.name == "sil" && self.version == 71
     }
 
     /// Whether this is sil v72.
     #[inline]
-    pub fn is_eth_v72(&self) -> bool {
+    pub fn is_sil_v72(&self) -> bool {
         self.name == "sil" && self.version == 72
     }
 
     /// Whether this is any sil version.
     #[inline]
     pub fn is_eth(&self) -> bool {
-        self.is_eth_v66()
-            || self.is_eth_v67()
-            || self.is_eth_v68()
-            || self.is_eth_v69()
-            || self.is_eth_v70()
-            || self.is_eth_v71()
-            || self.is_eth_v72()
+        self.is_sil_v66()
+            || self.is_sil_v67()
+            || self.is_sil_v68()
+            || self.is_sil_v69()
+            || self.is_sil_v70()
+            || self.is_sil_v71()
+            || self.is_sil_v72()
     }
 }
 
@@ -217,26 +217,26 @@ impl<'a> arbitrary::Arbitrary<'a> for Capability {
 pub struct Capabilities {
     /// All Capabilities and their versions
     inner: Vec<Capability>,
-    eth_66: bool,
-    eth_67: bool,
-    eth_68: bool,
-    eth_69: bool,
-    eth_70: bool,
-    eth_71: bool,
-    eth_72: bool,
+    sil_66: bool,
+    sil_67: bool,
+    sil_68: bool,
+    sil_69: bool,
+    sil_70: bool,
+    sil_71: bool,
+    sil_72: bool,
 }
 
 impl Capabilities {
     /// Create a new instance from the given vec.
     pub fn new(value: Vec<Capability>) -> Self {
         Self {
-            eth_66: value.iter().any(Capability::is_eth_v66),
-            eth_67: value.iter().any(Capability::is_eth_v67),
-            eth_68: value.iter().any(Capability::is_eth_v68),
-            eth_69: value.iter().any(Capability::is_eth_v69),
-            eth_70: value.iter().any(Capability::is_eth_v70),
-            eth_71: value.iter().any(Capability::is_eth_v71),
-            eth_72: value.iter().any(Capability::is_eth_v72),
+            sil_66: value.iter().any(Capability::is_sil_v66),
+            sil_67: value.iter().any(Capability::is_sil_v67),
+            sil_68: value.iter().any(Capability::is_sil_v68),
+            sil_69: value.iter().any(Capability::is_sil_v69),
+            sil_70: value.iter().any(Capability::is_sil_v70),
+            sil_71: value.iter().any(Capability::is_sil_v71),
+            sil_72: value.iter().any(Capability::is_sil_v72),
             inner: value,
         }
     }
@@ -249,33 +249,33 @@ impl Capabilities {
     ///
     /// Use this to gate requests on a minimum protocol version (e.g. BAL requires `sil/71`),
     /// not to check whether a peer advertises a specific version verbatim. For exact-version
-    /// checks use the `supports_eth_vXX` helpers (e.g. [`Self::supports_eth_v71`]).
-    pub const fn supports_eth_at_least(&self, version: &SilVersion) -> bool {
+    /// checks use the `supports_eth_vXX` helpers (e.g. [`Self::supports_sil_v71`]).
+    pub const fn supports_sil_at_least(&self, version: &SilVersion) -> bool {
         match version {
             SilVersion::Sil66 => {
-                self.eth_66
-                    || self.eth_67
-                    || self.eth_68
-                    || self.eth_69
-                    || self.eth_70
-                    || self.eth_71
-                    || self.eth_72
+                self.sil_66
+                    || self.sil_67
+                    || self.sil_68
+                    || self.sil_69
+                    || self.sil_70
+                    || self.sil_71
+                    || self.sil_72
             }
             SilVersion::Sil67 => {
-                self.eth_67
-                    || self.eth_68
-                    || self.eth_69
-                    || self.eth_70
-                    || self.eth_71
-                    || self.eth_72
+                self.sil_67
+                    || self.sil_68
+                    || self.sil_69
+                    || self.sil_70
+                    || self.sil_71
+                    || self.sil_72
             }
             SilVersion::Sil68 => {
-                self.eth_68 || self.eth_69 || self.eth_70 || self.eth_71 || self.eth_72
+                self.sil_68 || self.sil_69 || self.sil_70 || self.sil_71 || self.sil_72
             }
-            SilVersion::Sil69 => self.eth_69 || self.eth_70 || self.eth_71 || self.eth_72,
-            SilVersion::Sil70 => self.eth_70 || self.eth_71 || self.eth_72,
-            SilVersion::Sil71 => self.eth_71 || self.eth_72,
-            SilVersion::Sil72 => self.eth_72,
+            SilVersion::Sil69 => self.sil_69 || self.sil_70 || self.sil_71 || self.sil_72,
+            SilVersion::Sil70 => self.sil_70 || self.sil_71 || self.sil_72,
+            SilVersion::Sil71 => self.sil_71 || self.sil_72,
+            SilVersion::Sil72 => self.sil_72,
         }
     }
 
@@ -294,49 +294,49 @@ impl Capabilities {
     /// Whether the peer supports `sil` sub-protocol.
     #[inline]
     pub const fn supports_eth(&self) -> bool {
-        self.eth_72
-            || self.eth_71
-            || self.eth_70
-            || self.eth_69
-            || self.eth_68
-            || self.eth_67
-            || self.eth_66
+        self.sil_72
+            || self.sil_71
+            || self.sil_70
+            || self.sil_69
+            || self.sil_68
+            || self.sil_67
+            || self.sil_66
     }
 
     /// Whether this peer supports sil v66 protocol.
     #[inline]
-    pub const fn supports_eth_v66(&self) -> bool {
-        self.eth_66
+    pub const fn supports_sil_v66(&self) -> bool {
+        self.sil_66
     }
 
     /// Whether this peer supports sil v67 protocol.
     #[inline]
-    pub const fn supports_eth_v67(&self) -> bool {
-        self.eth_67
+    pub const fn supports_sil_v67(&self) -> bool {
+        self.sil_67
     }
 
     /// Whether this peer supports sil v68 protocol.
     #[inline]
-    pub const fn supports_eth_v68(&self) -> bool {
-        self.eth_68
+    pub const fn supports_sil_v68(&self) -> bool {
+        self.sil_68
     }
 
     /// Whether this peer supports sil v69 protocol.
     #[inline]
-    pub const fn supports_eth_v69(&self) -> bool {
-        self.eth_69
+    pub const fn supports_sil_v69(&self) -> bool {
+        self.sil_69
     }
 
     /// Whether this peer supports sil v70 protocol.
     #[inline]
-    pub const fn supports_eth_v70(&self) -> bool {
-        self.eth_70
+    pub const fn supports_sil_v70(&self) -> bool {
+        self.sil_70
     }
 
     /// Whether this peer supports sil v71 protocol.
     #[inline]
-    pub const fn supports_eth_v71(&self) -> bool {
-        self.eth_71
+    pub const fn supports_sil_v71(&self) -> bool {
+        self.sil_71
     }
 }
 
@@ -357,13 +357,13 @@ impl Decodable for Capabilities {
         let inner = Vec::<Capability>::decode(buf)?;
 
         Ok(Self {
-            eth_66: inner.iter().any(Capability::is_eth_v66),
-            eth_67: inner.iter().any(Capability::is_eth_v67),
-            eth_68: inner.iter().any(Capability::is_eth_v68),
-            eth_69: inner.iter().any(Capability::is_eth_v69),
-            eth_70: inner.iter().any(Capability::is_eth_v70),
-            eth_71: inner.iter().any(Capability::is_eth_v71),
-            eth_72: inner.iter().any(Capability::is_eth_v72),
+            sil_66: inner.iter().any(Capability::is_sil_v66),
+            sil_67: inner.iter().any(Capability::is_sil_v67),
+            sil_68: inner.iter().any(Capability::is_sil_v68),
+            sil_69: inner.iter().any(Capability::is_sil_v69),
+            sil_70: inner.iter().any(Capability::is_sil_v70),
+            sil_71: inner.iter().any(Capability::is_sil_v71),
+            sil_72: inner.iter().any(Capability::is_sil_v72),
             inner,
         })
     }

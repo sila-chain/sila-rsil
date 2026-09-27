@@ -12,7 +12,6 @@
 extern crate alloc;
 
 #[cfg(any(test, feature = "rsil-codec"))]
-extern crate rsil_codecs as reth_codecs;
 
 /// Accounts
 pub mod accounts;

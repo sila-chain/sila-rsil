@@ -1,7 +1,7 @@
 //! Sila Node types config.
 
 use crate::{SilEngineTypes, SilEvmConfig};
-use alloy_eips::{merge::EPOCH_SLOTS, sip7840::BlobParams};
+use alloy_sips::{merge::EPOCH_SLOTS, sip7840::BlobParams};
 use alloy_network::Sila;
 use alloy_rpc_types_engine::ExecutionData;
 use revm::context::TxEnv;

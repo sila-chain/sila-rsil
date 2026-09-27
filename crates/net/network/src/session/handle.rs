@@ -169,7 +169,7 @@ impl<N: NetworkPrimitives> ActiveSessionHandle<N> {
             local_addr: self.local_addr,
             capabilities: self.capabilities.clone(),
             client_version: self.client_version.clone(),
-            eth_version: self.version,
+            sil_version: self.version,
             status: self.status.clone(),
             session_established: self.established,
             kind,

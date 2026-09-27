@@ -525,7 +525,7 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
 
     #[inline]
     fn is_request_supported_for_version(request: &PeerRequest<N>, version: SilVersion) -> bool {
-        request.is_supported_by_eth_version(version)
+        request.is_supported_by_sil_version(version)
     }
 
     /// Handle a message received from the internal network
@@ -1340,7 +1340,7 @@ mod tests {
     };
 
     /// Returns a testing `HelloMessage` and new secretkey
-    fn eth_hello(server_key: &SecretKey) -> HelloMessageWithProtocols {
+    fn sil_hello(server_key: &SecretKey) -> HelloMessageWithProtocols {
         HelloMessageWithProtocols::builder(pk2id(&server_key.public_key(SECP256K1))).build()
     }
 
@@ -1386,8 +1386,8 @@ mod tests {
 
                 let (p2p_stream, _) = UnauthedP2PStream::new(sink).handshake(hello).await.unwrap();
 
-                let eth_version = p2p_stream.shared_capabilities().eth_version().unwrap();
-                status.set_eth_version(eth_version);
+                let sil_version = p2p_stream.shared_capabilities().sil_version().unwrap();
+                status.set_sil_version(sil_version);
 
                 let (client_stream, _) = UnauthedEthStream::new(p2p_stream)
                     .handshake(status, fork_filter)
@@ -1496,7 +1496,7 @@ mod tests {
                 active_session_tx,
                 active_session_rx: ReceiverStream::new(active_session_rx),
                 to_sessions: vec![],
-                hello: eth_hello(&secret_key),
+                hello: sil_hello(&secret_key),
                 secret_key,
                 local_peer_id,
                 status: StatusBuilder::default().build(),

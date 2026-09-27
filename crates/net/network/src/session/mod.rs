@@ -1143,7 +1143,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
     }
 
     // Ensure we negotiated mandatory sil protocol
-    let eth_version = match p2p_stream.shared_capabilities().eth_version() {
+    let sil_version = match p2p_stream.shared_capabilities().sil_version() {
         Ok(version) => version,
         Err(err) => {
             return PendingSessionEvent::Disconnected {
@@ -1156,7 +1156,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
     };
 
     // Before trying status handshake, set up the version to negotiated shared version
-    status.set_eth_version(eth_version);
+    status.set_sil_version(sil_version);
 
     let (conn, their_status) = if p2p_stream.shared_capabilities().len() == 1 {
         // if the shared caps are 1, we know both support the sil version
@@ -1169,7 +1169,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
         {
             Ok(their_status) => {
                 let eth_stream =
-                    SilStream::with_max_message_size(eth_version, p2p_stream, sil_max_message_size);
+                    SilStream::with_max_message_size(sil_version, p2p_stream, sil_max_message_size);
                 (eth_stream.into(), their_status)
             }
             Err(err) => {

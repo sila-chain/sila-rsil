@@ -267,7 +267,7 @@ pub struct PeerInfo {
     /// The direction of the session
     pub direction: Direction,
     /// The negotiated sil version.
-    pub eth_version: SilVersion,
+    pub sil_version: SilVersion,
     /// The Status message the peer sent for the `sil` handshake
     pub status: Arc<UnifiedStatus>,
     /// The timestamp when the session to that peer has been established.

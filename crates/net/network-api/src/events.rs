@@ -321,7 +321,7 @@ impl<N: NetworkPrimitives> PeerRequest<N> {
 
     /// Returns true if this request is supported for the negotiated sil protocol version.
     #[inline]
-    pub fn is_supported_by_eth_version(&self, version: SilVersion) -> bool {
+    pub fn is_supported_by_sil_version(&self, version: SilVersion) -> bool {
         match self {
             Self::GetBlockAccessLists { .. } => version >= SilVersion::Sil71,
             Self::GetCells { .. } => version >= SilVersion::Sil72,
@@ -446,8 +446,8 @@ mod tests {
         let req: PeerRequest<SilNetworkPrimitives> =
             PeerRequest::GetBlockAccessLists { request: GetBlockAccessLists(vec![]), response: tx };
 
-        assert!(!req.is_supported_by_eth_version(SilVersion::Sil70));
-        assert!(req.is_supported_by_eth_version(SilVersion::Sil71));
+        assert!(!req.is_supported_by_sil_version(SilVersion::Sil70));
+        assert!(req.is_supported_by_sil_version(SilVersion::Sil71));
     }
 
     #[test]
@@ -456,7 +456,7 @@ mod tests {
         let req: PeerRequest<SilNetworkPrimitives> =
             PeerRequest::GetCells { request: GetCells::default(), response: tx };
 
-        assert!(!req.is_supported_by_eth_version(SilVersion::Sil71));
-        assert!(req.is_supported_by_eth_version(SilVersion::Sil72));
+        assert!(!req.is_supported_by_sil_version(SilVersion::Sil71));
+        assert!(req.is_supported_by_sil_version(SilVersion::Sil72));
     }
 }

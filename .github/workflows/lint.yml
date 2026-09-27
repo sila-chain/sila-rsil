@@ -13,6 +13,37 @@ env:
 permissions: {}
 
 jobs:
+  pure-sila-identity:
+    name: Pure Sila identity
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - name: Reject non-Sila protocol identity
+        shell: bash
+        run: |
+          p_identity='Ethe''reum|ethe''reum|ETHE''REUM|Eth''[A-Z0-9_][A-Za-z0-9_]*|eth''_[A-Za-z0-9_]*|eth''::|EIP[-_0-9A-Za-z]*|eip[0-9][A-Za-z0-9_]*|eip_'
+          p_ecosystem='re''th[-_A-Za-z0-9]*|al''loy[-_A-Za-z0-9]*|re''vm[c_-A-Za-z0-9]*|ethe''reum_ssz|sigp/discv5|ethdisco'
+          content_matches="$(git grep -nE "($p_identity|$p_ecosystem)" -- . || true)"
+          p_path='(^|/)(eth|ethereum|eip|reth|revm|alloy)([^/]*)($|/)'
+          path_matches="$(git ls-files | grep -Ei "$p_path" || true)"
+          if [ -n "$content_matches" ] || [ -n "$path_matches" ]; then
+            echo "::error::Non-Sila protocol identity remains in tracked project files."
+            if [ -n "$content_matches" ]; then
+              printf '%s\n' "$content_matches"
+            fi
+            if [ -n "$path_matches" ]; then
+              echo "Non-Sila identity in tracked paths:"
+              printf '%s\n' "$path_matches"
+            fi
+            false
+          fi
+          echo "Pure Sila identity gate passed."
+
   clippy-binaries:
     name: clippy binaries / ${{ matrix.type }}
     runs-on: ubuntu-latest
@@ -352,6 +383,7 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs:
+      - pure-sila-identity
       - clippy-binaries
       - clippy
       - wasm

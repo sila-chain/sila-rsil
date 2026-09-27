@@ -2,7 +2,7 @@
 
 use std::io;
 
-use rsil_eth_wire_types::{DisconnectReason, UnknownDisconnectReason};
+use rsil_sil_wire_types::{DisconnectReason, UnknownDisconnectReason};
 use rsil_primitives_traits::GotExpected;
 
 use crate::{capability::SharedCapabilityError, ProtocolVersion};

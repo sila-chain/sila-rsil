@@ -130,26 +130,26 @@ jobs:
             limit: engine-api
           - sim: sila/engine
             limit: cancun
-          # eth_ rpc methods
+          # sil_ rpc methods
           - sim: sila/rpc-compat
             include:
-              - eth_blockNumber
-              - eth_call
-              - eth_chainId
-              - eth_createAccessList
-              - eth_estimateGas
-              - eth_feeHistory
-              - eth_getBalance
-              - eth_getBlockBy
-              - eth_getBlockTransactionCountBy
-              - eth_getCode
-              - eth_getProof
-              - eth_getStorage
-              - eth_getTransactionBy
-              - eth_getTransactionCount
-              - eth_getTransactionReceipt
-              - eth_sendRawTransaction
-              - eth_syncing
+              - sil_blockNumber
+              - sil_call
+              - sil_chainId
+              - sil_createAccessList
+              - sil_estimateGas
+              - sil_feeHistory
+              - sil_getBalance
+              - sil_getBlockBy
+              - sil_getBlockTransactionCountBy
+              - sil_getCode
+              - sil_getProof
+              - sil_getStorage
+              - sil_getTransactionBy
+              - sil_getTransactionCount
+              - sil_getTransactionReceipt
+              - sil_sendRawTransaction
+              - sil_syncing
               # debug_ rpc methods
               - debug_
 
@@ -313,26 +313,26 @@ jobs:
             limit: engine-api
           - sim: sila/engine
             limit: cancun
-          # eth_ rpc methods
+          # sil_ rpc methods
           - sim: sila/rpc-compat
             include:
-              - eth_blockNumber
-              - eth_call
-              - eth_chainId
-              - eth_createAccessList
-              - eth_estimateGas
-              - eth_feeHistory
-              - eth_getBalance
-              - eth_getBlockBy
-              - eth_getBlockTransactionCountBy
-              - eth_getCode
-              - eth_getProof
-              - eth_getStorage
-              - eth_getTransactionBy
-              - eth_getTransactionCount
-              - eth_getTransactionReceipt
-              - eth_sendRawTransaction
-              - eth_syncing
+              - sil_blockNumber
+              - sil_call
+              - sil_chainId
+              - sil_createAccessList
+              - sil_estimateGas
+              - sil_feeHistory
+              - sil_getBalance
+              - sil_getBlockBy
+              - sil_getBlockTransactionCountBy
+              - sil_getCode
+              - sil_getProof
+              - sil_getStorage
+              - sil_getTransactionBy
+              - sil_getTransactionCount
+              - sil_getTransactionReceipt
+              - sil_sendRawTransaction
+              - sil_syncing
               # debug_ rpc methods
               - debug_
 

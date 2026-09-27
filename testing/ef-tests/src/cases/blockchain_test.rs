@@ -9,8 +9,8 @@ use rayon::iter::{IndexedParallelIterator, ParallelIterator};
 use rsil_chainspec::ChainSpec;
 use rsil_consensus::{Consensus, HeaderValidator};
 use rsil_db_common::init::{insert_genesis_hashes, insert_genesis_history, insert_genesis_state};
-use rsil_evm::{execute::Executor, ConfigureEvm};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm::{execute::Executor, ConfigureEvm};
+use rsil_savm_sila::SilEvmConfig;
 use rsil_primitives_traits::{ParallelBridgeBuffered, RecoveredBlock, SealedBlock};
 use rsil_provider::{
     test_utils::create_test_provider_factory_with_chain_spec, BlockWriter, DatabaseProviderFactory,

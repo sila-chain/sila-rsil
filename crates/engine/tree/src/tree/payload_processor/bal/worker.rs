@@ -1,6 +1,6 @@
 use super::BalExecutionError;
 use alloy_consensus::Transaction;
-use alloy_eip7928::BlockAccessIndex;
+use alloy_sip7928::BlockAccessIndex;
 use alloy_savm::{
     block::{BlockExecutionError, BlockExecutor, BlockExecutorFactory},
     Savm,

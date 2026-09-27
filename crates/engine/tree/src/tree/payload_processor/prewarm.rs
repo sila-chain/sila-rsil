@@ -18,7 +18,7 @@ use crate::tree::{
     PayloadExecutionCache, SavedCache, StateProviderBuilder,
 };
 use alloy_consensus::transaction::TxHashRef;
-use alloy_eip7928::bal::DecodedBal;
+use alloy_sip7928::bal::DecodedBal;
 use alloy_sips::eip4895::Withdrawal;
 use alloy_primitives::{keccak256, B256, U256};
 use metrics::{Counter, Gauge, Histogram};
@@ -641,7 +641,7 @@ where
         &self,
         parent_span: &Span,
         provider: &mut Option<Box<dyn AccountReader>>,
-        account_changes: &alloy_eip7928::AccountChanges,
+        account_changes: &alloy_sip7928::AccountChanges,
         hashed_update_stream: &StateRootUpdateStream,
     ) {
         if self.disable_bal_parallel_state_root {
@@ -741,7 +741,7 @@ struct BalAccountStateFields {
 }
 
 impl BalAccountStateFields {
-    fn from_changes(account_changes: &alloy_eip7928::AccountChanges) -> Self {
+    fn from_changes(account_changes: &alloy_sip7928::AccountChanges) -> Self {
         Self {
             balance: account_changes.balance_changes.last().map(|change| change.post_balance),
             nonce: account_changes.nonce_changes.last().map(|change| change.new_nonce),
@@ -784,7 +784,7 @@ impl BalAccountStateFields {
 }
 
 const fn bal_account_changes_state_root(
-    account_changes: &alloy_eip7928::AccountChanges,
+    account_changes: &alloy_sip7928::AccountChanges,
     account_fields: BalAccountStateFields,
 ) -> bool {
     !account_fields.is_empty() || !account_changes.storage_changes.is_empty()
@@ -804,7 +804,7 @@ fn multiproof_targets_from_withdrawals(withdrawals: &[Withdrawal]) -> MultiProof
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eip7928::{
+    use alloy_sip7928::{
         AccountChanges, BalanceChange, BlockAccessIndex, CodeChange, NonceChange, SlotChanges,
         StorageChange,
     };

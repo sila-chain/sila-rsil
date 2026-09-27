@@ -148,7 +148,7 @@ mod state;
 mod swarm;
 mod trusted_peers_resolver;
 
-pub use rsil_eth_wire::{DisconnectReason, HelloMessageWithProtocols};
+pub use rsil_sil_wire::{DisconnectReason, HelloMessageWithProtocols};
 pub use rsil_sil_wire_types::{primitives, NetworkPrimitives, SilNetworkPrimitives};
 pub use rsil_network_api::{
     events, BlockDownloaderProvider, DiscoveredEvent, DiscoveryEvent, NetworkEvent,

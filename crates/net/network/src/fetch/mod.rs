@@ -7,7 +7,7 @@ pub use client::FetchClient;
 use crate::{message::BlockRequest, session::BlockRangeInfo};
 use alloy_primitives::B256;
 use futures::StreamExt;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     snap::SnapProtocolMessage, BlockAccessLists, Capabilities, GetBlockAccessLists, GetBlockBodies,
     GetBlockHeaders, GetReceipts, NetworkPrimitives, SilNetworkPrimitives, SilVersion,
 };
@@ -850,8 +850,8 @@ mod tests {
     use crate::{peers::PeersManager, PeersConfig};
     use alloy_consensus::Header;
     use alloy_primitives::B512;
-    use rsil_eth_wire::Capability;
-    use rsil_eth_wire_types::snap::{AccountRangeMessage, GetAccountRangeMessage};
+    use rsil_sil_wire::Capability;
+    use rsil_sil_wire_types::snap::{AccountRangeMessage, GetAccountRangeMessage};
     use std::future::poll_fn;
 
     #[tokio::test(flavor = "multi_thread")]

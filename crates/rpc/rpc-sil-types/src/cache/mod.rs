@@ -3,7 +3,7 @@
 use super::{MultiConsumerLruCache, SilStateCacheConfig};
 use crate::block::CachedTransaction;
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
-use alloy_eip7928::bal::DecodedBal;
+use alloy_sip7928::bal::DecodedBal;
 use alloy_eips::BlockHashOrNumber;
 use alloy_primitives::{Address, TxHash, B256};
 use futures::{stream::FuturesOrdered, Stream, StreamExt};
@@ -991,7 +991,7 @@ fn revm_code_write_heap_size((_, bytecode): &(B256, Bytecode)) -> usize {
 mod tests {
     use super::*;
     use alloy_consensus::{transaction::TransactionMeta, Header};
-    use alloy_eip7928::BlockAccessIndex;
+    use alloy_sip7928::BlockAccessIndex;
     use alloy_eips::{BlockHashOrNumber, NumHash};
     use alloy_primitives::{Address, BlockHash, BlockNumber, Bytes, Signature, TxHash, TxNumber};
     use core::ops::{RangeBounds, RangeInclusive};

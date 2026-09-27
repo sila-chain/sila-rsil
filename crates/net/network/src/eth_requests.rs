@@ -8,7 +8,7 @@ use alloy_consensus::{BlockHeader, ReceiptWithBloom};
 use alloy_eips::BlockHashOrNumber;
 use alloy_rlp::Encodable;
 use futures::StreamExt;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     snap::{BlockAccessListsMessage, SnapProtocolMessage},
     BlockAccessLists, BlockBodies, BlockHeaders, Cells, GetBlockAccessLists, GetBlockBodies,
     GetBlockHeaders, GetCells, GetNodeData, GetReceipts, GetReceipts70, HeadersDirection,

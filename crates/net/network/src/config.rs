@@ -11,7 +11,7 @@ use rsil_chainspec::{ChainSpecProvider, Hardforks, SilChainSpec};
 use rsil_discv4::{Discv4Config, Discv4ConfigBuilder, NatResolver, DEFAULT_DISCOVERY_ADDRESS};
 use rsil_discv5::NetworkStackId;
 use rsil_dns_discovery::DnsDiscoveryConfig;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     handshake::{SilHandshake, SilRlpxHandshake},
     HelloMessage, HelloMessageWithProtocols, NetworkPrimitives, SilNetworkPrimitives,
     UnifiedStatus,
@@ -329,7 +329,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
     /// Sets the `HelloMessage` to send when connecting to peers.
     ///
     /// ```
-    /// # use rsil_eth_wire::HelloMessage;
+    /// # use rsil_sil_wire::HelloMessage;
     /// # use rsil_network::NetworkConfigBuilder;
     /// # fn builder(builder: NetworkConfigBuilder) {
     /// let peer_id = builder.get_peer_id();

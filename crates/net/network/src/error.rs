@@ -3,7 +3,7 @@
 use crate::session::PendingSessionHandshakeError;
 use rsil_dns_discovery::resolver::NetError;
 use rsil_ecies::ECIESErrorImpl;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::{P2PHandshakeError, P2PStreamError, SilHandshakeError, SilStreamError},
     DisconnectReason,
 };

@@ -1387,7 +1387,7 @@ mod tests {
 
     type NewPooledTransactionHashes68Fields = (Vec<u8>, Vec<usize>, Vec<B256>);
 
-    fn decode_eth68_hashes_derived(
+    fn decode_sil68_hashes_derived(
         buf: &mut &[u8],
     ) -> alloy_rlp::Result<NewPooledTransactionHashes68> {
         let encodable = EncodableNewPooledTransactionHashes68::decode(buf)?;
@@ -1406,7 +1406,7 @@ mod tests {
         Ok(msg)
     }
 
-    fn eth68_hash_fields_strategy() -> impl Strategy<Value = NewPooledTransactionHashes68Fields> {
+    fn sil68_hash_fields_strategy() -> impl Strategy<Value = NewPooledTransactionHashes68Fields> {
         (0usize..128, 0usize..128, 0usize..128).prop_flat_map(
             |(types_len, sizes_len, hashes_len)| {
                 (
@@ -1457,8 +1457,8 @@ mod tests {
         }
 
         #[test]
-        fn eth_68_handrolled_decode_matches_derived_implementation(
-            (types, sizes, hashes) in eth68_hash_fields_strategy()
+        fn sil_68_handrolled_decode_matches_derived_implementation(
+            (types, sizes, hashes) in sil68_hash_fields_strategy()
         ) {
             let encodable = EncodableNewPooledTransactionHashes68 {
                 types: Bytes::from(types),
@@ -1468,7 +1468,7 @@ mod tests {
             let encoded = encoded(&encodable);
 
             let mut derived_buf = encoded.as_slice();
-            let derived = decode_eth68_hashes_derived(&mut derived_buf);
+            let derived = decode_sil68_hashes_derived(&mut derived_buf);
 
             let mut handrolled_buf = encoded.as_slice();
             let handrolled = NewPooledTransactionHashes68::decode(&mut handrolled_buf);
@@ -1495,7 +1495,7 @@ mod tests {
     }
 
     #[test]
-    fn eth_68_tx_hash_roundtrip() {
+    fn sil_68_tx_hash_roundtrip() {
         let vectors = vec![
             (
                 NewPooledTransactionHashes68 { types: vec![], sizes: vec![], hashes: vec![] },
@@ -1634,7 +1634,7 @@ mod tests {
     }
 
     #[test]
-    fn eth_72_tx_hash_roundtrip() {
+    fn sil_72_tx_hash_roundtrip() {
         let vectors = vec![
             (
                 NewPooledTransactionHashes72 {
@@ -1662,10 +1662,10 @@ mod tests {
     }
 
     #[test]
-    fn eth_72_rejects_missing_cell_mask() {
-        let encoded_eth68_payload = hex!("c380c0c0");
+    fn sil_72_rejects_missing_cell_mask() {
+        let encoded_sil68_payload = hex!("c380c0c0");
 
-        let result = NewPooledTransactionHashes72::decode(&mut encoded_eth68_payload.as_ref());
+        let result = NewPooledTransactionHashes72::decode(&mut encoded_sil68_payload.as_ref());
 
         assert!(matches!(result, Err(alloy_rlp::Error::InputTooShort)));
     }

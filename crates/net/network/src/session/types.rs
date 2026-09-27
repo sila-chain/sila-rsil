@@ -2,7 +2,7 @@
 
 use alloy_primitives::B256;
 use parking_lot::RwLock;
-use rsil_eth_wire::BlockRangeUpdate;
+use rsil_sil_wire::BlockRangeUpdate;
 use std::{
     ops::RangeInclusive,
     sync::{

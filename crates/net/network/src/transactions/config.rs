@@ -18,7 +18,7 @@ use crate::transactions::constants::{
 use alloy_eips::sip2718::IsTyped2718;
 use alloy_primitives::B256;
 use derive_more::{Constructor, Display};
-use rsil_eth_wire::NetworkPrimitives;
+use rsil_sil_wire::NetworkPrimitives;
 use rsil_network_types::peers::kind::PeerKind;
 
 /// Configuration for managing transactions within the network.
@@ -127,23 +127,23 @@ impl FromStr for TransactionPropagationMode {
 #[derive(Debug, Constructor, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TransactionFetcherConfig {
-    /// Max inflight [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) requests.
+    /// Max inflight [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) requests.
     pub max_inflight_requests: u32,
-    /// Max inflight [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) requests per
+    /// Max inflight [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) requests per
     /// peer.
     pub max_inflight_requests_per_peer: u8,
     /// Soft limit for the byte size of a
-    /// [`PooledTransactions`](rsil_eth_wire::PooledTransactions) response on assembling a
-    /// [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) request. Spec'd at 2
+    /// [`PooledTransactions`](rsil_sil_wire::PooledTransactions) response on assembling a
+    /// [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) request. Spec'd at 2
     /// MiB.
     pub soft_limit_byte_size_pooled_transactions_response: usize,
     /// Soft limit for the byte size of the expected
-    /// [`PooledTransactions`](rsil_eth_wire::PooledTransactions) response on packing a
-    /// [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) request with hashes.
+    /// [`PooledTransactions`](rsil_sil_wire::PooledTransactions) response on packing a
+    /// [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) request with hashes.
     pub soft_limit_byte_size_pooled_transactions_response_on_pack_request: usize,
     /// Max capacity of the cache of transaction hashes, for transactions that weren't yet fetched.
     /// A transaction is pending fetch if its hash didn't fit into a
-    /// [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) yet, or it wasn't returned
+    /// [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) yet, or it wasn't returned
     /// upon request to peers.
     pub max_capacity_cache_txns_pending_fetch: u32,
 }

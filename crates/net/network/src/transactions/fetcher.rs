@@ -43,7 +43,7 @@ use alloy_primitives::{
 use derive_more::{Constructor, Deref};
 use futures::{stream::FuturesUnordered, Future, FutureExt, Stream, StreamExt};
 use pin_project::pin_project;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     DedupPayload, GetPooledTransactions, HandleMempoolData, HandleVersionedMempoolData,
     PartiallyValidData, RequestTxHashes, ValidAnnouncementData,
 };
@@ -252,7 +252,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
     }
 
     /// Packages hashes for a [`GetPooledTxRequest`] from an
-    /// [`Sil68`](rsil_eth_wire::SilVersion::Sil68) announcement up to limit as defined by protocol
+    /// [`Sil68`](rsil_sil_wire::SilVersion::Sil68) announcement up to limit as defined by protocol
     /// version 68. Takes a [`RequestTxHashes`] buffer as parameter for filling with hashes to
     /// request.
     ///
@@ -319,7 +319,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
     }
 
     /// Packages hashes for a [`GetPooledTxRequest`] from an
-    /// [`Sil66`](rsil_eth_wire::SilVersion::Sil66) announcement up to limit as defined by
+    /// [`Sil66`](rsil_sil_wire::SilVersion::Sil66) announcement up to limit as defined by
     /// protocol version 66. Takes a [`RequestTxHashes`] buffer as parameter for filling with
     /// hashes to request.
     ///
@@ -1044,8 +1044,8 @@ impl TxFetchMetadata {
     }
 
     /// Returns the size of the transaction, if its hash has been received in any
-    /// [`Sil68`](rsil_eth_wire::SilVersion::Sil68) announcement. If the transaction hash has only
-    /// been seen in [`Sil66`](rsil_eth_wire::SilVersion::Sil66) announcements so far, this will
+    /// [`Sil68`](rsil_sil_wire::SilVersion::Sil68) announcement. If the transaction hash has only
+    /// been seen in [`Sil66`](rsil_sil_wire::SilVersion::Sil66) announcements so far, this will
     /// return `None`.
     pub const fn tx_encoded_len(&self) -> Option<usize> {
         self.tx_encoded_length

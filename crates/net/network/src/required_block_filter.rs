@@ -5,7 +5,7 @@
 
 use alloy_eips::BlockNumHash;
 use futures::StreamExt;
-use rsil_eth_wire_types::{GetBlockHeaders, HeadersDirection};
+use rsil_sil_wire_types::{GetBlockHeaders, HeadersDirection};
 use rsil_network_api::{
     NetworkEvent, NetworkEventListenerProvider, PeerRequest, Peers, ReputationChangeKind,
 };

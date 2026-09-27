@@ -400,7 +400,7 @@ mod tests {
     use crate::{Capabilities, Capability, SnapVersion};
     use alloy_primitives::bytes::Bytes;
     use alloy_rlp::{Decodable, Encodable};
-    use rsil_eth_wire_types::RawCapabilityMessage;
+    use rsil_sil_wire_types::RawCapabilityMessage;
 
     #[test]
     fn from_eth_68() {

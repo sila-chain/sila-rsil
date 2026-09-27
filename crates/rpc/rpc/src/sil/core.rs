@@ -15,12 +15,12 @@ use rsil_savm_sila::SilEvmConfig;
 use rsil_network_api::noop::NoopNetwork;
 use rsil_node_api::{FullNodeComponents, FullNodeTypes};
 use rsil_rpc_convert::{RpcConvert, RpcConverter};
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{pending_block::PendingEnvBuilder, spec::SignersForRpc, SpawnBlocking},
     node::{RpcNodeCoreAdapter, RpcNodeCoreExt},
     RpcNodeCore, SilApiTypes,
 };
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     builder::config::PendingBlockKind, receipt::SilReceiptConverter, FeeHistoryCache, GasCap,
     GasPriceOracle, PendingBlock, SilApiError, SilStateCache,
 };
@@ -54,8 +54,8 @@ pub type SilApiBuilderFor<N, NetworkT = Sila> = SilApiBuilder<N, SilRpcConverter
 ///
 /// This type provides the functionality for handling `eth_` related requests.
 /// These are implemented two-fold: Core functionality is implemented as
-/// [`SilApiSpec`](rsil_rpc_eth_api::helpers::SilApiSpec) trait. Additionally, the required server
-/// implementations (e.g. [`SilApiServer`](rsil_rpc_eth_api::SilApiServer)) are implemented
+/// [`SilApiSpec`](rsil_rpc_sil_api::helpers::SilApiSpec) trait. Additionally, the required server
+/// implementations (e.g. [`SilApiServer`](rsil_rpc_sil_api::SilApiServer)) are implemented
 /// separately in submodules. The rpc handler implementation can then delegate to the main impls.
 /// This way [`SilApi`] is not limited to [`jsonrpsee`] and can be used standalone or in other
 /// network handlers (for example ipc).
@@ -520,7 +520,7 @@ where
 
         self.tx_batch_sender()
             .send(request)
-            .map_err(|_| rsil_rpc_eth_types::SilApiError::BatchTxSendError)?;
+            .map_err(|_| rsil_rpc_sil_types::SilApiError::BatchTxSendError)?;
 
         Ok(response_rx.await??)
     }
@@ -586,7 +586,7 @@ mod tests {
         test_utils::{MockEthProvider, NoopProvider},
         PruneCheckpointReader, StageCheckpointReader,
     };
-    use rsil_rpc_eth_api::{node::RpcNodeCoreAdapter, SilApiServer};
+    use rsil_rpc_sil_api::{node::RpcNodeCoreAdapter, SilApiServer};
     use rsil_sila_primitives::TransactionSigned;
     use rsil_storage_api::{BalProvider, BlockReader, BlockReaderIdExt, StateProviderFactory};
     use rsil_testing_utils::generators;

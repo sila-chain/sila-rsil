@@ -15,14 +15,14 @@ use alloy_dyn_abi::TypedData;
 use alloy_eips::{sip2718::Encodable2718, BlockId};
 use alloy_network::{TransactionBuilder, TransactionBuilder4844};
 use alloy_primitives::{Address, Bytes, TxHash, B256, U256};
-use alloy_rpc_types_eth::{state::SavmOverrides, TransactionInfo};
+use alloy_rpc_types_sil::{state::SavmOverrides, TransactionInfo};
 use futures::{Future, StreamExt};
 use rsil_chain_state::CanonStateSubscriptions;
 use rsil_primitives_traits::{
     BlockBody, Recovered, RecoveredBlock, SignedTransaction, TxTy, WithEncoded,
 };
 use rsil_rpc_convert::{transaction::RpcConvert, RpcTxReq, TransactionConversionError};
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     block::convert_transaction_receipt,
     utils::binary_search,
     FillTransaction, SignError,

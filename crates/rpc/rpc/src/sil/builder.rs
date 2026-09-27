@@ -6,10 +6,10 @@ use rsil_chain_state::CanonStateSubscriptions;
 use rsil_chainspec::ChainSpecProvider;
 use rsil_primitives_traits::HeaderTy;
 use rsil_rpc_convert::{RpcConvert, RpcConverter};
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::pending_block::PendingEnvBuilder, node::RpcNodeCoreAdapter, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     builder::config::PendingBlockKind, fee_history::fee_history_cache_new_blocks_task,
     receipt::SilReceiptConverter, FeeHistoryCache, FeeHistoryCacheConfig, ForwardConfig, GasCap,
     GasPriceOracle, GasPriceOracleConfig, SilStateCache, SilStateCacheConfig,

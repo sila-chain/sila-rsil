@@ -2,11 +2,11 @@
 
 use crate::SilApi;
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{LoadPendingBlock, LoadState, SilState},
     RpcNodeCore,
 };
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_types::SilApiError;
 
 impl<N, Rpc> SilState for SilApi<N, Rpc>
 where
@@ -43,7 +43,7 @@ mod tests {
         test_utils::{ExtendedAccount, MockEthProvider, NoopProvider},
         ChainSpecProvider,
     };
-    use rsil_rpc_eth_api::{helpers::SilState, node::RpcNodeCoreAdapter};
+    use rsil_rpc_sil_api::{helpers::SilState, node::RpcNodeCoreAdapter};
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
 
     fn noop_eth_api() -> SilApi<

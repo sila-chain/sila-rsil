@@ -9,11 +9,11 @@ use alloy_primitives::{hex, B256};
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_primitives_traits::{AlloyBlockHeader, WithEncoded};
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{spec::SignersForRpc, LoadTransaction, SilTransactions},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{error::RpcPoolError, SilApiError};
+use rsil_rpc_sil_types::{error::RpcPoolError, SilApiError};
 use rsil_storage_api::BlockReaderIdExt;
 use rsil_transaction_pool::{
     error::Sip4844PoolTransactionError, AddedTransactionOutcome, PoolTransaction, PoolTx,
@@ -136,7 +136,7 @@ mod tests {
         BlobTransactionSidecar, Block, Header, SidecarBuilder, SimpleCoder, Transaction,
     };
     use alloy_primitives::{map::AddressMap, Address, Bytes, U256};
-    use alloy_rpc_types_eth::request::TransactionRequest;
+    use alloy_rpc_types_sil::request::TransactionRequest;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
     use rsil_evm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
@@ -144,7 +144,7 @@ mod tests {
         test_utils::{ExtendedAccount, MockEthProvider},
         ChainSpecProvider,
     };
-    use rsil_rpc_eth_api::node::RpcNodeCoreAdapter;
+    use rsil_rpc_sil_api::node::RpcNodeCoreAdapter;
     use rsil_transaction_pool::{
         test_utils::{testing_pool, TestPool},
         TransactionOrigin, TransactionPool,

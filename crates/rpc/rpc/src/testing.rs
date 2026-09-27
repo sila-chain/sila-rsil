@@ -38,8 +38,8 @@ use rsil_primitives_traits::{
 };
 use rsil_revm::{database::StateProviderDatabase, db::State};
 use rsil_rpc_api::{TestingApiServer, TestingBuildBlockRequestV1};
-use rsil_rpc_eth_api::{helpers::Call, FromEthApiError};
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_api::{helpers::Call, FromEthApiError};
+use rsil_rpc_sil_types::SilApiError;
 use rsil_sila_engine_primitives::SilBuiltPayload;
 use rsil_sila_primitives::SilPrimitives;
 use rsil_storage_api::{BlockReader, BlockReaderIdExt, HeaderProvider};

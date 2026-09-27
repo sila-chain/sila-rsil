@@ -6,11 +6,11 @@ use alloy_primitives::{b256, Address, TxKind, U256};
 use rsil_chainspec::{
     ChainSpec, ChainSpecBuilder, SilaHardfork, MIN_TRANSACTION_GAS, SILA_MAINNET,
 };
-use rsil_evm::{
+use rsil_savm::{
     execute::{BlockExecutionOutput, Executor},
     ConfigureEvm,
 };
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_node_api::NodePrimitives;
 use rsil_primitives_traits::{Block as _, RecoveredBlock};
 use rsil_provider::{
@@ -102,7 +102,7 @@ fn blocks(
             receipts_root: b256!(
                 "0xd3a6acf9a244d78b33831df95d472c4128ea85bf079a1d41e32ed0b7d2244c9e"
             ),
-            difficulty: chain_spec.fork(SilaHardfork::SilaParis).ttd().expect("SilaParis TTD"),
+            difficulty: chain_spec.fork(SilaHardfork::Paris).ttd().expect("SilaParis TTD"),
             number: 1,
             gas_limit: MIN_TRANSACTION_GAS,
             gas_used: MIN_TRANSACTION_GAS,
@@ -133,7 +133,7 @@ fn blocks(
             receipts_root: b256!(
                 "0xd3a6acf9a244d78b33831df95d472c4128ea85bf079a1d41e32ed0b7d2244c9e"
             ),
-            difficulty: chain_spec.fork(SilaHardfork::SilaParis).ttd().expect("SilaParis TTD"),
+            difficulty: chain_spec.fork(SilaHardfork::Paris).ttd().expect("SilaParis TTD"),
             number: 2,
             gas_limit: MIN_TRANSACTION_GAS,
             gas_used: MIN_TRANSACTION_GAS,

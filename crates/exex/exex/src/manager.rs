@@ -7,7 +7,7 @@ use futures::StreamExt;
 use itertools::Itertools;
 use metrics::Gauge;
 use rsil_chain_state::ForkChoiceStream;
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_metrics::{metrics::Counter, Metrics};
 use rsil_node_api::NodePrimitives;
 use rsil_primitives_traits::SealedHeader;
@@ -684,7 +684,7 @@ mod tests {
     use futures::{StreamExt, TryStreamExt};
     use rand::Rng;
     use rsil_db_common::init::init_genesis;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::RecoveredBlock;
     use rsil_provider::{
         providers::BlockchainProvider, test_utils::create_test_provider_factory, BlockReader,

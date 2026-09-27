@@ -18,7 +18,7 @@ use rsil_chainspec::{ChainSpecProvider, Hardforks, SilaHardforks};
 use rsil_eth_wire::{
     protocol::Protocol, DisconnectReason, HelloMessageWithProtocols, SilNetworkPrimitives,
 };
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_metrics::common::mpsc::memory_bounded_channel;
 use rsil_network_api::{
     events::{PeerEvent, SessionInfo},

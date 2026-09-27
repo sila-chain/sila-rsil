@@ -26,7 +26,7 @@ use rsil_db::{
     DatabaseEnv,
 };
 use rsil_db_common::init::init_genesis;
-use rsil_evm_sila::MockEvmConfig;
+use rsil_savm_sila::MockEvmConfig;
 use rsil_execution_types::Chain;
 use rsil_exex::{ExExContext, ExExEvent, ExExNotification, ExExNotifications, Wal};
 use rsil_network::{config::rng_secret_key, NetworkConfigBuilder, NetworkManager};

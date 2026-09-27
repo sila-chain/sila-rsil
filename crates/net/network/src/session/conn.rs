@@ -10,7 +10,7 @@ use rsil_eth_wire::{
     NetworkPrimitives, P2PStream, SilMessage, SilNetworkPrimitives, SilSnapMessage, SilSnapStream,
     SilStream, SilVersion,
 };
-use rsil_eth_wire_types::RawCapabilityMessage;
+use rsil_sil_wire_types::RawCapabilityMessage;
 use std::{
     pin::Pin,
     task::{Context, Poll},

@@ -2,7 +2,7 @@ use crate::{BackfillJobFactory, ExExNotification, StreamBackfillJob, WalHandle};
 use alloy_consensus::BlockHeader;
 use alloy_eips::BlockNumHash;
 use futures::{Stream, StreamExt};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_exex_types::ExExHead;
 use rsil_node_api::NodePrimitives;
 use rsil_provider::{BlockReader, Chain, HeaderProvider, StateProviderFactory};
@@ -525,7 +525,7 @@ mod tests {
     use eyre::OptionExt;
     use futures::StreamExt;
     use rsil_db_common::init::init_genesis;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::Block as _;
     use rsil_provider::{
         providers::BlockchainProvider, test_utils::create_test_provider_factory, BlockWriter,

@@ -5,7 +5,7 @@ use futures::{
     stream::{FuturesOrdered, Stream},
     StreamExt,
 };
-use rsil_evm::{
+use rsil_savm::{
     execute::{BlockExecutionError, BlockExecutionOutput},
     ConfigureEvm,
 };
@@ -253,7 +253,7 @@ mod tests {
     use futures::StreamExt;
     use rsil_chainspec::{ChainSpec, SilaHardfork, MIN_TRANSACTION_GAS};
     use rsil_db_common::init::init_genesis;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::{
         crypto::secp256k1::public_key_to_address, Block as _, NodePrimitives,
     };
@@ -358,7 +358,7 @@ mod tests {
                         "0xd3a6acf9a244d78b33831df95d472c4128ea85bf079a1d41e32ed0b7d2244c9e"
                     ),
                     difficulty: chain_spec
-                        .fork(SilaHardfork::SilaParis)
+                        .fork(SilaHardfork::Paris)
                         .ttd()
                         .expect("SilaParis TTD"),
                     number: i,

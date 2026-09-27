@@ -4,7 +4,7 @@ use crate::{fetch::DownloadRequest, flattened_response::FlattenedResponse};
 use alloy_primitives::B256;
 use futures::{future, future::Either};
 use rsil_eth_wire::{BlockAccessLists, NetworkPrimitives, SilNetworkPrimitives};
-use rsil_eth_wire_types::snap::{
+use rsil_sil_wire_types::snap::{
     GetAccountRangeMessage, GetBlockAccessListsMessage, GetByteCodesMessage,
     GetStorageRangesMessage, SnapProtocolMessage,
 };

@@ -16,7 +16,7 @@ use rsil_eth_wire::{
     HelloMessage, HelloMessageWithProtocols, NetworkPrimitives, SilNetworkPrimitives,
     UnifiedStatus,
 };
-use rsil_eth_wire_types::message::MAX_MESSAGE_SIZE;
+use rsil_sil_wire_types::message::MAX_MESSAGE_SIZE;
 use rsil_network_peers::{mainnet_nodes, pk2id, sepolia_nodes, PeerId, TrustedPeer};
 use rsil_network_types::{PeersConfig, SessionsConfig};
 use rsil_sila_forks::{ForkFilter, Head};
@@ -777,7 +777,7 @@ impl NetworkMode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eips::sip2124::ForkHash;
+    use alloy_sips::eip2124::ForkHash;
     use alloy_genesis::Genesis;
     use alloy_primitives::U256;
     use rsil_chainspec::{
@@ -866,8 +866,8 @@ mod tests {
 
         let genesis = Genesis::default().with_timestamp(GENESIS_TIME);
 
-        let active_fork = (SilaHardfork::SilaShanghai, ForkCondition::Timestamp(GENESIS_TIME));
-        let future_fork = (SilaHardfork::SilaCancun, ForkCondition::Timestamp(GENESIS_TIME + 1));
+        let active_fork = (SilaHardfork::Shanghai, ForkCondition::Timestamp(GENESIS_TIME));
+        let future_fork = (SilaHardfork::Cancun, ForkCondition::Timestamp(GENESIS_TIME + 1));
 
         let chain_spec = ChainSpecBuilder::default()
             .chain(Chain::dev())

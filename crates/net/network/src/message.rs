@@ -14,7 +14,7 @@ use rsil_eth_wire::{
     PooledTransactions, Receipts, SharedTransactions, SilMessage, SilNetworkPrimitives,
     Transactions,
 };
-use rsil_eth_wire_types::{snap::SnapProtocolMessage, RawCapabilityMessage};
+use rsil_sil_wire_types::{snap::SnapProtocolMessage, RawCapabilityMessage};
 use rsil_network_api::{PeerRequest, RequestMessage};
 use rsil_network_p2p::{
     error::{RequestError, RequestResult},

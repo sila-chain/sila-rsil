@@ -32,7 +32,7 @@ use rsil_eth_wire::{
     Capabilities, DisconnectP2P, DisconnectReason, NetworkPrimitives, NewBlockPayload, SilMessage,
     SilSnapMessage,
 };
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     message::RequestPair, snap::SnapProtocolMessage, NewPooledTransactionHashes,
     RawCapabilityMessage,
 };
@@ -1311,7 +1311,7 @@ impl<N: NetworkPrimitives> Drop for QueuedOutgoingMessages<N> {
 mod tests {
     use super::*;
     use crate::session::{handle::PendingSessionEvent, start_pending_incoming_session};
-    use alloy_eips::sip2124::ForkFilter;
+    use alloy_sips::eip2124::ForkFilter;
     use alloy_primitives::B256;
     use futures::task::noop_waker;
     use rsil_chainspec::SILA_MAINNET;
@@ -1321,7 +1321,7 @@ mod tests {
         HelloMessageWithProtocols, P2PStream, SilNetworkPrimitives, SilStream, StatusBuilder,
         UnauthedEthStream, UnauthedP2PStream, UnifiedStatus,
     };
-    use rsil_eth_wire_types::{
+    use rsil_sil_wire_types::{
         message::MAX_MESSAGE_SIZE,
         snap::{
             AccountRangeMessage, BlockAccessListsMessage, GetAccountRangeMessage,

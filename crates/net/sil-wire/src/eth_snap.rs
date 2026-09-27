@@ -61,7 +61,7 @@ where
         status: UnifiedStatus,
         fork_filter: ForkFilter,
         handshake: Arc<dyn SilRlpxHandshake>,
-        eth_max_message_size: usize,
+        sil_max_message_size: usize,
     ) -> Result<(Self, UnifiedStatus), SilStreamError> {
         let eth_version = conn.shared_capabilities().eth_version()?;
         let snap_offset = eth_snap_layout(conn.shared_capabilities())?;
@@ -69,7 +69,7 @@ where
         let their_status =
             handshake.handshake(&mut conn, status, fork_filter, HANDSHAKE_TIMEOUT).await?;
 
-        let sil = SilStreamInner::with_max_message_size(eth_version, eth_max_message_size);
+        let sil = SilStreamInner::with_max_message_size(eth_version, sil_max_message_size);
         Ok((Self { conn, sil, snap_offset }, their_status))
     }
 }

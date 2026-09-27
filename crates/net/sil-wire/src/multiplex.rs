@@ -223,7 +223,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
         status: UnifiedStatus,
         fork_filter: ForkFilter,
         handshake: Arc<dyn SilRlpxHandshake>,
-        eth_max_message_size: usize,
+        sil_max_message_size: usize,
     ) -> Result<(RlpxSatelliteStream<St, SilStream<ProtocolProxy, N>>, UnifiedStatus), SilStreamError>
     where
         St: Stream<Item = io::Result<BytesMut>> + Sink<Bytes, Error = io::Error> + Unpin,
@@ -240,7 +240,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
                 let eth_stream = SilStream::with_max_message_size(
                     eth_cap,
                     unauth.into_inner(),
-                    eth_max_message_size,
+                    sil_max_message_size,
                 );
                 Ok((eth_stream, their_status))
             },

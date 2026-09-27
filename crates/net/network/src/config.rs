@@ -101,7 +101,7 @@ pub struct NetworkConfig<C, N: NetworkPrimitives = SilNetworkPrimitives> {
     /// [`NetworkConfigBuilder`].
     pub handshake: Arc<dyn SilRlpxHandshake>,
     /// Maximum allowed SIL message size for post-handshake SIL/Snap streams.
-    pub eth_max_message_size: usize,
+    pub sil_max_message_size: usize,
     /// List of block number-hash pairs to check for required blocks.
     /// If non-empty, peers that don't have these blocks will be filtered out.
     pub required_block_hashes: Vec<BlockNumHash>,
@@ -227,7 +227,7 @@ pub struct NetworkConfigBuilder<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// <https://github.com/sila-chain/devp2p/blob/master/rlpx.md#initial-handshake>.
     handshake: Arc<dyn SilRlpxHandshake>,
     /// Maximum allowed SIL message size for post-handshake SIL/Snap streams.
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     /// List of block hashes to check for required blocks.
     required_block_hashes: Vec<BlockNumHash>,
     /// Optional network id
@@ -274,7 +274,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
             transactions_manager_config: Default::default(),
             nat: None,
             handshake: Arc::new(SilHandshake::default()),
-            eth_max_message_size: MAX_MESSAGE_SIZE,
+            sil_max_message_size: MAX_MESSAGE_SIZE,
             required_block_hashes: Vec::new(),
             network_id: None,
             snap_enabled: false,
@@ -601,7 +601,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
     }
 
     /// Overrides the default Sil `RLPx` handshake.
-    pub fn eth_rlpx_handshake(mut self, handshake: Arc<dyn SilRlpxHandshake>) -> Self {
+    pub fn sil_rlpx_handshake(mut self, handshake: Arc<dyn SilRlpxHandshake>) -> Self {
         self.handshake = handshake;
         self
     }
@@ -610,15 +610,15 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
     ///
     /// This does not affect the initial status handshake, which continues to use
     /// [`MAX_MESSAGE_SIZE`].
-    pub const fn eth_max_message_size(mut self, max_message_size: usize) -> Self {
-        self.eth_max_message_size = max_message_size;
+    pub const fn sil_max_message_size(mut self, max_message_size: usize) -> Self {
+        self.sil_max_message_size = max_message_size;
         self
     }
 
     /// Sets the maximum allowed SIL message size for post-handshake SIL/Snap streams if present.
-    pub const fn eth_max_message_size_opt(mut self, max_message_size: Option<usize>) -> Self {
+    pub const fn sil_max_message_size_opt(mut self, max_message_size: Option<usize>) -> Self {
         if let Some(max_message_size) = max_message_size {
-            self.eth_max_message_size = max_message_size;
+            self.sil_max_message_size = max_message_size;
         }
         self
     }
@@ -661,7 +661,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
             transactions_manager_config,
             nat,
             handshake,
-            eth_max_message_size,
+            sil_max_message_size,
             required_block_hashes,
             network_id,
             snap_enabled,
@@ -744,7 +744,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
             transactions_manager_config,
             nat,
             handshake,
-            eth_max_message_size,
+            sil_max_message_size,
             required_block_hashes,
         }
     }

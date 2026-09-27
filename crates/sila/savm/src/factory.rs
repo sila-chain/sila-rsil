@@ -1,6 +1,6 @@
 //! revmc JIT compiler integration for SAVM execution (requires the `jit` feature).
 //!
-//! Re-exports types from `revmc::alloy_savm` and provides [`RsilEvmFactory`], a newtype that
+//! Re-exports types from `revmc::alloy_evm` and provides [`RsilEvmFactory`], a newtype that
 //! implements [`Debug`].
 
 #[cfg(feature = "jit")]
@@ -14,7 +14,7 @@ use revm::{
     Inspector,
 };
 #[cfg(feature = "jit")]
-use revmc::alloy_savm::JitEvmFactory;
+use revmc::alloy_evm::JitEvmFactory;
 
 #[cfg(feature = "jit")]
 pub use revmc::{

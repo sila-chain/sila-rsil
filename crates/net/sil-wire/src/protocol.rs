@@ -38,17 +38,17 @@ impl Protocol {
     }
 
     /// Returns the [`SilVersion::Sil66`] capability.
-    pub const fn eth_66() -> Self {
+    pub const fn sil_66() -> Self {
         Self::sil(SilVersion::Sil66)
     }
 
     /// Returns the [`SilVersion::Sil67`] capability.
-    pub const fn eth_67() -> Self {
+    pub const fn sil_67() -> Self {
         Self::sil(SilVersion::Sil67)
     }
 
     /// Returns the [`SilVersion::Sil68`] capability.
-    pub const fn eth_68() -> Self {
+    pub const fn sil_68() -> Self {
         Self::sil(SilVersion::Sil68)
     }
 

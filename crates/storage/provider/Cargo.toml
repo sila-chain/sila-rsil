@@ -16,7 +16,7 @@ workspace = true
 rsil-chainspec.workspace = true
 rsil-execution-types.workspace = true
 rsil-sila-primitives = { workspace = true, features = ["rsil-codec"] }
-rsil-primitives-traits = { workspace = true, features = ["rsil-codec", "secp256k1", "dashmap"] }
+rsil-primitives-traits = { workspace = true, features = ["reth-codec", "secp256k1", "dashmap"] }
 rsil-errors.workspace = true
 rsil-storage-errors.workspace = true
 rsil-storage-api = { workspace = true, features = ["std", "db-api"] }

@@ -16,7 +16,7 @@ workspace = true
 rsil-codecs.workspace = true
 rsil-db-models = { workspace = true, features = ["serde", "rsil-codec"] }
 rsil-sila-primitives = { workspace = true, features = ["serde", "rsil-codec"] }
-rsil-primitives-traits = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-primitives-traits = { workspace = true, features = ["serde", "reth-codec"] }
 rsil-stages-types = { workspace = true, features = ["serde", "rsil-codec"] }
 rsil-prune-types = { workspace = true, features = ["serde", "rsil-codec"] }
 rsil-storage-errors.workspace = true

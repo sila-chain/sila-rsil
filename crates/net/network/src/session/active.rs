@@ -1319,7 +1319,7 @@ mod tests {
     use rsil_sil_wire::{
         handshake::SilHandshake, protocol::Protocol, GetBlockAccessLists, GetBlockBodies,
         HelloMessageWithProtocols, P2PStream, SilNetworkPrimitives, SilStream, StatusBuilder,
-        UnauthedEthStream, UnauthedP2PStream, UnifiedStatus,
+        UnauthedSilStream, UnauthedP2PStream, UnifiedStatus,
     };
     use rsil_sil_wire_types::{
         message::MAX_MESSAGE_SIZE,
@@ -1389,7 +1389,7 @@ mod tests {
                 let sil_version = p2p_stream.shared_capabilities().sil_version().unwrap();
                 status.set_sil_version(sil_version);
 
-                let (client_stream, _) = UnauthedEthStream::new(p2p_stream)
+                let (client_stream, _) = UnauthedSilStream::new(p2p_stream)
                     .handshake(status, fork_filter)
                     .await
                     .unwrap();

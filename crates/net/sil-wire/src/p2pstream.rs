@@ -869,7 +869,7 @@ fn compress_frame(
 mod tests {
     use super::*;
     use crate::{
-        capability::SharedCapability, test_utils::eth_hello, Capability, ProtocolVersion,
+        capability::SharedCapability, test_utils::sil_hello, Capability, ProtocolVersion,
         SilVersion,
     };
     use futures::task::noop_waker_ref;
@@ -916,7 +916,7 @@ mod tests {
         }
     }
 
-    fn eth_shared_capabilities() -> SharedCapabilities {
+    fn sil_shared_capabilities() -> SharedCapabilities {
         SharedCapabilities::try_new(
             vec![SilVersion::Sil68.into()],
             vec![Capability::sil(SilVersion::Sil68)],
@@ -927,7 +927,7 @@ mod tests {
     #[tokio::test]
     async fn poll_ready_drains_full_subprotocol_queue_without_flushing_inner() {
         let mut stream =
-            P2PStream::new(FlushCountingTransport::default(), eth_shared_capabilities());
+            P2PStream::new(FlushCountingTransport::default(), sil_shared_capabilities());
         stream.set_outgoing_message_buffer_capacity(1);
         Pin::new(&mut stream).start_send(Bytes::from_static(&[0x00, EMPTY_LIST_CODE])).unwrap();
 
@@ -951,7 +951,7 @@ mod tests {
     #[tokio::test]
     async fn poll_ready_flushes_queued_control_messages() {
         let mut stream =
-            P2PStream::new(FlushCountingTransport::default(), eth_shared_capabilities());
+            P2PStream::new(FlushCountingTransport::default(), sil_shared_capabilities());
         stream.send_ping();
 
         let waker = noop_waker_ref();
@@ -976,7 +976,7 @@ mod tests {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
 
-            let (server_hello, _) = eth_hello();
+            let (server_hello, _) = sil_hello();
 
             let (mut p2p_stream, _) =
                 UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
@@ -987,7 +987,7 @@ mod tests {
         let outgoing = TcpStream::connect(local_addr).await.unwrap();
         let sink = crate::PassthroughCodec::default().framed(outgoing);
 
-        let (client_hello, _) = eth_hello();
+        let (client_hello, _) = sil_hello();
 
         let (mut p2p_stream, _) =
             UnauthedP2PStream::new(sink).handshake(client_hello).await.unwrap();
@@ -1014,7 +1014,7 @@ mod tests {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
 
-            let (server_hello, _) = eth_hello();
+            let (server_hello, _) = sil_hello();
 
             let (mut p2p_stream, _) =
                 UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
@@ -1032,7 +1032,7 @@ mod tests {
         let outgoing = TcpStream::connect(local_addr).await.unwrap();
         let sink = crate::PassthroughCodec::default().framed(outgoing);
 
-        let (client_hello, _) = eth_hello();
+        let (client_hello, _) = sil_hello();
 
         let (mut p2p_stream, _) =
             UnauthedP2PStream::new(sink).handshake(client_hello).await.unwrap();
@@ -1058,7 +1058,7 @@ mod tests {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
 
-            let (server_hello, _) = eth_hello();
+            let (server_hello, _) = sil_hello();
 
             let unauthed_stream = UnauthedP2PStream::new(stream);
             let (p2p_stream, _) = unauthed_stream.handshake(server_hello).await.unwrap();
@@ -1076,7 +1076,7 @@ mod tests {
         let outgoing = TcpStream::connect(local_addr).await.unwrap();
         let sink = crate::PassthroughCodec::default().framed(outgoing);
 
-        let (client_hello, _) = eth_hello();
+        let (client_hello, _) = sil_hello();
 
         let unauthed_stream = UnauthedP2PStream::new(sink);
         let (p2p_stream, _) = unauthed_stream.handshake(client_hello).await.unwrap();
@@ -1106,7 +1106,7 @@ mod tests {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
 
-            let (server_hello, _) = eth_hello();
+            let (server_hello, _) = sil_hello();
 
             let unauthed_stream = UnauthedP2PStream::new(stream);
             match unauthed_stream.handshake(server_hello.clone()).await {
@@ -1126,7 +1126,7 @@ mod tests {
         let outgoing = TcpStream::connect(local_addr).await.unwrap();
         let sink = crate::PassthroughCodec::default().framed(outgoing);
 
-        let (mut client_hello, _) = eth_hello();
+        let (mut client_hello, _) = sil_hello();
 
         // modify the hello to include an incompatible p2p protocol version
         client_hello.protocol_version = ProtocolVersion::V4;

@@ -228,7 +228,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
     where
         St: Stream<Item = io::Result<BytesMut>> + Sink<Bytes, Error = io::Error> + Unpin,
     {
-        let eth_cap = self.inner.conn.shared_capabilities().eth_version()?;
+        let eth_cap = self.inner.conn.shared_capabilities().sil_version()?;
         self.into_satellite_stream_with_tuple_handshake(
             &Capability::sil(eth_cap),
             async move |proxy| {
@@ -880,7 +880,7 @@ mod tests {
         message::MAX_MESSAGE_SIZE,
         protocol::Protocol,
         test_utils::{
-            connect_passthrough, eth_handshake, eth_hello,
+            connect_passthrough, sil_handshake, sil_hello,
             proto::{test_hello, TestProtoMessage},
         },
         UnauthedEthStream, UnauthedP2PStream,
@@ -980,7 +980,7 @@ mod tests {
 
     #[tokio::test]
     async fn satellite_mux_round_robins_ready_protocols_when_out_buffer_fills() {
-        let (mut hello, _) = eth_hello();
+        let (mut hello, _) = sil_hello();
         let cap_a = Capability::new_static("aaa", 1);
         let cap_b = Capability::new_static("bbb", 1);
         hello.protocols.push(Protocol::new(cap_a.clone(), 1));
@@ -1027,13 +1027,13 @@ mod tests {
         rsil_tracing::init_test_tracing();
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let local_addr = listener.local_addr().unwrap();
-        let (status, fork_filter) = eth_handshake();
+        let (status, fork_filter) = sil_handshake();
         let other_status = status;
         let other_fork_filter = fork_filter.clone();
         let _handle = tokio::spawn(async move {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
-            let (server_hello, _) = eth_hello();
+            let (server_hello, _) = sil_hello();
             let (p2p_stream, _) =
                 UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
 
@@ -1045,7 +1045,7 @@ mod tests {
             tokio::time::sleep(std::time::Duration::from_millis(100)).await;
         });
 
-        let conn = connect_passthrough(local_addr, eth_hello().0).await;
+        let conn = connect_passthrough(local_addr, sil_hello().0).await;
         let sil = conn.shared_capabilities().sil().unwrap().clone();
 
         let multiplexer = RlpxProtocolMultiplexer::new(conn);
@@ -1065,7 +1065,7 @@ mod tests {
         rsil_tracing::init_test_tracing();
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let local_addr = listener.local_addr().unwrap();
-        let (status, fork_filter) = eth_handshake();
+        let (status, fork_filter) = sil_handshake();
         let other_status = status;
         let other_fork_filter = fork_filter.clone();
         let _handle = tokio::spawn(async move {

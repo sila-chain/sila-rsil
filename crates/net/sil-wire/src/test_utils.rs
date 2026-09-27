@@ -18,7 +18,7 @@ use tokio_util::codec::{Decoder, Framed, LengthDelimitedCodec};
 pub type P2pPassthroughTcpStream = P2PStream<Framed<TcpStream, LengthDelimitedCodec>>;
 
 /// Returns a new testing `HelloMessage` and new secretkey
-pub fn eth_hello() -> (HelloMessageWithProtocols, SecretKey) {
+pub fn sil_hello() -> (HelloMessageWithProtocols, SecretKey) {
     let server_key = SecretKey::new(&mut rand_08::thread_rng());
     let protocols = vec![SilVersion::Sil67.into()];
     let hello = HelloMessageWithProtocols {
@@ -32,7 +32,7 @@ pub fn eth_hello() -> (HelloMessageWithProtocols, SecretKey) {
 }
 
 /// Returns testing sil handshake status and fork filter.
-pub fn eth_handshake() -> (UnifiedStatus, ForkFilter) {
+pub fn sil_handshake() -> (UnifiedStatus, ForkFilter) {
     let genesis = B256::random();
     let fork_filter = ForkFilter::new(Head::default(), genesis, 0, Vec::new());
 
@@ -70,7 +70,7 @@ pub mod proto {
 
     /// Returns a new testing `HelloMessage` with sil and the test protocol
     pub fn test_hello() -> (HelloMessageWithProtocols, SecretKey) {
-        let mut handshake = eth_hello();
+        let mut handshake = sil_hello();
         handshake.0.protocols.push(TestProtoMessage::protocol());
         handshake
     }

@@ -63,13 +63,13 @@ where
         handshake: Arc<dyn SilRlpxHandshake>,
         sil_max_message_size: usize,
     ) -> Result<(Self, UnifiedStatus), SilStreamError> {
-        let eth_version = conn.shared_capabilities().eth_version()?;
+        let sil_version = conn.shared_capabilities().sil_version()?;
         let snap_offset = eth_snap_layout(conn.shared_capabilities())?;
 
         let their_status =
             handshake.handshake(&mut conn, status, fork_filter, HANDSHAKE_TIMEOUT).await?;
 
-        let sil = SilStreamInner::with_max_message_size(eth_version, sil_max_message_size);
+        let sil = SilStreamInner::with_max_message_size(sil_version, sil_max_message_size);
         Ok((Self { conn, sil, snap_offset }, their_status))
     }
 }
@@ -243,7 +243,7 @@ mod tests {
         handshake::SilHandshake,
         message::MAX_MESSAGE_SIZE,
         protocol::Protocol,
-        test_utils::{connect_passthrough, eth_handshake, eth_hello},
+        test_utils::{connect_passthrough, sil_handshake, sil_hello},
         UnauthedP2PStream,
     };
     use rsil_sil_wire_types::{
@@ -324,7 +324,7 @@ mod tests {
         rsil_tracing::init_test_tracing();
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let local_addr = listener.local_addr().unwrap();
-        let (status, fork_filter) = eth_handshake();
+        let (status, fork_filter) = sil_handshake();
         let server_status = status;
         let server_fork_filter = fork_filter.clone();
 
@@ -393,7 +393,7 @@ mod tests {
 
     /// Builds a hello advertising `sil` + `snap/2`.
     fn eth_snap_hello() -> crate::HelloMessageWithProtocols {
-        let mut hello = eth_hello().0;
+        let mut hello = sil_hello().0;
         hello.try_add_protocol(Protocol::snap_2()).unwrap();
         hello
     }

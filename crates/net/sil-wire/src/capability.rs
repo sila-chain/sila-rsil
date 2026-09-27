@@ -108,7 +108,7 @@ impl SharedCapability {
     }
 
     /// Returns the sil version if it's the `sil` capability.
-    pub const fn eth_version(&self) -> Option<SilVersion> {
+    pub const fn sil_version(&self) -> Option<SilVersion> {
         match self {
             Self::Sil { version, .. } => Some(*version),
             _ => None,
@@ -170,9 +170,9 @@ impl SharedCapabilities {
 
     /// Returns the negotiated sil version if it is shared.
     #[inline]
-    pub fn eth_version(&self) -> Result<SilVersion, P2PStreamError> {
+    pub fn sil_version(&self) -> Result<SilVersion, P2PStreamError> {
         self.iter_caps()
-            .find_map(SharedCapability::eth_version)
+            .find_map(SharedCapability::sil_version)
             .ok_or(P2PStreamError::CapabilityNotShared)
     }
 

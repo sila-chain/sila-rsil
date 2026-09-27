@@ -92,7 +92,7 @@ impl UnifiedStatus {
     }
 
     /// Sets the [`SilVersion`] for the status.
-    pub const fn set_eth_version(&mut self, v: SilVersion) {
+    pub const fn set_sil_version(&mut self, v: SilVersion) {
         self.version = v;
     }
 

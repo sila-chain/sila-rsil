@@ -15,7 +15,7 @@ use crate::{
 use alloy_primitives::bytes::{Bytes, BytesMut};
 use futures::{ready, Sink, SinkExt};
 use pin_project::pin_project;
-use rsil_eth_wire_types::{NetworkPrimitives, RawCapabilityMessage, SilMessageID};
+use rsil_sil_wire_types::{NetworkPrimitives, RawCapabilityMessage, SilMessageID};
 use rsil_sila_forks::ForkFilter;
 use std::{
     future::Future,
@@ -370,7 +370,7 @@ mod tests {
     use alloy_rlp::Decodable;
     use futures::{SinkExt, StreamExt};
     use rsil_ecies::stream::ECIESStream;
-    use rsil_eth_wire_types::{SilNetworkPrimitives, UnifiedStatus};
+    use rsil_sil_wire_types::{SilNetworkPrimitives, UnifiedStatus};
     use rsil_network_peers::pk2id;
     use rsil_sila_forks::{ForkFilter, Head};
     use secp256k1::{SecretKey, SECP256K1};

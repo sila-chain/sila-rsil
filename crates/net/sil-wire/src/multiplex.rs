@@ -138,7 +138,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
     /// This accepts a closure that does a handshake with the remote peer and returns a tuple of the
     /// primary stream and extra data.
     ///
-    /// See also [`UnauthedEthStream::handshake`](crate::UnauthedEthStream)
+    /// See also [`UnauthedSilStream::handshake`](crate::UnauthedSilStream)
     pub async fn into_satellite_stream_with_tuple_handshake<F, Fut, Err, Primary, Extra>(
         mut self,
         cap: &Capability,
@@ -228,21 +228,21 @@ impl<St> RlpxProtocolMultiplexer<St> {
     where
         St: Stream<Item = io::Result<BytesMut>> + Sink<Bytes, Error = io::Error> + Unpin,
     {
-        let eth_cap = self.inner.conn.shared_capabilities().sil_version()?;
+        let sil_cap = self.inner.conn.shared_capabilities().sil_version()?;
         self.into_satellite_stream_with_tuple_handshake(
-            &Capability::sil(eth_cap),
+            &Capability::sil(sil_cap),
             async move |proxy| {
                 let handshake = handshake.clone();
                 let mut unauth = UnauthProxy { inner: proxy };
                 let their_status = handshake
                     .handshake(&mut unauth, status, fork_filter, HANDSHAKE_TIMEOUT)
                     .await?;
-                let eth_stream = SilStream::with_max_message_size(
-                    eth_cap,
+                let sil_stream = SilStream::with_max_message_size(
+                    sil_cap,
                     unauth.into_inner(),
                     sil_max_message_size,
                 );
-                Ok((eth_stream, their_status))
+                Ok((sil_stream, their_status))
             },
         )
         .await
@@ -883,7 +883,7 @@ mod tests {
             connect_passthrough, sil_handshake, sil_hello,
             proto::{test_hello, TestProtoMessage},
         },
-        UnauthedEthStream, UnauthedP2PStream,
+        UnauthedSilStream, UnauthedP2PStream,
     };
     use futures::{stream, task::noop_waker_ref};
     use rsil_sil_wire_types::SilNetworkPrimitives;
@@ -1037,7 +1037,7 @@ mod tests {
             let (p2p_stream, _) =
                 UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
 
-            let (_eth_stream, _) = UnauthedEthStream::new(p2p_stream)
+            let (_sil_stream, _) = UnauthedSilStream::new(p2p_stream)
                 .handshake::<SilNetworkPrimitives>(other_status, other_fork_filter)
                 .await
                 .unwrap();
@@ -1051,7 +1051,7 @@ mod tests {
         let multiplexer = RlpxProtocolMultiplexer::new(conn);
         let _satellite = multiplexer
             .into_satellite_stream_with_handshake(sil.capability().as_ref(), async move |proxy| {
-                UnauthedEthStream::new(proxy)
+                UnauthedSilStream::new(proxy)
                     .handshake::<SilNetworkPrimitives>(status, fork_filter)
                     .await
             })

@@ -5,7 +5,7 @@ use crate::{
     metrics::SilRequestHandlerMetrics,
 };
 use alloy_consensus::{BlockHeader, ReceiptWithBloom};
-use alloy_eips::BlockHashOrNumber;
+use rsil_sil_wire_types::BlockHashOrNumber;
 use alloy_rlp::Encodable;
 use futures::StreamExt;
 use rsil_sil_wire::{

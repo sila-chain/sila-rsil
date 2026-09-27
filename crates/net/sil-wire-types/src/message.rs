@@ -10,7 +10,7 @@ use super::{
     broadcast::NewBlockHashes, BlockAccessLists, BlockBodies, BlockHeaders, GetBlockAccessLists,
     GetBlockBodies, GetBlockHeaders, GetNodeData, GetPooledTransactions, GetReceipts,
     GetReceipts70, NewPooledTransactionHashes66, NewPooledTransactionHashes68, NodeData,
-    PooledTransactions, Receipts, Status, StatusEth69, Transactions,
+    PooledTransactions, Receipts, Status, StatusSil69, Transactions,
 };
 use crate::{
     status::StatusMessage, BlockRangeUpdate, BroadcastPoolTransactions, Cells, GetCells,
@@ -87,7 +87,7 @@ impl<N: NetworkPrimitives> ProtocolMessage<N> {
         let status = if version < SilVersion::Sil69 {
             StatusMessage::Legacy(Status::decode(buf)?)
         } else {
-            StatusMessage::Sil69(StatusEth69::decode(buf)?)
+            StatusMessage::Sil69(StatusSil69::decode(buf)?)
         };
 
         Ok(status)
@@ -118,7 +118,7 @@ impl<N: NetworkPrimitives> ProtocolMessage<N> {
             SilMessageID::Status => SilMessage::Status(if version < SilVersion::Sil69 {
                 StatusMessage::Legacy(Status::decode(buf)?)
             } else {
-                StatusMessage::Sil69(StatusEth69::decode(buf)?)
+                StatusMessage::Sil69(StatusSil69::decode(buf)?)
             }),
             SilMessageID::NewBlockHashes => {
                 SilMessage::NewBlockHashes(NewBlockHashes::decode(buf)?)

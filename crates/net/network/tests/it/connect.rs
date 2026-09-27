@@ -4,7 +4,7 @@ use alloy_primitives::map::HashSet;
 use futures::StreamExt;
 use rsil_chainspec::{SEPOLIA, SILA_MAINNET};
 use rsil_discv4::Discv4Config;
-use rsil_eth_wire::{DisconnectReason, HeadersDirection, SilNetworkPrimitives};
+use rsil_sil_wire::{DisconnectReason, HeadersDirection, SilNetworkPrimitives};
 use rsil_network::{
     test_utils::{NetworkEventStream, PeerConfig, Testnet},
     BlockDownloaderProvider, NetworkConfigBuilder, NetworkEvent, NetworkEventListenerProvider,

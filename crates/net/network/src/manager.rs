@@ -42,7 +42,7 @@ use crate::{
 use futures::{Future, StreamExt};
 use parking_lot::Mutex;
 use rsil_chainspec::EnrForkIdEntry;
-use rsil_eth_wire::{DisconnectReason, NetworkPrimitives, SilNetworkPrimitives};
+use rsil_sil_wire::{DisconnectReason, NetworkPrimitives, SilNetworkPrimitives};
 use rsil_fs_util::{self as fs, FsPathError};
 use rsil_metrics::common::mpsc::MemoryBoundedSender;
 use rsil_network_api::{

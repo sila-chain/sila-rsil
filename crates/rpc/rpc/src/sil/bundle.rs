@@ -11,11 +11,11 @@ use revm::{
 };
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_savm::{ConfigureEvm, Savm};
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{Call, LoadPendingBlock, SilTransactions},
     FromEthApiError, FromEvmError, SilCallBundleApiServer,
 };
-use rsil_rpc_eth_types::{utils::recover_raw_transaction, RpcInvalidTransactionError, SilApiError};
+use rsil_rpc_sil_types::{utils::recover_raw_transaction, RpcInvalidTransactionError, SilApiError};
 use rsil_tasks::pool::BlockingTaskGuard;
 use rsil_transaction_pool::{
     PoolPooledTx, PoolTransaction, SilBlobTransactionSidecar, SilPoolTransaction, TransactionPool,

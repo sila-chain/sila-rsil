@@ -18,7 +18,7 @@ use alloy_serde::JsonStorageKey;
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use rsil_primitives_traits::TxTy;
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_types::{FillTransaction, SilApiError, SilCapabilities};
+use rsil_rpc_sil_types::{FillTransaction, SilApiError, SilCapabilities};
 use rsil_rpc_server_types::{result::internal_rpc_err, ToRpcResult};
 use serde_json::Value;
 use std::collections::HashMap;

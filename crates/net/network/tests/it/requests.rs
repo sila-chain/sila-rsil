@@ -5,7 +5,7 @@ use alloy_consensus::Header;
 use alloy_eips::NumHash;
 use alloy_primitives::{BlockHash, BlockNumber, Bytes, B256};
 use rand::Rng;
-use rsil_eth_wire::{BlockAccessLists, GetBlockAccessLists, HeadersDirection, SilVersion};
+use rsil_sil_wire::{BlockAccessLists, GetBlockAccessLists, HeadersDirection, SilVersion};
 use rsil_network::{
     eth_requests::{MAX_BLOCK_ACCESS_LISTS_SERVE, SOFT_RESPONSE_LIMIT},
     test_utils::{NetworkEventStream, PeerConfig, Testnet, TestnetHandle},
@@ -346,7 +346,7 @@ async fn test_eth68_get_receipts() {
         handle0.send_request(
             *handle1.peer_id(),
             rsil_network::PeerRequest::GetReceipts {
-                request: rsil_eth_wire::GetReceipts(vec![block_hash]),
+                request: rsil_sil_wire::GetReceipts(vec![block_hash]),
                 response: tx,
             },
         );
@@ -519,7 +519,7 @@ async fn test_eth69_get_receipts() {
         handle0.send_request(
             *handle1.peer_id(),
             rsil_network::PeerRequest::GetReceipts69 {
-                request: rsil_eth_wire::GetReceipts(vec![block_hash]),
+                request: rsil_sil_wire::GetReceipts(vec![block_hash]),
                 response: tx,
             },
         );

@@ -3,7 +3,7 @@
 use alloy_sips::eip2718::Decodable2718;
 use alloy_primitives::hex;
 use alloy_rlp::{Decodable, Encodable};
-use rsil_eth_wire::{PooledTransactions, ProtocolMessage, SilNetworkPrimitives, SilVersion};
+use rsil_sil_wire::{PooledTransactions, ProtocolMessage, SilNetworkPrimitives, SilVersion};
 use std::{fs, path::PathBuf};
 use test_fuzz::test_fuzz;
 

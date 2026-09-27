@@ -3,7 +3,7 @@
 //! This demonstrates how to build a `ChainSpec` with custom hardforks,
 //! implementing required traits for integration with Rsil's chain management.
 
-use alloy_eips::sip7840::BlobParams;
+use alloy_sips::eip7840::BlobParams;
 use alloy_genesis::Genesis;
 use alloy_primitives::{B256, U256};
 use rsil_chainspec::{

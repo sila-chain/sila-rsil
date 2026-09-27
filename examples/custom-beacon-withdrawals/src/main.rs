@@ -3,8 +3,8 @@
 
 #![warn(unused_crate_dependencies)]
 
-use alloy_eips::sip4895::Withdrawal;
-use alloy_evm::{
+use alloy_sips::eip4895::Withdrawal;
+use alloy_savm::{
     block::{BlockExecutorFactory, ExecutableTx, GasOutput},
     precompiles::PrecompilesMap,
     revm::context::Block as _,

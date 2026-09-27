@@ -6,7 +6,7 @@ use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_config::config::ExecutionConfig;
 use rsil_consensus::FullConsensus;
 use rsil_db::{static_file::HeaderMask, tables};
-use rsil_evm::{execute::Executor, metrics::ExecutorMetrics, ConfigureEvm};
+use rsil_savm::{execute::Executor, metrics::ExecutorMetrics, ConfigureEvm};
 use rsil_execution_types::Chain;
 use rsil_exex::{ExExManagerHandle, ExExNotification, ExExNotificationSource};
 use rsil_primitives_traits::{format_gas_throughput, BlockBody, NodePrimitives};
@@ -757,7 +757,7 @@ mod tests {
         models::{metadata::StorageSettings, AccountBeforeTx},
         transaction::{DbTx, DbTxMut},
     };
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::{Account, Block as _, Bytecode, SealedBlock, StorageEntry};
     use rsil_provider::{
         test_utils::{create_test_provider_factory, create_test_provider_factory_with_chain_spec},
@@ -1195,7 +1195,7 @@ mod tests {
         let chain_spec = Arc::new(
             ChainSpecBuilder::sila_mainnet()
                 .berlin_activated()
-                .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(15))
+                .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(15))
                 .build(),
         );
         let factory = create_test_provider_factory_with_chain_spec(chain_spec);

@@ -2,7 +2,7 @@
 
 #![warn(unused_crate_dependencies)]
 
-use alloy_evm::{
+use alloy_savm::{
     precompiles::PrecompilesMap,
     revm::{
         context::DBErrorMarker,

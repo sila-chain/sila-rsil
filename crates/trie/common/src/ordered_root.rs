@@ -265,7 +265,7 @@ mod tests {
             proofs::{calculate_receipt_root, calculate_transaction_root},
             ReceiptWithBloom, Signed, SilaReceipt, TxLegacy,
         };
-        use alloy_eips::sip2718::Encodable2718;
+        use alloy_sips::eip2718::Encodable2718;
         use alloy_primitives::Signature;
         use proptest::test_runner::Config;
         use proptest_arbitrary_interop::arb;

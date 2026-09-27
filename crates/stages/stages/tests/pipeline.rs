@@ -1,7 +1,7 @@
 //! Pipeline forward sync and unwind tests.
 
 use alloy_consensus::{constants::ETH_TO_WEI, Header, TxEip1559, TxReceipt};
-use alloy_eips::sip1559::INITIAL_BASE_FEE;
+use alloy_sips::eip1559::INITIAL_BASE_FEE;
 use alloy_genesis::{Genesis, GenesisAccount};
 use alloy_primitives::{bytes, Address, Bytes, TxKind, B256, U256};
 use rsil_chainspec::{ChainSpecBuilder, ChainSpecProvider, SILA_MAINNET};
@@ -13,8 +13,8 @@ use rsil_downloaders::{
     bodies::bodies::BodiesDownloaderBuilder, file_client::FileClient,
     headers::reverse_headers::ReverseHeadersDownloaderBuilder,
 };
-use rsil_evm::{execute::Executor, ConfigureEvm};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm::{execute::Executor, ConfigureEvm};
+use rsil_savm_sila::SilEvmConfig;
 use rsil_network_p2p::{
     bodies::downloader::BodyDownloader,
     headers::downloader::{HeaderDownloader, SyncTarget},

@@ -8,7 +8,7 @@ use alloy_eips::{
     sip7002::{WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS, WITHDRAWAL_REQUEST_PREDEPLOY_CODE},
     sip7685::EMPTY_REQUESTS_HASH,
 };
-use alloy_evm::block::BlockValidationError;
+use alloy_savm::block::BlockValidationError;
 use alloy_primitives::{b256, fixed_bytes, keccak256, Bytes, TxKind, B256, U256};
 use revm::{
     database::{CacheDB, EmptyDB, TransitionState},
@@ -17,11 +17,11 @@ use revm::{
     Database,
 };
 use rsil_chainspec::{ChainSpecBuilder, ForkCondition, SilaHardfork, SILA_MAINNET};
-use rsil_evm::{
+use rsil_savm::{
     execute::{BasicBlockExecutor, Executor},
     ConfigureEvm,
 };
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_execution_types::BlockExecutionResult;
 use rsil_primitives_traits::{
     crypto::secp256k1::public_key_to_address, Block as _, RecoveredBlock,
@@ -75,7 +75,7 @@ fn sip_4788_non_genesis_call() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -155,7 +155,7 @@ fn sip_4788_no_code_cancun() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -187,7 +187,7 @@ fn sip_4788_empty_account_call() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -229,7 +229,7 @@ fn sip_4788_genesis_call() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(0))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(0))
             .build(),
     );
 
@@ -289,7 +289,7 @@ fn sip_4788_high_base_fee() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -355,7 +355,7 @@ fn sip_2935_pre_fork() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Never)
+            .with_fork(SilaHardfork::Prague, ForkCondition::Never)
             .build(),
     );
 
@@ -432,7 +432,7 @@ fn sip_2935_fork_activation_within_window_bounds() {
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
             .cancun_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -485,7 +485,7 @@ fn sip_2935_fork_activation_outside_window_bounds() {
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
             .cancun_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -703,7 +703,7 @@ fn block_gas_limit_error() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(0))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(0))
             .build(),
     );
 

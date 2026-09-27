@@ -58,7 +58,7 @@ mod tests {
         transaction::{DbTx, DbTxMut},
         AccountsHistory,
     };
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_exex::ExExManagerHandle;
     use rsil_primitives_traits::{Account, Bytecode, SealedBlock};
     use rsil_provider::{

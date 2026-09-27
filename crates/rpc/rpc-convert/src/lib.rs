@@ -16,7 +16,7 @@ pub mod transaction;
 pub use rpc::*;
 pub use transaction::{RpcConvert, RpcConverter, TransactionConversionError};
 
-pub use alloy_savm::rpc::{CallFees, CallFeesError, SilTxEnvError, TryIntoTxEnv};
+pub use alloy_savm::rpc::{CallFees, CallFeesError, EthTxEnvError as SilTxEnvError, TryIntoTxEnv};
 
 // Re-export traits from rsil-rpc-traits
 pub use rsil_rpc_traits::{

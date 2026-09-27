@@ -105,14 +105,14 @@ async fn handshake_eth(
     p2p_stream: AuthedP2PStream,
 ) -> eyre::Result<(AuthedEthStream, UnifiedStatus)> {
     let fork_filter = SILA_MAINNET.fork_filter(Head {
-        timestamp: SILA_MAINNET.fork(SilaHardfork::SilaShanghai).as_timestamp().unwrap(),
+        timestamp: SILA_MAINNET.fork(SilaHardfork::Shanghai).as_timestamp().unwrap(),
         ..Default::default()
     });
 
     let unified_status = UnifiedStatus::builder()
         .chain(Chain::sila_mainnet())
         .genesis(MAINNET_GENESIS_HASH)
-        .forkid(SILA_MAINNET.hardfork_fork_id(SilaHardfork::SilaShanghai).unwrap())
+        .forkid(SILA_MAINNET.hardfork_fork_id(SilaHardfork::Shanghai).unwrap())
         .build();
 
     let status = UnifiedStatus {

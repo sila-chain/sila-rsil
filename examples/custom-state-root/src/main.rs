@@ -31,7 +31,7 @@ use rsil_engine_tree::tree::{
     },
     BasicEngineValidator, TreeConfig,
 };
-use rsil_evm::{revm::context::Block as _, ConfigureEvm};
+use rsil_savm::{revm::context::Block as _, ConfigureEvm};
 use rsil_primitives_traits::{NodePrimitives, RecoveredBlock};
 use rsil_provider::{BlockExecutionOutput, ProviderResult};
 use rsil_sila::{

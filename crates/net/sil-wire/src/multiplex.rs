@@ -27,7 +27,7 @@ use crate::{
 };
 use bytes::{Bytes, BytesMut};
 use futures::{Sink, SinkExt, Stream, StreamExt, TryStream, TryStreamExt};
-use rsil_eth_wire_types::NetworkPrimitives;
+use rsil_sil_wire_types::NetworkPrimitives;
 use rsil_sila_forks::ForkFilter;
 use tokio::sync::{mpsc, mpsc::UnboundedSender};
 use tokio_stream::wrappers::UnboundedReceiverStream;
@@ -886,7 +886,7 @@ mod tests {
         UnauthedEthStream, UnauthedP2PStream,
     };
     use futures::{stream, task::noop_waker_ref};
-    use rsil_eth_wire_types::SilNetworkPrimitives;
+    use rsil_sil_wire_types::SilNetworkPrimitives;
     use std::task::Poll;
     use tokio::{net::TcpListener, sync::oneshot};
     use tokio_util::codec::Decoder;

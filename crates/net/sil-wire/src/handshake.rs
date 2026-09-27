@@ -5,7 +5,7 @@ use crate::{
 };
 use bytes::{Bytes, BytesMut};
 use futures::{Sink, SinkExt, Stream};
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     DisconnectReason, ProtocolMessage, SilMessage, SilNetworkPrimitives, StatusMessage,
     UnifiedStatus,
 };

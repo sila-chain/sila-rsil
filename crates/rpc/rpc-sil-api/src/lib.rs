@@ -22,7 +22,7 @@ pub mod pubsub;
 pub mod types;
 
 pub use bundle::{SilBundleApiServer, SilCallBundleApiServer};
-pub use core::{FullEthApiServer, SilApiServer};
+pub use core::{FullSilApiServer, SilApiServer};
 pub use ext::L2EthApiExtServer;
 pub use filter::{EngineEthFilter, QueryLimits, SilFilterApiServer};
 pub use helpers::config::SilConfigApiServer;
@@ -32,7 +32,7 @@ pub use rsil_rpc_convert::*;
 pub use rsil_rpc_sil_types::error::{
     AsSilApiError, FromSilApiError, FromEvmError, IntoSilApiError,
 };
-pub use types::{FullEthApiTypes, RpcBlock, RpcHeader, RpcReceipt, RpcTransaction, SilApiTypes};
+pub use types::{FullSilApiTypes, RpcBlock, RpcHeader, RpcReceipt, RpcTransaction, SilApiTypes};
 
 #[cfg(feature = "client")]
 pub use bundle::{SilBundleApiClient, SilCallBundleApiClient};

@@ -1,7 +1,7 @@
 //! Implementation of the [`jsonrpsee`] generated [`SilApiServer`] trait. Handles RPC requests for
 //! the `sil_` namespace.
 use crate::{
-    helpers::{FullEthApi, SilApiSpec, SilBlocks, SilCall, SilFees, SilState, SilTransactions},
+    helpers::{FullSilApi, SilApiSpec, SilBlocks, SilCall, SilFees, SilState, SilTransactions},
     RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use alloy_dyn_abi::TypedData;
@@ -26,7 +26,7 @@ use tracing::trace;
 
 /// Helper trait, unifies functionality that must be supported to implement all RPC methods for
 /// server.
-pub trait FullEthApiServer:
+pub trait FullSilApiServer:
     SilApiServer<
         RpcTxReq<Self::NetworkTypes>,
         RpcTransaction<Self::NetworkTypes>,
@@ -34,12 +34,12 @@ pub trait FullEthApiServer:
         RpcReceipt<Self::NetworkTypes>,
         RpcHeader<Self::NetworkTypes>,
         TxTy<Self::Primitives>,
-    > + FullEthApi
+    > + FullSilApi
     + Clone
 {
 }
 
-impl<T> FullEthApiServer for T where
+impl<T> FullSilApiServer for T where
     T: SilApiServer<
             RpcTxReq<T::NetworkTypes>,
             RpcTransaction<T::NetworkTypes>,
@@ -47,7 +47,7 @@ impl<T> FullEthApiServer for T where
             RpcReceipt<T::NetworkTypes>,
             RpcHeader<T::NetworkTypes>,
             TxTy<T::Primitives>,
-        > + FullEthApi
+        > + FullSilApi
         + Clone
 {
 }
@@ -456,7 +456,7 @@ impl<T>
         TxTy<T::Primitives>,
     > for T
 where
-    T: FullEthApi,
+    T: FullSilApi,
     jsonrpsee_types::error::ErrorObject<'static>: From<T::Error>,
 {
     /// Handler for: `sil_protocolVersion`

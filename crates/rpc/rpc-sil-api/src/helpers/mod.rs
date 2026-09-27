@@ -44,7 +44,7 @@ pub use subscriptions::SilSubscriptions;
 pub use trace::Trace;
 pub use transaction::{LoadTransaction, SilTransactions};
 
-use crate::FullEthApiTypes;
+use crate::FullSilApiTypes;
 
 /// Extension trait that bundles traits needed for tracing transactions.
 pub trait TraceExt:
@@ -57,8 +57,8 @@ impl<T> TraceExt for T where T: LoadTransaction + LoadBlock + Trace + Call + Get
 /// Helper trait to unify all `sil` rpc server building block traits, for simplicity.
 ///
 /// This trait is automatically implemented for any type that implements all the `Sil` traits.
-pub trait FullEthApi:
-    FullEthApiTypes
+pub trait FullSilApi:
+    FullSilApiTypes
     + SilApiSpec
     + SilTransactions
     + SilBlocks
@@ -72,8 +72,8 @@ pub trait FullEthApi:
 {
 }
 
-impl<T> FullEthApi for T where
-    T: FullEthApiTypes
+impl<T> FullSilApi for T where
+    T: FullSilApiTypes
         + SilApiSpec
         + SilTransactions
         + SilBlocks

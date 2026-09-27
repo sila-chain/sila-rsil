@@ -218,7 +218,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sip2930"
+name = "alloy-eip2930"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9441120fa82df73e8959ae0e4ab8ade03de2aaae61be313fbf5746277847ce25"
@@ -232,7 +232,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "alloy-sip7702"
+name = "alloy-eip7702"
 version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2919c5a56a1007492da313e7a3b6d45ef5edc5d33416fdec63c0d7a2702a0d20"
@@ -270,8 +270,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea4c0453065b9206acc0f869a258dc8dcbbd595e144b4446f2c493a24a814d1f"
 dependencies = [
  "alloy-eip2124",
- "alloy-sip2930",
- "alloy-sip7702",
+ "alloy-eip2930",
+ "alloy-eip7702",
  "alloy-eip7928",
  "alloy-primitives",
  "alloy-rlp",
@@ -3432,7 +3432,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_hashing"
+name = "ethereum_hashing"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5aa93f58bb1eb3d1e556e4f408ef1dac130bad01ac37db4e7ade45de40d1c86a"
@@ -3443,7 +3443,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sila_serde_utils"
+name = "ethereum_serde_utils"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3dc1355dbb41fbbd34ec28d4fb2a57d9a70c67ac3c19f6a5ca4d4a176b9e997a"
@@ -3462,7 +3462,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e462875ad8693755ea8913d6e905715c76ea4836e2254e18c9cf0f7a8f8c2a13"
 dependencies = [
  "alloy-primitives",
- "sila_serde_utils",
+ "ethereum_serde_utils",
  "itertools 0.14.0",
  "serde",
  "serde_derive",
@@ -7754,8 +7754,8 @@ version = "41.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ac68282a454318246817486835a446519291dd0a8167d09de14c7e96f2147696"
 dependencies = [
- "alloy-sip2930",
- "alloy-sip7702",
+ "alloy-eip2930",
+ "alloy-eip7702",
  "auto_impl",
  "either",
  "revm-database-interface",
@@ -12977,7 +12977,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f7fd51aa83d2eb83b04570808430808b5d24fdbf479a4d5ac5dee4a2e2dd2be4"
 dependencies = [
  "alloy-primitives",
- "sila_hashing",
+ "ethereum_hashing",
  "ethereum_ssz",
  "smallvec",
  "typenum",

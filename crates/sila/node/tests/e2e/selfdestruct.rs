@@ -11,7 +11,7 @@ use crate::utils::{eth_payload_attributes, eth_payload_attributes_shanghai};
 use alloy_network::{EthereumWallet as SilaWallet, TransactionBuilder};
 use alloy_primitives::{bytes, Address, Bytes, TxKind, U256};
 use alloy_provider::{Provider, ProviderBuilder};
-use alloy_rpc_types_eth::TransactionRequest;
+use alloy_rpc_types_sil::TransactionRequest;
 use futures::StreamExt;
 use rsil_chainspec::{ChainSpec, ChainSpecBuilder, SILA_MAINNET};
 use rsil_e2e_test_utils::setup_engine;

@@ -1,6 +1,6 @@
 //! Helper types to workaround 'higher-ranked lifetime error'
 //! <https://github.com/rust-lang/rust/issues/100013> in default implementation of
-//! `rsil_rpc_eth_api::helpers::Call`.
+//! `rsil_rpc_sil_api::helpers::Call`.
 
 use alloy_primitives::{Address, B256, U256};
 use revm::database::{BundleState, State};
@@ -126,7 +126,7 @@ impl rsil_storage_api::BlockHashReader for StateProviderTraitObjWrapper {
 
     fn convert_block_hash(
         &self,
-        hash_or_number: alloy_rpc_types_eth::BlockHashOrNumber,
+        hash_or_number: alloy_rpc_types_sil::BlockHashOrNumber,
     ) -> rsil_errors::ProviderResult<Option<B256>> {
         self.0.convert_block_hash(hash_or_number)
     }

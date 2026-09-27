@@ -42,14 +42,14 @@ use rsil_rpc::{
 };
 use rsil_rpc_api::servers::{BlockSubmissionValidationApiServer, TestingApiServer};
 use rsil_rpc_builder::config::RsilRpcServerConfig;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{
         config::{SilConfigApiServer, SilConfigHandler},
         pending_block::BuildPendingEnv,
     },
     RpcConvert, RpcTypes, SignableTxRequest,
 };
-use rsil_rpc_eth_types::{error::FromEvmError, SilApiError};
+use rsil_rpc_sil_types::{error::FromEvmError, SilApiError};
 use rsil_rpc_server_types::RsilRpcModule;
 use rsil_sila_consensus::SilBeaconConsensus;
 use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};

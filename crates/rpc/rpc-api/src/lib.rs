@@ -59,7 +59,7 @@ pub mod servers {
         validation::BlockSubmissionValidationApiServer,
         web3::Web3ApiServer,
     };
-    pub use rsil_rpc_eth_api::{
+    pub use rsil_rpc_sil_api::{
         self as sil, L2EthApiExtServer, SilApiServer, SilBundleApiServer, SilCallBundleApiServer,
         SilConfigApiServer, SilFilterApiServer, SilPubSubApiServer,
     };
@@ -91,7 +91,7 @@ pub mod clients {
         validation::BlockSubmissionValidationApiClient,
         web3::Web3ApiClient,
     };
-    pub use rsil_rpc_eth_api::{
+    pub use rsil_rpc_sil_api::{
         L2EthApiExtClient, SilApiClient, SilBundleApiClient, SilCallBundleApiClient,
         SilConfigApiClient, SilFilterApiClient,
     };

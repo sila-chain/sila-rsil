@@ -1,5 +1,5 @@
 //! Helper traits to wrap generic l1 errors, in network specific error type configured in
-//! `rsil_rpc_eth_api::SilApiTypes`.
+//! `rsil_rpc_sil_api::SilApiTypes`.
 
 use crate::{simulate::SilSimulateError, RevertError, SilApiError};
 use alloy_primitives::Bytes;

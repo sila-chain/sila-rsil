@@ -1,7 +1,7 @@
 use crate::utils::eth_payload_attributes;
 use alloy_primitives::{bytes, Address, U256};
 use alloy_provider::{network::EthereumWallet as SilaWallet, Provider, ProviderBuilder};
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     simulate::{SimBlock, SimulatePayload, SimulatedBlock},
     state::{AccountOverride, StateOverride, StateOverridesBuilder},
     BlockOverrides, TransactionRequest, TransactionTrait as _,

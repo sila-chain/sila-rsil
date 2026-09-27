@@ -18,7 +18,7 @@ use rsil_revm::{
     database::StateProviderDatabase,
     db::{bal::SavmDatabaseError, State},
 };
-use rsil_rpc_eth_types::cache::db::StateCacheDb;
+use rsil_rpc_sil_types::cache::db::StateCacheDb;
 use rsil_storage_api::{ProviderBlock, ProviderTx};
 use std::sync::Arc;
 

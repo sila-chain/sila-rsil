@@ -5,11 +5,11 @@ use crate::FromEthApiError;
 use alloy_consensus::BlockHeader;
 use alloy_eips::sip7840::BlobParams;
 use alloy_primitives::U256;
-use alloy_rpc_types_eth::{BlockNumberOrTag, FeeHistory};
+use alloy_rpc_types_sil::{BlockNumberOrTag, FeeHistory};
 use futures::{Future, StreamExt};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_primitives_traits::BlockBody;
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     fee_history::calculate_reward_percentiles_for_block, utils::checked_blob_gas_used_ratio,
     FeeHistoryCache, FeeHistoryEntry, GasPriceOracle, RpcInvalidTransactionError, SilApiError,
 };

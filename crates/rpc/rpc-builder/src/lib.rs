@@ -43,7 +43,7 @@ use rsil_rpc::{
 };
 use rsil_rpc_api::servers::*;
 use rsil_rpc_engine_api::RsilEngineApi;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{
         pending_block::PendingEnvBuilder, Call, LoadPendingBlock, SilApiSpec, SilTransactions,
         TraceExt,
@@ -52,7 +52,7 @@ use rsil_rpc_eth_api::{
     FullEthApiServer, FullEthApiTypes, RpcBlock, RpcConvert, RpcConverter, RpcHeader, RpcNodeCore,
     RpcReceipt, RpcTransaction, RpcTxReq, SilApiServer, SilApiTypes,
 };
-use rsil_rpc_eth_types::{receipt::SilReceiptConverter, SilConfig, SilSubscriptionIdProvider};
+use rsil_rpc_sil_types::{receipt::SilReceiptConverter, SilConfig, SilSubscriptionIdProvider};
 use rsil_rpc_layer::{AuthLayer, Claims, CompressionLayer, JwtAuthValidator, JwtSecret};
 pub use rsil_rpc_server_types::RsilRpcModule;
 use rsil_storage_api::{

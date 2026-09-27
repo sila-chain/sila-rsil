@@ -47,7 +47,7 @@ use alloy_primitives::{
 use alloy_rlp::Encodable;
 use constants::SOFT_LIMIT_COUNT_HASHES_IN_NEW_POOLED_TRANSACTIONS_BROADCAST_MESSAGE;
 use futures::{stream::FuturesUnordered, Future, StreamExt};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     BroadcastPoolTransactions, DedupPayload, GetPooledTransactions, HandleMempoolData,
     HandleVersionedMempoolData, LazyEncoded, LazyEncodedTransaction, NetworkPrimitives,
     NewPooledTransactionHashes, NewPooledTransactionHashes66, NewPooledTransactionHashes68,

@@ -15,7 +15,7 @@ use crate::{
 use futures::{FutureExt, StreamExt};
 use pin_project::pin_project;
 use rsil_chainspec::{ChainSpecProvider, Hardforks, SilaHardforks};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     protocol::Protocol, DisconnectReason, HelloMessageWithProtocols, SilNetworkPrimitives,
 };
 use rsil_savm_sila::SilEvmConfig;

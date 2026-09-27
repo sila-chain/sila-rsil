@@ -6,14 +6,14 @@ use crate::{FromEthApiError, RpcNodeCore, RpcNodeCoreExt, SilApiTypes};
 use alloy_consensus::constants::KECCAK_EMPTY;
 use alloy_eips::BlockId;
 use alloy_primitives::{Address, Bytes, B256, U256};
-use alloy_rpc_types_eth::{Account, AccountInfo, SIP1186AccountProofResponse};
+use alloy_rpc_types_sil::{Account, AccountInfo, SIP1186AccountProofResponse};
 use alloy_serde::JsonStorageKey;
 use futures::Future;
 use rsil_errors::RsilError;
 use rsil_evm::{ConfigureEvm, SavmEnvFor};
 use rsil_primitives_traits::{BlockTy, RecoveredBlock, SealedHeaderFor};
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     error::{FromEvmError, IntoEthApiError},
     PendingBlockEnv, RpcInvalidTransactionError, SignError, SilApiError,
 };

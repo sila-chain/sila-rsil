@@ -20,7 +20,7 @@ use rsil_savm::{
 use rsil_primitives_traits::{transaction::error::InvalidTransactionError, HeaderTy, SealedHeader};
 use rsil_revm::{database::StateProviderDatabase, db::State};
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     block::BlockAndReceipts, builder::config::PendingBlockKind, PendingBlock, PendingBlockEnv,
     PendingBlockEnvOrigin, SilApiError,
 };

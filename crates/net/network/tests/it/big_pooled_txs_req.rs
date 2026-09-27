@@ -1,5 +1,5 @@
 use alloy_primitives::{Signature, B256};
-use rsil_eth_wire::{GetPooledTransactions, PooledTransactions};
+use rsil_sil_wire::{GetPooledTransactions, PooledTransactions};
 use rsil_network::{
     test_utils::{NetworkEventStream, Testnet},
     NetworkEventListenerProvider, PeerRequest,

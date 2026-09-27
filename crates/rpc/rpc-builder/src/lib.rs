@@ -20,7 +20,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 use crate::{auth::AuthRpcModule, error::WsHttpSamePortError, metrics::RpcRequestMetrics};
-use alloy_network::{IntoWallet, Sila};
+use alloy_network::{Ethereum as Sila, IntoWallet};
 use alloy_provider::{fillers::RecommendedFillers, Provider, ProviderBuilder};
 use core::marker::PhantomData;
 use error::{ConflictingModules, RpcError, ServerKind};
@@ -33,7 +33,7 @@ use jsonrpsee::{
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_consensus::FullConsensus;
 use rsil_engine_primitives::{ConsensusEngineEvent, ConsensusEngineHandle};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_network_api::{noop::NoopNetwork, NetworkInfo, Peers};
 use rsil_payload_primitives::PayloadTypes;
 use rsil_primitives_traits::{NodePrimitives, TxTy};

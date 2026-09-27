@@ -4,9 +4,9 @@
 
 use alloy_savm::{
     precompiles::{DynPrecompile, Precompile, PrecompileInput, PrecompilesMap},
-    revm::{context::DBErrorMarker, handler::SilPrecompiles, precompile::PrecompileId},
-    sil::SilEvmContext,
-    Savm, SavmFactory,
+    revm::{context::DBErrorMarker, handler::EthPrecompiles as SilPrecompiles, precompile::PrecompileId},
+    eth::EthEvmContext as SilEvmContext,
+    Evm as Savm, EvmFactory as SavmFactory,
 };
 use alloy_genesis::Genesis;
 use alloy_primitives::Bytes;
@@ -27,7 +27,7 @@ use rsil_sila::{
             context::{BlockEnv, Context, TxEnv},
             context_interface::result::{EVMError, HaltReason},
             inspector::{Inspector, NoOpInspector},
-            interpreter::interpreter::SilInterpreter,
+            interpreter::interpreter::EthInterpreter as SilInterpreter,
             precompile::PrecompileResult,
             primitives::hardfork::SpecId,
             MainBuilder, MainContext,
@@ -62,7 +62,7 @@ pub struct MyEvmFactory {
 }
 
 impl SavmFactory for MyEvmFactory {
-    type Savm<DB: Database, I: Inspector<SilEvmContext<DB>, SilInterpreter>> =
+    type Evm<DB: Database, I: Inspector<SilEvmContext<DB>, SilInterpreter>> =
         SilEvm<DB, I, PrecompilesMap>;
     type Tx = TxEnv;
     type Error<DBError: DBErrorMarker> = EVMError<DBError>;
@@ -72,11 +72,11 @@ impl SavmFactory for MyEvmFactory {
     type BlockEnv = BlockEnv;
     type Precompiles = PrecompilesMap;
 
-    fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Savm<DB, NoOpInspector> {
+    fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Evm<DB, NoOpInspector> {
         let new_cache = self.precompile_cache.clone();
         let spec = input.cfg_env.spec;
 
-        let savm = Context::sila_mainnet()
+        let savm = Context::mainnet()
             .with_db(db)
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
@@ -97,7 +97,7 @@ impl SavmFactory for MyEvmFactory {
         db: DB,
         input: SavmEnv,
         inspector: I,
-    ) -> Self::Savm<DB, I> {
+    ) -> Self::Evm<DB, I> {
         SilEvm::new(self.create_evm(db, input).into_inner().with_inspector(inspector), true)
     }
 }

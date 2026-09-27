@@ -10,10 +10,10 @@
 
 #![warn(unused_crate_dependencies)]
 
-use alloy_eips::BlockNumberOrTag;
-use alloy_evm::Savm;
+use alloy_sips::BlockNumberOrTag;
+use alloy_savm::Evm as Savm;
 use alloy_primitives::Address;
-use alloy_rpc_types_eth::{state::SavmOverrides, TransactionRequest};
+use alloy_rpc_types_sil::{state::EvmOverrides as SavmOverrides, TransactionRequest};
 use clap::Parser;
 use futures_util::StreamExt;
 use rsil_sila::{
@@ -27,7 +27,7 @@ use rsil_sila::{
             bytecode::opcode::OpCode,
             context_interface::ContextTr,
             inspector::Inspector,
-            interpreter::{interpreter::SilInterpreter, interpreter_types::Jumps, Interpreter},
+            interpreter::{interpreter::EthInterpreter as SilInterpreter, interpreter_types::Jumps, Interpreter},
         },
     },
 };

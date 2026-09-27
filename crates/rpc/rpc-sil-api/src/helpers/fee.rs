@@ -3,7 +3,7 @@
 use super::LoadBlock;
 use crate::FromEthApiError;
 use alloy_consensus::BlockHeader;
-use alloy_eips::sip7840::BlobParams;
+use alloy_sips::eip7840::BlobParams;
 use alloy_primitives::U256;
 use alloy_rpc_types_sil::{BlockNumberOrTag, FeeHistory};
 use futures::{Future, StreamExt};

@@ -8,8 +8,12 @@ use alloy_savm::{
     block::{BlockExecutorFactory, ExecutableTx, GasOutput},
     precompiles::PrecompilesMap,
     revm::context::Block as _,
-    sil::{SilBlockExecutionCtx, SilBlockExecutor, SilTxResult},
-    SavmFactory, SilEvm, SilEvmFactory,
+    eth::{
+        EthBlockExecutionCtx as SilBlockExecutionCtx,
+        EthBlockExecutor as SilBlockExecutor,
+        EthTxResult as SilTxResult,
+    },
+    EthEvm as SilEvm, EthEvmFactory as SilEvmFactory, EvmFactory as SavmFactory,
 };
 use alloy_sol_types::{sol, SolCall};
 use rsil_sila::{
@@ -87,7 +91,7 @@ pub struct CustomEvmConfig {
 }
 
 impl BlockExecutorFactory for CustomEvmConfig {
-    type SavmFactory = SilEvmFactory;
+    type EvmFactory = SilEvmFactory;
     type ExecutionCtx<'a> = SilBlockExecutionCtx<'a>;
     type Transaction = TransactionSigned;
     type Receipt = Receipt;
@@ -95,7 +99,7 @@ impl BlockExecutorFactory for CustomEvmConfig {
     type Executor<'a, DB: StateDB, I: InspectorFor<Self, DB>> =
         CustomBlockExecutor<'a, SilEvm<DB, I, PrecompilesMap>>;
 
-    fn evm_factory(&self) -> &Self::SavmFactory {
+    fn evm_factory(&self) -> &Self::EvmFactory {
         self.inner.evm_factory()
     }
 
@@ -196,7 +200,7 @@ where
 {
     type Transaction = TransactionSigned;
     type Receipt = Receipt;
-    type Savm = E;
+    type Evm = E;
     type Result = SilTxResult<E::HaltReason, TxType>;
 
     fn apply_pre_execution_changes(&mut self) -> Result<(), BlockExecutionError> {
@@ -220,7 +224,7 @@ where
 
     fn finish(
         mut self,
-    ) -> Result<(Self::Savm, BlockExecutionResult<Receipt>), BlockExecutionError> {
+    ) -> Result<(Self::Evm, BlockExecutionResult<Receipt>), BlockExecutionError> {
         if let Some(withdrawals) = self.inner.ctx.withdrawals.clone() {
             apply_withdrawals_contract_call(withdrawals.as_ref(), self.inner.evm_mut())?;
         }
@@ -229,12 +233,12 @@ where
         self.inner.finish()
     }
 
-    fn evm_mut(&mut self) -> &mut Self::Savm {
+    fn evm_mut(&mut self) -> &mut Self::Evm {
         self.inner.evm_mut()
     }
 
-    fn savm(&self) -> &Self::Savm {
-        self.inner.savm()
+    fn evm(&self) -> &Self::Evm {
+        self.inner.evm()
     }
 }
 

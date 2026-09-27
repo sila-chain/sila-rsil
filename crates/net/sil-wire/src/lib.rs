@@ -49,4 +49,4 @@ pub use crate::{
 
 // Re-export wire types
 #[doc(inline)]
-pub use rsil_eth_wire_types::*;
+pub use rsil_sil_wire_types::*;

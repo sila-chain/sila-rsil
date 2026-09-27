@@ -2117,7 +2117,7 @@ dependencies = [
 [[package]]
 name = "c-kzg"
 version = "2.1.8"
-source = "git+https://github.com/sila-chain/c-kzg-4844?rev=8e39b81310b79ea75e1fec943420b2627158ae54#8e39b81310b79ea75e1fec943420b2627158ae54"
+source = "git+https://github.com/sila-chain/c-kzg-4844?rev=6f03f03800dcd0d731b163bf62806b364298e6c2#6f03f03800dcd0d731b163bf62806b364298e6c2"
 dependencies = [
  "arbitrary",
  "blst",

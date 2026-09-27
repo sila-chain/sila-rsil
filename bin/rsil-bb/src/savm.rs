@@ -14,9 +14,15 @@ use alloy_savm::{
         BlockExecutionError, BlockExecutionResult, BlockExecutor, BlockExecutorFactory,
         ExecutableTx, GasOutput, StateDB,
     },
+    eth::{
+        EthBlockExecutionCtx as SilBlockExecutionCtx,
+        EthBlockExecutor as SilBlockExecutor,
+        EthEvmContext as SilEvmContext,
+        EthTxResult as SilTxResult,
+    },
     precompiles::PrecompilesMap,
-    sil::{SilBlockExecutionCtx, SilBlockExecutor, SilEvmContext, SilTxResult},
-    Database, FromRecoveredTx, FromTxWithEncoded, Savm, SavmFactory, SilEvm, SilEvmFactory,
+    Database, EthEvm as SilEvm, EthEvmFactory as SilEvmFactory, Evm as Savm,
+    EvmFactory as SavmFactory, FromRecoveredTx, FromTxWithEncoded,
 };
 use alloy_primitives::B256;
 use revm::{
@@ -173,7 +179,7 @@ where
     DB: StateDB,
     I: Inspector<SilEvmContext<DB>>,
     P: PrecompileProvider<SilEvmContext<DB>, Output = InterpreterResult>,
-    Spec: alloy_savm::sil::spec::SilExecutorSpec + Clone,
+    Spec: alloy_savm::eth::spec::EthExecutorSpec + Clone,
     SilEvm<DB, I, P>: Savm<
         DB = DB,
         Tx = TxEnv,
@@ -227,7 +233,7 @@ where
 
         let segment_idx = if let Some(bal_index) = self
             .bal_index_reader
-            .map(|reader| reader(self.inner().savm().db()))
+            .map(|reader| reader(self.inner().evm().db()))
             .filter(|bal_index| *bal_index > 0)
         {
             let segment_idx = self.plan.segment_index_for_tx((bal_index - 1) as usize);
@@ -260,7 +266,7 @@ where
         cfg_env.disable_base_fee = true;
 
         let inner = self.inner.as_mut().expect("inner executor must exist");
-        let evm_ctx = inner.savm.ctx_mut();
+        let evm_ctx = inner.evm.ctx_mut();
         evm_ctx.block = block_env;
         evm_ctx.cfg = cfg_env;
         inner.ctx = segment.ctx.clone();
@@ -392,7 +398,7 @@ where
     DB: StateDB,
     I: Inspector<SilEvmContext<DB>>,
     P: PrecompileProvider<SilEvmContext<DB>, Output = InterpreterResult>,
-    Spec: alloy_savm::sil::spec::SilExecutorSpec + Clone,
+    Spec: alloy_savm::eth::spec::EthExecutorSpec + Clone,
     SilEvm<DB, I, P>: Savm<
         DB = DB,
         Tx = TxEnv,
@@ -405,7 +411,7 @@ where
 {
     type Transaction = TransactionSigned;
     type Receipt = Receipt;
-    type Savm = SilEvm<DB, I, P>;
+    type Evm = SilEvm<DB, I, P>;
     type Result = SilTxResult<HaltReason, alloy_consensus::TxType>;
 
     fn apply_pre_execution_changes(&mut self) -> Result<(), BlockExecutionError> {
@@ -452,7 +458,7 @@ where
 
     fn finish(
         mut self,
-    ) -> Result<(Self::Savm, BlockExecutionResult<Self::Receipt>), BlockExecutionError> {
+    ) -> Result<(Self::Evm, BlockExecutionResult<Self::Receipt>), BlockExecutionError> {
         // Swap the inner executor's ctx to the last segment's ctx so that
         // SilBlockExecutor::finish() applies the correct withdrawal balance
         // increments and post-execution system calls.
@@ -500,12 +506,12 @@ where
         Ok((savm, result))
     }
 
-    fn evm_mut(&mut self) -> &mut Self::Savm {
+    fn evm_mut(&mut self) -> &mut Self::Evm {
         self.inner_mut().evm_mut()
     }
 
-    fn savm(&self) -> &Self::Savm {
-        self.inner().savm()
+    fn evm(&self) -> &Self::Evm {
+        self.inner().evm()
     }
 
     fn receipts(&self) -> &[Self::Receipt] {
@@ -557,7 +563,7 @@ impl<Spec> BbBlockExecutorFactory<Spec> {
         bal_index_setter: Option<BalIndexSetter<DB>>,
     ) -> BbBlockExecutor<'a, DB, I, PrecompilesMap, &'a Spec>
     where
-        Spec: alloy_savm::sil::spec::SilExecutorSpec,
+        Spec: alloy_savm::eth::spec::EthExecutorSpec,
         DB: StateDB,
         I: Inspector<SilEvmContext<DB>>,
     {
@@ -576,10 +582,10 @@ impl<Spec> BbBlockExecutorFactory<Spec> {
 
 impl<Spec> BlockExecutorFactory for BbBlockExecutorFactory<Spec>
 where
-    Spec: alloy_savm::sil::spec::SilExecutorSpec + 'static,
+    Spec: alloy_savm::eth::spec::EthExecutorSpec + 'static,
     TxEnv: FromRecoveredTx<TransactionSigned> + FromTxWithEncoded<TransactionSigned>,
 {
-    type SavmFactory = SilEvmFactory;
+    type EvmFactory = SilEvmFactory;
     type ExecutionCtx<'a> = BbEvmPlan<'a>;
     type Transaction = TransactionSigned;
     type Receipt = Receipt;
@@ -590,7 +596,7 @@ where
     type Executor<'a, DB: StateDB, I: Inspector<SilEvmContext<DB>>> =
         BbBlockExecutor<'a, DB, I, PrecompilesMap, &'a Spec>;
 
-    fn evm_factory(&self) -> &Self::SavmFactory {
+    fn evm_factory(&self) -> &Self::EvmFactory {
         &self.evm_factory
     }
 

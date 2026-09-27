@@ -14,8 +14,11 @@ use crate::savm::{BalIndexReader, BbBlockExecutorFactory, BbEvmPlan};
 use alloy_consensus::Header;
 use alloy_eips::Decodable2718;
 use alloy_savm::{
-    sil::{spec::SilExecutorSpec, SilBlockExecutionCtx},
-    SilEvmFactory,
+    eth::{
+        spec::EthExecutorSpec as SilExecutorSpec,
+        EthBlockExecutionCtx as SilBlockExecutionCtx,
+    },
+    EthEvmFactory as SilEvmFactory,
 };
 use alloy_primitives::B256;
 use alloy_rpc_types::engine::ExecutionData;

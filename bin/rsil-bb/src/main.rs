@@ -130,7 +130,7 @@ where
     Node: FullNodeTypes<
         Types: NodeTypes<
             ChainSpec: rsil_sila_forks::Hardforks
-                           + alloy_savm::sil::spec::SilExecutorSpec
+                           + alloy_savm::eth::spec::EthExecutorSpec
                            + SilaHardforks,
             Primitives = SilPrimitives,
         >,

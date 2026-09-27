@@ -244,7 +244,7 @@ where
 /// This stream emits _non-empty_ Bytes that start with the normalized message id, so that the first
 /// byte of each message starts from 0. If this stream only supports a single capability, for
 /// example `sil` then the first byte of each message will match
-/// [SilMessageID](rsil_eth_wire_types::message::SilMessageID).
+/// [SilMessageID](rsil_sil_wire_types::message::SilMessageID).
 ///
 /// ### Sink behavior
 ///

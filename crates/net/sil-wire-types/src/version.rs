@@ -250,7 +250,7 @@ mod tests {
     use bytes::BytesMut;
 
     #[test]
-    fn test_eth_version_try_from_str() {
+    fn test_sil_version_try_from_str() {
         assert_eq!(SilVersion::Sil66, SilVersion::try_from("66").unwrap());
         assert_eq!(SilVersion::Sil67, SilVersion::try_from("67").unwrap());
         assert_eq!(SilVersion::Sil68, SilVersion::try_from("68").unwrap());
@@ -261,7 +261,7 @@ mod tests {
     }
 
     #[test]
-    fn test_eth_version_from_str() {
+    fn test_sil_version_from_str() {
         assert_eq!(SilVersion::Sil66, "66".parse().unwrap());
         assert_eq!(SilVersion::Sil67, "67".parse().unwrap());
         assert_eq!(SilVersion::Sil68, "68".parse().unwrap());
@@ -283,7 +283,7 @@ mod tests {
     }
 
     #[test]
-    fn test_eth_version_rlp_encode() {
+    fn test_sil_version_rlp_encode() {
         let versions = [
             SilVersion::Sil66,
             SilVersion::Sil67,
@@ -303,7 +303,7 @@ mod tests {
         }
     }
     #[test]
-    fn test_eth_version_rlp_decode() {
+    fn test_sil_version_rlp_decode() {
         let test_cases = [
             (66_u8, Ok(SilVersion::Sil66)),
             (67_u8, Ok(SilVersion::Sil67)),

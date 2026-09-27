@@ -2,7 +2,7 @@
 
 use alloy_primitives::hex;
 use alloy_rlp::Decodable;
-use rsil_eth_wire::NewPooledTransactionHashes66;
+use rsil_sil_wire::NewPooledTransactionHashes66;
 use std::{fs, path::PathBuf};
 
 #[test]

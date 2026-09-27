@@ -2,7 +2,7 @@
 
 use clap::{Parser, Subcommand};
 use rsil_ecies::stream::ECIESStream;
-use rsil_eth_wire::{HelloMessage, UnauthedP2PStream};
+use rsil_sil_wire::{HelloMessage, UnauthedP2PStream};
 use rsil_network::config::rng_secret_key;
 use rsil_network_peers::{pk2id, AnyNode};
 use secp256k1::SECP256K1;

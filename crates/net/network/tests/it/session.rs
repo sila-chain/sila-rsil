@@ -1,7 +1,7 @@
 //! Session tests
 
 use futures::StreamExt;
-use rsil_eth_wire::SilVersion;
+use rsil_sil_wire::SilVersion;
 use rsil_network::{
     test_utils::{NetworkEventStream, PeerConfig, Testnet},
     NetworkEvent, NetworkEventListenerProvider,

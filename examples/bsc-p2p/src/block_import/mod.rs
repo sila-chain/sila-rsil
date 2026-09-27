@@ -1,7 +1,7 @@
 #![allow(unused)]
 use handle::ImportHandle;
 use rsil_engine_primitives::EngineTypes;
-use rsil_eth_wire::NewBlock;
+use rsil_sil_wire::NewBlock;
 use rsil_network::import::{BlockImport, BlockImportOutcome, NewBlockEvent};
 use rsil_network_peers::PeerId;
 use rsil_payload_primitives::{BuiltPayload, PayloadTypes};

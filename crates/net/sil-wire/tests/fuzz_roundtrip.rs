@@ -51,7 +51,7 @@ pub mod fuzz_rlp {
     use crate::roundtrip_encoding;
     use alloy_rlp::{RlpDecodableWrapper, RlpEncodableWrapper};
     use rsil_codecs::add_arbitrary_tests;
-    use rsil_eth_wire::{
+    use rsil_sil_wire::{
         BlockBodies, BlockHeaders, DisconnectReason, GetBlockBodies, GetBlockHeaders, GetNodeData,
         GetPooledTransactions, GetReceipts, HelloMessage, NewBlock, NewBlockHashes,
         NewPooledTransactionHashes66, NewPooledTransactionHashes68, NodeData, P2PMessage,

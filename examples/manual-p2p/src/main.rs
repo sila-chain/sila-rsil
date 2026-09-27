@@ -19,7 +19,7 @@ use rsil_sila::{
     chainspec::{Chain, Head, SilaHardfork, SILA_MAINNET},
     network::{
         config::rng_secret_key,
-        eth_wire::{
+        sil_wire::{
             HelloMessage, P2PStream, SilMessage, SilStream, UnauthedEthStream, UnauthedP2PStream,
             UnifiedStatus,
         },

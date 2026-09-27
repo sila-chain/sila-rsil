@@ -1,12 +1,12 @@
 use crate::upgrade_status::{UpgradeStatus, UpgradeStatusExtension};
 use alloy_rlp::Decodable;
 use futures::SinkExt;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::{SilHandshakeError, SilStreamError},
     handshake::{SilRlpxHandshake, SilaEthHandshake, UnauthEth},
     UnifiedStatus,
 };
-use rsil_eth_wire_types::{DisconnectReason, SilVersion};
+use rsil_sil_wire_types::{DisconnectReason, SilVersion};
 use rsil_sila_forks::ForkFilter;
 use std::{future::Future, pin::Pin};
 use tokio::time::{timeout, Duration};

@@ -9,7 +9,7 @@ use std::{
 
 use alloy_primitives::bytes::BytesMut;
 use futures::{Stream, StreamExt};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     capability::SharedCapabilities, multiplex::ProtocolConnection, protocol::Protocol,
 };
 use rsil_network::{
@@ -30,7 +30,7 @@ use crate::multiplex::proto::{PingPongProtoMessage, PingPongProtoMessageKind};
 mod proto {
     use super::*;
     use alloy_primitives::bytes::{Buf, BufMut};
-    use rsil_eth_wire::Capability;
+    use rsil_sil_wire::Capability;
 
     #[repr(u8)]
     #[derive(Clone, Copy, Debug, PartialEq, Eq)]

@@ -2,7 +2,7 @@
 //! following [RLPx specs](https://github.com/sila-chain/devp2p/blob/master/rlpx.md)
 
 use alloy_primitives::bytes::{Buf, BufMut, BytesMut};
-use rsil_sila::network::eth_wire::{protocol::Protocol, Capability};
+use rsil_sila::network::sil_wire::{protocol::Protocol, Capability};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

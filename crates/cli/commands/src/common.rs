@@ -11,7 +11,7 @@ use rsil_consensus::noop::NoopConsensus;
 use rsil_db::{init_db, open_db_read_only, DatabaseEnv};
 use rsil_db_common::init::init_genesis_with_settings;
 use rsil_downloaders::{bodies::noop::NoopBodiesDownloader, headers::noop::NoopHeaderDownloader};
-use rsil_eth_wire::NetPrimitivesFor;
+use rsil_sil_wire::NetPrimitivesFor;
 use rsil_evm::{noop::NoopEvmConfig, ConfigureEvm};
 use rsil_network::NetworkEventListenerProvider;
 use rsil_node_api::FullNodeTypesAdapter;

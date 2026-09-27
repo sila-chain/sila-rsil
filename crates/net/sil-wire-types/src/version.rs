@@ -122,7 +122,7 @@ impl Decodable for SilVersion {
 ///
 /// # Example
 /// ```
-/// use rsil_eth_wire_types::SilVersion;
+/// use rsil_sil_wire_types::SilVersion;
 ///
 /// let version = SilVersion::try_from("67").unwrap();
 /// assert_eq!(version, SilVersion::Sil67);
@@ -149,7 +149,7 @@ impl TryFrom<&str> for SilVersion {
 ///
 /// # Example
 /// ```
-/// use rsil_eth_wire_types::SilVersion;
+/// use rsil_sil_wire_types::SilVersion;
 ///
 /// let version = SilVersion::try_from(67).unwrap();
 /// assert_eq!(version, SilVersion::Sil67);

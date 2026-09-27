@@ -14,7 +14,7 @@ use rsil_savm::{precompiles::PrecompilesMap, ConfigureEvm, Savm};
 use rsil_node_api::NodePrimitives;
 use rsil_primitives_traits::header::HeaderMut;
 use rsil_revm::db::EmptyDB;
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_types::SilApiError;
 use rsil_storage_api::BlockReaderIdExt;
 use std::collections::BTreeMap;
 

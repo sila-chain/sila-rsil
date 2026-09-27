@@ -2,7 +2,7 @@
 //! are executed on the `tokio` runtime.
 
 use futures::Future;
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_types::SilApiError;
 use rsil_tasks::{
     pool::{BlockingTaskGuard, BlockingTaskPool},
     Runtime,

@@ -6,7 +6,7 @@ use rsil_savm::ConfigureEvm;
 use rsil_network_api::NetworkInfo;
 use rsil_node_api::{FullNodeComponents, NodePrimitives, PrimitivesTy};
 use rsil_primitives_traits::{BlockTy, HeaderTy, ReceiptTy, TxTy};
-use rsil_rpc_eth_types::SilStateCache;
+use rsil_rpc_sil_types::SilStateCache;
 use rsil_storage_api::{
     BalProvider, BlockReader, BlockReaderIdExt, PruneCheckpointReader, StageCheckpointReader,
     StateProviderFactory,

@@ -1,7 +1,7 @@
 //! `eth_` Extension traits.
 
 use alloy_primitives::{Bytes, B256};
-use alloy_rpc_types_eth::src4337::TransactionConditional;
+use alloy_rpc_types_sil::src4337::TransactionConditional;
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 
 /// Extension trait for `eth_` namespace for L2s.

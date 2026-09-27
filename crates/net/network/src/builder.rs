@@ -72,7 +72,7 @@ impl<Tx, Sil, N: NetworkPrimitives> NetworkBuilder<Tx, Sil, N> {
     {
         let Self { mut network, transactions, .. } = self;
         let (tx, rx) = mpsc::channel(ETH_REQUEST_CHANNEL_CAPACITY);
-        network.set_eth_request_handler(tx);
+        network.set_sil_request_handler(tx);
         let peers = network.handle().peers_handle().clone();
         let request_handler = SilRequestHandler::new(client, peers, rx);
         NetworkBuilder { network, request_handler, transactions }

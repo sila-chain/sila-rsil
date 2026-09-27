@@ -44,7 +44,7 @@ pub struct NetworkMetrics {
     pub(crate) invalid_messages_received: Counter,
 
     /// Number of Sil Requests dropped due to channel being at full capacity
-    pub(crate) total_dropped_eth_requests_at_full_capacity: Counter,
+    pub(crate) total_dropped_sil_requests_at_full_capacity: Counter,
 
     /// Number of transaction events dropped due to the tx manager channel being at full capacity
     pub(crate) total_dropped_tx_events_at_full_capacity: Counter,
@@ -546,26 +546,26 @@ impl OutboundDisconnectMetrics {
 #[metrics(scope = "network")]
 pub struct SilRequestHandlerMetrics {
     /// Number of `GetBlockHeaders` requests received
-    pub(crate) eth_headers_requests_received_total: Counter,
+    pub(crate) sil_headers_requests_received_total: Counter,
 
     /// Number of `GetReceipts` requests received
-    pub(crate) eth_receipts_requests_received_total: Counter,
+    pub(crate) sil_receipts_requests_received_total: Counter,
 
     /// Number of `GetBlockBodies` requests received
-    pub(crate) eth_bodies_requests_received_total: Counter,
+    pub(crate) sil_bodies_requests_received_total: Counter,
 
     /// Number of `GetNodeData` requests received
-    pub(crate) eth_node_data_requests_received_total: Counter,
+    pub(crate) sil_node_data_requests_received_total: Counter,
 
     /// Number of `GetBlockAccessLists` requests received
-    pub(crate) eth_block_access_lists_requests_received_total: Counter,
+    pub(crate) sil_block_access_lists_requests_received_total: Counter,
 
     /// Number of `snap/2` (SIP-8189) requests received
     pub(crate) snap_requests_received_total: Counter,
 
     /// Duration in seconds of call to poll
     /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
-    pub(crate) acc_duration_poll_eth_req_handler: Gauge,
+    pub(crate) acc_duration_poll_sil_req_handler: Gauge,
 }
 
 /// Sil67 announcement metrics, track entries by `TxType`

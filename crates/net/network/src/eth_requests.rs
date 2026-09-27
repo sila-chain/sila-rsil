@@ -78,7 +78,7 @@ pub struct SilRequestHandler<C, N: NetworkPrimitives = SilNetworkPrimitives> {
     #[expect(dead_code)]
     peers: PeersHandle,
     /// Incoming request from the [`NetworkManager`](crate::NetworkManager).
-    incoming_requests: ReceiverStream<IncomingEthRequest<N>>,
+    incoming_requests: ReceiverStream<IncomingSilRequest<N>>,
     /// Metrics for the sil request handler.
     metrics: SilRequestHandlerMetrics,
 }
@@ -86,7 +86,7 @@ pub struct SilRequestHandler<C, N: NetworkPrimitives = SilNetworkPrimitives> {
 // === impl SilRequestHandler ===
 impl<C, N: NetworkPrimitives> SilRequestHandler<C, N> {
     /// Create a new instance
-    pub fn new(client: C, peers: PeersHandle, incoming: Receiver<IncomingEthRequest<N>>) -> Self {
+    pub fn new(client: C, peers: PeersHandle, incoming: Receiver<IncomingSilRequest<N>>) -> Self {
         Self {
             client,
             blob_store: Box::<NoopBlobStore>::default(),
@@ -178,7 +178,7 @@ where
         request: GetBlockHeaders,
         response: oneshot::Sender<RequestResult<BlockHeaders<C::Header>>>,
     ) {
-        self.metrics.eth_headers_requests_received_total.increment(1);
+        self.metrics.sil_headers_requests_received_total.increment(1);
         let headers = self.get_headers_response(request);
         let _ = response.send(Ok(BlockHeaders(headers)));
     }
@@ -189,7 +189,7 @@ where
         request: GetBlockBodies,
         response: oneshot::Sender<RequestResult<BlockBodies<<C::Block as Block>::Body>>>,
     ) {
-        self.metrics.eth_bodies_requests_received_total.increment(1);
+        self.metrics.sil_bodies_requests_received_total.increment(1);
         let mut bodies = Vec::new();
 
         let mut total_bytes = 0;
@@ -217,7 +217,7 @@ where
         request: GetReceipts,
         response: oneshot::Sender<RequestResult<Receipts<C::Receipt>>>,
     ) {
-        self.metrics.eth_receipts_requests_received_total.increment(1);
+        self.metrics.sil_receipts_requests_received_total.increment(1);
 
         let receipts = self.get_receipts_response(request, |receipts_by_block| {
             receipts_by_block.into_iter().map(ReceiptWithBloom::from).collect::<Vec<_>>()
@@ -232,7 +232,7 @@ where
         request: GetReceipts,
         response: oneshot::Sender<RequestResult<Receipts69<C::Receipt>>>,
     ) {
-        self.metrics.eth_receipts_requests_received_total.increment(1);
+        self.metrics.sil_receipts_requests_received_total.increment(1);
 
         let receipts = self.get_receipts_response(request, |receipts_by_block| {
             // skip bloom filter for eth69
@@ -251,7 +251,7 @@ where
         request: GetReceipts70,
         response: oneshot::Sender<RequestResult<Receipts70<C::Receipt>>>,
     ) {
-        self.metrics.eth_receipts_requests_received_total.increment(1);
+        self.metrics.sil_receipts_requests_received_total.increment(1);
 
         let GetReceipts70 { first_block_receipt_index, block_hashes } = request;
 
@@ -375,7 +375,7 @@ where
         mut request: GetBlockAccessLists,
         response: oneshot::Sender<RequestResult<BlockAccessLists>>,
     ) {
-        self.metrics.eth_block_access_lists_requests_received_total.increment(1);
+        self.metrics.sil_block_access_lists_requests_received_total.increment(1);
         request.0.truncate(MAX_BLOCK_ACCESS_LISTS_SERVE);
 
         let limit = GetBlockAccessListLimit::ResponseSizeSoftLimit(SOFT_RESPONSE_LIMIT);
@@ -452,38 +452,38 @@ where
             this.incoming_requests.poll_next_unpin(cx),
             |incoming| {
                 match incoming {
-                    IncomingEthRequest::GetBlockHeaders { peer_id, request, response } => {
+                    IncomingSilRequest::GetBlockHeaders { peer_id, request, response } => {
                         this.on_headers_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetBlockBodies { peer_id, request, response } => {
+                    IncomingSilRequest::GetBlockBodies { peer_id, request, response } => {
                         this.on_bodies_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetNodeData { .. } => {
-                        this.metrics.eth_node_data_requests_received_total.increment(1);
+                    IncomingSilRequest::GetNodeData { .. } => {
+                        this.metrics.sil_node_data_requests_received_total.increment(1);
                     }
-                    IncomingEthRequest::GetReceipts { peer_id, request, response } => {
+                    IncomingSilRequest::GetReceipts { peer_id, request, response } => {
                         this.on_receipts_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetReceipts69 { peer_id, request, response } => {
+                    IncomingSilRequest::GetReceipts69 { peer_id, request, response } => {
                         this.on_receipts69_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetReceipts70 { peer_id, request, response } => {
+                    IncomingSilRequest::GetReceipts70 { peer_id, request, response } => {
                         this.on_receipts70_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetBlockAccessLists { peer_id, request, response } => {
+                    IncomingSilRequest::GetBlockAccessLists { peer_id, request, response } => {
                         this.on_block_access_lists_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetCells { peer_id, request, response } => {
+                    IncomingSilRequest::GetCells { peer_id, request, response } => {
                         this.on_cells_request(peer_id, request, response)
                     }
-                    IncomingEthRequest::GetSnap { peer_id, request, response } => {
+                    IncomingSilRequest::GetSnap { peer_id, request, response } => {
                         this.on_snap_request(peer_id, request, response)
                     }
                 }
             },
         );
 
-        this.metrics.acc_duration_poll_eth_req_handler.set(acc.as_secs_f64());
+        this.metrics.acc_duration_poll_sil_req_handler.set(acc.as_secs_f64());
 
         // stream is fully drained and import futures pending
         if maybe_more_incoming_requests {
@@ -497,7 +497,7 @@ where
 
 /// All `sil` request related to blocks delegated by the network.
 #[derive(Debug)]
-pub enum IncomingEthRequest<N: NetworkPrimitives = SilNetworkPrimitives> {
+pub enum IncomingSilRequest<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// Request Block headers from the peer.
     ///
     /// The response should be sent through the channel.

@@ -20,7 +20,7 @@ use crate::{
     config::NetworkConfig,
     discovery::Discovery,
     error::{NetworkError, ServiceKind},
-    eth_requests::IncomingEthRequest,
+    eth_requests::IncomingSilRequest,
     import::{BlockImport, BlockImportEvent, BlockImportOutcome, BlockValidation, NewBlockEvent},
     listener::ConnectionListener,
     message::{NewBlockMessage, PeerMessage},
@@ -132,7 +132,7 @@ pub struct NetworkManager<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// Thus, we use a bounded channel here to avoid unbounded build up if the node is flooded with
     /// requests. This channel size is set at
     /// [`ETH_REQUEST_CHANNEL_CAPACITY`](crate::builder::ETH_REQUEST_CHANNEL_CAPACITY)
-    to_eth_request_handler: Option<mpsc::Sender<IncomingEthRequest<N>>>,
+    to_sil_request_handler: Option<mpsc::Sender<IncomingSilRequest<N>>>,
     /// Tracks the number of active session (connected peers).
     ///
     /// This is updated via internal events and shared via `Arc` with the [`NetworkHandle`]
@@ -189,15 +189,15 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
 
     /// Sets the dedicated channel for events intended for the
     /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
-    pub fn with_eth_request_handler(mut self, tx: mpsc::Sender<IncomingEthRequest<N>>) -> Self {
-        self.set_eth_request_handler(tx);
+    pub fn with_sil_request_handler(mut self, tx: mpsc::Sender<IncomingSilRequest<N>>) -> Self {
+        self.set_sil_request_handler(tx);
         self
     }
 
     /// Sets the dedicated channel for events intended for the
     /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
-    pub fn set_eth_request_handler(&mut self, tx: mpsc::Sender<IncomingEthRequest<N>>) {
-        self.to_eth_request_handler = Some(tx);
+    pub fn set_sil_request_handler(&mut self, tx: mpsc::Sender<IncomingSilRequest<N>>) {
+        self.to_sil_request_handler = Some(tx);
     }
 
     /// Adds an additional protocol handler to the `RLPx` sub-protocol list.
@@ -362,7 +362,7 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
             block_import,
             event_sender,
             to_transactions_manager: None,
-            to_eth_request_handler: None,
+            to_sil_request_handler: None,
             num_active_peers,
             metrics: Default::default(),
             disconnect_metrics: Default::default(),
@@ -511,71 +511,71 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
 
     /// Sends an event to the [`SilRequestManager`](crate::eth_requests::SilRequestHandler) if
     /// configured.
-    fn delegate_eth_request(&self, event: IncomingEthRequest<N>) {
-        if let Some(ref reqs) = self.to_eth_request_handler {
+    fn delegate_sil_request(&self, event: IncomingSilRequest<N>) {
+        if let Some(ref reqs) = self.to_sil_request_handler {
             let _ = reqs.try_send(event).map_err(|e| {
                 if let TrySendError::Full(_) = e {
                     debug!(target:"net", "SilRequestHandler channel is full!");
-                    self.metrics.total_dropped_eth_requests_at_full_capacity.increment(1);
+                    self.metrics.total_dropped_sil_requests_at_full_capacity.increment(1);
                 }
             });
         }
     }
 
     /// Handle an incoming request from the peer
-    fn on_eth_request(&self, peer_id: PeerId, req: PeerRequest<N>) {
+    fn on_sil_request(&self, peer_id: PeerId, req: PeerRequest<N>) {
         match req {
             PeerRequest::GetBlockHeaders { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetBlockHeaders {
+                self.delegate_sil_request(IncomingSilRequest::GetBlockHeaders {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetBlockBodies { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetBlockBodies {
+                self.delegate_sil_request(IncomingSilRequest::GetBlockBodies {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetNodeData { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetNodeData {
+                self.delegate_sil_request(IncomingSilRequest::GetNodeData {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetReceipts { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetReceipts {
+                self.delegate_sil_request(IncomingSilRequest::GetReceipts {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetReceipts69 { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetReceipts69 {
+                self.delegate_sil_request(IncomingSilRequest::GetReceipts69 {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetReceipts70 { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetReceipts70 {
+                self.delegate_sil_request(IncomingSilRequest::GetReceipts70 {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetBlockAccessLists { request, response } => {
-                self.delegate_eth_request(IncomingEthRequest::GetBlockAccessLists {
+                self.delegate_sil_request(IncomingSilRequest::GetBlockAccessLists {
                     peer_id,
                     request,
                     response,
                 })
             }
             PeerRequest::GetCells { request, response } => self
-                .delegate_eth_request(IncomingEthRequest::GetCells { peer_id, request, response }),
+                .delegate_sil_request(IncomingSilRequest::GetCells { peer_id, request, response }),
             PeerRequest::GetPooledTransactions { request, response } => {
                 self.notify_tx_manager(NetworkTransactionEvent::GetPooledTransactions {
                     peer_id,
@@ -584,7 +584,7 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
                 });
             }
             PeerRequest::GetSnap { request, response } => self
-                .delegate_eth_request(IncomingEthRequest::GetSnap { peer_id, request, response }),
+                .delegate_sil_request(IncomingSilRequest::GetSnap { peer_id, request, response }),
         }
     }
 
@@ -671,7 +671,7 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
                 });
             }
             PeerMessage::SilRequest(req) => {
-                self.on_eth_request(peer_id, req);
+                self.on_sil_request(peer_id, req);
             }
             PeerMessage::ReceivedTransaction(msg) => {
                 self.notify_tx_manager(NetworkTransactionEvent::IncomingTransactions {

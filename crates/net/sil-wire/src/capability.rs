@@ -403,7 +403,7 @@ mod tests {
     use rsil_sil_wire_types::RawCapabilityMessage;
 
     #[test]
-    fn from_eth_68() {
+    fn from_sil_68() {
         let capability = SharedCapability::new("sil", 68, MAX_RESERVED_MESSAGE_ID + 1, 13).unwrap();
 
         assert_eq!(capability.name(), "sil");
@@ -418,7 +418,7 @@ mod tests {
     }
 
     #[test]
-    fn from_eth_67() {
+    fn from_sil_67() {
         let capability = SharedCapability::new("sil", 67, MAX_RESERVED_MESSAGE_ID + 1, 13).unwrap();
 
         assert_eq!(capability.name(), "sil");
@@ -433,7 +433,7 @@ mod tests {
     }
 
     #[test]
-    fn from_eth_66() {
+    fn from_sil_66() {
         let capability = SharedCapability::new("sil", 66, MAX_RESERVED_MESSAGE_ID + 1, 15).unwrap();
 
         assert_eq!(capability.name(), "sil");

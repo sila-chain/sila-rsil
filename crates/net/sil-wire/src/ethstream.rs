@@ -6,7 +6,7 @@
 
 use crate::{
     errors::{SilHandshakeError, SilStreamError},
-    handshake::SilaEthHandshake,
+    handshake::SilaSilHandshake,
     message::{SilBroadcastMessage, MAX_MESSAGE_SIZE, TX_MEMORY_BUDGET_MULTIPLIER},
     p2pstream::HANDSHAKE_TIMEOUT,
     CanDisconnect, DisconnectReason, ProtocolMessage, SilMessage, SilNetworkPrimitives, SilVersion,
@@ -31,13 +31,13 @@ use tracing::{debug, trace};
 /// `Status` handshake is completed.
 #[pin_project]
 #[derive(Debug)]
-pub struct UnauthedEthStream<S> {
+pub struct UnauthedSilStream<S> {
     #[pin]
     inner: S,
 }
 
-impl<S> UnauthedEthStream<S> {
-    /// Create a new `UnauthedEthStream` from a type `S` which implements `Stream` and `Sink`.
+impl<S> UnauthedSilStream<S> {
+    /// Create a new `UnauthedSilStream` from a type `S` which implements `Stream` and `Sink`.
     pub const fn new(inner: S) -> Self {
         Self { inner }
     }
@@ -48,17 +48,17 @@ impl<S> UnauthedEthStream<S> {
     }
 }
 
-impl<S, E> UnauthedEthStream<S>
+impl<S, E> UnauthedSilStream<S>
 where
     S: Stream<Item = Result<BytesMut, E>> + CanDisconnect<Bytes> + Send + Unpin,
     SilStreamError: From<E> + From<<S as Sink<Bytes>>::Error>,
 {
-    /// Consumes the [`UnauthedEthStream`] and returns an [`SilStream`] after the `Status`
+    /// Consumes the [`UnauthedSilStream`] and returns an [`SilStream`] after the `Status`
     /// handshake is completed successfully. This also returns the `Status` message sent by the
     /// remote peer.
     ///
     /// Caution: This expects that the [`UnifiedStatus`] has the proper sil version configured, with
-    /// ETH69 the initial status message changed.
+    /// SIL69 the initial status message changed.
     pub async fn handshake<N: NetworkPrimitives>(
         self,
         status: UnifiedStatus,
@@ -90,7 +90,7 @@ where
             "sending sil status to peer"
         );
         let their_status =
-            SilaEthHandshake(&mut self.inner).eth_handshake(status, fork_filter).await?;
+            SilaSilHandshake(&mut self.inner).sil_handshake(status, fork_filter).await?;
 
         // now we can create the `SilStream` because the peer has successfully completed
         // the handshake
@@ -355,7 +355,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::UnauthedEthStream;
+    use super::UnauthedSilStream;
     use crate::{
         broadcast::BlockHashNumber,
         errors::{SilHandshakeError, SilStreamError},
@@ -403,7 +403,7 @@ mod tests {
             // roughly based off of the design of tokio::net::TcpListener
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = PassthroughCodec::default().framed(incoming);
-            let (_, their_status) = UnauthedEthStream::new(stream)
+            let (_, their_status) = UnauthedSilStream::new(stream)
                 .handshake::<SilNetworkPrimitives>(status_clone, fork_filter_clone)
                 .await
                 .unwrap();
@@ -416,7 +416,7 @@ mod tests {
         let sink = PassthroughCodec::default().framed(outgoing);
 
         // try to connect
-        let (_, their_status) = UnauthedEthStream::new(sink)
+        let (_, their_status) = UnauthedSilStream::new(sink)
             .handshake::<SilNetworkPrimitives>(unified_status, fork_filter)
             .await
             .unwrap();
@@ -453,7 +453,7 @@ mod tests {
             // roughly based off of the design of tokio::net::TcpListener
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = PassthroughCodec::default().framed(incoming);
-            let (_, their_status) = UnauthedEthStream::new(stream)
+            let (_, their_status) = UnauthedSilStream::new(stream)
                 .handshake::<SilNetworkPrimitives>(status_clone, fork_filter_clone)
                 .await
                 .unwrap();
@@ -466,7 +466,7 @@ mod tests {
         let sink = PassthroughCodec::default().framed(outgoing);
 
         // try to connect
-        let (_, their_status) = UnauthedEthStream::new(sink)
+        let (_, their_status) = UnauthedSilStream::new(sink)
             .handshake::<SilNetworkPrimitives>(unified_status, fork_filter)
             .await
             .unwrap();
@@ -503,7 +503,7 @@ mod tests {
             // roughly based off of the design of tokio::net::TcpListener
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = PassthroughCodec::default().framed(incoming);
-            let handshake_res = UnauthedEthStream::new(stream)
+            let handshake_res = UnauthedSilStream::new(stream)
                 .handshake::<SilNetworkPrimitives>(status_clone, fork_filter_clone)
                 .await;
 
@@ -520,7 +520,7 @@ mod tests {
         let sink = PassthroughCodec::default().framed(outgoing);
 
         // try to connect
-        let handshake_res = UnauthedEthStream::new(sink)
+        let handshake_res = UnauthedSilStream::new(sink)
             .handshake::<SilNetworkPrimitives>(unified_status, fork_filter)
             .await;
 
@@ -657,13 +657,13 @@ mod tests {
 
             let unauthed_stream = UnauthedP2PStream::new(stream);
             let (p2p_stream, _) = unauthed_stream.handshake(server_hello).await.unwrap();
-            let (mut eth_stream, _) = UnauthedEthStream::new(p2p_stream)
+            let (mut sil_stream, _) = UnauthedSilStream::new(p2p_stream)
                 .handshake(status_copy, fork_filter_clone)
                 .await
                 .unwrap();
 
             // use the stream to get the next message
-            let message = eth_stream.next().await.unwrap().unwrap();
+            let message = sil_stream.next().await.unwrap().unwrap();
             assert_eq!(message, test_msg_clone);
         });
 
@@ -686,7 +686,7 @@ mod tests {
         let unauthed_stream = UnauthedP2PStream::new(sink);
         let (p2p_stream, _) = unauthed_stream.handshake(client_hello).await.unwrap();
 
-        let (mut client_stream, _) = UnauthedEthStream::new(p2p_stream)
+        let (mut client_stream, _) = UnauthedSilStream::new(p2p_stream)
             .handshake(unified_status, fork_filter)
             .await
             .unwrap();
@@ -724,7 +724,7 @@ mod tests {
             // roughly based off of the design of tokio::net::TcpListener
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = PassthroughCodec::default().framed(incoming);
-            let (_, their_status) = UnauthedEthStream::new(stream)
+            let (_, their_status) = UnauthedSilStream::new(stream)
                 .handshake::<SilNetworkPrimitives>(status_clone, fork_filter_clone)
                 .await
                 .unwrap();
@@ -737,7 +737,7 @@ mod tests {
         let sink = PassthroughCodec::default().framed(outgoing);
 
         // try to connect
-        let handshake_result = UnauthedEthStream::new(sink)
+        let handshake_result = UnauthedSilStream::new(sink)
             .handshake_with_timeout::<SilNetworkPrimitives>(
                 unified_status,
                 fork_filter,

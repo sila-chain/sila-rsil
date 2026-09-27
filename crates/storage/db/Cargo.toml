@@ -50,7 +50,7 @@ libc.workspace = true
 
 [dev-dependencies]
 # rsil libs with arbitrary
-rsil-primitives-traits = { workspace = true, features = ["rsil-codec"] }
+rsil-primitives-traits = { workspace = true, features = ["reth-codec"] }
 rsil-prune-types.workspace = true
 
 alloy-primitives = { workspace = true, features = ["getrandom"] }

@@ -89,7 +89,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_protocol_eth_message_count() {
+    fn test_protocol_sil_message_count() {
         // Test that Protocol::sil() returns correct message counts for each version
         // This ensures that SilMessageID::message_count() produces the expected results
         assert_eq!(Protocol::sil(SilVersion::Sil66).messages(), 17);

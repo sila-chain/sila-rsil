@@ -179,7 +179,7 @@ impl SharedCapabilities {
     /// Returns `true` if the shared capabilities are exactly `sil` and `snap/2` (SIP-8189), the
     /// layout handled by the dedicated [`SilSnapStream`](crate::SilSnapStream).
     #[inline]
-    pub fn is_exact_eth_snap_v2(&self) -> bool {
+    pub fn is_exact_sil_snap_v2(&self) -> bool {
         self.len() == 2 && self.ensure_matching_capability(&Capability::snap_2()).is_ok()
     }
 
@@ -615,27 +615,27 @@ mod tests {
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_accepts_eth_and_snap() {
+    fn is_exact_sil_snap_v2_accepts_sil_and_snap() {
         let shared = SharedCapabilities::try_new(
             vec![SilVersion::Sil68.into(), Protocol::snap_2()],
             vec![SilVersion::Sil68.into(), Capability::snap_2()],
         )
         .unwrap();
-        assert!(shared.is_exact_eth_snap_v2());
+        assert!(shared.is_exact_sil_snap_v2());
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_rejects_eth_only() {
+    fn is_exact_sil_snap_v2_rejects_sil_only() {
         let shared = SharedCapabilities::try_new(
             vec![SilVersion::Sil68.into()],
             vec![SilVersion::Sil68.into()],
         )
         .unwrap();
-        assert!(!shared.is_exact_eth_snap_v2());
+        assert!(!shared.is_exact_sil_snap_v2());
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_rejects_eth_without_snap() {
+    fn is_exact_sil_snap_v2_rejects_sil_without_snap() {
         // sil + a non-snap capability is not the dedicated layout.
         let cap = Capability::new_static("les", 1);
         let shared = SharedCapabilities::try_new(
@@ -643,11 +643,11 @@ mod tests {
             vec![SilVersion::Sil68.into(), cap],
         )
         .unwrap();
-        assert!(!shared.is_exact_eth_snap_v2());
+        assert!(!shared.is_exact_sil_snap_v2());
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_rejects_eth_snap_plus_extra() {
+    fn is_exact_sil_snap_v2_rejects_sil_snap_plus_extra() {
         // sil + snap/2 + another capability belongs on the general satellite multiplexer.
         let cap = Capability::new_static("les", 1);
         let shared = SharedCapabilities::try_new(
@@ -655,6 +655,6 @@ mod tests {
             vec![SilVersion::Sil68.into(), Capability::snap_2(), cap],
         )
         .unwrap();
-        assert!(!shared.is_exact_eth_snap_v2());
+        assert!(!shared.is_exact_sil_snap_v2());
     }
 }

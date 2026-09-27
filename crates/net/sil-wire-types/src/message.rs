@@ -184,7 +184,7 @@ impl<N: NetworkPrimitives> ProtocolMessage<N> {
                         SilMessage::Receipts70(RequestPair::decode(buf)?)
                     }
                     SilVersion::Sil69 => {
-                        // with eth69, receipts no longer include the bloom
+                        // with sil69, receipts no longer include the bloom
                         SilMessage::Receipts69(RequestPair::decode(buf)?)
                     }
                     _ => {
@@ -1142,7 +1142,7 @@ mod tests {
     }
 
     #[test]
-    fn eth_message_id_max_includes_block_range_update() {
+    fn sil_message_id_max_includes_block_range_update() {
         assert_eq!(SilMessageID::max(SilVersion::Sil69), SilMessageID::BlockRangeUpdate.to_u8(),);
         assert_eq!(SilMessageID::max(SilVersion::Sil70), SilMessageID::BlockRangeUpdate.to_u8(),);
         assert_eq!(SilMessageID::max(SilVersion::Sil68), SilMessageID::Receipts.to_u8());

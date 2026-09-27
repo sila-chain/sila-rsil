@@ -1181,7 +1181,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
                 }
             }
         }
-    } else if p2p_stream.shared_capabilities().is_exact_eth_snap_v2() {
+    } else if p2p_stream.shared_capabilities().is_exact_sil_snap_v2() {
         // Exactly `sil` + `snap/2` (no other extras): use the dedicated stream instead of the
         // general-purpose satellite multiplexer. If `snap/2` is negotiated alongside other extra
         // capabilities, fall through to the satellite path — the dedicated stream only composes

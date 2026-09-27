@@ -185,10 +185,10 @@ where
             #[expect(deprecated)]
             protocols: ProtocolInfo {
                 sil: Some(SilProtocolInfo {
-                    network: status.eth_protocol_info.network,
-                    genesis: status.eth_protocol_info.genesis,
+                    network: status.sil_protocol_info.network,
+                    genesis: status.sil_protocol_info.genesis,
                     config,
-                    head: status.eth_protocol_info.head,
+                    head: status.sil_protocol_info.head,
                     difficulty: None,
                 }),
                 snap: None,

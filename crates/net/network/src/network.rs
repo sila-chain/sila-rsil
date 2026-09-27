@@ -149,7 +149,7 @@ impl<N: NetworkPrimitives> NetworkHandle<N> {
     }
 
     /// Send sil message to the peer.
-    pub fn send_eth_message(&self, peer_id: PeerId, message: PeerMessage<N>) {
+    pub fn send_sil_message(&self, peer_id: PeerId, message: PeerMessage<N>) {
         self.send_message(NetworkHandleMessage::SilMessage { peer_id, message })
     }
 

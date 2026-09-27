@@ -13,7 +13,7 @@ use clap::Parser;
 use evm_config::{BbEvmConfig, BigBlockData};
 use rsil_chainspec::{ChainSpec, SilaHardforks};
 use rsil_consensus::noop::NoopConsensus;
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_node_api::{
     AddOnsContext, FullNodeComponents, NewPayloadError, NodeTypes, PayloadTypes, PayloadValidator,
 };
@@ -130,7 +130,7 @@ where
     Node: FullNodeTypes<
         Types: NodeTypes<
             ChainSpec: rsil_sila_forks::Hardforks
-                           + alloy_evm::sil::spec::SilExecutorSpec
+                           + alloy_savm::sil::spec::SilExecutorSpec
                            + SilaHardforks,
             Primitives = SilPrimitives,
         >,

@@ -63,7 +63,7 @@ where
     pub async fn get_block_by_number(
         &self,
         number: alloy_sips::BlockNumberOrTag,
-    ) -> Result<Option<alloy_rpc_types_eth::Block>> {
+    ) -> Result<Option<alloy_rpc_types_sil::Block>> {
         self.provider
             .get_block_by_number(number)
             .await

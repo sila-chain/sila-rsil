@@ -5,7 +5,7 @@ use crate::testsuite::{
     Action, BlockInfo, Environment,
 };
 use alloy_rpc_types_engine::{ForkchoiceState, PayloadAttributes};
-use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
+use alloy_rpc_types_sil::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
 use rsil_node_api::{EngineTypes, PayloadTypes};

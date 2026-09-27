@@ -3,7 +3,7 @@
 use alloy_consensus::BlockHeader;
 use alloy_primitives::{Address, Bytes, TxKind, B256, U256};
 use alloy_rpc_types_engine::PayloadAttributes;
-use alloy_rpc_types_eth::{Transaction, TransactionInput, TransactionReceipt, TransactionRequest};
+use alloy_rpc_types_sil::{Transaction, TransactionInput, TransactionReceipt, TransactionRequest};
 use alloy_sips::eip2718::Encodable2718;
 use eyre::Result;
 use jsonrpsee::core::client::ClientT;
@@ -279,7 +279,7 @@ async fn test_rocksdb_multi_tx_same_block() -> Result<()> {
     assert_eq!(payload.block().number(), 1);
 
     // Verify block contains all 3 txs
-    let block: Option<alloy_rpc_types_eth::Block> =
+    let block: Option<alloy_rpc_types_sil::Block> =
         client.request("eth_getBlockByNumber", ("0x1", true)).await?;
     let block = block.expect("Block 1 should exist");
     assert_eq!(block.transactions.len(), 3, "Block should contain 3 txs");
@@ -533,7 +533,7 @@ async fn test_rocksdb_reorg_unwind() -> Result<()> {
 
     // Verify we can still query transactions and the chain is consistent
     // If unwind_trie_state_from failed, this would have errored during reorg
-    let latest: Option<alloy_rpc_types_eth::Block> =
+    let latest: Option<alloy_rpc_types_sil::Block> =
         client.request("eth_getBlockByNumber", ("latest", false)).await?;
     let latest = latest.expect("Latest block should exist");
     // The alt block is at height 4 (on top of block 3)

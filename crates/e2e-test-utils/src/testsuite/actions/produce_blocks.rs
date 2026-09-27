@@ -8,7 +8,7 @@ use alloy_primitives::{Bytes, B256};
 use alloy_rpc_types_engine::{
     payload::ExecutionPayloadEnvelopeV3, ForkchoiceState, PayloadAttributes, PayloadStatusEnum,
 };
-use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
+use alloy_rpc_types_sil::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
 use rsil_node_api::{EngineTypes, PayloadTypes};

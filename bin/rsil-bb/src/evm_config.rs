@@ -13,7 +13,7 @@ use rsil_storage_errors::any::AnyError;
 use crate::savm::{BalIndexReader, BbBlockExecutorFactory, BbEvmPlan};
 use alloy_consensus::Header;
 use alloy_eips::Decodable2718;
-use alloy_evm::{
+use alloy_savm::{
     sil::{spec::SilExecutorSpec, SilBlockExecutionCtx},
     SilEvmFactory,
 };
@@ -22,11 +22,11 @@ use alloy_rpc_types::engine::ExecutionData;
 use core::convert::Infallible;
 use revm::{primitives::hardfork::SpecId, state::bal::BlockAccessIndex};
 use rsil_chainspec::{ChainSpec, SilChainSpec};
-use rsil_evm::{
+use rsil_savm::{
     execute::BlockAssembler, ConfigureEngineEvm, ConfigureEvm, Database, ExecutableTxIterator,
     ExecutionCtxFor, NextBlockEnvAttributes, SavmEnv, SavmEnvFor,
 };
-use rsil_evm_sila::{RsilReceiptBuilder, SilEvmConfig};
+use rsil_savm_sila::{RsilReceiptBuilder, SilEvmConfig};
 use rsil_primitives_traits::{SealedBlock, SealedHeader, SignedTransaction, TxTy};
 use rsil_sila_forks::Hardforks;
 use rsil_sila_primitives::{Block, SilPrimitives};
@@ -184,9 +184,9 @@ where
 
     fn create_executor<'a, DB, I>(
         &'a self,
-        savm: rsil_evm::SavmFor<Self, &'a mut revm::database::State<DB>, I>,
+        savm: rsil_savm::SavmFor<Self, &'a mut revm::database::State<DB>, I>,
         ctx: BbEvmPlan<'a>,
-    ) -> alloy_evm::block::BlockExecutorFor<
+    ) -> alloy_savm::block::BlockExecutorFor<
         'a,
         Self::BlockExecutorFactory,
         &'a mut revm::database::State<DB>,
@@ -194,7 +194,7 @@ where
     >
     where
         DB: Database,
-        I: rsil_evm::InspectorFor<Self, &'a mut revm::database::State<DB>> + 'a,
+        I: rsil_savm::InspectorFor<Self, &'a mut revm::database::State<DB>> + 'a,
     {
         let bal_index_reader: Option<BalIndexReader<&'a mut revm::database::State<DB>>> =
             Some(read_bal_index::<DB>);
@@ -214,9 +214,9 @@ where
 
     fn create_executor_with_state<'ctx, 'db, DB, I>(
         &'ctx self,
-        savm: rsil_evm::SavmFor<Self, &'db mut revm::database::State<DB>, I>,
+        savm: rsil_savm::SavmFor<Self, &'db mut revm::database::State<DB>, I>,
         ctx: BbEvmPlan<'ctx>,
-    ) -> alloy_evm::block::BlockExecutorFor<
+    ) -> alloy_savm::block::BlockExecutorFor<
         'ctx,
         Self::BlockExecutorFactory,
         &'db mut revm::database::State<DB>,
@@ -224,7 +224,7 @@ where
     >
     where
         DB: Database,
-        I: rsil_evm::InspectorFor<Self, &'db mut revm::database::State<DB>>,
+        I: rsil_savm::InspectorFor<Self, &'db mut revm::database::State<DB>>,
     {
         let bal_index_reader: Option<BalIndexReader<&'db mut revm::database::State<DB>>> =
             Some(read_bal_index::<DB>);
@@ -324,7 +324,7 @@ impl<Spec: SilExecutorSpec + 'static> BlockAssembler<BbBlockExecutorFactory<Spec
 
     fn assemble_block(
         &self,
-        _input: rsil_evm::execute::BlockAssemblerInput<
+        _input: rsil_savm::execute::BlockAssemblerInput<
             '_,
             '_,
             BbBlockExecutorFactory<Spec>,

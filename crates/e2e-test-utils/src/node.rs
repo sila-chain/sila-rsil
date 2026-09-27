@@ -2,7 +2,7 @@ use crate::{network::NetworkTestContext, payload::PayloadTestContext, rpc::RpcTe
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_primitives::{BlockHash, BlockNumber, Bytes, Sealable, B256};
 use alloy_rpc_types_engine::{ExecutionPayloadEnvelopeV5, ForkchoiceState};
-use alloy_rpc_types_eth::BlockNumberOrTag;
+use alloy_rpc_types_sil::BlockNumberOrTag;
 use alloy_sips::BlockId;
 use eyre::Ok;
 use futures_util::Future;

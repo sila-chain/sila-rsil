@@ -7,7 +7,7 @@ use alloy_network::{
     NetworkTransactionBuilder, TransactionBuilder4844,
 };
 use alloy_primitives::{hex, Address, Bytes, TxKind, B256, U256};
-use alloy_rpc_types_eth::{Authorization, TransactionInput, TransactionRequest};
+use alloy_rpc_types_sil::{Authorization, TransactionInput, TransactionRequest};
 use alloy_signer::SignerSync;
 use alloy_signer_local::PrivateKeySigner;
 use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};

@@ -975,7 +975,7 @@ mod tests {
     use super::*;
     use crate::test_utils::TestBlockBuilder;
     use alloy_primitives::{Address, BlockNumber, Bytes, StorageKey, StorageValue};
-    use alloy_sips::sip7685::Requests;
+    use alloy_sips::eip7685::Requests;
     use rand::Rng;
     use rsil_errors::ProviderResult;
     use rsil_primitives_traits::{Account, Bytecode};

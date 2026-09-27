@@ -8,8 +8,8 @@
 
 use crate::evm_config::BigBlockSegment;
 use alloy_consensus::TransactionEnvelope;
-use alloy_eips::sip7685::Requests;
-use alloy_evm::{
+use alloy_sips::eip7685::Requests;
+use alloy_savm::{
     block::{
         BlockExecutionError, BlockExecutionResult, BlockExecutor, BlockExecutorFactory,
         ExecutableTx, GasOutput, StateDB,
@@ -27,7 +27,7 @@ use revm::{
     primitives::hardfork::SpecId,
     Inspector,
 };
-use rsil_evm_sila::RsilReceiptBuilder;
+use rsil_savm_sila::RsilReceiptBuilder;
 use rsil_sila_primitives::{Receipt, TransactionSigned};
 use tracing::{debug, trace};
 
@@ -173,7 +173,7 @@ where
     DB: StateDB,
     I: Inspector<SilEvmContext<DB>>,
     P: PrecompileProvider<SilEvmContext<DB>, Output = InterpreterResult>,
-    Spec: alloy_evm::sil::spec::SilExecutorSpec + Clone,
+    Spec: alloy_savm::sil::spec::SilExecutorSpec + Clone,
     SilEvm<DB, I, P>: Savm<
         DB = DB,
         Tx = TxEnv,
@@ -392,7 +392,7 @@ where
     DB: StateDB,
     I: Inspector<SilEvmContext<DB>>,
     P: PrecompileProvider<SilEvmContext<DB>, Output = InterpreterResult>,
-    Spec: alloy_evm::sil::spec::SilExecutorSpec + Clone,
+    Spec: alloy_savm::sil::spec::SilExecutorSpec + Clone,
     SilEvm<DB, I, P>: Savm<
         DB = DB,
         Tx = TxEnv,
@@ -557,7 +557,7 @@ impl<Spec> BbBlockExecutorFactory<Spec> {
         bal_index_setter: Option<BalIndexSetter<DB>>,
     ) -> BbBlockExecutor<'a, DB, I, PrecompilesMap, &'a Spec>
     where
-        Spec: alloy_evm::sil::spec::SilExecutorSpec,
+        Spec: alloy_savm::sil::spec::SilExecutorSpec,
         DB: StateDB,
         I: Inspector<SilEvmContext<DB>>,
     {
@@ -576,7 +576,7 @@ impl<Spec> BbBlockExecutorFactory<Spec> {
 
 impl<Spec> BlockExecutorFactory for BbBlockExecutorFactory<Spec>
 where
-    Spec: alloy_evm::sil::spec::SilExecutorSpec + 'static,
+    Spec: alloy_savm::sil::spec::SilExecutorSpec + 'static,
     TxEnv: FromRecoveredTx<TransactionSigned> + FromTxWithEncoded<TransactionSigned>,
 {
     type SavmFactory = SilEvmFactory;

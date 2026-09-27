@@ -1,7 +1,7 @@
 //! Node-specific operations for multi-node testing.
 
 use crate::testsuite::{Action, Environment};
-use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
+use alloy_rpc_types_sil::{Block, Header, Receipt, Transaction, TransactionRequest};
 use eyre::Result;
 use futures_util::future::BoxFuture;
 use rsil_node_api::EngineTypes;

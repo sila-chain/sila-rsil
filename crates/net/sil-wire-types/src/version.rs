@@ -53,47 +53,47 @@ impl SilVersion {
     pub const ALL_VERSIONS: &'static [Self] = &[Self::Sil69, Self::Sil68, Self::Sil67, Self::Sil66];
 
     /// Returns true if the version is sil/66
-    pub const fn is_eth66(&self) -> bool {
+    pub const fn is_sil66(&self) -> bool {
         matches!(self, Self::Sil66)
     }
 
     /// Returns true if the version is sil/67
-    pub const fn is_eth67(&self) -> bool {
+    pub const fn is_sil67(&self) -> bool {
         matches!(self, Self::Sil67)
     }
 
     /// Returns true if the version is sil/68
-    pub const fn is_eth68(&self) -> bool {
+    pub const fn is_sil68(&self) -> bool {
         matches!(self, Self::Sil68)
     }
 
     /// Returns true if the version carries sil/68 transaction announcement metadata.
-    pub const fn has_eth68_metadata(&self) -> bool {
+    pub const fn has_sil68_metadata(&self) -> bool {
         matches!(self, Self::Sil68 | Self::Sil69 | Self::Sil70 | Self::Sil71 | Self::Sil72)
     }
 
     /// Returns true if the version is sil/69
-    pub const fn is_eth69(&self) -> bool {
+    pub const fn is_sil69(&self) -> bool {
         matches!(self, Self::Sil69)
     }
 
     /// Returns true if the version is sil/70
-    pub const fn is_eth70(&self) -> bool {
+    pub const fn is_sil70(&self) -> bool {
         matches!(self, Self::Sil70)
     }
 
     /// Returns true if the version is sil/71
-    pub const fn is_eth71(&self) -> bool {
+    pub const fn is_sil71(&self) -> bool {
         matches!(self, Self::Sil71)
     }
 
     /// Returns true if the version is sil/72
-    pub const fn is_eth72(&self) -> bool {
+    pub const fn is_sil72(&self) -> bool {
         matches!(self, Self::Sil72)
     }
 
     /// Returns true if the version is sil/69 or newer.
-    pub const fn is_eth69_or_newer(&self) -> bool {
+    pub const fn is_sil69_or_newer(&self) -> bool {
         matches!(self, Self::Sil69 | Self::Sil70 | Self::Sil71 | Self::Sil72)
     }
 }
@@ -272,14 +272,14 @@ mod tests {
     }
 
     #[test]
-    fn test_has_eth68_metadata() {
-        assert!(!SilVersion::Sil66.has_eth68_metadata());
-        assert!(!SilVersion::Sil67.has_eth68_metadata());
-        assert!(SilVersion::Sil68.has_eth68_metadata());
-        assert!(SilVersion::Sil69.has_eth68_metadata());
-        assert!(SilVersion::Sil70.has_eth68_metadata());
-        assert!(SilVersion::Sil71.has_eth68_metadata());
-        assert!(SilVersion::Sil72.has_eth68_metadata());
+    fn test_has_sil68_metadata() {
+        assert!(!SilVersion::Sil66.has_sil68_metadata());
+        assert!(!SilVersion::Sil67.has_sil68_metadata());
+        assert!(SilVersion::Sil68.has_sil68_metadata());
+        assert!(SilVersion::Sil69.has_sil68_metadata());
+        assert!(SilVersion::Sil70.has_sil68_metadata());
+        assert!(SilVersion::Sil71.has_sil68_metadata());
+        assert!(SilVersion::Sil72.has_sil68_metadata());
     }
 
     #[test]

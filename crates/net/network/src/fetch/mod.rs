@@ -202,10 +202,10 @@ impl<N: NetworkPrimitives> StateFetcher<N> {
     }
 
     /// Returns whether any connected peer can serve BAL requests.
-    fn has_eth71_peer(&self) -> bool {
+    fn has_sil71_peer(&self) -> bool {
         self.peers.values().any(|peer| {
             !matches!(peer.state, PeerState::Closing)
-                && peer.capabilities.supports_eth_at_least(&SilVersion::Sil71)
+                && peer.capabilities.supports_sil_at_least(&SilVersion::Sil71)
         })
     }
 
@@ -295,7 +295,7 @@ impl<N: NetworkPrimitives> StateFetcher<N> {
     /// Returns `true` if `request` cannot be served by any currently connected peer and should
     /// fail immediately instead of waiting for future peer churn.
     fn should_fail_fast(&self, request: &DownloadRequest<N>) -> bool {
-        (request.is_optional_bal() && !self.has_eth71_peer())
+        (request.is_optional_bal() && !self.has_sil71_peer())
             || (request.is_snap() && !self.has_snap_peer())
     }
 
@@ -585,7 +585,7 @@ impl Peer {
     /// Returns whether this peer can serve requests with the given hard requirements.
     fn satisfies(&self, requirement: &BestPeerRequirements) -> bool {
         match requirement {
-            BestPeerRequirements::SilVersion(ver) => self.capabilities.supports_eth_at_least(ver),
+            BestPeerRequirements::SilVersion(ver) => self.capabilities.supports_sil_at_least(ver),
             BestPeerRequirements::SupportsSnap => self.supports_snap,
             BestPeerRequirements::None
             | BestPeerRequirements::FullBlock

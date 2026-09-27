@@ -95,7 +95,7 @@ impl SharedCapability {
 
     /// Returns true if the capability is sil.
     #[inline]
-    pub const fn is_eth(&self) -> bool {
+    pub const fn is_sil(&self) -> bool {
         matches!(self, Self::Sil { .. })
     }
 
@@ -165,7 +165,7 @@ impl SharedCapabilities {
     /// Returns the sil capability if it is shared.
     #[inline]
     pub fn sil(&self) -> Result<&SharedCapability, P2PStreamError> {
-        self.iter_caps().find(|c| c.is_eth()).ok_or(P2PStreamError::CapabilityNotShared)
+        self.iter_caps().find(|c| c.is_sil()).ok_or(P2PStreamError::CapabilityNotShared)
     }
 
     /// Returns the negotiated sil version if it is shared.
@@ -448,7 +448,7 @@ mod tests {
     }
 
     #[test]
-    fn capabilities_supports_eth() {
+    fn capabilities_supports_sil() {
         let capabilities: Capabilities = vec![
             Capability::new_static("sil", 66),
             Capability::new_static("sil", 67),
@@ -458,12 +458,12 @@ mod tests {
         ]
         .into();
 
-        assert!(capabilities.supports_eth());
-        assert!(capabilities.supports_eth_v66());
-        assert!(capabilities.supports_eth_v67());
-        assert!(capabilities.supports_eth_v68());
-        assert!(capabilities.supports_eth_v69());
-        assert!(capabilities.supports_eth_v70());
+        assert!(capabilities.supports_sil());
+        assert!(capabilities.supports_sil_v66());
+        assert!(capabilities.supports_sil_v67());
+        assert!(capabilities.supports_sil_v68());
+        assert!(capabilities.supports_sil_v69());
+        assert!(capabilities.supports_sil_v70());
     }
 
     #[test]

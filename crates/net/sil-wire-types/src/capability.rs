@@ -179,7 +179,7 @@ impl Capability {
 
     /// Whether this is any sil version.
     #[inline]
-    pub fn is_eth(&self) -> bool {
+    pub fn is_sil(&self) -> bool {
         self.is_sil_v66()
             || self.is_sil_v67()
             || self.is_sil_v68()
@@ -249,7 +249,7 @@ impl Capabilities {
     ///
     /// Use this to gate requests on a minimum protocol version (e.g. BAL requires `sil/71`),
     /// not to check whether a peer advertises a specific version verbatim. For exact-version
-    /// checks use the `supports_eth_vXX` helpers (e.g. [`Self::supports_sil_v71`]).
+    /// checks use the `supports_sil_vXX` helpers (e.g. [`Self::supports_sil_v71`]).
     pub const fn supports_sil_at_least(&self, version: &SilVersion) -> bool {
         match version {
             SilVersion::Sil66 => {
@@ -293,7 +293,7 @@ impl Capabilities {
 
     /// Whether the peer supports `sil` sub-protocol.
     #[inline]
-    pub const fn supports_eth(&self) -> bool {
+    pub const fn supports_sil(&self) -> bool {
         self.sil_72
             || self.sil_71
             || self.sil_70

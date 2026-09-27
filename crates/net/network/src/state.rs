@@ -423,7 +423,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
                     (request, response)
                 }
                 BlockRequest::GetReceipts(request) => {
-                    if peer.capabilities.supports_eth_v70() {
+                    if peer.capabilities.supports_sil_v70() {
                         let (response, rx) = oneshot::channel();
                         let request = PeerRequest::GetReceipts70 {
                             request: GetReceipts70 {
@@ -434,7 +434,7 @@ impl<N: NetworkPrimitives> NetworkState<N> {
                         };
                         let response = PeerResponse::Receipts70 { response: rx };
                         (request, response)
-                    } else if peer.capabilities.supports_eth_v69() {
+                    } else if peer.capabilities.supports_sil_v69() {
                         let (response, rx) = oneshot::channel();
                         let request = PeerRequest::GetReceipts69 { request, response };
                         let response = PeerResponse::Receipts69 { response: rx };

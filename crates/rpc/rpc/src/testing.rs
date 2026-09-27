@@ -16,7 +16,7 @@
 
 use alloy_consensus::{Header, Transaction};
 use alloy_eips::{sip1559::calculate_block_gas_limit, sip2718::Decodable2718};
-use alloy_evm::{RecoveredTx, Savm};
+use alloy_savm::{RecoveredTx, Savm};
 use alloy_primitives::{
     map::{DefaultHashBuilder, HashSet},
     Address, Bytes, B256, U256,
@@ -30,7 +30,7 @@ use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_consensus_common::validation::MAX_RLP_BLOCK_SIZE;
 use rsil_engine_primitives::ConsensusEngineHandle;
 use rsil_errors::RsilError;
-use rsil_evm::{execute::BlockBuilder, ConfigureEvm, NextBlockEnvAttributes};
+use rsil_savm::{execute::BlockBuilder, ConfigureEvm, NextBlockEnvAttributes};
 use rsil_payload_primitives::PayloadTypes;
 use rsil_primitives_traits::{
     transaction::{recover::try_recover_signers, signed::RecoveryError},

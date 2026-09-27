@@ -1,7 +1,7 @@
 //! Payload component configuration for the Sila node.
 
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_node_api::{FullNodeTypes, NodeTypes, PrimitivesTy, TxTy};
 use rsil_node_builder::{
     components::PayloadBuilderBuilder, BuilderContext, PayloadBuilderConfig, PayloadTypes,
@@ -25,7 +25,7 @@ where
         + 'static,
     Savm: ConfigureEvm<
             Primitives = PrimitivesTy<Types>,
-            NextBlockEnvCtx = rsil_evm::NextBlockEnvAttributes,
+            NextBlockEnvCtx = rsil_savm::NextBlockEnvAttributes,
         > + 'static,
     Types::Payload:
         PayloadTypes<BuiltPayload = SilBuiltPayload, PayloadAttributes = SilPayloadAttributes>,

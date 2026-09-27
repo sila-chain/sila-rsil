@@ -20,12 +20,12 @@ use rsil_basic_payload_builder::{
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
 use rsil_consensus_common::validation::MAX_RLP_BLOCK_SIZE;
 use rsil_errors::{BlockExecutionError, BlockValidationError, ConsensusError};
-use rsil_evm::{
+use rsil_savm::{
     block::TxResult,
     execute::{BlockBuilder, BlockBuilderOutcome},
     ConfigureEvm, NextBlockEnvAttributes, Savm,
 };
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_execution_cache::{CachedStateMetrics, CachedStateMetricsSource, CachedStateProvider};
 use rsil_payload_builder::{BlobSidecars, SilBuiltPayload};
 use rsil_payload_builder_primitives::PayloadBuilderError;

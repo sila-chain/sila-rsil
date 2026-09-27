@@ -5,7 +5,7 @@ use alloy_provider::{
     Provider, ProviderBuilder, SendableTx,
 };
 use alloy_rpc_types_engine::PayloadAttributes;
-use alloy_rpc_types_eth::TransactionRequest;
+use alloy_rpc_types_sil::TransactionRequest;
 use alloy_signer::SignerSync;
 use rand::{seq::IndexedRandom, Rng};
 use rsil_e2e_test_utils::{wallet::Wallet, NodeHelperType, TmpDB};

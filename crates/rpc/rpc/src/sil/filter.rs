@@ -3,7 +3,7 @@
 use alloy_consensus::BlockHeader;
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::{Sealable, TxHash};
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     BlockNumHash, Filter, FilterBlockOption, FilterChanges, FilterId, Log,
     PendingTransactionFilterKind,
 };
@@ -121,7 +121,7 @@ where
     /// # Create a new instance with [`SilApi`](crate::SilApi)
     ///
     /// ```no_run
-    /// use rsil_evm_sila::SilEvmConfig;
+    /// use rsil_savm_sila::SilEvmConfig;
     /// use rsil_network_api::noop::NoopNetwork;
     /// use rsil_provider::noop::NoopProvider;
     /// use rsil_rpc::{SilApi, SilFilter};
@@ -1352,7 +1352,7 @@ mod tests {
     use alloy_primitives::FixedBytes;
     use rand::Rng;
     use rsil_chainspec::{ChainSpec, ChainSpecProvider};
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::test_utils::MockEthProvider;
     use rsil_rpc_convert::RpcConverter;

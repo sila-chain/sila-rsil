@@ -2,7 +2,7 @@
 
 use alloy_primitives::{Address, Bytes, B256};
 use alloy_rpc_types_engine::ExecutionPayloadEnvelopeV4;
-use alloy_rpc_types_eth::BlockNumberOrTag;
+use alloy_rpc_types_sil::BlockNumberOrTag;
 use jsonrpsee_core::client::ClientT;
 use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
 use rsil_db::test_utils::create_test_rw_db;

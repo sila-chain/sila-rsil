@@ -1,11 +1,11 @@
 use alloy_consensus::BlockHeader as _;
 use alloy_eips::BlockId;
-use alloy_evm::block::calc::{base_block_reward_pre_merge, block_reward, ommer_reward};
+use alloy_savm::block::calc::{base_block_reward_pre_merge, block_reward, ommer_reward};
 use alloy_primitives::{
     map::{HashMap, HashSet},
     Address, BlockHash, Bytes, B256, U256,
 };
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     state::{SavmOverrides, StateOverride},
     BlockOverrides, Index,
 };
@@ -25,7 +25,7 @@ use revm_inspectors::{
     tracing::{parity::populate_state_diff, TracingInspector, TracingInspectorConfig},
 };
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{BlockBody, BlockHeader};
 use rsil_rpc_api::TraceApiServer;
 use rsil_rpc_convert::RpcTxReq;

@@ -91,7 +91,7 @@ pub use revm::state::EvmState as SavmState;
 /// ## 1. Executing Externally Provided Blocks (e.g., during sync)
 ///
 /// ```rust,ignore
-/// use rsil_evm::ConfigureEvm;
+/// use rsil_savm::ConfigureEvm;
 ///
 /// // Execute a received block
 /// let mut executor = evm_config.executor(state_db);
@@ -109,7 +109,7 @@ pub use revm::state::EvmState as SavmState;
 /// The block's header will be the outcome of the block building process.
 ///
 /// ```rust,ignore
-/// use rsil_evm::{ConfigureEvm, NextBlockEnvAttributes};
+/// use rsil_savm::{ConfigureEvm, NextBlockEnvAttributes};
 ///
 /// // Create attributes for the next block
 /// let attributes = NextBlockEnvAttributes {

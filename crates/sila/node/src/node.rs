@@ -8,12 +8,12 @@ use revm::context::TxEnv;
 use rsil_chainspec::{ChainSpec, Hardforks, SilChainSpec, SilaHardforks};
 use rsil_engine_local::LocalPayloadAttributesBuilder;
 use rsil_engine_primitives::EngineTypes;
-use rsil_evm::{
+use rsil_savm::{
     sil::spec::SilExecutorSpec, ConfigureEvm, NextBlockEnvAttributes, SavmFactory, SavmFactoryFor,
 };
-use rsil_evm_sila::factory::RsilEvmFactory;
+use rsil_savm_sila::factory::RsilEvmFactory;
 #[cfg(feature = "jit")]
-use rsil_evm_sila::factory::{JitBackend, JitMode, RevmcMetrics, RuntimeConfig, RuntimeTuning};
+use rsil_savm_sila::factory::{JitBackend, JitMode, RevmcMetrics, RuntimeConfig, RuntimeTuning};
 use rsil_network::{primitives::BasicNetworkPrimitives, NetworkHandle, PeersInfo};
 use rsil_node_api::{
     AddOnsContext, FullNodeComponents, HeaderTy, NodeAddOns, NodePrimitives,
@@ -63,7 +63,7 @@ use std::{marker::PhantomData, sync::Arc, time::SystemTime};
 
 pub use crate::{payload::SilaPayloadBuilder, SilaEngineValidator};
 #[cfg(feature = "jit")]
-pub use rsil_evm_sila::factory::maybe_run_jit_helper;
+pub use rsil_savm_sila::factory::maybe_run_jit_helper;
 
 /// Type configuration for a regular Sila node.
 #[derive(Debug, Default, Clone, Copy)]
@@ -460,7 +460,7 @@ where
 }
 
 impl<N: FullNodeComponents<Types = Self>> DebugNode<N> for SilaNode {
-    type RpcBlock = alloy_rpc_types_eth::Block;
+    type RpcBlock = alloy_rpc_types_sil::Block;
 
     fn rpc_to_primitive_block(rpc_block: Self::RpcBlock) -> rsil_sila_primitives::Block {
         rpc_block.into_consensus().convert_transactions()

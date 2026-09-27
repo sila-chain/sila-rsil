@@ -1,7 +1,7 @@
 //! An abstraction over sila signers.
 
 use alloy_dyn_abi::TypedData;
-use alloy_eips::sip2718::Decodable2718;
+use alloy_sips::eip2718::Decodable2718;
 use alloy_primitives::{map::AddressMap, sip191_hash_message, Address, Signature, B256};
 use alloy_signer::SignerSync;
 use alloy_signer_local::{coins_bip39::English, MnemonicBuilder, PrivateKeySigner};
@@ -112,7 +112,7 @@ mod tests {
     use super::*;
     use alloy_consensus::Transaction;
     use alloy_primitives::{Bytes, TxKind, U256};
-    use alloy_rpc_types_eth::{TransactionInput, TransactionRequest};
+    use alloy_rpc_types_sil::{TransactionInput, TransactionRequest};
     use rsil_sila_primitives::TransactionSigned;
 
     fn build_signer() -> DevSigner {

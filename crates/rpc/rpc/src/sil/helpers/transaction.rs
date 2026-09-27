@@ -138,7 +138,7 @@ mod tests {
     use alloy_primitives::{map::AddressMap, Address, Bytes, U256};
     use alloy_rpc_types_sil::request::TransactionRequest;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
         test_utils::{ExtendedAccount, MockEthProvider},

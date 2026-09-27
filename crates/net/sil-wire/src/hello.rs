@@ -2,7 +2,7 @@ use crate::{Capability, ProtocolVersion, SilVersion};
 use alloy_rlp::{RlpDecodable, RlpEncodable};
 use rsil_codecs::add_arbitrary_tests;
 use rsil_network_peers::PeerId;
-use rsil_primitives_traits::constants::RSIL_CLIENT_VERSION;
+const RSIL_CLIENT_VERSION: &str = concat!("rsil/v", env!("CARGO_PKG_VERSION"));
 
 /// The default tcp port for p2p.
 ///
@@ -44,7 +44,7 @@ impl HelloMessageWithProtocols {
     /// Starts a new `HelloMessageProtocolsBuilder`
     ///
     /// ```
-    /// use rsil_eth_wire::HelloMessageWithProtocols;
+    /// use rsil_sil_wire::HelloMessageWithProtocols;
     /// use rsil_network_peers::pk2id;
     /// use secp256k1::{SecretKey, SECP256K1};
     /// let secret_key = SecretKey::new(&mut rand_08::thread_rng());
@@ -140,7 +140,7 @@ impl HelloMessage {
     /// Starts a new `HelloMessageBuilder`
     ///
     /// ```
-    /// use rsil_eth_wire::HelloMessage;
+    /// use rsil_sil_wire::HelloMessage;
     /// use rsil_network_peers::pk2id;
     /// use secp256k1::{SecretKey, SECP256K1};
     /// let secret_key = SecretKey::new(&mut rand_08::thread_rng());

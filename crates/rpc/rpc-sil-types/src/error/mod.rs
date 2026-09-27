@@ -533,7 +533,7 @@ impl From<InvalidHeader> for SilApiError {
 impl<T, TxError> From<EVMError<T, TxError>> for SilApiError
 where
     T: Into<Self>,
-    TxError: rsil_evm::InvalidTxError,
+    TxError: rsil_savm::InvalidTxError,
 {
     fn from(err: EVMError<T, TxError>) -> Self {
         match err {

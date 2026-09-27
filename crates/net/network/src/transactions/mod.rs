@@ -839,12 +839,12 @@ impl<Pool: TransactionPool, N: NetworkPrimitives> TransactionsManager<Pool, N> {
         if let Some(failed_to_request_hashes) =
             self.transaction_fetcher.request_transactions_from_peer(hashes_to_request, peer)
         {
-            let conn_eth_version = peer.version;
+            let conn_sil_version = peer.version;
 
             trace!(target: "net::tx",
                 peer_id=format!("{peer_id:#}"),
                 failed_to_request_hashes=?*failed_to_request_hashes,
-                %conn_eth_version,
+                %conn_sil_version,
                 %client,
                 "sending `GetPooledTransactions` request to peer's session failed, buffering hashes"
             );
@@ -2604,7 +2604,7 @@ mod tests {
             .split_with_handle();
 
         let peer_id_1 = PeerId::new([1; 64]);
-        let eth_version = SilVersion::Sil66;
+        let sil_version = SilVersion::Sil66;
 
         let txs = vec![TransactionSigned::new_unhashed(
             Transaction::Legacy(TxLegacy {
@@ -2631,7 +2631,7 @@ mod tests {
 
         let txs_hashes: Vec<B256> = txs.iter().map(|tx| *tx.hash()).collect();
 
-        let (peer_1, mut to_mock_session_rx) = new_mock_session(peer_id_1, eth_version);
+        let (peer_1, mut to_mock_session_rx) = new_mock_session(peer_id_1, sil_version);
         tx_manager.peers.insert(peer_id_1, peer_1);
 
         assert!(pool.is_empty());
@@ -2945,7 +2945,7 @@ mod tests {
         let tx_fetcher = &mut tx_manager.transaction_fetcher;
 
         let peer_id_1 = PeerId::new([1; 64]);
-        let eth_version = SilVersion::Sil66;
+        let sil_version = SilVersion::Sil66;
 
         let txs = vec![
             TransactionSigned::new_unhashed(
@@ -2998,7 +2998,7 @@ mod tests {
 
         let txs_hashes: Vec<B256> = txs.iter().map(|tx| *tx.hash()).collect();
 
-        let (mut peer_1, mut to_mock_session_rx) = new_mock_session(peer_id_1, eth_version);
+        let (mut peer_1, mut to_mock_session_rx) = new_mock_session(peer_id_1, sil_version);
         // mark hashes as seen by peer so it can fish them out from the cache for hashes pending
         // fetch
         peer_1.seen_transactions.insert(txs_hashes[0]);
@@ -3059,10 +3059,10 @@ mod tests {
 
         let peer_id_1 = PeerId::new([1; 64]);
         let peer_id_2 = PeerId::new([2; 64]);
-        let eth_version = SilVersion::Sil66;
+        let sil_version = SilVersion::Sil66;
         let seen_hashes = [B256::from_slice(&[1; 32]), B256::from_slice(&[2; 32])];
 
-        let (mut peer_1, mut to_mock_session_rx) = new_mock_session(peer_id_1, eth_version);
+        let (mut peer_1, mut to_mock_session_rx) = new_mock_session(peer_id_1, sil_version);
         // mark hashes as seen by peer so it can fish them out from the cache for hashes pending
         // fetch
         peer_1.seen_transactions.insert(seen_hashes[0]);
@@ -3115,7 +3115,7 @@ mod tests {
         // failing peer_1's request buffers requested hashes for retry
         assert_eq!(tx_fetcher.num_pending_hashes(), 2);
 
-        let (peer_2, mut to_mock_session_rx) = new_mock_session(peer_id_2, eth_version);
+        let (peer_2, mut to_mock_session_rx) = new_mock_session(peer_id_2, sil_version);
         tx_manager.peers.insert(peer_id_2, peer_2);
 
         // peer_2 announces same hashes as peer_1
@@ -3423,8 +3423,8 @@ mod tests {
         );
 
         let peer_id = PeerId::random();
-        let eth_version = SilVersion::Sil68;
-        let (mock_peer_metadata, mut mock_session_rx) = new_mock_session(peer_id, eth_version);
+        let sil_version = SilVersion::Sil68;
+        let (mock_peer_metadata, mut mock_session_rx) = new_mock_session(peer_id, sil_version);
         tx_manager.peers.insert(peer_id, mock_peer_metadata);
 
         let mut tx_factory = MockTransactionFactory::default();

@@ -10,7 +10,7 @@ use alloy_rpc_types_sil::{Account, AccountInfo, SIP1186AccountProofResponse};
 use alloy_serde::JsonStorageKey;
 use futures::Future;
 use rsil_errors::RsilError;
-use rsil_evm::{ConfigureEvm, SavmEnvFor};
+use rsil_savm::{ConfigureEvm, SavmEnvFor};
 use rsil_primitives_traits::{BlockTy, RecoveredBlock, SealedHeaderFor};
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
 use rsil_rpc_sil_types::{

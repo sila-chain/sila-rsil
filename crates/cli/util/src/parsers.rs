@@ -1,4 +1,4 @@
-use alloy_eips::BlockHashOrNumber;
+use rsil_sil_wire_types::BlockHashOrNumber;
 use alloy_primitives::B256;
 use rsil_fs_util::FsPathError;
 use std::{

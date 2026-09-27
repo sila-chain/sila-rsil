@@ -8465,7 +8465,7 @@ dependencies = [
 name = "rsil-cli-util"
 version = "2.4.0"
 dependencies = [
- "alloy-eips",
+ "rsil-sil-wire-types",
  "alloy-primitives",
  "cfg-if",
  "eyre",

@@ -16,7 +16,7 @@ rsil-fs-util.workspace = true
 
 # sil
 alloy-primitives.workspace = true
-alloy-sips.workspace = true
+rsil-sil-wire-types.workspace = true
 
 # misc
 cfg-if.workspace = true

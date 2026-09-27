@@ -4,7 +4,7 @@
 
 use alloy_primitives::bytes::BytesMut;
 use futures::Stream;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     capability::SharedCapabilities, multiplex::ProtocolConnection, protocol::Protocol,
 };
 use rsil_network_api::{Direction, PeerId};

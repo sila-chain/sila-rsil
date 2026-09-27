@@ -1,8 +1,8 @@
 //! This module provides an abstraction over block import in the form of the `BlockImport` trait.
 
 use crate::message::NewBlockMessage;
-use rsil_eth_wire::NewBlock;
-use rsil_eth_wire_types::broadcast::NewBlockHashes;
+use rsil_sil_wire::NewBlock;
+use rsil_sil_wire_types::broadcast::NewBlockHashes;
 use rsil_network_peers::PeerId;
 use std::{
     error::Error,

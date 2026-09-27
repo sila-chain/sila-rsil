@@ -51,10 +51,10 @@ pub mod chainspec {
 #[cfg(feature = "savm")]
 pub mod savm {
     #[doc(inline)]
-    pub use rsil_evm_sila::*;
+    pub use rsil_savm_sila::*;
 
     #[doc(inline)]
-    pub use rsil_evm as primitives;
+    pub use rsil_savm as primitives;
 
     #[doc(inline)]
     pub use rsil_revm as revm;
@@ -74,7 +74,7 @@ pub mod tasks {
 #[cfg(feature = "network")]
 pub mod network {
     #[doc(inline)]
-    pub use rsil_eth_wire as eth_wire;
+    pub use rsil_sil_wire as sil_wire;
     #[doc(inline)]
     pub use rsil_network::*;
     #[doc(inline)]
@@ -150,9 +150,9 @@ pub mod rpc {
     #[allow(ambiguous_glob_reexports)]
     pub mod sil {
         #[doc(inline)]
-        pub use alloy_rpc_types_eth as primitives;
+        pub use alloy_rpc_types_sil as primitives;
         #[doc(inline)]
-        pub use rsil_rpc_eth_types::*;
+        pub use rsil_rpc_sil_types::*;
 
         pub use rsil_rpc::sil::*;
     }

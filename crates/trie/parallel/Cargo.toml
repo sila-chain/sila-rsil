@@ -21,7 +21,7 @@ rsil-tasks = { workspace = true, features = ["rayon"] }
 rsil-trie.workspace = true
 
 # alloy
-alloy-savm.workspace = true
+rsil-savm.workspace = true
 alloy-primitives.workspace = true
 alloy-rlp.workspace = true
 

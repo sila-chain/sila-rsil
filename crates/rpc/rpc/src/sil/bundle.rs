@@ -1,8 +1,8 @@
 //! `Sil` bundle implementation and helpers.
 
 use alloy_consensus::{transaction::TxHashRef, EnvKzgSettings, Transaction as _};
-use alloy_eips::sip7840::BlobParams;
-use alloy_evm::env::BlockEnvironment;
+use alloy_sips::eip7840::BlobParams;
+use alloy_savm::env::BlockEnvironment;
 use alloy_primitives::{uint, Keccak256, U256};
 use alloy_rpc_types_mev::{SilCallBundle, SilCallBundleResponse, SilCallBundleTransactionResult};
 use jsonrpsee::core::RpcResult;
@@ -10,7 +10,7 @@ use revm::{
     context::Block, context_interface::result::ResultAndState, DatabaseCommit, DatabaseRef,
 };
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
-use rsil_evm::{ConfigureEvm, Savm};
+use rsil_savm::{ConfigureEvm, Savm};
 use rsil_rpc_eth_api::{
     helpers::{Call, LoadPendingBlock, SilTransactions},
     FromEthApiError, FromEvmError, SilCallBundleApiServer,
@@ -92,7 +92,7 @@ where
             .map(|tx| recover_raw_transaction::<PoolPooledTx<Sil::Pool>>(&tx))
             .collect::<Result<Vec<_>, _>>()?;
 
-        let block_id: alloy_rpc_types_eth::BlockId = state_block_number.into();
+        let block_id: alloy_rpc_types_sil::BlockId = state_block_number.into();
         // Note: the block number is considered the `parent` block: <https://github.com/flashbots/mev-geth/blob/fddf97beec5877483f879a77b7dea2e58a58d653/internal/ethapi/api.go#L2104>
         let (mut evm_env, at) = self.eth_api().evm_env_at(block_id).await?;
 

@@ -11,7 +11,7 @@ use alloy_primitives::{Bytes, U256};
 use alloy_rpc_client::RpcClient;
 use derive_more::Deref;
 use rsil_chainspec::{ChainSpec, ChainSpecProvider};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_network_api::noop::NoopNetwork;
 use rsil_node_api::{FullNodeComponents, FullNodeTypes};
 use rsil_rpc_convert::{RpcConvert, RpcConverter};
@@ -100,7 +100,7 @@ impl
     ///
     /// ```no_run
     /// use alloy_network::Sila;
-    /// use rsil_evm_sila::SilEvmConfig;
+    /// use rsil_savm_sila::SilEvmConfig;
     /// use rsil_network_api::noop::NoopNetwork;
     /// use rsil_provider::noop::NoopProvider;
     /// use rsil_rpc::SilApi;
@@ -395,7 +395,7 @@ where
         &self.pending_block
     }
 
-    /// Returns a type that knows how to build a [`rsil_evm::ConfigureEvm::NextBlockEnvCtx`] for a
+    /// Returns a type that knows how to build a [`rsil_savm::ConfigureEvm::NextBlockEnvCtx`] for a
     /// pending block.
     #[inline]
     pub const fn pending_env_builder(&self) -> &dyn PendingEnvBuilder<N::Savm> {
@@ -575,12 +575,12 @@ mod tests {
     use alloy_eips::BlockNumberOrTag;
     use alloy_primitives::{Signature, B256, U64};
     use alloy_rpc_types::FeeHistory;
-    use alloy_rpc_types_eth::{Bundle, TransactionRequest};
+    use alloy_rpc_types_sil::{Bundle, TransactionRequest};
     use jsonrpsee_types::error::INVALID_PARAMS_CODE;
     use rand::Rng;
     use rsil_chain_state::CanonStateSubscriptions;
     use rsil_chainspec::{ChainSpec, ChainSpecProvider, SilChainSpec};
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
         test_utils::{MockEthProvider, NoopProvider},

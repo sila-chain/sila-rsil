@@ -1,6 +1,6 @@
 use alloy_eips::{BlockId, BlockNumberOrTag};
 use alloy_primitives::{Address, Bytes, B256, U256, U64};
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     state::StateOverride, BlockOverrides, Filter, Log, SIP1186AccountProofResponse, SyncStatus,
 };
 use alloy_serde::JsonStorageKey;

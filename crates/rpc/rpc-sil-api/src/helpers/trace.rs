@@ -4,12 +4,12 @@ use super::{Call, LoadBlock, LoadState, LoadTransaction};
 use crate::{FromEthApiError, FromEvmError};
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_primitives::B256;
-use alloy_rpc_types_eth::{BlockId, TransactionInfo};
+use alloy_rpc_types_sil::{BlockId, TransactionInfo};
 use futures::Future;
 use revm::{context::Block, context_interface::result::ResultAndState};
 use revm_inspectors::tracing::{TracingInspector, TracingInspectorConfig};
 use rsil_errors::{ProviderError, RsilError};
-use rsil_evm::{
+use rsil_savm::{
     block::BlockExecutor, savm::SavmFactoryExt, tracing::TracingCtx, ConfigureEvm, Database,
     HaltReasonFor, InspectorFor, Savm, SavmEnvFor, SavmFor, TxEnvFor,
 };
@@ -24,7 +24,7 @@ use std::sync::Arc;
 
 /// Executes CPU heavy tasks.
 pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
-    /// Executes the [`TxEnvFor`] with [`rsil_evm::SavmEnv`] against the given [Database] without
+    /// Executes the [`TxEnvFor`] with [`rsil_savm::SavmEnv`] against the given [Database] without
     /// committing state changes.
     fn inspect<DB, I>(
         &self,
@@ -45,7 +45,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
     /// config.
     ///
     /// The callback is then called with the [`TracingInspector`] and the [`ResultAndState`] after
-    /// the configured [`rsil_evm::SavmEnv`] was inspected.
+    /// the configured [`rsil_savm::SavmEnv`] was inspected.
     ///
     /// Caution: this is blocking
     fn trace_at<F, R>(
@@ -79,7 +79,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
     /// config.
     ///
     /// The callback is then called with the [`TracingInspector`] and the [`ResultAndState`] after
-    /// the configured [`rsil_evm::SavmEnv`] was inspected.
+    /// the configured [`rsil_savm::SavmEnv`] was inspected.
     fn spawn_trace_at_with_state<F, R>(
         &self,
         evm_env: SavmEnvFor<Self::Savm>,

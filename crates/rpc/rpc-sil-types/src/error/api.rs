@@ -5,7 +5,7 @@ use crate::{simulate::SilSimulateError, RevertError, SilApiError};
 use alloy_primitives::Bytes;
 use revm::{context::result::ExecutionResult, context_interface::result::HaltReason};
 use rsil_errors::ProviderError;
-use rsil_evm::{ConfigureEvm, HaltReasonFor, SavmErrorFor};
+use rsil_savm::{ConfigureEvm, HaltReasonFor, SavmErrorFor};
 use rsil_revm::db::bal::SavmDatabaseError;
 
 use super::RpcInvalidTransactionError;

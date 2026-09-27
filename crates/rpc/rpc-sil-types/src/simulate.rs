@@ -6,10 +6,10 @@ use crate::{
 };
 use alloy_chains::Chain;
 use alloy_consensus::{transaction::TxHashRef, BlockHeader, Transaction as _};
-use alloy_eips::sip2718::WithEncoded;
-use alloy_evm::{block::TxResult, precompiles::PrecompilesMap};
+use alloy_sips::eip2718::WithEncoded;
+use alloy_savm::{block::TxResult, precompiles::PrecompilesMap};
 use alloy_network::{NetworkTransactionBuilder, TransactionBuilder};
-use alloy_rpc_types_eth::{
+use alloy_rpc_types_sil::{
     simulate::{SimBlock, SimCallResult, SimulateError, SimulatedBlock},
     state::StateOverride,
     BlockId, BlockOverrides, BlockTransactionsKind,
@@ -21,7 +21,7 @@ use revm::{
     primitives::{Address, Bytes, TxKind, U256},
     Database,
 };
-use rsil_evm::{
+use rsil_savm::{
     execute::{BlockBuilder, BlockBuilderOutcome, BlockExecutor},
     HaltReasonFor, Savm,
 };
@@ -279,7 +279,7 @@ pub fn apply_precompile_overrides(
     }
 
     precompiles.move_precompiles(moves).map_err(
-        |alloy_evm::precompiles::MovePrecompileError::NotAPrecompile(addr)| {
+        |alloy_savm::precompiles::MovePrecompileError::NotAPrecompile(addr)| {
             SilSimulateError::NotAPrecompile(addr)
         },
     )?;
@@ -297,7 +297,7 @@ pub fn apply_precompile_overrides(
 /// execution. This matches the spec rule `"gasLimit: blockGasLimit - soFarUsedGasInBlock"` and
 /// geth's per-call `sanitizeCall` behavior.
 ///
-/// [`TransactionRequest`]: alloy_rpc_types_eth::TransactionRequest
+/// [`TransactionRequest`]: alloy_rpc_types_sil::TransactionRequest
 #[expect(clippy::type_complexity)]
 pub fn execute_transactions<S, T>(
     mut builder: S,
@@ -411,7 +411,7 @@ where
 ///
 /// This will set the defaults as defined in <https://github.com/sila-chain/execution-apis/blob/e56d3208789259d0b09fa68e9d8594aa4d73c725/docs/ethsimulatev1-notes.md#default-values-for-transactions>
 ///
-/// [`TransactionRequest`]: alloy_rpc_types_eth::TransactionRequest
+/// [`TransactionRequest`]: alloy_rpc_types_sil::TransactionRequest
 pub fn resolve_transaction<DB: Database, Tx, T>(
     mut tx: RpcTxReq<T::Network>,
     default_gas_limit: u64,
@@ -545,7 +545,7 @@ where
                     .into_iter()
                     .map(|log| {
                         log_index += 1;
-                        alloy_rpc_types_eth::Log {
+                        alloy_rpc_types_sil::Log {
                             inner: log,
                             log_index: Some(log_index - 1),
                             transaction_index: Some(index as u64),
@@ -580,9 +580,9 @@ mod tests {
     use crate::{error::ToRpcError, SilApiError};
     use alloy_chains::Chain;
     use alloy_consensus::Header;
-    use alloy_evm::precompiles::PrecompilesMap;
+    use alloy_savm::precompiles::PrecompilesMap;
     use alloy_primitives::{address, U256};
-    use alloy_rpc_types_eth::{
+    use alloy_rpc_types_sil::{
         simulate::SimBlock,
         state::{AccountOverride, StateOverride},
         BlockOverrides, TransactionRequest,

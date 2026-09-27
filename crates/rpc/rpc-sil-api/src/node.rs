@@ -2,7 +2,7 @@
 
 use rsil_chain_state::CanonStateSubscriptions;
 use rsil_chainspec::{ChainSpecProvider, Hardforks, SilChainSpec, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_network_api::NetworkInfo;
 use rsil_node_api::{FullNodeComponents, NodePrimitives, PrimitivesTy};
 use rsil_primitives_traits::{BlockTy, HeaderTy, ReceiptTy, TxTy};

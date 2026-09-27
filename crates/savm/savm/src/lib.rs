@@ -56,6 +56,8 @@ pub use alloy_savm::{
     block::{state_changes, system_calls, OnStateHook},
     Evm as Savm, EvmEnv as SavmEnv, EvmFactory as SavmFactory, *,
 };
+/// Sila-facing alias for the underlying VM state type.
+pub use revm::state::EvmState as SavmState;
 
 /// A complete configuration of SAVM for Rsil.
 ///

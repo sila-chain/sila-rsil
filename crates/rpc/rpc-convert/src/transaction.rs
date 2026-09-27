@@ -4,10 +4,10 @@ use crate::{
 };
 use alloy_consensus::{error::ValueError, transaction::Recovered};
 use alloy_primitives::Address;
-use alloy_rpc_types_eth::TransactionInfo;
+use alloy_rpc_types_sil::TransactionInfo;
 use core::error;
 use dyn_clone::DynClone;
-use rsil_evm::{BlockEnvFor, ConfigureEvm, SavmEnvFor, SpecFor, TxEnvFor};
+use rsil_savm::{BlockEnvFor, ConfigureEvm, SavmEnvFor, SpecFor, TxEnvFor};
 use rsil_primitives_traits::{
     BlockTy, HeaderTy, NodePrimitives, SealedBlock, SealedHeader, SealedHeaderFor, TransactionMeta,
     TxTy,

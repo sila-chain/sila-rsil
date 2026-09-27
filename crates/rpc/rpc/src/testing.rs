@@ -38,7 +38,7 @@ use rsil_primitives_traits::{
 };
 use rsil_revm::{database::StateProviderDatabase, db::State};
 use rsil_rpc_api::{TestingApiServer, TestingBuildBlockRequestV1};
-use rsil_rpc_sil_api::{helpers::Call, FromEthApiError};
+use rsil_rpc_sil_api::{helpers::Call, FromSilApiError};
 use rsil_rpc_sil_types::SilApiError;
 use rsil_sila_engine_primitives::SilBuiltPayload;
 use rsil_sila_primitives::SilPrimitives;
@@ -160,8 +160,8 @@ where
                 let mut builder = evm_config
                     .builder_for_next_block(&mut db, &parent, env_attrs)
                     .map_err(RsilError::other)
-                    .map_err(Sil::Error::from_eth_err)?;
-                builder.apply_pre_execution_changes().map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
+                builder.apply_pre_execution_changes().map_err(Sil::Error::from_sil_err)?;
 
                 let mut total_fees = U256::ZERO;
                 let base_fee = builder.evm_mut().block().basefee();
@@ -221,7 +221,7 @@ where
                                 invalid_senders.insert(signer);
                                 continue;
                             }
-                            return Err(Sil::Error::from_eth_err(SilApiError::InvalidParams(
+                            return Err(Sil::Error::from_sil_err(SilApiError::InvalidParams(
                                 format!(
                                     "transaction at index {} would exceed max block size: {} > {}",
                                     idx, estimated_block_size, MAX_RLP_BLOCK_SIZE
@@ -252,14 +252,14 @@ where
                                 error = ?err,
                                 "Transaction execution failed"
                             );
-                            return Err(Sil::Error::from_eth_err(err));
+                            return Err(Sil::Error::from_sil_err(err));
                         }
                     };
 
                     block_transactions_rlp_length += tx_rlp_len;
                     total_fees += U256::from(tip) * U256::from(gas_used);
                 }
-                let outcome = builder.finish(&state, None).map_err(Sil::Error::from_eth_err)?;
+                let outcome = builder.finish(&state, None).map_err(Sil::Error::from_sil_err)?;
 
                 let has_requests = outcome.block.requests_hash().is_some();
                 let requests = has_requests.then_some(outcome.execution_result.requests);
@@ -286,7 +286,7 @@ where
             .await?
             .try_into_v5()
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)
+            .map_err(Sil::Error::from_sil_err)
     }
 
     async fn commit_block_v1(
@@ -337,9 +337,9 @@ where
             .new_payload(execution_data)
             .await
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
         if !status.is_valid() {
-            return Err(Sil::Error::from_eth_err(SilApiError::InvalidParams(format!(
+            return Err(Sil::Error::from_sil_err(SilApiError::InvalidParams(format!(
                 "new payload returned non-valid status: {:?}",
                 status.status
             ))));
@@ -357,9 +357,9 @@ where
             )
             .await
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
         if !fcu.is_valid() {
-            return Err(Sil::Error::from_eth_err(SilApiError::InvalidParams(format!(
+            return Err(Sil::Error::from_sil_err(SilApiError::InvalidParams(format!(
                 "forkchoice update returned non-valid status: {:?}",
                 fcu.payload_status.status
             ))));

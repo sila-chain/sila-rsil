@@ -218,7 +218,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
 
     /// Converts this multiplexer into a [`RlpxSatelliteStream`] with sil protocol as the given
     /// primary protocol and the handshake implementation.
-    pub async fn into_eth_satellite_stream<N: NetworkPrimitives>(
+    pub async fn into_sil_satellite_stream<N: NetworkPrimitives>(
         self,
         status: UnifiedStatus,
         fork_filter: ForkFilter,
@@ -1075,7 +1075,7 @@ mod tests {
             let (conn, _) = UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
 
             let (mut st, _their_status) = RlpxProtocolMultiplexer::new(conn)
-                .into_eth_satellite_stream::<SilNetworkPrimitives>(
+                .into_sil_satellite_stream::<SilNetworkPrimitives>(
                     other_status,
                     other_fork_filter,
                     Arc::new(SilHandshake::default()),
@@ -1111,7 +1111,7 @@ mod tests {
 
         let conn = connect_passthrough(local_addr, test_hello().0).await;
         let (mut st, _their_status) = RlpxProtocolMultiplexer::new(conn)
-            .into_eth_satellite_stream::<SilNetworkPrimitives>(
+            .into_sil_satellite_stream::<SilNetworkPrimitives>(
                 status,
                 fork_filter,
                 Arc::new(SilHandshake::default()),

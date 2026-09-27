@@ -2,7 +2,7 @@
 //! RPC methods.
 
 use super::{LoadBlock, LoadPendingBlock, SilApiSpec, SpawnBlocking};
-use crate::{FromEthApiError, RpcNodeCore, RpcNodeCoreExt, SilApiTypes};
+use crate::{FromSilApiError, RpcNodeCore, RpcNodeCoreExt, SilApiTypes};
 use alloy_consensus::constants::KECCAK_EMPTY;
 use alloy_eips::BlockId;
 use alloy_primitives::{Address, Bytes, B256, U256};
@@ -14,7 +14,7 @@ use rsil_savm::{ConfigureEvm, SavmEnvFor};
 use rsil_primitives_traits::{BlockTy, RecoveredBlock, SealedHeaderFor};
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
 use rsil_rpc_sil_types::{
-    error::{FromEvmError, IntoEthApiError},
+    error::{FromEvmError, IntoSilApiError},
     PendingBlockEnv, RpcInvalidTransactionError, SignError, SilApiError,
 };
 use rsil_rpc_server_types::constants::DEFAULT_MAX_STORAGE_VALUES_SLOTS;
@@ -37,11 +37,11 @@ pub trait SilState: LoadState + SpawnBlocking {
     where
         Self: SilApiSpec,
     {
-        let chain_info = self.chain_info().map_err(Self::Error::from_eth_err)?;
+        let chain_info = self.chain_info().map_err(Self::Error::from_sil_err)?;
         let block_number = self
             .provider()
             .block_number_for_id(block_id)
-            .map_err(Self::Error::from_eth_err)?
+            .map_err(Self::Error::from_sil_err)?
             .ok_or(SilApiError::HeaderNotFound(block_id))?;
         if chain_info.best_number.saturating_sub(block_number) > self.max_proof_window() {
             return Err(SilApiError::ExceedsMaxProofWindow.into());
@@ -81,7 +81,7 @@ pub trait SilState: LoadState + SpawnBlocking {
                 .state_at_block_id_or_latest(block_id)
                 .await?
                 .account_balance(&address)
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .unwrap_or_default())
         })
     }
@@ -98,7 +98,7 @@ pub trait SilState: LoadState + SpawnBlocking {
                 this.state_at_block_id_or_latest(block_id)
                     .await?
                     .storage(address, index.as_b256())
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     .unwrap_or_default()
                     .to_be_bytes(),
             ))
@@ -116,13 +116,13 @@ pub trait SilState: LoadState + SpawnBlocking {
     ) -> impl Future<Output = Result<HashMap<Address, Vec<B256>>, Self::Error>> + Send {
         async move {
             if requests.is_empty() {
-                return Err(Self::Error::from_eth_err(SilApiError::InvalidParams(
+                return Err(Self::Error::from_sil_err(SilApiError::InvalidParams(
                     "empty request".to_string(),
                 )));
             }
             let total_slots: usize = requests.values().map(|slots| slots.len()).sum();
             if total_slots > DEFAULT_MAX_STORAGE_VALUES_SLOTS {
-                return Err(Self::Error::from_eth_err(SilApiError::InvalidParams(
+                return Err(Self::Error::from_sil_err(SilApiError::InvalidParams(
                     format!(
                         "total slot count {total_slots} exceeds limit {DEFAULT_MAX_STORAGE_VALUES_SLOTS}",
                     ),
@@ -138,7 +138,7 @@ pub trait SilState: LoadState + SpawnBlocking {
                     for slot in &slots {
                         let value = state
                             .storage(address, slot.as_b256())
-                            .map_err(Self::Error::from_eth_err)?
+                            .map_err(Self::Error::from_sil_err)?
                             .unwrap_or_default();
                         values.push(B256::new(value.to_be_bytes()));
                     }
@@ -179,7 +179,7 @@ pub trait SilState: LoadState + SpawnBlocking {
                 let storage_keys = keys.iter().map(|key| key.as_b256()).collect::<Vec<_>>();
                 let proof = state
                     .proof(Default::default(), address, &storage_keys)
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
                 Ok(proof.into_eip1186_response(keys))
             })
             .await
@@ -200,7 +200,7 @@ pub trait SilState: LoadState + SpawnBlocking {
 
             self.spawn_blocking_io_fut(async move |this| {
                 let state = this.state_at_block_id(block_id).await?;
-                let account = state.basic_account(&address).map_err(Self::Error::from_eth_err)?;
+                let account = state.basic_account(&address).map_err(Self::Error::from_sil_err)?;
                 let Some(account) = account else { return Ok(None) };
 
                 let balance = account.balance;
@@ -211,7 +211,7 @@ pub trait SilState: LoadState + SpawnBlocking {
                 // get the storage root hash of the current state.
                 let storage_root = state
                     .storage_root(address, Default::default())
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
 
                 Ok(Some(Account { balance, nonce, code_hash, storage_root }))
             })
@@ -229,7 +229,7 @@ pub trait SilState: LoadState + SpawnBlocking {
             let state = this.state_at_block_id(block_id).await?;
             let account = state
                 .basic_account(&address)
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .unwrap_or_default();
 
             let balance = account.balance;
@@ -239,7 +239,7 @@ pub trait SilState: LoadState + SpawnBlocking {
             } else {
                 state
                     .account_code(&address)
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     .unwrap_or_default()
                     .original_bytes()
             };
@@ -255,13 +255,13 @@ pub trait SilState: LoadState + SpawnBlocking {
 pub trait LoadState:
     LoadPendingBlock
     + SilApiTypes<
-        Error: FromEvmError<Self::Savm> + FromEthApiError,
+        Error: FromEvmError<Self::Savm> + FromSilApiError,
         RpcConvert: RpcConvert<Network = Self::NetworkTypes>,
     > + RpcNodeCoreExt
 {
     /// Returns the state at the given block number
     fn state_at_hash(&self, block_hash: B256) -> Result<StateProviderBox, Self::Error> {
-        self.provider().history_by_block_hash(block_hash).map_err(Self::Error::from_eth_err)
+        self.provider().history_by_block_hash(block_hash).map_err(Self::Error::from_sil_err)
     }
 
     /// Returns the state at the given [`BlockId`] enum.
@@ -282,13 +282,13 @@ pub trait LoadState:
                 return Ok(state);
             }
 
-            self.provider().state_by_block_id(at).map_err(Self::Error::from_eth_err)
+            self.provider().state_by_block_id(at).map_err(Self::Error::from_sil_err)
         }
     }
 
     /// Returns the _latest_ state
     fn latest_state(&self) -> Result<StateProviderBox, Self::Error> {
-        self.provider().latest().map_err(Self::Error::from_eth_err)
+        self.provider().latest().map_err(Self::Error::from_sil_err)
     }
 
     /// Returns the state at the given [`BlockId`] enum or the latest.
@@ -318,7 +318,7 @@ pub trait LoadState:
         self.evm_config()
             .evm_env(header)
             .map_err(RsilError::other)
-            .map_err(Self::Error::from_eth_err)
+            .map_err(Self::Error::from_sil_err)
     }
 
     /// Returns the revm savm env for the requested [`BlockId`]
@@ -344,7 +344,7 @@ pub trait LoadState:
                 // header
                 let header = RpcNodeCore::provider(self)
                     .sealed_header_by_id(at)
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     .ok_or_else(|| SilApiError::HeaderNotFound(at))?;
                 let evm_env = self.evm_env_for_header(&header)?;
 
@@ -409,14 +409,14 @@ pub trait LoadState:
         self.spawn_blocking_io(move |this| {
             let address = match address {
                 Some(address) => address,
-                None => return Err(SignError::NoAccount.into_eth_err()),
+                None => return Err(SignError::NoAccount.into_sil_err()),
             };
 
             // first fetch the on chain nonce of the account
             let mut next_nonce = this
                 .latest_state()?
                 .account_nonce(&address)
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .unwrap_or_default();
 
             // Retrieve the highest consecutive transaction for the sender from the transaction pool
@@ -453,7 +453,7 @@ pub trait LoadState:
                 .state_at_block_id_or_latest(block_id)
                 .await?
                 .account_nonce(&address)
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .unwrap_or_default();
 
             if block_id == Some(BlockId::pending()) {
@@ -498,7 +498,7 @@ pub trait LoadState:
                 .state_at_block_id_or_latest(block_id)
                 .await?
                 .account_code(&address)
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .unwrap_or_default()
                 .original_bytes())
         })

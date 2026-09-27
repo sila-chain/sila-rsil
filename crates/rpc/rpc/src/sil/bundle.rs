@@ -13,7 +13,7 @@ use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_savm::{ConfigureEvm, Savm};
 use rsil_rpc_sil_api::{
     helpers::{Call, LoadPendingBlock, SilTransactions},
-    FromEthApiError, FromEvmError, SilCallBundleApiServer,
+    FromSilApiError, FromEvmError, SilCallBundleApiServer,
 };
 use rsil_rpc_sil_types::{utils::recover_raw_transaction, RpcInvalidTransactionError, SilApiError};
 use rsil_tasks::pool::BlockingTaskGuard;
@@ -148,7 +148,7 @@ where
 
                 let initial_coinbase = db
                     .basic_ref(coinbase)
-                    .map_err(Sil::Error::from_eth_err)?
+                    .map_err(Sil::Error::from_sil_err)?
                     .map(|acc| acc.balance)
                     .unwrap_or_default();
                 let mut coinbase_balance_before_tx = initial_coinbase;
@@ -170,7 +170,7 @@ where
                         if let SilBlobTransactionSidecar::Present(sidecar) = tx.take_blob() {
                             tx.validate_blob(&sidecar, EnvKzgSettings::Default.get()).map_err(
                                 |e| {
-                                    Sil::Error::from_eth_err(SilApiError::InvalidParams(
+                                    Sil::Error::from_sil_err(SilApiError::InvalidParams(
                                         e.to_string(),
                                     ))
                                 },

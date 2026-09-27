@@ -4,7 +4,7 @@
 use super::{LoadBlock, LoadFee, LoadReceipt, LoadState, SilApiSpec, SilSigner, SpawnBlocking};
 use crate::{
     helpers::{estimate::EstimateCall, spec::SignersForRpc},
-    FromEthApiError, FullEthApiTypes, IntoEthApiError, RpcNodeCore, RpcNodeCoreExt, RpcReceipt,
+    FromSilApiError, FullEthApiTypes, IntoSilApiError, RpcNodeCore, RpcNodeCoreExt, RpcReceipt,
     RpcTransaction,
 };
 use alloy_consensus::{
@@ -85,7 +85,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
         async move {
             let pool_transaction =
                 <PoolTx<Self::Pool> as PoolTransaction>::recover_raw_transaction(&tx)
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
             self.send_pool_transaction(
                 TransactionOrigin::Local,
                 WithEncoded::new(tx, pool_transaction),
@@ -155,14 +155,14 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                         return Ok(receipt);
                     }
                 }
-                Err(Self::Error::from_eth_err(TransactionConfirmationTimeout {
+                Err(Self::Error::from_sil_err(TransactionConfirmationTimeout {
                     hash,
                     duration: timeout_duration,
                 }))
             })
             .await
             .unwrap_or_else(|_elapsed| {
-                Err(Self::Error::from_eth_err(TransactionConfirmationTimeout {
+                Err(Self::Error::from_sil_err(TransactionConfirmationTimeout {
                     hash,
                     duration: timeout_duration,
                 }))
@@ -209,7 +209,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 .get_recovered_block(block)
                 .await
                 .map(|b| b.map(|b| b.body().transactions().to_vec()))
-                .map_err(Self::Error::from_eth_err)
+                .map_err(Self::Error::from_sil_err)
         }
     }
 
@@ -236,7 +236,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 Ok(this
                     .provider()
                     .transaction_by_hash(hash)
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     .map(|tx| tx.encoded_2718().into()))
             })
             .await
@@ -321,7 +321,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                     .cache()
                     .get_receipts(cached.block.hash())
                     .await
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     && let Some(receipt) = receipts.get(cached.tx_index).cloned()
                 {
                     return Ok(Some((tx, meta, receipt, Some(receipts))));
@@ -333,14 +333,14 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 let provider = this.provider();
                 let Some((tx, meta)) = provider
                     .transaction_by_hash_with_meta(hash)
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                 else {
                     return Ok(None);
                 };
 
-                let tx = tx.try_into_recovered_unchecked().map_err(Self::Error::from_eth_err)?;
+                let tx = tx.try_into_recovered_unchecked().map_err(Self::Error::from_sil_err)?;
 
-                let receipt = provider.receipt_by_hash(hash).map_err(Self::Error::from_eth_err)?;
+                let receipt = provider.receipt_by_hash(hash).map_err(Self::Error::from_sil_err)?;
 
                 Ok(receipt.map(|receipt| (tx, meta, receipt, None)))
             })
@@ -416,7 +416,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 return Ok(None);
             }
 
-            let high = self.provider().best_block_number().map_err(Self::Error::from_eth_err)?;
+            let high = self.provider().best_block_number().map_err(Self::Error::from_sil_err)?;
 
             // Perform a binary search over the block range to find the block in which the sender's
             // nonce reached the requested nonce.
@@ -492,11 +492,11 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
         async move {
             let from = match request.as_ref().from() {
                 Some(from) => from,
-                None => return Err(SignError::NoAccount.into_eth_err()),
+                None => return Err(SignError::NoAccount.into_sil_err()),
             };
 
             if self.find_signer(&from).is_err() {
-                return Err(SignError::NoAccount.into_eth_err());
+                return Err(SignError::NoAccount.into_sil_err());
             }
 
             // set nonce if not already set before
@@ -521,7 +521,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                     transaction,
                 )
                 .map_err(|e| {
-                    Self::Error::from_eth_err(TransactionConversionError::Other(e.to_string()))
+                    Self::Error::from_sil_err(TransactionConversionError::Other(e.to_string()))
                 })?;
 
             // submit the transaction to the pool with a `Local` origin
@@ -529,7 +529,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 .pool()
                 .add_transaction(TransactionOrigin::Local, pool_transaction)
                 .await
-                .map_err(Self::Error::from_eth_err)?;
+                .map_err(Self::Error::from_sil_err)?;
 
             Ok(hash)
         }
@@ -588,7 +588,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 };
                 if request.as_ref().max_fee_per_gas().is_none() {
                     let header =
-                        self.provider().latest_header().map_err(Self::Error::from_eth_err)?;
+                        self.provider().latest_header().map_err(Self::Error::from_sil_err)?;
                     let base_fee = header.and_then(|h| h.base_fee_per_gas()).unwrap_or_default();
                     // Use `2 * base_fee` as headroom, matching go-sila's
                     // `setLondonFeeDefaults`, so the transaction does not
@@ -618,7 +618,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
             self.find_signer(from)?
                 .sign_transaction(txn, from)
                 .await
-                .map_err(Self::Error::from_eth_err)
+                .map_err(Self::Error::from_sil_err)
         }
     }
 
@@ -633,7 +633,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
                 .find_signer(&account)?
                 .sign(account, &message)
                 .await
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .as_bytes()
                 .into())
         }
@@ -648,7 +648,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
         async move {
             let from = match request.as_ref().from() {
                 Some(from) => from,
-                None => return Err(SignError::NoAccount.into_eth_err()),
+                None => return Err(SignError::NoAccount.into_sil_err()),
             };
 
             Ok(self.sign_request(&from, request).await?.encoded_2718().into())
@@ -660,7 +660,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
         Ok(self
             .find_signer(&account)?
             .sign_typed_data(account, data)
-            .map_err(Self::Error::from_eth_err)?
+            .map_err(Self::Error::from_sil_err)?
             .as_bytes()
             .into())
     }
@@ -679,7 +679,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
             .iter()
             .find(|signer| signer.is_signer_for(account))
             .map(|signer| dyn_clone::clone_box(&**signer))
-            .ok_or_else(|| SignError::NoAccount.into_eth_err())
+            .ok_or_else(|| SignError::NoAccount.into_sil_err())
     }
 }
 
@@ -713,7 +713,7 @@ pub trait LoadTransaction: SpawnBlocking + FullEthApiTypes + RpcNodeCoreExt {
                 .spawn_blocking_io(move |this| {
                     this.provider()
                         .transaction_by_hash_with_meta(hash)
-                        .map_err(Self::Error::from_eth_err)
+                        .map_err(Self::Error::from_sil_err)
                 })
                 .await?
             {
@@ -796,7 +796,7 @@ pub trait LoadTransaction: SpawnBlocking + FullEthApiTypes + RpcNodeCoreExt {
                 .cache()
                 .get_recovered_block(block_hash)
                 .await
-                .map_err(Self::Error::from_eth_err)?;
+                .map_err(Self::Error::from_sil_err)?;
             Ok(block.map(|block| (transaction, block)))
         }
     }

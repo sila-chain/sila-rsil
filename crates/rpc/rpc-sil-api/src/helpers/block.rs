@@ -2,7 +2,7 @@
 
 use super::{LoadPendingBlock, LoadReceipt, SpawnBlocking};
 use crate::{
-    node::RpcNodeCoreExt, FromEthApiError, FullEthApiTypes, RpcBlock, RpcNodeCore, RpcReceipt,
+    node::RpcNodeCoreExt, FromSilApiError, FullEthApiTypes, RpcBlock, RpcNodeCore, RpcReceipt,
     SilApiTypes,
 };
 use alloy_consensus::{transaction::TxHashRef, TxReceipt};
@@ -165,7 +165,7 @@ pub trait SilBlocks: LoadBlock<RpcConvert: RpcConvert<Primitives = Self::Primiti
                 if let Some((block, receipts)) = self
                     .provider()
                     .pending_block_and_receipts()
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                 {
                     return Ok(Some((Arc::new(block), Arc::new(receipts))));
                 }
@@ -177,12 +177,12 @@ pub trait SilBlocks: LoadBlock<RpcConvert: RpcConvert<Primitives = Self::Primiti
             }
 
             if let Some(block_hash) =
-                self.provider().block_hash_for_id(block_id).map_err(Self::Error::from_eth_err)?
+                self.provider().block_hash_for_id(block_id).map_err(Self::Error::from_sil_err)?
                 && let Some((block, receipts)) = self
                     .cache()
                     .get_block_and_receipts(block_hash)
                     .await
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
             {
                 return Ok(Some((block, receipts)));
             }
@@ -270,7 +270,7 @@ pub trait LoadBlock: LoadPendingBlock + SpawnBlocking + RpcNodeCoreExt {
 
                 // Pending block can be fetched directly without need for caching
                 if let Some(pending_block) =
-                    self.provider().pending_block().map_err(Self::Error::from_eth_err)?
+                    self.provider().pending_block().map_err(Self::Error::from_sil_err)?
                 {
                     return Ok(Some(Arc::new(pending_block)));
                 }
@@ -285,13 +285,13 @@ pub trait LoadBlock: LoadPendingBlock + SpawnBlocking + RpcNodeCoreExt {
             let block_hash = match self
                 .provider()
                 .block_hash_for_id(block_id)
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
             {
                 Some(block_hash) => block_hash,
                 None => return Ok(None),
             };
 
-            self.cache().get_recovered_block(block_hash).await.map_err(Self::Error::from_eth_err)
+            self.cache().get_recovered_block(block_hash).await.map_err(Self::Error::from_sil_err)
         }
     }
 }

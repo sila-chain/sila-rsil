@@ -1222,7 +1222,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
         }
 
         let (multiplex_stream, their_status) = match multiplex_stream
-            .into_eth_satellite_stream(status, fork_filter, handshake, sil_max_message_size)
+            .into_sil_satellite_stream(status, fork_filter, handshake, sil_max_message_size)
             .await
         {
             Ok((multiplex_stream, their_status)) => (multiplex_stream, their_status),

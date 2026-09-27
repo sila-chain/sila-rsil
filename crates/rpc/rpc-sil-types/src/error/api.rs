@@ -11,18 +11,18 @@ use rsil_revm::db::bal::SavmDatabaseError;
 use super::RpcInvalidTransactionError;
 
 /// Helper trait to wrap core [`SilApiError`].
-pub trait FromEthApiError: From<SilApiError> {
+pub trait FromSilApiError: From<SilApiError> {
     /// Converts from error via [`SilApiError`].
-    fn from_eth_err<E>(err: E) -> Self
+    fn from_sil_err<E>(err: E) -> Self
     where
         SilApiError: From<E>;
 }
 
-impl<T> FromEthApiError for T
+impl<T> FromSilApiError for T
 where
     T: From<SilApiError>,
 {
-    fn from_eth_err<E>(err: E) -> Self
+    fn from_sil_err<E>(err: E) -> Self
     where
         SilApiError: From<E>,
     {
@@ -31,27 +31,27 @@ where
 }
 
 /// Helper trait to wrap core [`SilApiError`].
-pub trait IntoEthApiError: Into<SilApiError> {
+pub trait IntoSilApiError: Into<SilApiError> {
     /// Converts into error via [`SilApiError`].
-    fn into_eth_err<E>(self) -> E
+    fn into_sil_err<E>(self) -> E
     where
-        E: FromEthApiError;
+        E: FromSilApiError;
 }
 
-impl<T> IntoEthApiError for T
+impl<T> IntoSilApiError for T
 where
     SilApiError: From<T>,
 {
-    fn into_eth_err<E>(self) -> E
+    fn into_sil_err<E>(self) -> E
     where
-        E: FromEthApiError,
+        E: FromSilApiError,
     {
-        E::from_eth_err(self)
+        E::from_sil_err(self)
     }
 }
 
 /// Helper trait to access wrapped core error.
-pub trait AsEthApiError {
+pub trait AsSilApiError {
     /// Returns a reference to [`SilApiError`] if this is an error variant inherited from core
     /// functionality.
     fn as_err(&self) -> Option<&SilApiError>;
@@ -104,7 +104,7 @@ pub trait AsEthApiError {
     }
 }
 
-impl AsEthApiError for SilApiError {
+impl AsSilApiError for SilApiError {
     fn as_err(&self) -> Option<&SilApiError> {
         Some(self)
     }

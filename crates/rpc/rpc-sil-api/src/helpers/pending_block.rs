@@ -2,7 +2,7 @@
 //! RPC methods.
 
 use super::SpawnBlocking;
-use crate::{FromEthApiError, FromEvmError, RpcNodeCore, SilApiTypes};
+use crate::{FromSilApiError, FromEvmError, RpcNodeCore, SilApiTypes};
 use alloy_consensus::{BlockHeader, Transaction};
 use alloy_sips::eip7840::BlobParams;
 use alloy_primitives::{B256, U256};
@@ -65,7 +65,7 @@ pub trait LoadPendingBlock:
     /// If no pending block is available, this will derive it from the `latest` block
     fn pending_block_env_and_cfg(&self) -> Result<PendingBlockEnv<Self::Savm>, Self::Error> {
         if let Some((block, receipts)) =
-            self.provider().pending_block_and_receipts().map_err(Self::Error::from_eth_err)?
+            self.provider().pending_block_and_receipts().map_err(Self::Error::from_sil_err)?
         {
             // Note: for the PENDING block we assume it is past the known merge block and
             // thus this will not fail when looking up the total
@@ -74,7 +74,7 @@ pub trait LoadPendingBlock:
                 .evm_config()
                 .evm_env(block.header())
                 .map_err(RsilError::other)
-                .map_err(Self::Error::from_eth_err)?;
+                .map_err(Self::Error::from_sil_err)?;
 
             return Ok(PendingBlockEnv::new(
                 evm_env,
@@ -87,14 +87,14 @@ pub trait LoadPendingBlock:
         let latest = self
             .provider()
             .latest_header()
-            .map_err(Self::Error::from_eth_err)?
+            .map_err(Self::Error::from_sil_err)?
             .ok_or(SilApiError::HeaderNotFound(BlockNumberOrTag::Latest.into()))?;
 
         let evm_env = self
             .evm_config()
             .next_evm_env(&latest, &self.next_env_attributes(&latest)?)
             .map_err(RsilError::other)
-            .map_err(Self::Error::from_eth_err)?;
+            .map_err(Self::Error::from_sil_err)?;
 
         Ok(PendingBlockEnv::new(evm_env, PendingBlockEnvOrigin::DerivedFromLatest(latest)))
     }
@@ -122,7 +122,7 @@ pub trait LoadPendingBlock:
             let latest_historical = self
                 .provider()
                 .history_by_block_hash(pending_block.block().parent_hash())
-                .map_err(Self::Error::from_eth_err)?;
+                .map_err(Self::Error::from_sil_err)?;
 
             let state = BlockState::from(pending_block);
 
@@ -252,7 +252,7 @@ pub trait LoadPendingBlock:
         let state_provider = self
             .provider()
             .history_by_block_hash(parent.hash())
-            .map_err(Self::Error::from_eth_err)?;
+            .map_err(Self::Error::from_sil_err)?;
         let state = StateProviderDatabase::new(state_provider);
         let mut db = State::builder().with_database(state).with_bundle_update().build();
 
@@ -260,9 +260,9 @@ pub trait LoadPendingBlock:
             .evm_config()
             .builder_for_next_block(&mut db, parent, self.next_env_attributes(parent)?)
             .map_err(RsilError::other)
-            .map_err(Self::Error::from_eth_err)?;
+            .map_err(Self::Error::from_sil_err)?;
 
-        builder.apply_pre_execution_changes().map_err(Self::Error::from_eth_err)?;
+        builder.apply_pre_execution_changes().map_err(Self::Error::from_sil_err)?;
 
         let block_gas_limit: u64 = builder.savm().block().gas_limit();
         let is_amsterdam = self
@@ -406,7 +406,7 @@ pub trait LoadPendingBlock:
                             continue;
                         }
                         // this is an error that we should treat as fatal for this attempt
-                        Err(err) => return Err(Self::Error::from_eth_err(err)),
+                        Err(err) => return Err(Self::Error::from_sil_err(err)),
                     };
 
                 // add to the total blob gas used if the transaction successfully executed
@@ -428,7 +428,7 @@ pub trait LoadPendingBlock:
         }
 
         let BlockBuilderOutcome { execution_result, block, hashed_state, trie_updates, .. } =
-            builder.finish(NoopProvider::default(), None).map_err(Self::Error::from_eth_err)?;
+            builder.finish(NoopProvider::default(), None).map_err(Self::Error::from_sil_err)?;
 
         let execution_outcome =
             BlockExecutionOutput { state: db.take_bundle(), result: execution_result };

@@ -30,7 +30,7 @@ pub use node::{RpcNodeCore, RpcNodeCoreExt};
 pub use pubsub::SilPubSubApiServer;
 pub use rsil_rpc_convert::*;
 pub use rsil_rpc_sil_types::error::{
-    AsEthApiError, FromEthApiError, FromEvmError, IntoEthApiError,
+    AsSilApiError, FromSilApiError, FromEvmError, IntoSilApiError,
 };
 pub use types::{FullEthApiTypes, RpcBlock, RpcHeader, RpcReceipt, RpcTransaction, SilApiTypes};
 

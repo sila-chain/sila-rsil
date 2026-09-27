@@ -21,7 +21,7 @@ pub trait SilRlpxHandshake: Debug + Send + Sync + 'static {
     /// Perform the P2P handshake for the `sil` protocol.
     fn handshake<'a>(
         &'a self,
-        unauth: &'a mut dyn UnauthEth,
+        unauth: &'a mut dyn UnauthSil,
         status: UnifiedStatus,
         fork_filter: ForkFilter,
         timeout_limit: Duration,
@@ -29,7 +29,7 @@ pub trait SilRlpxHandshake: Debug + Send + Sync + 'static {
 }
 
 /// An unauthenticated stream that can send and receive messages.
-pub trait UnauthEth:
+pub trait UnauthSil:
     Stream<Item = Result<BytesMut, P2PStreamError>>
     + Sink<Bytes, Error = P2PStreamError>
     + CanDisconnect<Bytes>
@@ -38,7 +38,7 @@ pub trait UnauthEth:
 {
 }
 
-impl<T> UnauthEth for T where
+impl<T> UnauthSil for T where
     T: Stream<Item = Result<BytesMut, P2PStreamError>>
         + Sink<Bytes, Error = P2PStreamError>
         + CanDisconnect<Bytes>
@@ -57,13 +57,13 @@ pub struct SilHandshake;
 impl SilRlpxHandshake for SilHandshake {
     fn handshake<'a>(
         &'a self,
-        unauth: &'a mut dyn UnauthEth,
+        unauth: &'a mut dyn UnauthSil,
         status: UnifiedStatus,
         fork_filter: ForkFilter,
         timeout_limit: Duration,
     ) -> Pin<Box<dyn Future<Output = Result<UnifiedStatus, SilStreamError>> + 'a + Send>> {
         Box::pin(async move {
-            timeout(timeout_limit, SilaEthHandshake(unauth).eth_handshake(status, fork_filter))
+            timeout(timeout_limit, SilaSilHandshake(unauth).sil_handshake(status, fork_filter))
                 .await
                 .map_err(|_| SilStreamError::StreamTimeout)?
         })
@@ -72,15 +72,15 @@ impl SilRlpxHandshake for SilHandshake {
 
 /// A type that performs the sila specific `sil` protocol handshake.
 #[derive(Debug)]
-pub struct SilaEthHandshake<'a, S: ?Sized>(pub &'a mut S);
+pub struct SilaSilHandshake<'a, S: ?Sized>(pub &'a mut S);
 
-impl<S: ?Sized, E> SilaEthHandshake<'_, S>
+impl<S: ?Sized, E> SilaSilHandshake<'_, S>
 where
     S: Stream<Item = Result<BytesMut, E>> + CanDisconnect<Bytes> + Send + Unpin,
     SilStreamError: From<E> + From<<S as Sink<Bytes>>::Error>,
 {
     /// Performs the `sil` rlpx protocol handshake using the given input stream.
-    pub async fn eth_handshake(
+    pub async fn sil_handshake(
         self,
         unified_status: UnifiedStatus,
         fork_filter: ForkFilter,

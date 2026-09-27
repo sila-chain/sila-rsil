@@ -4,7 +4,7 @@
 use super::{LoadBlock, LoadFee, LoadReceipt, LoadState, SilApiSpec, SilSigner, SpawnBlocking};
 use crate::{
     helpers::{estimate::EstimateCall, spec::SignersForRpc},
-    FromSilApiError, FullEthApiTypes, IntoSilApiError, RpcNodeCore, RpcNodeCoreExt, RpcReceipt,
+    FromSilApiError, FullSilApiTypes, IntoSilApiError, RpcNodeCore, RpcNodeCoreExt, RpcReceipt,
     RpcTransaction,
 };
 use alloy_consensus::{
@@ -687,7 +687,7 @@ pub trait SilTransactions: LoadTransaction<Provider: BlockReaderIdExt> {
 ///
 /// Behaviour shared by several `eth_` RPC methods, not exclusive to `eth_` transactions RPC
 /// methods.
-pub trait LoadTransaction: SpawnBlocking + FullEthApiTypes + RpcNodeCoreExt {
+pub trait LoadTransaction: SpawnBlocking + FullSilApiTypes + RpcNodeCoreExt {
     /// Returns the transaction by hash.
     ///
     /// Checks the pool and state.

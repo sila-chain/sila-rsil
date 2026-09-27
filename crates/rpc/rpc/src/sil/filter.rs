@@ -19,7 +19,7 @@ use rsil_errors::ProviderError;
 use rsil_primitives_traits::{NodePrimitives, SealedHeader};
 use rsil_rpc_sil_api::{
     helpers::{LoadReceipt, SilBlocks},
-    EngineEthFilter, FullEthApiTypes, QueryLimits, RpcConvert, RpcNodeCoreExt, RpcTransaction,
+    EngineEthFilter, FullSilApiTypes, QueryLimits, RpcConvert, RpcNodeCoreExt, RpcTransaction,
     SilApiTypes, SilFilterApiServer,
 };
 use rsil_rpc_sil_types::{
@@ -50,7 +50,7 @@ use tracing::{debug, error, trace};
 
 impl<Sil> EngineEthFilter for SilFilter<Sil>
 where
-    Sil: FullEthApiTypes
+    Sil: FullSilApiTypes
         + RpcNodeCoreExt<Provider: BlockIdReader>
         + LoadReceipt
         + SilBlocks
@@ -201,7 +201,7 @@ where
 
 impl<Sil> SilFilter<Sil>
 where
-    Sil: FullEthApiTypes<Provider: BlockReader + BlockIdReader>
+    Sil: FullSilApiTypes<Provider: BlockReader + BlockIdReader>
         + RpcNodeCoreExt
         + LoadReceipt
         + SilBlocks
@@ -332,7 +332,7 @@ where
 #[async_trait]
 impl<Sil> SilFilterApiServer<RpcTransaction<Sil::NetworkTypes>> for SilFilter<Sil>
 where
-    Sil: FullEthApiTypes + RpcNodeCoreExt + LoadReceipt + SilBlocks + 'static,
+    Sil: FullSilApiTypes + RpcNodeCoreExt + LoadReceipt + SilBlocks + 'static,
 {
     /// Handler for `sil_newFilter`
     async fn new_filter(&self, filter: Filter) -> RpcResult<FilterId> {

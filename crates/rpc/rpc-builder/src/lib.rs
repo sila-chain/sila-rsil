@@ -49,7 +49,7 @@ use rsil_rpc_sil_api::{
         TraceExt,
     },
     node::RpcNodeCoreAdapter,
-    FullEthApiServer, FullEthApiTypes, RpcBlock, RpcConvert, RpcConverter, RpcHeader, RpcNodeCore,
+    FullSilApiServer, FullSilApiTypes, RpcBlock, RpcConvert, RpcConverter, RpcHeader, RpcNodeCore,
     RpcReceipt, RpcTransaction, RpcTxReq, SilApiServer, SilApiTypes,
 };
 use rsil_rpc_sil_types::{receipt::SilReceiptConverter, SilConfig, SilSubscriptionIdProvider};
@@ -342,7 +342,7 @@ where
         RpcRegistryInner<Provider, Pool, Network, SilApi, SavmConfig, Consensus>,
     )
     where
-        SilApi: FullEthApiServer<Provider = Provider, Pool = Pool>,
+        SilApi: FullSilApiServer<Provider = Provider, Pool = Pool>,
         Payload: PayloadTypes,
     {
         let config = module_config.config.clone().unwrap_or_default();
@@ -365,7 +365,7 @@ where
         engine_events: EventSender<ConsensusEngineEvent<N>>,
     ) -> RpcRegistryInner<Provider, Pool, Network, SilApi, SavmConfig, Consensus>
     where
-        SilApi: FullEthApiServer<Provider = Provider, Pool = Pool>,
+        SilApi: FullSilApiServer<Provider = Provider, Pool = Pool>,
     {
         let Self { provider, pool, network, executor, consensus, evm_config, .. } = self;
         let executor =
@@ -392,7 +392,7 @@ where
         engine_events: EventSender<ConsensusEngineEvent<N>>,
     ) -> TransportRpcModules<()>
     where
-        SilApi: FullEthApiServer<Provider = Provider, Pool = Pool>,
+        SilApi: FullSilApiServer<Provider = Provider, Pool = Pool>,
     {
         if module_config.is_empty() {
             TransportRpcModules::default()
@@ -522,7 +522,7 @@ where
         + 'static,
     Pool: Send + Sync + Clone + 'static,
     Network: Clone + 'static,
-    SilApi: FullEthApiTypes + 'static,
+    SilApi: FullSilApiTypes + 'static,
     SavmConfig: ConfigureEvm<Primitives = N>,
 {
     /// Creates a new, empty instance.
@@ -820,7 +820,7 @@ where
     /// If called outside of the tokio runtime. See also [`Self::eth_api`]
     pub fn debug_api(&self) -> DebugApi<SilApi>
     where
-        SilApi: FullEthApiTypes,
+        SilApi: FullSilApiTypes,
     {
         DebugApi::new(
             self.eth_api().clone(),
@@ -866,7 +866,7 @@ where
         + ChangeSetReader,
     Pool: TransactionPool + Clone + 'static,
     Network: NetworkInfo + Peers + Clone + 'static,
-    SilApi: FullEthApiServer,
+    SilApi: FullSilApiServer,
     SavmConfig: ConfigureEvm<Primitives = N> + 'static,
     Consensus: FullConsensus<N> + Clone + 'static,
 {

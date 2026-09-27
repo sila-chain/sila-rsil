@@ -17,4 +17,4 @@ pub use pubsub::SilPubSub;
 
 pub use helpers::{signer::DevSigner, sync_listener::SyncListener};
 
-pub use rsil_rpc_sil_api::{FullEthApiServer, RpcNodeCore, SilApiServer, SilApiTypes};
+pub use rsil_rpc_sil_api::{FullSilApiServer, RpcNodeCore, SilApiServer, SilApiTypes};

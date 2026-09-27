@@ -2,7 +2,7 @@
 
 use super::{LoadPendingBlock, LoadReceipt, SpawnBlocking};
 use crate::{
-    node::RpcNodeCoreExt, FromSilApiError, FullEthApiTypes, RpcBlock, RpcNodeCore, RpcReceipt,
+    node::RpcNodeCoreExt, FromSilApiError, FullSilApiTypes, RpcBlock, RpcNodeCore, RpcReceipt,
     SilApiTypes,
 };
 use alloy_consensus::{transaction::TxHashRef, TxReceipt};
@@ -37,7 +37,7 @@ pub trait SilBlocks: LoadBlock<RpcConvert: RpcConvert<Primitives = Self::Primiti
         block_id: BlockId,
     ) -> impl Future<Output = Result<Option<RpcHeader<Self::NetworkTypes>>, Self::Error>> + Send
     where
-        Self: FullEthApiTypes,
+        Self: FullSilApiTypes,
     {
         async move {
             let Some(block) = self.recovered_block(block_id).await? else { return Ok(None) };
@@ -57,7 +57,7 @@ pub trait SilBlocks: LoadBlock<RpcConvert: RpcConvert<Primitives = Self::Primiti
         full: bool,
     ) -> impl Future<Output = Result<Option<RpcBlock<Self::NetworkTypes>>, Self::Error>> + Send
     where
-        Self: FullEthApiTypes,
+        Self: FullSilApiTypes,
     {
         async move {
             let Some(block) = self.recovered_block(block_id).await? else { return Ok(None) };

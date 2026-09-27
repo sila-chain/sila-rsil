@@ -5,7 +5,7 @@ use core::fmt;
 
 use super::{LoadBlock, LoadPendingBlock, LoadState, LoadTransaction, SpawnBlocking, Trace};
 use crate::{
-    helpers::estimate::EstimateCall, FromEvmError, FullEthApiTypes, RpcBlock, RpcNodeCore,
+    helpers::estimate::EstimateCall, FromEvmError, FullSilApiTypes, RpcBlock, RpcNodeCore,
 };
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_sips::eip2930::AccessListResult;
@@ -53,7 +53,7 @@ pub type SimulatedBlocksResult<N, E> = Result<Vec<SimulatedBlock<RpcBlock<N>>>, 
 
 /// Execution related functions for the [`SilApiServer`](crate::SilApiServer) trait in
 /// the `eth_` namespace.
-pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthApiTypes {
+pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullSilApiTypes {
     /// Estimate gas needed for execution of the `request` at the [`BlockId`].
     fn estimate_gas_at(
         &self,

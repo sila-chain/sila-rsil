@@ -33,7 +33,7 @@ use rsil_node_core::{
 };
 use rsil_payload_builder::{PayloadBuilderHandle, PayloadStore};
 use rsil_rpc::{
-    sil::{core::SilRpcConverterFor, DevSigner, FullEthApiServer, SilApiTypes},
+    sil::{core::SilRpcConverterFor, DevSigner, FullSilApiServer, SilApiTypes},
     AdminApi,
 };
 use rsil_rpc_api::{sil::helpers::SilTransactions, IntoEngineApiRpcModule};
@@ -1322,7 +1322,7 @@ impl<'a, N: FullNodeComponents<Types: NodeTypes<ChainSpec: Hardforks + SilaHardf
 /// A `SilApi` that knows how to build `sil` namespace API from [`FullNodeComponents`].
 pub trait SilApiBuilder<N: FullNodeComponents>: Default + Send + 'static {
     /// The Ethapi implementation this builder will build.
-    type SilApi: FullEthApiServer<Provider = N::Provider, Pool = N::Pool>;
+    type SilApi: FullSilApiServer<Provider = N::Provider, Pool = N::Pool>;
 
     /// Builds the [`SilApiServer`](rsil_rpc_api::sil::SilApiServer) from the given context.
     fn build_eth_api(

@@ -5,7 +5,7 @@ use crate::{
 };
 use alloy_chains::Chain;
 use alloy_primitives::B256;
-use rsil_eth_wire_types::{snap::SnapProtocolError, SilVersion};
+use rsil_sil_wire_types::{snap::SnapProtocolError, SilVersion};
 use rsil_primitives_traits::{GotExpected, GotExpectedBoxed};
 use rsil_sila_forks::ValidationError;
 use std::io;

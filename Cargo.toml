@@ -598,7 +598,7 @@ secp256k1 = { version = "0.30", default-features = false, features = ["global-co
 rand_08 = { package = "rand", version = "0.8" }
 
 # for sip-4844
-c-kzg = { git = "https://github.com/sila-chain/c-kzg-4844", rev = "8e39b81310b79ea75e1fec943420b2627158ae54" }
+c-kzg = { git = "https://github.com/sila-chain/c-kzg-4844", rev = "6f03f03800dcd0d731b163bf62806b364298e6c2" }
 
 # config
 toml = "0.9"
@@ -695,4 +695,4 @@ vergen-git2 = "10.0.1"
 ipnet = "2.11"
 
 [patch.crates-io]
-c-kzg = { git = "https://github.com/sila-chain/c-kzg-4844", rev = "8e39b81310b79ea75e1fec943420b2627158ae54" }
+c-kzg = { git = "https://github.com/sila-chain/c-kzg-4844", rev = "6f03f03800dcd0d731b163bf62806b364298e6c2" }

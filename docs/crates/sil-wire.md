@@ -404,7 +404,7 @@ impl<S> UnauthedP2PStream<S> {
 }
 
 ```
-Similarly, `UnauthedEthStream` does the `Status` handshake and returns an `SilStream`. It accepts a `UnifiedStatus`
+Similarly, `UnauthedSilStream` does the `Status` handshake and returns an `SilStream`. It accepts a `UnifiedStatus`
 and a `ForkFilter`, and provides a timeout wrapper. The code is [here](../../crates/net/sil-wire/src/ethstream.rs)
 
 ### Multiplexing and satellites

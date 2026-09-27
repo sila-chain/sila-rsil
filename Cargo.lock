@@ -11147,7 +11147,7 @@ dependencies = [
 name = "rsil-trie-parallel"
 version = "2.4.0"
 dependencies = [
- "alloy-evm",
+ "rsil-savm",
  "alloy-primitives",
  "alloy-rlp",
  "crossbeam-channel",

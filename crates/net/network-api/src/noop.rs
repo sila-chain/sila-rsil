@@ -76,7 +76,7 @@ where
         Ok(NetworkStatus {
             client_version: "rsil-test".to_string(),
             protocol_version: ProtocolVersion::V5 as u64,
-            eth_protocol_info: SilProtocolInfo {
+            sil_protocol_info: SilProtocolInfo {
                 network: 1,
                 difficulty: None,
                 genesis: Default::default(),

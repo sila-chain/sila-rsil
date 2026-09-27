@@ -315,7 +315,7 @@ pub struct NetworkStatus {
     /// The current sila protocol version
     pub protocol_version: u64,
     /// Information about the Sila Wire Protocol.
-    pub eth_protocol_info: SilProtocolInfo,
+    pub sil_protocol_info: SilProtocolInfo,
     /// The list of supported capabilities and their versions.
     pub capabilities: Vec<Capability>,
 }

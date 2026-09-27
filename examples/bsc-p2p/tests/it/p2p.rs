@@ -31,7 +31,7 @@ async fn can_connect() {
         .set_head(head())
         .with_pow()
         .listener_addr(local_addr)
-        .eth_rlpx_handshake(Arc::new(BscHandshake::default()))
+        .sil_rlpx_handshake(Arc::new(BscHandshake::default()))
         .build(NoopProvider::sil(bsc_chain_spec()));
 
     let net_cfg = net_cfg.set_discovery_v4(

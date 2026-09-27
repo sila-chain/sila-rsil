@@ -8,7 +8,7 @@
 //! output state contains the expected account status after SELFDESTRUCT.
 
 use crate::utils::{eth_payload_attributes, eth_payload_attributes_shanghai};
-use alloy_network::{SilaWallet, TransactionBuilder};
+use alloy_network::{EthereumWallet as SilaWallet, TransactionBuilder};
 use alloy_primitives::{bytes, Address, Bytes, TxKind, U256};
 use alloy_provider::{Provider, ProviderBuilder};
 use alloy_rpc_types_eth::TransactionRequest;

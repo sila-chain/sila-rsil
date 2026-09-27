@@ -1,4 +1,4 @@
-use alloy_rpc_types_mev::{MevSendBundle, SilBundleHash, SimBundleOverrides, SimBundleResponse};
+use alloy_rpc_types_mev::{EthBundleHash as SilBundleHash, MevSendBundle, SimBundleOverrides, SimBundleResponse};
 use jsonrpsee::proc_macros::rpc;
 
 /// Mev rpc interface.

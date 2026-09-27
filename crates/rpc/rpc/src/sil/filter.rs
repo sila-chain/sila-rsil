@@ -1,7 +1,7 @@
 //! `eth_` `Filter` RPC handler implementation
 
 use alloy_consensus::BlockHeader;
-use alloy_eips::BlockNumberOrTag;
+use alloy_sips::BlockNumberOrTag;
 use alloy_primitives::{Sealable, TxHash};
 use alloy_rpc_types_sil::{
     BlockNumHash, Filter, FilterBlockOption, FilterChanges, FilterId, Log,
@@ -17,12 +17,12 @@ use itertools::Itertools;
 use jsonrpsee::{core::RpcResult, server::IdProvider};
 use rsil_errors::ProviderError;
 use rsil_primitives_traits::{NodePrimitives, SealedHeader};
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{LoadReceipt, SilBlocks},
     EngineEthFilter, FullEthApiTypes, QueryLimits, RpcConvert, RpcNodeCoreExt, RpcTransaction,
     SilApiTypes, SilFilterApiServer,
 };
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     logs_utils::{self, append_matching_block_logs, ProviderOrBlock},
     SilApiError, SilFilterConfig, SilStateCache, SilSubscriptionIdProvider,
 };
@@ -448,7 +448,7 @@ struct SilFilterInner<Sil: SilApiTypes> {
 impl<Sil> SilFilterInner<Sil>
 where
     Sil: RpcNodeCoreExt<Provider: BlockIdReader, Pool: TransactionPool>
-        + SilApiTypes<NetworkTypes: rsil_rpc_eth_api::types::RpcTypes>
+        + SilApiTypes<NetworkTypes: rsil_rpc_sil_api::types::RpcTypes>
         + LoadReceipt
         + SilBlocks
         + 'static,
@@ -1356,8 +1356,8 @@ mod tests {
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::test_utils::MockEthProvider;
     use rsil_rpc_convert::RpcConverter;
-    use rsil_rpc_eth_api::node::RpcNodeCoreAdapter;
-    use rsil_rpc_eth_types::receipt::SilReceiptConverter;
+    use rsil_rpc_sil_api::node::RpcNodeCoreAdapter;
+    use rsil_rpc_sil_types::receipt::SilReceiptConverter;
     use rsil_sila_primitives::TxType;
     use rsil_tasks::Runtime;
     use rsil_testing_utils::generators;

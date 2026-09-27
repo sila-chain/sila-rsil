@@ -1,7 +1,10 @@
 use alloy_eips::{sip2930::AccessListItem, sip7702::Authorization, BlockId, BlockNumberOrTag};
 use alloy_primitives::{bytes, Address, B256, U256};
 use alloy_provider::{
-    network::{NetworkWallet, Sila, SilaWallet, TransactionBuilder, TransactionBuilder7702},
+    network::{
+        Ethereum as Sila, EthereumWallet as SilaWallet, NetworkWallet, TransactionBuilder,
+        TransactionBuilder7702,
+    },
     Provider, ProviderBuilder, SendableTx,
 };
 use alloy_rpc_types_engine::PayloadAttributes;

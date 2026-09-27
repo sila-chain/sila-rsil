@@ -5,13 +5,13 @@ use crate::{
     RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use alloy_dyn_abi::TypedData;
-use alloy_eips::{sip2930::AccessListResult, BlockId, BlockNumberOrTag};
+use alloy_sips::{sip2930::AccessListResult, BlockId, BlockNumberOrTag};
 use alloy_json_rpc::RpcObject;
 use alloy_primitives::{Address, Bytes, B256, B64, U256, U64};
 use alloy_rpc_types_sil::{
     simulate::{SimulatePayload, SimulatedBlock},
-    state::{SavmOverrides, StateOverride},
-    BlockOverrides, Bundle, FeeHistory, Index, SIP1186AccountProofResponse, SilCallResponse,
+    state::{EvmOverrides as SavmOverrides, StateOverride},
+    BlockOverrides, Bundle, FeeHistory, Index, EIP1186AccountProofResponse as SIP1186AccountProofResponse, EthCallResponse as SilCallResponse,
     StateContext, SyncStatus, Work,
 };
 use alloy_serde::JsonStorageKey;

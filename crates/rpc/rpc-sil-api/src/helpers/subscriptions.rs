@@ -7,7 +7,7 @@ use futures::StreamExt;
 use rsil_chain_state::CanonStateSubscriptions;
 use rsil_primitives_traits::TransactionMeta;
 use rsil_rpc_convert::{transaction::ConvertReceiptInput, RpcHeader};
-use rsil_rpc_eth_types::logs_utils;
+use rsil_rpc_sil_types::logs_utils;
 use tracing::error;
 
 /// Provides streams subscriptions for `eth_subscribe`.

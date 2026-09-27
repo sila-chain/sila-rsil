@@ -1,7 +1,7 @@
 //! Loads fee history from database. Helper trait for `eth_` fee and transaction RPC methods.
 
 use super::LoadBlock;
-use crate::FromEthApiError;
+use crate::FromSilApiError;
 use alloy_consensus::BlockHeader;
 use alloy_sips::eip7840::BlobParams;
 use alloy_primitives::U256;
@@ -116,7 +116,7 @@ pub trait SilFees:
             // For explicit block numbers, validate against chain head before resolution
             if let BlockNumberOrTag::Number(requested) = newest_block {
                 let latest_block =
-                    self.provider().best_block_number().map_err(Self::Error::from_eth_err)?;
+                    self.provider().best_block_number().map_err(Self::Error::from_sil_err)?;
                 if requested > latest_block {
                     return Err(
                         SilApiError::RequestBeyondHead { requested, head: latest_block }.into()
@@ -127,7 +127,7 @@ pub trait SilFees:
             let end_block = self
                 .provider()
                 .block_number_for_id(newest_block.into())
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .ok_or(SilApiError::HeaderNotFound(newest_block.into()))?;
 
             // need to add 1 to the end block to get the correct (inclusive) range
@@ -198,7 +198,7 @@ pub trait SilFees:
                 let headers = self
                     .provider()
                     .sealed_headers_range(start_block..=end_block)
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
                 if headers.len() != block_count as usize {
                     return Err(SilApiError::InvalidBlockRange.into());
                 }
@@ -229,7 +229,7 @@ pub trait SilFees:
                         let header = &headers[header_idx];
                         header_idx += 1;
                         let (block, receipts) = result
-                            .map_err(Self::Error::from_eth_err)?
+                            .map_err(Self::Error::from_sil_err)?
                             .ok_or(SilApiError::InvalidBlockRange)?;
                         rewards.push(
                             calculate_reward_percentiles_for_block(
@@ -346,7 +346,7 @@ where
                     let latest = self
                         .provider()
                         .latest_header()
-                        .map_err(Self::Error::from_eth_err)?
+                        .map_err(Self::Error::from_sil_err)?
                         .ok_or(SilApiError::HeaderNotFound(BlockNumberOrTag::Latest.into()))?;
                     let pending_base_fee = self
                         .provider()
@@ -385,7 +385,7 @@ where
     /// See also: <https://github.com/sila-chain/pm/issues/328#issuecomment-853234014>
     fn gas_price(&self) -> impl Future<Output = Result<U256, Self::Error>> + Send {
         async move {
-            let header = self.provider().latest_header().map_err(Self::Error::from_eth_err)?;
+            let header = self.provider().latest_header().map_err(Self::Error::from_sil_err)?;
             let suggested_tip = self.suggested_priority_fee().await?;
             let base_fee = header.and_then(|h| h.base_fee_per_gas()).unwrap_or_default();
             Ok(suggested_tip + U256::from(base_fee))
@@ -397,7 +397,7 @@ where
         async move {
             self.provider()
                 .latest_header()
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .and_then(|h| {
                     h.maybe_next_block_blob_fee(
                         self.provider().chain_spec().blob_params_at_timestamp(h.timestamp()),
@@ -414,7 +414,7 @@ where
             let header = self
                 .provider()
                 .latest_header()
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .ok_or(SilApiError::HeaderNotFound(BlockNumberOrTag::Latest.into()))?;
             Ok(self
                 .provider()
@@ -429,6 +429,6 @@ where
     where
         Self: 'static,
     {
-        async move { self.gas_oracle().suggest_tip_cap().await.map_err(Self::Error::from_eth_err) }
+        async move { self.gas_oracle().suggest_tip_cap().await.map_err(Self::Error::from_sil_err) }
     }
 }

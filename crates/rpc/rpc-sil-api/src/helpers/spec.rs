@@ -1,14 +1,14 @@
 //! Loads chain metadata.
 
 use alloy_primitives::{U256, U64};
-use alloy_rpc_types_eth::{Stage, SyncInfo, SyncStatus};
+use alloy_rpc_types_sil::{Stage, SyncInfo, SyncStatus};
 use futures::Future;
 use rsil_chainspec::ChainInfo;
 use rsil_errors::{RsilError, RsilResult};
 use rsil_network_api::NetworkInfo;
 use rsil_prune_types::{PruneMode, PruneSegment};
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_types::{SilCapabilities, SilCapabilitiesHead, SilCapabilitiesResource};
+use rsil_rpc_sil_types::{SilCapabilities, SilCapabilitiesHead, SilCapabilitiesResource};
 use rsil_storage_api::{
     BlockNumReader, PruneCheckpointReader, StageCheckpointReader, TransactionsProvider,
 };

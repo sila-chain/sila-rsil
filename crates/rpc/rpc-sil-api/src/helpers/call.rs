@@ -38,7 +38,7 @@ use rsil_revm::{
     db::{bal::SavmDatabaseError, State},
 };
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     cache::db::StateProviderTraitObjWrapper,
     error::{AsSilApiError, FromSilApiError},
     simulate::{self, SilSimulateError},

@@ -1,7 +1,7 @@
 //! Loads a pending block from database. Helper trait for `eth_` call and trace RPC methods.
 
 use super::{Call, LoadBlock, LoadState, LoadTransaction};
-use crate::{FromEthApiError, FromEvmError};
+use crate::{FromSilApiError, FromEvmError};
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_primitives::B256;
 use alloy_rpc_types_sil::{BlockId, TransactionInfo};
@@ -416,9 +416,9 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
         self.evm_config()
             .executor_for_block(db, block.sealed_block())
             .map_err(RsilError::other)
-            .map_err(Self::Error::from_eth_err)?
+            .map_err(Self::Error::from_sil_err)?
             .apply_pre_execution_changes()
-            .map_err(Self::Error::from_eth_err)?;
+            .map_err(Self::Error::from_sil_err)?;
         Ok(())
     }
 }

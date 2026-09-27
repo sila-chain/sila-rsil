@@ -1,7 +1,7 @@
 //! Estimate gas needed implementation
 
 use super::{Call, LoadPendingBlock};
-use crate::{AsEthApiError, FromEthApiError, IntoEthApiError};
+use crate::{AsSilApiError, FromSilApiError, IntoSilApiError};
 use alloy_savm::overrides::{apply_block_overrides, apply_state_overrides};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{TxKind, U256};
@@ -23,7 +23,7 @@ use rsil_revm::{
     db::{bal::SavmDatabaseError, State},
 };
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     error::{
         api::{FromEvmHalt, FromRevert},
         FromEvmError,
@@ -90,7 +90,7 @@ pub trait EstimateCall: Call {
 
         // Apply any state overrides if specified.
         if let Some(state_override) = overrides.state {
-            apply_state_overrides(state_override, &mut db).map_err(Self::Error::from_eth_err)?;
+            apply_state_overrides(state_override, &mut db).map_err(Self::Error::from_sil_err)?;
         }
 
         // the gas limit of the corresponding block
@@ -185,7 +185,7 @@ pub trait EstimateCall: Call {
                 return Err(RpcInvalidTransactionError::GasRequiredExceedsAllowance {
                     gas_limit: tx_env.gas_limit(),
                 }
-                .into_eth_err());
+                .into_sil_err());
             }
             // Propagate other results (successful or other errors).
             ethres => ethres?,
@@ -345,7 +345,7 @@ pub trait EstimateCall: Call {
             ExecutionResult::Success { .. } => {
                 // Transaction succeeded by manually increasing the gas limit,
                 // which means the caller lacks funds to pay for the tx
-                Err(RpcInvalidTransactionError::BasicOutOfGas(req_gas_limit).into_eth_err())
+                Err(RpcInvalidTransactionError::BasicOutOfGas(req_gas_limit).into_sil_err())
             }
             ExecutionResult::Revert { output, .. } => {
                 // reverted again after bumping the limit

@@ -8,8 +8,8 @@ use alloy_consensus::{transaction::TransactionMeta, TxReceipt};
 use futures::Future;
 use rsil_primitives_traits::Recovered;
 use rsil_rpc_convert::{transaction::ConvertReceiptInput, RpcConvert};
-use rsil_rpc_eth_types::{
-    error::FromEthApiError, utils::calculate_gas_used_and_next_log_index, SilApiError,
+use rsil_rpc_sil_types::{
+    error::FromSilApiError, utils::calculate_gas_used_and_next_log_index, SilApiError,
 };
 use rsil_storage_api::{ProviderReceipt, ProviderTx};
 
@@ -38,7 +38,7 @@ pub trait LoadReceipt:
                     .cache()
                     .get_receipts(hash)
                     .await
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     .ok_or(SilApiError::HeaderNotFound(hash.into()))?,
             };
 

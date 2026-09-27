@@ -2,12 +2,12 @@
 use alloy_consensus::BlockHeader;
 use alloy_eip7928::{bal::DecodedBal, BlockAccessList};
 use alloy_primitives::Bytes;
-use alloy_rpc_types_eth::BlockId;
+use alloy_rpc_types_sil::BlockId;
 use rsil_errors::RsilError;
 use rsil_evm::{block::BlockExecutor, ConfigureEvm, Savm};
 use rsil_revm::{database::StateProviderDatabase, State};
-use rsil_rpc_eth_types::{
-    cache::db::StateProviderTraitObjWrapper, error::FromEthApiError, SilApiError,
+use rsil_rpc_sil_types::{
+    cache::db::StateProviderTraitObjWrapper, error::FromSilApiError, SilApiError,
 };
 use rsil_storage_api::StateProviderFactory;
 
@@ -30,11 +30,11 @@ pub trait GetBlockAccessList: Trace + Call + LoadBlock + RpcNodeCoreExt {
                 .ok_or_else(|| SilApiError::HeaderNotFound(block_id))?;
 
             if let Some(cached_bal) =
-                self.cache().get_bal(block.hash()).await.map_err(Self::Error::from_eth_err)?
+                self.cache().get_bal(block.hash()).await.map_err(Self::Error::from_sil_err)?
             {
                 let (bal, _) = DecodedBal::from_rlp_bytes(cached_bal.as_raw().clone())
                     .map_err(RsilError::other)
-                    .map_err(Self::Error::from_eth_err)?
+                    .map_err(Self::Error::from_sil_err)?
                     .split();
                 return Ok(Some(Vec::from(bal)));
             }
@@ -43,7 +43,7 @@ pub trait GetBlockAccessList: Trace + Call + LoadBlock + RpcNodeCoreExt {
                 let state = eth_api
                     .provider()
                     .state_by_block_id(block.parent_hash().into())
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
 
                 let mut db = State::builder()
                     .with_database(StateProviderDatabase::new(StateProviderTraitObjWrapper(state)))
@@ -54,14 +54,14 @@ pub trait GetBlockAccessList: Trace + Call + LoadBlock + RpcNodeCoreExt {
                 let mut executor = RpcNodeCore::evm_config(&eth_api)
                     .executor_for_block(&mut db, block.sealed_block())
                     .map_err(RsilError::other)
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
 
-                executor.apply_pre_execution_changes().map_err(Self::Error::from_eth_err)?;
+                executor.apply_pre_execution_changes().map_err(Self::Error::from_sil_err)?;
                 executor.evm_mut().db_mut().bump_bal_index();
 
                 // replay all transactions prior to the targeted transaction
                 for block_tx in block_txs {
-                    executor.execute_transaction(block_tx).map_err(Self::Error::from_eth_err)?;
+                    executor.execute_transaction(block_tx).map_err(Self::Error::from_sil_err)?;
                     executor.evm_mut().db_mut().bump_bal_index();
                 }
 
@@ -88,7 +88,7 @@ pub trait GetBlockAccessList: Trace + Call + LoadBlock + RpcNodeCoreExt {
                 .ok_or_else(|| SilApiError::HeaderNotFound(block_id))?;
 
             if let Some(cached_bal) =
-                self.cache().get_bal(block.hash()).await.map_err(Self::Error::from_eth_err)?
+                self.cache().get_bal(block.hash()).await.map_err(Self::Error::from_sil_err)?
             {
                 return Ok(Some(cached_bal.as_raw().clone()));
             }

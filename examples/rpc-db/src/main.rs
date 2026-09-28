@@ -72,7 +72,7 @@ async fn main() -> eyre::Result<()> {
         .with_evm_config(SilEvmConfig::new(spec.clone()))
         .with_consensus(SilBeaconConsensus::new(spec.clone()));
 
-    let eth_api = SilApiBuilder::new(
+    let sil_api = SilApiBuilder::new(
         provider.clone(),
         NoopTransactionPool::default(),
         NoopNetwork::default(),
@@ -83,7 +83,7 @@ async fn main() -> eyre::Result<()> {
     // Pick which namespaces to expose.
     let config = TransportRpcModuleConfig::default().with_http([RsilRpcModule::Sil]);
 
-    let mut server = rpc_builder.build(config, eth_api, Default::default());
+    let mut server = rpc_builder.build(config, sil_api, Default::default());
 
     // Add a custom rpc namespace
     let custom_rpc = MyRpcExt { provider };

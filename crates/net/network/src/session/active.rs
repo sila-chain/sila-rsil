@@ -1311,7 +1311,7 @@ impl<N: NetworkPrimitives> Drop for QueuedOutgoingMessages<N> {
 mod tests {
     use super::*;
     use crate::session::{handle::PendingSessionEvent, start_pending_incoming_session};
-    use alloy_sips::eip2124::ForkFilter;
+    use alloy_eips::eip2124::ForkFilter;
     use alloy_primitives::B256;
     use futures::task::noop_waker;
     use rsil_chainspec::SILA_MAINNET;

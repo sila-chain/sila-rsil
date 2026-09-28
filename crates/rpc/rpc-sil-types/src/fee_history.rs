@@ -7,7 +7,7 @@ use std::{
 };
 
 use alloy_consensus::{BlockHeader, Header, Transaction, TxReceipt};
-use alloy_eips::sip7840::BlobParams;
+use alloy_eips::eip7840::BlobParams;
 use alloy_rpc_types_eth::TxGasAndReward;
 use futures::{
     future::{Fuse, FusedFuture},
@@ -383,7 +383,7 @@ where
                 blob_params
                     .as_ref()
                     .map(|params| params.max_blob_gas_per_block())
-                    .unwrap_or(alloy_eips::sip4844::MAX_DATA_GAS_PER_BLOCK_DENCUN),
+                    .unwrap_or(alloy_eips::eip4844::MAX_DATA_GAS_PER_BLOCK_DENCUN),
             ),
             rewards: Vec::new(),
             blob_params,

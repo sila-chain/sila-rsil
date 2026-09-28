@@ -18,7 +18,7 @@ alloy-rlp = { workspace = true, features = ["arrayvec"] }
 alloy-trie = { workspace = true, features = ["ethereum"] }
 alloy-consensus.workspace = true
 rsil-primitives-traits.workspace = true
-rsil-codecs = { workspace = true, optional = true }
+reth-codecs = { version = "0.5.0", default-features = false, optional = true }
 
 alloy-rpc-types-sil = { workspace = true, optional = true }
 alloy-serde = { workspace = true, optional = true }
@@ -47,7 +47,7 @@ rayon = { workspace = true, optional = true }
 
 [dev-dependencies]
 rsil-primitives-traits = { workspace = true, features = ["serde"] }
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 alloy-sips.workspace = true
 alloy-genesis.workspace = true
 
@@ -84,7 +84,7 @@ std = [
     "serde_with?/std",
     "serde_json/std",
     "revm/std",
-    "rsil-codecs?/std",
+    "reth-codecs?/std",
     "alloy-sips/std",
 ]
 sip1186 = ["alloy-rpc-types-sil/serde", "dep:alloy-serde"]
@@ -98,11 +98,11 @@ serde = [
     "alloy-trie/serde",
     "alloy-rpc-types-sil?/serde",
     "rsil-primitives-traits/serde",
-    "rsil-codecs?/serde",
+    "reth-codecs?/serde",
     "revm/serde",
     "alloy-sips/serde",
 ]
-rsil-codec = ["dep:rsil-codecs", "dep:bytes", "dep:arrayvec"]
+rsil-codec = ["dep:reth-codecs", "dep:bytes", "dep:arrayvec"]
 serde-bincode-compat = [
     "serde",
     "alloy-consensus/serde-bincode-compat",
@@ -116,11 +116,11 @@ test-utils = [
     "dep:hash-db",
     "arbitrary",
     "rsil-primitives-traits/test-utils",
-    "rsil-codecs/test-utils",
+    "reth-codecs/test-utils",
 ]
 arbitrary = [
     "std",
-    "dep:rsil-codecs",
+    "dep:reth-codecs",
     "alloy-trie/arbitrary",
     "dep:arbitrary",
     "alloy-serde?/arbitrary",
@@ -128,7 +128,7 @@ arbitrary = [
     "alloy-consensus/arbitrary",
     "alloy-primitives/arbitrary",
     "nybbles/arbitrary",
-    "rsil-codecs/arbitrary",
+    "reth-codecs/arbitrary",
     "alloy-rpc-types-sil?/arbitrary",
     "alloy-sips/arbitrary",
     "revm/arbitrary",

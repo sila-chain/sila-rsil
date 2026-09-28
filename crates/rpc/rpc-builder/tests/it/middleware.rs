@@ -73,10 +73,10 @@ where
 #[tokio::test(flavor = "multi_thread")]
 async fn test_rpc_middleware() {
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let modules = builder.build(
         TransportRpcModuleConfig::set_http(RpcModuleSelection::All),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
 

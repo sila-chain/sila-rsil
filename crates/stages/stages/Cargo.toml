@@ -14,7 +14,7 @@ workspace = true
 [dependencies]
 # rsil
 rsil-chainspec.workspace = true
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-config.workspace = true
 rsil-consensus.workspace = true
 rsil-db.workspace = true
@@ -110,7 +110,7 @@ test-utils = [
     "rsil-downloaders/test-utils",
     "rsil-primitives-traits/test-utils",
     "rsil-revm/test-utils",
-    "rsil-codecs/test-utils",
+    "reth-codecs/test-utils",
     "rsil-db-api/test-utils",
     "rsil-trie-db/test-utils",
     "rsil-trie/test-utils",

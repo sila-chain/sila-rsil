@@ -1,6 +1,6 @@
 use crate::PipelineEvent;
 use alloy_eips::sip1898::BlockWithParent;
-use rsil_codecs::DecompressError;
+use reth_codecs::DecompressError;
 use rsil_consensus::ConsensusError;
 use rsil_errors::{BlockExecutionError, DatabaseError, RsilError};
 use rsil_network_p2p::error::DownloadError;

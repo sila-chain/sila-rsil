@@ -27,10 +27,10 @@ async fn test_http_addr_in_use() {
     let handle = launch_http(vec![RsilRpcModule::Admin]).await;
     let addr = handle.http_local_addr().unwrap();
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let server = builder.build(
         TransportRpcModuleConfig::set_http(vec![RsilRpcModule::Admin]),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
     let result =
@@ -44,10 +44,10 @@ async fn test_ws_addr_in_use() {
     let handle = launch_ws(vec![RsilRpcModule::Admin]).await;
     let addr = handle.ws_local_addr().unwrap();
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let server = builder.build(
         TransportRpcModuleConfig::set_ws(vec![RsilRpcModule::Admin]),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
     let result = RpcServerConfig::ws(Default::default()).with_ws_address(addr).start(&server).await;
@@ -66,11 +66,11 @@ async fn test_launch_same_port() {
 #[tokio::test(flavor = "multi_thread")]
 async fn test_launch_same_port_different_modules() {
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let server = builder.build(
         TransportRpcModuleConfig::set_ws(vec![RsilRpcModule::Admin])
             .with_http(vec![RsilRpcModule::Sil]),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
     let addr = test_address();
@@ -90,11 +90,11 @@ async fn test_launch_same_port_different_modules() {
 #[tokio::test(flavor = "multi_thread")]
 async fn test_launch_same_port_same_cors() {
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let server = builder.build(
         TransportRpcModuleConfig::set_ws(vec![RsilRpcModule::Sil])
             .with_http(vec![RsilRpcModule::Sil]),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
     let addr = test_address();
@@ -112,11 +112,11 @@ async fn test_launch_same_port_same_cors() {
 #[tokio::test(flavor = "multi_thread")]
 async fn test_launch_same_port_different_cors() {
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let server = builder.build(
         TransportRpcModuleConfig::set_ws(vec![RsilRpcModule::Sil])
             .with_http(vec![RsilRpcModule::Sil]),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
     let addr = test_address();

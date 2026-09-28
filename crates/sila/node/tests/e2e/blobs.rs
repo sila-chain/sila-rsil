@@ -1,4 +1,4 @@
-use crate::utils::eth_payload_attributes;
+use crate::utils::sil_payload_attributes;
 use alloy_eips::Decodable2718;
 use alloy_genesis::Genesis;
 use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
@@ -41,7 +41,7 @@ async fn can_handle_blobs() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallets = Wallet::new(2).wallet_gen();
     let blob_wallet = wallets.first().unwrap();
@@ -114,7 +114,7 @@ async fn can_send_legacy_sidecar_post_activation() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallets = Wallet::new(2).wallet_gen();
     let blob_wallet = wallets.first().unwrap();
@@ -176,7 +176,7 @@ async fn blob_conversion_at_osaka() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let mut wallets = Wallet::new(3).wallet_gen();
     let first = wallets.pop().unwrap();

@@ -4,7 +4,7 @@ use alloc::vec::Vec;
 use alloy_primitives::{Bytes, B256};
 use alloy_rlp::{RlpDecodableWrapper, RlpEncodableWrapper};
 use derive_more::{Deref, IntoIterator};
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// A request for state tree nodes corresponding to the given hashes.
 /// This message was removed in `sil/67`, only clients running `sil/66` or earlier will respond to

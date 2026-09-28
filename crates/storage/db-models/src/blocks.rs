@@ -79,6 +79,7 @@ rsil_codecs::impl_compression_for_compact!(StoredBlockBodyIndices);
 #[derive(Debug, Default, Eq, PartialEq, Clone)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StoredBlockWithdrawals {

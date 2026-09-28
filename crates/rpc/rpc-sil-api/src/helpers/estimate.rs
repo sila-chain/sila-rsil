@@ -2,10 +2,10 @@
 
 use super::{Call, LoadPendingBlock};
 use crate::{AsSilApiError, FromSilApiError, IntoSilApiError};
-use alloy_savm::overrides::{apply_block_overrides, apply_state_overrides};
+use alloy_evm::overrides::{apply_block_overrides, apply_state_overrides};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{TxKind, U256};
-use alloy_rpc_types_sil::{state::SavmOverrides, BlockId};
+use alloy_rpc_types_eth::{state::SavmOverrides, BlockId};
 use futures::Future;
 use revm::{
     context::Block,
@@ -20,7 +20,7 @@ use rsil_savm::{
 };
 use rsil_revm::{
     database::{SavmStateProvider, StateProviderDatabase},
-    db::{bal::SavmDatabaseError, State},
+    db::{bal::EvmDatabaseError, State},
 };
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
 use rsil_rpc_sil_types::{
@@ -333,7 +333,7 @@ pub trait EstimateCall: Call {
         max_gas_limit: u64,
     ) -> Result<U256, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>>,
+        DB: Database<Error = EvmDatabaseError<ProviderError>>,
         SilApiError: From<DB::Error>,
     {
         let req_gas_limit = tx_env.gas_limit();

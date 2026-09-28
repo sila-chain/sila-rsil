@@ -27,7 +27,6 @@ jobs:
         shell: bash
         run: |
           p_identity='Ethe''reum|ethe''reum|ETHE''REUM|Eth''[A-Z0-9_][A-Za-z0-9_]*|eth''_[A-Za-z0-9_]*|eth''::|EI''P[-_0-9A-Za-z]*|ei''p[0-9][A-Za-z0-9_]*|ei''p_'
-          p_ecosystem='re''th[-_A-Za-z0-9]*|al''loy[-_A-Za-z0-9]*|re''vm[c_A-Za-z0-9-]*|ethe''reum_ssz|sigp/discv5|ethdisco'
           content_matches="$(git grep -nE "($p_identity)" -- . || true)"
           p_path='(^|/)(et''h|ethe''reum|ei''p)([^/]*)($|/)'
           path_matches="$(git ls-files | grep -Ei "$p_path" || true)"

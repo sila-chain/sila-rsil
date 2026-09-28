@@ -6,7 +6,7 @@ use crate::{FromSilApiError, RpcNodeCore, RpcNodeCoreExt, SilApiTypes};
 use alloy_consensus::constants::KECCAK_EMPTY;
 use alloy_eips::BlockId;
 use alloy_primitives::{Address, Bytes, B256, U256};
-use alloy_rpc_types_sil::{Account, AccountInfo, SIP1186AccountProofResponse};
+use alloy_rpc_types_eth::{Account, AccountInfo, SIP1186AccountProofResponse};
 use alloy_serde::JsonStorageKey;
 use futures::Future;
 use rsil_errors::RsilError;

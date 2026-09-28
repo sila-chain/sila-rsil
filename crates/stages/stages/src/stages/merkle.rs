@@ -1,6 +1,6 @@
 use alloy_consensus::{constants::KECCAK_EMPTY, BlockHeader};
 use alloy_primitives::{BlockNumber, Sealable, B256};
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_consensus::ConsensusError;
 use rsil_db_api::{
     tables,

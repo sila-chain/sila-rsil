@@ -6,7 +6,7 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
-pub use reth_codecs::{Compress, Decompress};
+pub use rsil_codecs::{Compress, Decompress};
 
 /// Trait for converting encoded types to `Vec<u8>`.
 ///

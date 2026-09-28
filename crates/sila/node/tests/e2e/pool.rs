@@ -1,4 +1,4 @@
-use crate::utils::eth_payload_attributes;
+use crate::utils::sil_payload_attributes;
 use alloy_consensus::{SilaTxEnvelope, TxEip4844};
 use alloy_eips::{sip1559::SILA_BLOCK_GAS_LIMIT_30M, Encodable2718};
 use alloy_genesis::Genesis;
@@ -52,7 +52,7 @@ async fn maintain_txpool_stale_eviction() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallet = Wallet::default();
 
@@ -126,7 +126,7 @@ async fn maintain_txpool_reorg() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallets = Wallet::new(2).wallet_gen();
     let w1 = wallets.first().unwrap();
@@ -253,7 +253,7 @@ async fn maintain_txpool_commit() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallet = Wallet::default();
 

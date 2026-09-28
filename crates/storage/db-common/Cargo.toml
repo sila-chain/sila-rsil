@@ -17,7 +17,7 @@ rsil-config.workspace = true
 rsil-trie.workspace = true
 rsil-trie-db.workspace = true
 rsil-etl.workspace = true
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-stages-types.workspace = true
 rsil-fs-util.workspace = true
 rsil-node-types.workspace = true

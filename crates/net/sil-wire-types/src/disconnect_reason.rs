@@ -3,7 +3,7 @@
 use alloy_primitives::bytes::{Buf, BufMut};
 use alloy_rlp::{Decodable, Encodable, Header};
 use derive_more::Display;
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 use thiserror::Error;
 
 /// `RLPx` disconnect reason.

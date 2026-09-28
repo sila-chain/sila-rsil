@@ -575,7 +575,7 @@ mod tests {
     use alloy_eips::BlockNumberOrTag;
     use alloy_primitives::{Signature, B256, U64};
     use alloy_rpc_types::FeeHistory;
-    use alloy_rpc_types_sil::{Bundle, TransactionRequest};
+    use alloy_rpc_types_eth::{Bundle, TransactionRequest};
     use jsonrpsee_types::error::INVALID_PARAMS_CODE;
     use rand::Rng;
     use rsil_chain_state::CanonStateSubscriptions;

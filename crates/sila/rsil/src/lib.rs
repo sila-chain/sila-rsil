@@ -93,7 +93,7 @@ pub mod provider {
 
 /// Re-exported codec crate
 #[cfg(feature = "provider")]
-pub use rsil_codecs as codec;
+pub use reth_codecs as codec;
 
 /// Re-exported rsil storage api types
 #[cfg(feature = "storage-api")]

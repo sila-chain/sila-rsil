@@ -14,7 +14,7 @@ workspace = true
 [dependencies]
 # rsil
 rsil-chainspec.workspace = true
-rsil-codecs-derive.workspace = true
+reth-codecs-derive = "0.5.0"
 rsil-sila-primitives.workspace = true
 rsil-primitives-traits.workspace = true
 

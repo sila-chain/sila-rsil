@@ -19,7 +19,7 @@ use rsil_network_p2p::{
     BlockAccessListsClient,
 };
 use rsil_provider::{
-    test_utils::MockEthProvider, BalNotificationStream, BalStore, BalStoreHandle, InMemoryBalStore,
+    test_utils::MockSilProvider, BalNotificationStream, BalStore, BalStoreHandle, InMemoryBalStore,
     ProviderError, ProviderResult, RawBal,
 };
 use rsil_sila_primitives::Block;
@@ -27,13 +27,13 @@ use rsil_transaction_pool::test_utils::{TestPool, TransactionGenerator};
 use std::sync::Arc;
 use tokio::sync::oneshot;
 
-type BalTestnetHandle = TestnetHandle<Arc<MockEthProvider>, TestPool>;
+type BalTestnetHandle = TestnetHandle<Arc<MockSilProvider>, TestPool>;
 
 #[tokio::test(flavor = "multi_thread")]
 async fn test_get_body() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
     let mut tx_gen = TransactionGenerator::new(rand::rng());
 
     let mut net = Testnet::create_with(2, mock_provider.clone()).await;
@@ -76,7 +76,7 @@ async fn test_get_body() {
 async fn test_get_body_range() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
     let mut tx_gen = TransactionGenerator::new(rand::rng());
 
     let mut net = Testnet::create_with(2, mock_provider.clone()).await;
@@ -130,7 +130,7 @@ async fn test_get_body_range() {
 async fn test_get_header() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
 
     let mut net = Testnet::create_with(2, mock_provider.clone()).await;
 
@@ -176,7 +176,7 @@ async fn test_get_header() {
 async fn test_get_header_range() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
 
     let mut net = Testnet::create_with(2, mock_provider.clone()).await;
 
@@ -234,7 +234,7 @@ async fn test_get_header_range() {
 async fn test_get_header_range_falling() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
 
     let mut net = Testnet::create_with(2, mock_provider.clone()).await;
 
@@ -294,9 +294,9 @@ async fn test_get_header_range_falling() {
 async fn test_eth68_get_receipts() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
 
-    let mut net: Testnet<Arc<MockEthProvider>, TestPool> = Testnet::default();
+    let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
     // Create peers with ETH68 protocol explicitly
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil68.into()));
@@ -365,9 +365,9 @@ async fn test_eth68_get_receipts() {
 async fn test_eth69_get_headers() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
 
-    let mut net: Testnet<Arc<MockEthProvider>, TestPool> = Testnet::default();
+    let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
     // Create peers with ETH69 protocol
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil69.into()));
@@ -417,10 +417,10 @@ async fn test_eth69_get_headers() {
 async fn test_eth69_get_bodies() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
     let mut tx_gen = TransactionGenerator::new(rand::rng());
 
-    let mut net: Testnet<Arc<MockEthProvider>, TestPool> = Testnet::default();
+    let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
     // Create peers with ETH69 protocol
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil69.into()));
@@ -466,9 +466,9 @@ async fn test_eth69_get_bodies() {
 async fn test_eth69_get_receipts() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
-    let mock_provider = Arc::new(MockEthProvider::default());
+    let mock_provider = Arc::new(MockSilProvider::default());
 
-    let mut net: Testnet<Arc<MockEthProvider>, TestPool> = Testnet::default();
+    let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
     // Create peers with ETH69 protocol
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil69.into()));
@@ -690,11 +690,11 @@ async fn spawn_bal_testnet_with_store(
     versions: impl IntoIterator<Item = SilVersion>,
     bal_store: BalStoreHandle,
 ) -> (BalTestnetHandle, BalStoreHandle) {
-    let mut mock_provider = MockEthProvider::default();
+    let mut mock_provider = MockSilProvider::default();
     mock_provider.bal_store = bal_store.clone();
     let mock_provider = Arc::new(mock_provider);
 
-    let mut net: Testnet<Arc<MockEthProvider>, TestPool> = Testnet::default();
+    let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
     for version in versions {
         let peer = PeerConfig::with_protocols(mock_provider.clone(), Some(version.into()));

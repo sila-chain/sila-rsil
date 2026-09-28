@@ -1178,7 +1178,7 @@ mod tests {
     use super::*;
     use alloy_primitives::{map::HashMap, U256};
     use revm::state::AccountInfo;
-    use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
+    use rsil_provider::test_utils::{ExtendedAccount, MockSilProvider};
     use rsil_revm::db::{AccountStatus, BundleAccount};
 
     #[test]
@@ -1187,7 +1187,7 @@ mod tests {
         let storage_key = StorageKey::random();
         let account = ExtendedAccount::new(0, U256::ZERO);
 
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         provider.extend_accounts(vec![(address, account)]);
 
         let caches = ExecutionCache::new(1000);
@@ -1210,7 +1210,7 @@ mod tests {
         let account =
             ExtendedAccount::new(0, U256::ZERO).extend_storage(vec![(storage_key, storage_value)]);
 
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         provider.extend_accounts(vec![(address, account)]);
 
         let caches = ExecutionCache::new(1000);

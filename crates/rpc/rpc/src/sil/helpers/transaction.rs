@@ -141,7 +141,7 @@ mod tests {
     use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
-        test_utils::{ExtendedAccount, MockEthProvider},
+        test_utils::{ExtendedAccount, MockSilProvider},
         ChainSpecProvider,
     };
     use rsil_rpc_sil_api::node::RpcNodeCoreAdapter;
@@ -153,7 +153,7 @@ mod tests {
     fn mock_eth_api(
         accounts: AddressMap<ExtendedAccount>,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
         mock_eth_api_with_sync_timeout(accounts, Duration::from_secs(30))
@@ -163,10 +163,10 @@ mod tests {
         accounts: AddressMap<ExtendedAccount>,
         send_raw_transaction_sync_timeout: Duration,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
-        let mock_provider = MockEthProvider::default()
+        let mock_provider = MockSilProvider::default()
             .with_chain_spec(ChainSpecBuilder::sila_mainnet().cancun_activated().build());
         mock_provider.extend_accounts(accounts);
 

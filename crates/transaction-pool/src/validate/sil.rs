@@ -1517,7 +1517,7 @@ mod tests {
     use revm::primitives::sip3860::MAX_INITCODE_SIZE;
     use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::SignedTransaction;
-    use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
+    use rsil_provider::test_utils::{ExtendedAccount, MockSilProvider};
     use rsil_sila_primitives::PooledTransactionVariant;
 
     fn test_evm_config() -> SilEvmConfig {
@@ -1555,7 +1555,7 @@ mod tests {
         let res = ensure_intrinsic_gas(&transaction, &fork_tracker);
         assert!(res.is_ok());
 
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1579,7 +1579,7 @@ mod tests {
 
     #[test]
     fn validates_configured_chain_id() {
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         let validator = SilTransactionValidatorBuilder::new(provider, test_evm_config())
             .build(InMemoryBlobStore::default());
         let transaction = |chain_id| {
@@ -1612,7 +1612,7 @@ mod tests {
     async fn invalid_on_gas_limit_too_high() {
         let transaction = get_transaction();
 
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1645,7 +1645,7 @@ mod tests {
     #[tokio::test]
     async fn invalid_on_fee_cap_exceeded() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1682,7 +1682,7 @@ mod tests {
     #[tokio::test]
     async fn valid_on_zero_fee_cap() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1700,7 +1700,7 @@ mod tests {
     #[tokio::test]
     async fn valid_on_normal_fee_cap() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1718,7 +1718,7 @@ mod tests {
     #[tokio::test]
     async fn invalid_on_max_tx_gas_limit_exceeded() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1750,7 +1750,7 @@ mod tests {
     #[tokio::test]
     async fn valid_on_max_tx_gas_limit_disabled() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1768,7 +1768,7 @@ mod tests {
     #[tokio::test]
     async fn valid_on_max_tx_gas_limit_within_limit() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1784,9 +1784,9 @@ mod tests {
     }
 
     // Helper function to set up common test infrastructure for priority fee tests
-    fn setup_priority_fee_test() -> (SilPooledTransaction, MockEthProvider) {
+    fn setup_priority_fee_test() -> (SilPooledTransaction, MockSilProvider) {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1796,10 +1796,10 @@ mod tests {
 
     // Helper function to create a validator with minimum priority fee
     fn create_validator_with_minimum_fee(
-        provider: MockEthProvider,
+        provider: MockSilProvider,
         minimum_priority_fee: Option<u128>,
         local_config: Option<LocalTransactionConfig>,
-    ) -> SilTransactionValidator<MockEthProvider, SilPooledTransaction, SilEvmConfig> {
+    ) -> SilTransactionValidator<MockSilProvider, SilPooledTransaction, SilEvmConfig> {
         let blob_store = InMemoryBlobStore::default();
         let mut builder = SilTransactionValidatorBuilder::new(provider, test_evm_config())
             .with_minimum_priority_fee(minimum_priority_fee);
@@ -1956,7 +1956,7 @@ mod tests {
     fn reject_oversized_tx() {
         let mut transaction = get_transaction();
         transaction.encoded_length = DEFAULT_MAX_TX_INPUT_BYTES + 1;
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
 
         // No minimum priority fee set (default is None)
         let validator = create_validator_with_minimum_fee(provider, None, None);
@@ -1969,7 +1969,7 @@ mod tests {
     #[test]
     fn reject_blob_tx_with_oversized_access_list() {
         let max_tx_input_bytes = 512;
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         let validator = SilTransactionValidatorBuilder::new(provider, test_evm_config())
             .with_max_tx_input_bytes(max_tx_input_bytes)
             .build(InMemoryBlobStore::default());
@@ -2006,7 +2006,7 @@ mod tests {
     #[tokio::test]
     async fn valid_with_disabled_balance_check() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
 
         // Set account with 0 balance
         provider.add_account(

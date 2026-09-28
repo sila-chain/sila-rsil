@@ -1354,7 +1354,7 @@ mod tests {
     use rsil_chainspec::{ChainSpec, ChainSpecProvider};
     use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
-    use rsil_provider::test_utils::MockEthProvider;
+    use rsil_provider::test_utils::MockSilProvider;
     use rsil_rpc_convert::RpcConverter;
     use rsil_rpc_sil_api::node::RpcNodeCoreAdapter;
     use rsil_rpc_sil_types::receipt::SilReceiptConverter;
@@ -1389,9 +1389,9 @@ mod tests {
     // Helper function to create a test SilApi instance
     #[expect(clippy::type_complexity)]
     fn build_test_eth_api(
-        provider: MockEthProvider,
+        provider: MockSilProvider,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         RpcConverter<Sila, SilEvmConfig, SilReceiptConverter<ChainSpec>>,
     > {
         SilApiBuilder::new(
@@ -1405,7 +1405,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_range_block_mode_empty_range() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         let eth_api = build_test_eth_api(provider);
 
         let eth_filter =
@@ -1430,7 +1430,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_range_block_mode_queued_results_priority() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         let eth_api = build_test_eth_api(provider);
 
         let eth_filter =
@@ -1545,7 +1545,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_range_block_mode_single_block_no_receipts() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         let eth_api = build_test_eth_api(provider);
 
         let eth_filter =
@@ -1571,7 +1571,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_range_block_mode_provider_receipts() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
 
         let header_1 = alloy_consensus::Header { number: 100, ..Default::default() };
         let header_2 = alloy_consensus::Header { number: 101, ..Default::default() };
@@ -1682,7 +1682,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_range_block_mode_iterator_exhaustion() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
 
         let header_100 = alloy_consensus::Header { number: 100, ..Default::default() };
         let header_101 = alloy_consensus::Header { number: 101, ..Default::default() };
@@ -1769,7 +1769,7 @@ mod tests {
             success: true,
         };
 
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         provider.add_header(test_hash, test_header.header().clone());
         provider.add_receipts(test_block_number, vec![mock_receipt.clone()]);
 
@@ -1803,7 +1803,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_cached_mode_empty_headers() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
         let eth_api = build_test_eth_api(provider);
 
         let eth_filter =
@@ -1821,7 +1821,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_log_limit_retry_range_excludes_overflow_block() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
 
         use alloy_consensus::TxLegacy;
         use rsil_db_api::models::StoredBlockBodyIndices;
@@ -1902,7 +1902,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_non_consecutive_headers_after_bloom_filter() {
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
 
         // Create 4 headers where only blocks 100 and 102 will match bloom filter
         let mut expected_hashes = vec![];

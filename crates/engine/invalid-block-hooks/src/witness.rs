@@ -420,7 +420,7 @@ mod tests {
     use revm::database::states::reverts::AccountRevert;
     use rsil_chainspec::ChainSpec;
     use rsil_savm_sila::SilEvmConfig;
-    use rsil_provider::test_utils::MockEthProvider;
+    use rsil_provider::test_utils::MockSilProvider;
     use rsil_revm::db::{BundleAccount, BundleState};
     use rsil_sila_primitives::SilPrimitives;
     use tempfile::TempDir;
@@ -598,14 +598,14 @@ mod tests {
 
     /// Creates test `InvalidBlockWitnessHook` with temporary directory
     fn create_test_hook() -> (
-        InvalidBlockWitnessHook<MockEthProvider<SilPrimitives, ChainSpec>, SilEvmConfig>,
+        InvalidBlockWitnessHook<MockSilProvider<SilPrimitives, ChainSpec>, SilEvmConfig>,
         PathBuf,
         TempDir,
     ) {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
         let output_directory = temp_dir.path().to_path_buf();
 
-        let provider = MockEthProvider::<SilPrimitives, ChainSpec>::default();
+        let provider = MockSilProvider::<SilPrimitives, ChainSpec>::default();
         let evm_config = SilEvmConfig::sila_mainnet();
 
         let hook =
@@ -675,8 +675,8 @@ mod tests {
 
     #[test]
     fn test_proof_generator_generate() {
-        // Use existing MockEthProvider
-        let mock_provider = MockEthProvider::default();
+        // Use existing MockSilProvider
+        let mock_provider = MockSilProvider::default();
         let state_provider: Box<dyn StateProvider> = Box::new(mock_provider);
 
         // Mock Data
@@ -697,7 +697,7 @@ mod tests {
         assert!(result.is_ok(), "generate function should succeed");
         let execution_witness = result.unwrap();
 
-        assert!(execution_witness.state.is_empty(), "State should be empty from MockEthProvider");
+        assert!(execution_witness.state.is_empty(), "State should be empty from MockSilProvider");
 
         let expected_codes: Vec<Bytes> = codes.into_values().collect();
         assert_eq!(

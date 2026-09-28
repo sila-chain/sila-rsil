@@ -25,7 +25,7 @@ use rsil_engine_primitives::{EngineApiValidator, ForkchoiceStatus, NoopInvalidBl
 use rsil_savm_sila::MockEvmConfig;
 use rsil_payload_builder::PayloadServiceCommand;
 use rsil_primitives_traits::Block as _;
-use rsil_provider::{test_utils::MockEthProvider, BalStoreHandle, InMemoryBalStore, RawBal};
+use rsil_provider::{test_utils::MockSilProvider, BalStoreHandle, InMemoryBalStore, RawBal};
 use rsil_sila_consensus::SilBeaconConsensus;
 use rsil_sila_engine_primitives::{SilEngineTypes, SilPayloadAttributes};
 use rsil_sila_primitives::{Block, SilPrimitives};
@@ -144,9 +144,9 @@ impl TestChannelHandle {
 struct TestHarness {
     tree: EngineApiTreeHandler<
         SilPrimitives,
-        MockEthProvider,
+        MockSilProvider,
         SilEngineTypes,
-        BasicEngineValidator<MockEthProvider, MockEvmConfig, MockEngineValidator>,
+        BasicEngineValidator<MockSilProvider, MockEvmConfig, MockEngineValidator>,
         MockEvmConfig,
     >,
     to_tree_tx: crossbeam_channel::Sender<
@@ -157,7 +157,7 @@ struct TestHarness {
     blocks: Vec<ExecutedBlock>,
     action_rx: Receiver<PersistenceAction>,
     block_builder: TestBlockBuilder,
-    provider: MockEthProvider,
+    provider: MockSilProvider,
 }
 
 impl TestHarness {
@@ -200,7 +200,7 @@ impl TestHarness {
 
         let consensus = Arc::new(SilBeaconConsensus::new(chain_spec.clone()));
 
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
 
         let payload_validator = MockEngineValidator;
 
@@ -418,7 +418,7 @@ pub(crate) struct ValidatorTestHarness {
     /// Basic test harness
     harness: TestHarness,
     /// Direct access to validator for `validate_block_with_state` calls
-    validator: BasicEngineValidator<MockEthProvider, MockEvmConfig, MockEngineValidator>,
+    validator: BasicEngineValidator<MockSilProvider, MockEvmConfig, MockEngineValidator>,
     /// Simple validation metrics
     metrics: TestMetrics,
 }

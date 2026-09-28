@@ -10,7 +10,7 @@ use rsil_network::{
     NetworkEvent, NetworkEventListenerProvider, Peers,
 };
 use rsil_network_api::{events::PeerEvent, PeerKind, PeersInfo};
-use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
+use rsil_provider::test_utils::{ExtendedAccount, MockSilProvider};
 use rsil_sila_primitives::TransactionSigned;
 use rsil_transaction_pool::{
     test_utils::TransactionGenerator, AddedTransactionOutcome, PoolTransaction, TransactionPool,
@@ -22,7 +22,7 @@ use tokio::join;
 async fn test_tx_gossip() {
     rsil_tracing::init_test_tracing();
 
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
     let net = Testnet::create_with(2, provider.clone()).await;
 
     // install request handlers
@@ -61,7 +61,7 @@ async fn test_tx_gossip() {
 async fn test_tx_propagation_policy_trusted_only() {
     rsil_tracing::init_test_tracing();
 
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
 
     let policy = TransactionPropagationKind::Trusted;
     let net = Testnet::create_with(2, provider.clone()).await;
@@ -129,7 +129,7 @@ async fn test_tx_propagation_policy_trusted_only() {
 async fn test_tx_ingress_policy_trusted_only() {
     rsil_tracing::init_test_tracing();
 
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
 
     let tx_manager_config = TransactionsManagerConfig {
         ingress_policy: TransactionIngressPolicy::Trusted,
@@ -195,7 +195,7 @@ async fn test_tx_ingress_policy_trusted_only() {
 #[tokio::test(flavor = "multi_thread")]
 async fn test_4844_tx_gossip_penalization() {
     rsil_tracing::init_test_tracing();
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
     let net = Testnet::create_with(2, provider.clone()).await;
 
     // install request handlers
@@ -246,7 +246,7 @@ async fn test_4844_tx_gossip_penalization() {
 #[tokio::test(flavor = "multi_thread")]
 async fn test_sending_invalid_transactions() {
     rsil_tracing::init_test_tracing();
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
     let net = Testnet::create_with(2, provider.clone()).await;
     // install request handlers
     let net = net.with_eth_pool();

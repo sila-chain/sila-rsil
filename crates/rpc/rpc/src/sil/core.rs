@@ -583,7 +583,7 @@ mod tests {
     use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
-        test_utils::{MockEthProvider, NoopProvider},
+        test_utils::{MockSilProvider, NoopProvider},
         PruneCheckpointReader, StageCheckpointReader,
     };
     use rsil_rpc_sil_api::{node::RpcNodeCoreAdapter, SilApiServer};
@@ -592,7 +592,7 @@ mod tests {
     use rsil_testing_utils::generators;
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
 
-    type FakeEthApi<P = MockEthProvider> = SilApi<
+    type FakeEthApi<P = MockSilProvider> = SilApi<
         RpcNodeCoreAdapter<P, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     >;
@@ -630,7 +630,7 @@ mod tests {
         newest_block: u64,
         mut oldest_block: Option<B256>,
         block_count: u64,
-        mock_provider: MockEthProvider,
+        mock_provider: MockSilProvider,
     ) -> (FakeEthApi, Vec<u128>, Vec<f64>) {
         let mut rng = generators::rng();
 
@@ -735,7 +735,7 @@ mod tests {
         let oldest_block = None;
 
         let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
             &eth_api,
@@ -758,7 +758,7 @@ mod tests {
         let oldest_block = None;
 
         let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
             &eth_api,
@@ -775,7 +775,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_call_many_maps_provider_block_lookup_error_with_eth_api_conversion() {
-        let eth_api = build_test_eth_api(MockEthProvider::default());
+        let eth_api = build_test_eth_api(MockSilProvider::default());
         let bundles = vec![Bundle {
             transactions: vec![TransactionRequest::default()],
             block_override: None,
@@ -828,7 +828,7 @@ mod tests {
         let oldest_block = None;
 
         let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
             &eth_api,
@@ -853,7 +853,7 @@ mod tests {
         let oldest_block = None;
 
         let (eth_api, base_fees_per_gas, gas_used_ratios) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let fee_history =
             eth_api.fee_history(U64::from(1), newest_block.into(), None).await.unwrap();
@@ -887,7 +887,7 @@ mod tests {
         let oldest_block = None;
 
         let (eth_api, base_fees_per_gas, gas_used_ratios) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let fee_history =
             eth_api.fee_history(U64::from(block_count), newest_block.into(), None).await.unwrap();

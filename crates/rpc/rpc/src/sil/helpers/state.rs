@@ -40,7 +40,7 @@ mod tests {
     use rsil_evm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
-        test_utils::{ExtendedAccount, MockEthProvider, NoopProvider},
+        test_utils::{ExtendedAccount, MockSilProvider, NoopProvider},
         ChainSpecProvider,
     };
     use rsil_rpc_sil_api::{helpers::SilState, node::RpcNodeCoreAdapter};
@@ -60,11 +60,11 @@ mod tests {
     fn mock_eth_api(
         accounts: AddressMap<ExtendedAccount>,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
         let pool = testing_pool();
-        let mock_provider = MockEthProvider::default();
+        let mock_provider = MockSilProvider::default();
 
         let evm_config = SilEvmConfig::new(mock_provider.chain_spec());
         mock_provider.extend_accounts(accounts);

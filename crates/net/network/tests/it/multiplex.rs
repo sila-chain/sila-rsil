@@ -18,7 +18,7 @@ use rsil_network::{
     NetworkConfigBuilder, NetworkEventListenerProvider, NetworkManager,
 };
 use rsil_network_api::{Direction, NetworkInfo, PeerId, Peers};
-use rsil_provider::{noop::NoopProvider, test_utils::MockEthProvider};
+use rsil_provider::{noop::NoopProvider, test_utils::MockSilProvider};
 use rsil_tasks::Runtime;
 use secp256k1::SecretKey;
 use tokio::sync::{mpsc, oneshot};
@@ -322,7 +322,7 @@ async fn test_connect_to_non_multiplex_peer() {
 #[tokio::test(flavor = "multi_thread")]
 async fn test_proto_multiplex() {
     rsil_tracing::init_test_tracing();
-    let provider = MockEthProvider::default();
+    let provider = MockSilProvider::default();
     let mut net = Testnet::create_with(2, provider.clone()).await;
 
     let (tx, mut from_peer0) = mpsc::unbounded_channel();

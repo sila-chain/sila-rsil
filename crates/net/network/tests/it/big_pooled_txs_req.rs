@@ -7,7 +7,7 @@ use rsil_network::{
 use rsil_network_api::{NetworkInfo, Peers};
 use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState};
 use rsil_primitives_traits::SignedTransaction;
-use rsil_provider::test_utils::MockEthProvider;
+use rsil_provider::test_utils::MockSilProvider;
 use rsil_sila_primitives::TransactionSigned;
 use rsil_transaction_pool::{
     test_utils::{testing_pool, MockTransaction},
@@ -36,7 +36,7 @@ async fn test_large_tx_req() {
     let txs_hashes: Vec<B256> = txs.iter().map(|tx| *tx.get_hash()).collect();
 
     // setup testnet
-    let mut net = Testnet::create_with(2, MockEthProvider::default()).await;
+    let mut net = Testnet::create_with(2, MockSilProvider::default()).await;
 
     // install request handlers
     net.for_each_mut(|peer| peer.install_request_handler());

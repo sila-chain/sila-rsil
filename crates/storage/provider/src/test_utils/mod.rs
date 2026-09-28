@@ -23,7 +23,7 @@ pub mod blocks;
 mod mock;
 mod noop;
 
-pub use mock::{ExtendedAccount, MockEthProvider};
+pub use mock::{ExtendedAccount, MockSilProvider};
 pub use noop::NoopProvider;
 pub use rsil_chain_state::test_utils::TestCanonStateSubscriptions;
 

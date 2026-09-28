@@ -19,7 +19,7 @@ use rsil_network_p2p::{
     sync::{NetworkSyncUpdater, SyncState},
 };
 use rsil_network_peers::{mainnet_nodes, NodeRecord, TrustedPeer};
-use rsil_provider::test_utils::MockEthProvider;
+use rsil_provider::test_utils::MockSilProvider;
 use rsil_storage_api::noop::NoopProvider;
 use rsil_tasks::Runtime;
 use rsil_tracing::init_test_tracing;
@@ -662,7 +662,7 @@ async fn new_random_peer(
 async fn test_connect_many() {
     rsil_tracing::init_test_tracing();
 
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
     let net = Testnet::create_with(5, provider).await;
 
     // install request handlers

@@ -240,7 +240,7 @@ mod tests {
     use alloy_primitives::B256;
     use rsil_provider::{
         providers::BlockchainProvider,
-        test_utils::{create_test_provider_factory, MockEthProvider},
+        test_utils::{create_test_provider_factory, MockSilProvider},
         BlockWriter,
     };
     use rsil_testing_utils::generators::{self, random_block_range, BlockRangeParams};
@@ -254,7 +254,7 @@ mod tests {
         };
 
         // Default provider with no block corresponding to block 10
-        let provider = MockEthProvider::default();
+        let provider = MockSilProvider::default();
 
         // No block body for block 10, expected None
         let range = input.get_next_tx_num_range(&provider).expect("Expected range");

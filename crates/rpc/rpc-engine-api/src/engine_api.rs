@@ -1616,7 +1616,7 @@ mod tests {
     };
     use rsil_node_sila::SilaEngineValidator;
     use rsil_payload_builder::test_utils::spawn_test_payload_service;
-    use rsil_provider::{test_utils::MockEthProvider, BalStoreHandle, InMemoryBalStore, RawBal};
+    use rsil_provider::{test_utils::MockSilProvider, BalStoreHandle, InMemoryBalStore, RawBal};
     use rsil_sila_engine_primitives::SilEngineTypes;
     use rsil_sila_primitives::Block;
     use rsil_tasks::Runtime;
@@ -1626,7 +1626,7 @@ mod tests {
     fn setup_engine_api() -> (
         EngineApiTestHandle,
         EngineApi<
-            Arc<MockEthProvider>,
+            Arc<MockSilProvider>,
             SilEngineTypes,
             NoopTransactionPool,
             SilaEngineValidator,
@@ -1641,7 +1641,7 @@ mod tests {
         };
 
         let chain_spec: Arc<ChainSpec> = SILA_MAINNET.clone();
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service();
         let (to_engine, engine_rx) = unbounded_channel();
         let task_executor = Runtime::test();
@@ -1697,7 +1697,7 @@ mod tests {
     #[tokio::test]
     async fn get_payload_bodies_by_hash_v2_returns_block_access_list_from_store() {
         let bal_store = BalStoreHandle::new(InMemoryBalStore::default());
-        let mut provider = MockEthProvider::default();
+        let mut provider = MockSilProvider::default();
         provider.bal_store = bal_store.clone();
         let provider = Arc::new(provider);
 
@@ -1752,7 +1752,7 @@ mod tests {
     #[tokio::test]
     async fn get_payload_bodies_by_range_v2_returns_block_access_lists_from_store() {
         let bal_store = BalStoreHandle::new(InMemoryBalStore::default());
-        let mut provider = MockEthProvider::default();
+        let mut provider = MockSilProvider::default();
         provider.bal_store = bal_store.clone();
         let provider = Arc::new(provider);
 
@@ -1803,7 +1803,7 @@ mod tests {
     struct EngineApiTestHandle {
         #[allow(dead_code)]
         chain_spec: Arc<ChainSpec>,
-        provider: Arc<MockEthProvider>,
+        provider: Arc<MockSilProvider>,
         from_api: UnboundedReceiver<BeaconEngineMessage<SilEngineTypes>>,
     }
 
@@ -1826,7 +1826,7 @@ mod tests {
     #[tokio::test]
     async fn new_payload_v5_accepts_amsterdam_payloads() {
         let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
 
@@ -1928,7 +1928,7 @@ mod tests {
     async fn get_blobs_v3_returns_null_when_syncing() {
         let chain_spec: Arc<ChainSpec> =
             Arc::new(ChainSpecBuilder::sila_mainnet().osaka_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, _engine_rx) = unbounded_channel::<BeaconEngineMessage<SilEngineTypes>>();
 
@@ -1959,7 +1959,7 @@ mod tests {
     async fn get_blobs_v4_returns_null_when_syncing() {
         let chain_spec: Arc<ChainSpec> =
             Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, _engine_rx) = unbounded_channel::<BeaconEngineMessage<SilEngineTypes>>();
 
@@ -1990,7 +1990,7 @@ mod tests {
     async fn fcu_v4_updates_shared_cell_custody_before_forkchoice_result() {
         let chain_spec: Arc<ChainSpec> =
             Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
         let network = NoopNetwork::default();
@@ -2056,7 +2056,7 @@ mod tests {
     async fn fcu_v4_updates_shared_cell_custody_when_payload_attrs_invalid() {
         let chain_spec: Arc<ChainSpec> =
             Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
         let network = NoopNetwork::default();

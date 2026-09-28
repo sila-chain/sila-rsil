@@ -75,7 +75,7 @@ where
             let res = f.await;
             let _ = tx.send(res);
         });
-        rx.await.map_err(|_| SilApiError::InternalEthError)?
+        rx.await.map_err(|_| SilApiError::InternalSilError)?
     }
 
     /// Returns a map of addresses to changed account balanced for a particular block.
@@ -137,7 +137,7 @@ where
             .clone()
             .acquire_owned()
             .await
-            .map_err(|_| SilApiError::InternalEthError)?;
+            .map_err(|_| SilApiError::InternalSilError)?;
         self.on_blocking_task(async move |this| {
             let _permit = permit;
             this.try_block_execution_outcome(block_id, block_count)

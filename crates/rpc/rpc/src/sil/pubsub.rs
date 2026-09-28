@@ -43,8 +43,8 @@ pub struct SilPubSub<Sil> {
 
 impl<Sil> SilPubSub<Sil> {
     /// Creates a new, shareable instance.
-    pub fn new(eth_api: Sil, subscription_task_spawner: Runtime) -> Self {
-        let inner = SilPubSubInner { eth_api, subscription_task_spawner };
+    pub fn new(sil_api: Sil, subscription_task_spawner: Runtime) -> Self {
+        let inner = SilPubSubInner { sil_api, subscription_task_spawner };
         Self { inner: Arc::new(inner) }
     }
 }
@@ -72,12 +72,12 @@ where
 
     /// Returns a stream that yields new block headers.
     pub fn new_headers_stream(&self) -> impl Stream<Item = RpcHeader<Sil::NetworkTypes>> {
-        self.inner.eth_api.header_stream()
+        self.inner.sil_api.header_stream()
     }
 
     /// Returns a stream that yields matching logs.
     pub fn log_stream(&self, filter: Filter) -> impl Stream<Item = Log> {
-        self.inner.eth_api.log_stream(filter)
+        self.inner.sil_api.log_stream(filter)
     }
 
     /// The actual handler for an accepted [`SilPubSub::subscribe`] call.
@@ -111,7 +111,7 @@ where
                             let stream = self.full_pending_transaction_stream().filter_map(|tx| {
                                 let tx_value = match self
                                     .inner
-                                    .eth_api
+                                    .sil_api
                                     .converter()
                                     .fill_pending(tx.transaction.to_consensus())
                                 {
@@ -144,10 +144,10 @@ where
             SubscriptionKind::Syncing => {
                 // get new block subscription
                 let mut canon_state = BroadcastStream::new(
-                    self.inner.eth_api.provider().subscribe_to_canonical_state(),
+                    self.inner.sil_api.provider().subscribe_to_canonical_state(),
                 );
                 // get current sync status
-                let mut initial_sync_status = self.inner.eth_api.network().is_syncing();
+                let mut initial_sync_status = self.inner.sil_api.network().is_syncing();
                 let current_sub_res = self.sync_status(initial_sync_status);
 
                 // send the current status immediately
@@ -163,7 +163,7 @@ where
                 }
 
                 while canon_state.next().await.is_some() {
-                    let current_syncing = self.inner.eth_api.network().is_syncing();
+                    let current_syncing = self.inner.sil_api.network().is_syncing();
                     // Only send a new response if the sync status has changed
                     if current_syncing != initial_sync_status {
                         // Update the sync status on each new block
@@ -199,7 +199,7 @@ where
 
                 pipe_from_stream(
                     accepted_sink,
-                    self.inner.eth_api.transaction_receipts_stream(filter),
+                    self.inner.sil_api.transaction_receipts_stream(filter),
                 )
                 .await
             }
@@ -294,7 +294,7 @@ impl<Sil> std::fmt::Debug for SilPubSub<Sil> {
 #[derive(Clone)]
 struct SilPubSubInner<SilApi> {
     /// The `sil` API.
-    eth_api: SilApi,
+    sil_api: SilApi,
     /// The type that's used to spawn subscription tasks.
     subscription_task_spawner: Runtime,
 }
@@ -309,7 +309,7 @@ where
     fn sync_status(&self, is_syncing: bool) -> PubSubSyncStatus {
         if is_syncing {
             let current_block = self
-                .eth_api
+                .sil_api
                 .provider()
                 .chain_info()
                 .map(|info| info.best_number)
@@ -332,13 +332,13 @@ where
 {
     /// Returns a stream that yields all transaction hashes emitted by the txpool.
     fn pending_transaction_hashes_stream(&self) -> impl Stream<Item = TxHash> {
-        ReceiverStream::new(self.eth_api.pool().pending_transactions_listener())
+        ReceiverStream::new(self.sil_api.pool().pending_transactions_listener())
     }
 
     /// Returns a stream that yields all transactions emitted by the txpool.
     fn full_pending_transaction_stream(
         &self,
     ) -> impl Stream<Item = NewTransactionEvent<<Sil::Pool as TransactionPool>::Transaction>> {
-        self.eth_api.pool().new_pending_pool_transactions_listener()
+        self.sil_api.pool().new_pending_pool_transactions_listener()
     }
 }

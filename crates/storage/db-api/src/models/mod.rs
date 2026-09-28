@@ -7,7 +7,7 @@ use crate::{
 use alloy_primitives::{Address, B256, U256};
 use bytes::{BufMut, BytesMut};
 use modular_bitfield::prelude::*;
-use rsil_codecs::{add_arbitrary_tests, impl_compression_for_compact, Compact};
+use reth_codecs::{add_arbitrary_tests, impl_compression_for_compact, Compact};
 use rsil_prune_types::PruneSegment;
 use rsil_trie_common::{StoredNibbles, StoredNibblesSubKey, *};
 use serde::{Deserialize, Serialize};
@@ -366,7 +366,7 @@ mod tests {
     #[test]
     fn test_ensure_backwards_compatibility() {
         use super::*;
-        use rsil_codecs::{test_utils::UnusedBits, validate_bitflag_backwards_compat};
+        use reth_codecs::{test_utils::UnusedBits, validate_bitflag_backwards_compat};
         use rsil_primitives_traits::Account;
         use rsil_prune_types::{PruneCheckpoint, PruneMode, PruneSegment};
         use rsil_stages_types::{

@@ -41,7 +41,7 @@ rsil-trie-db.workspace = true
 alloy-savm.workspace = true
 alloy-consensus.workspace = true
 alloy-sips.workspace = true
-alloy-sip7928 = { workspace = true, features = ["rlp"] }
+alloy-eip7928 = { workspace = true, features = ["rlp"] }
 alloy-primitives.workspace = true
 alloy-rlp.workspace = true
 alloy-rpc-types-engine.workspace = true

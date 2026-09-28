@@ -27,7 +27,7 @@ rsil-sila-primitives.workspace = true
 
 # sila
 alloy-sips.workspace = true
-alloy-sip7928.workspace = true
+alloy-eip7928.workspace = true
 alloy-primitives.workspace = true
 alloy-consensus.workspace = true
 alloy-rpc-types-engine.workspace = true
@@ -60,7 +60,7 @@ std = [
     "rsil-trie-common/std",
     "serde_json?/std",
     "dep:rsil-tokio-util",
-    "alloy-sip7928/std",
+    "alloy-eip7928/std",
 ]
 
 db-api = [
@@ -81,7 +81,7 @@ serde = [
     "alloy-primitives/serde",
     "alloy-consensus/serde",
     "alloy-rpc-types-engine/serde",
-    "alloy-sip7928/serde",
+    "alloy-eip7928/serde",
 ]
 
 serde-bincode-compat = [

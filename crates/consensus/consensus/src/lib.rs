@@ -39,7 +39,7 @@ use alloc::{
 };
 use alloy_consensus::Header;
 use alloy_primitives::{BlockHash, BlockNumber, Bloom, B256};
-use alloy_sip7928::BlockAccessListGasError;
+use alloy_eip7928::BlockAccessListGasError;
 use core::{error::Error, fmt::Display};
 
 /// Pre-computed receipt root and logs bloom.

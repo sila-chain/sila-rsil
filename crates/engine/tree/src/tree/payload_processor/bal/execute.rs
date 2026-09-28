@@ -15,7 +15,7 @@
 //! rebuilt from canonical execution.
 
 use super::{ordered_outputs::ordered_worker_outputs, worker, BalExecutionError};
-use alloy_sip7928::{
+use alloy_eip7928::{
     bal::{Bal as AlloyBal, DecodedBal},
     compute_block_access_list_hash, BlockAccessList,
 };
@@ -297,7 +297,7 @@ impl BlockGasTracker {
 mod tests {
     use super::*;
     use alloy_consensus::{BlockHeader, Header};
-    use alloy_sip7928::{bal::Bal as AlloyBal, BlockAccessList};
+    use alloy_eip7928::{bal::Bal as AlloyBal, BlockAccessList};
     use alloy_eips::{
         sip2935::{HISTORY_STORAGE_ADDRESS, HISTORY_STORAGE_CODE},
         sip4788::{BEACON_ROOTS_ADDRESS, BEACON_ROOTS_CODE},
@@ -427,7 +427,7 @@ mod tests {
         let evm_config = SilEvmConfig::sila_mainnet();
 
         let input_bal = reference_bal_for_empty_block(&evm_config);
-        let bal_hash = alloy_sip7928::compute_block_access_list_hash(&input_bal);
+        let bal_hash = alloy_eip7928::compute_block_access_list_hash(&input_bal);
         // Sanity: reference BAL is non-empty (system calls populated it).
         assert!(!input_bal.is_empty(), "empty BAL means system calls didn't record state");
 
@@ -651,7 +651,7 @@ mod tests {
         );
         assert!(!reference_bal.is_empty(), "expected BAL entries from pre-exec + txs");
 
-        let bal_hash = alloy_sip7928::compute_block_access_list_hash(&reference_bal);
+        let bal_hash = alloy_eip7928::compute_block_access_list_hash(&reference_bal);
         let block = empty_amsterdam_block(bal_hash);
 
         let result = run_execute_block(
@@ -746,7 +746,7 @@ mod tests {
             run_serial_path(&evm_config, canonical_db_template.clone(), &block_header_only, &txs);
 
         // BAL path: stamp the hash of the reference BAL onto the header.
-        let bal_hash = alloy_sip7928::compute_block_access_list_hash(&reference_bal);
+        let bal_hash = alloy_eip7928::compute_block_access_list_hash(&reference_bal);
         let block =
             empty_amsterdam_block_with_gas_limit(bal_hash, block_header_only.header().gas_limit());
 
@@ -893,7 +893,7 @@ mod tests {
             &reference_block,
             vec![tx1.clone(), tx2.clone()],
         );
-        let bal_hash = alloy_sip7928::compute_block_access_list_hash(&reference_bal);
+        let bal_hash = alloy_eip7928::compute_block_access_list_hash(&reference_bal);
         let low_gas_block = empty_amsterdam_block_with_gas_limit(bal_hash, block_gas_limit);
 
         let result = run_execute_block(
@@ -1034,7 +1034,7 @@ mod tests {
         // Build the BAL an empty block actually produces, then append a phantom address
         // that execution never touches. The rebuilt BAL omits it, and the outer consensus
         // validator is responsible for comparing that rebuilt hash to the header commitment.
-        use alloy_sip7928::AccountChanges;
+        use alloy_eip7928::AccountChanges;
 
         let evm_config = SilEvmConfig::sila_mainnet();
 
@@ -1046,12 +1046,12 @@ mod tests {
         let phantom = alloy_primitives::Address::from([0xFF; 20]);
         let mut tampered_entries: Vec<AccountChanges> = real_bal;
         tampered_entries.push(AccountChanges::new(phantom));
-        let tampered_bal: alloy_sip7928::bal::Bal = alloy_sip7928::bal::Bal::new(tampered_entries);
+        let tampered_bal: alloy_eip7928::bal::Bal = alloy_eip7928::bal::Bal::new(tampered_entries);
 
         // Stamp the tampered BAL's hash on the block header.
         let tampered_block_access_list: BlockAccessList = tampered_bal.clone().into();
         let tampered_hash =
-            alloy_sip7928::compute_block_access_list_hash(&tampered_block_access_list);
+            alloy_eip7928::compute_block_access_list_hash(&tampered_block_access_list);
         let block = empty_amsterdam_block(tampered_hash);
 
         let received = {
@@ -1070,7 +1070,7 @@ mod tests {
 
         match result {
             Ok((_, built_bal)) => {
-                let rebuilt = alloy_sip7928::compute_block_access_list_hash(&built_bal);
+                let rebuilt = alloy_eip7928::compute_block_access_list_hash(&built_bal);
                 assert_ne!(rebuilt, tampered_hash, "rebuilt and header hashes must differ");
             }
             Err(e) => panic!("expected success with rebuilt BAL, got {e:?}"),

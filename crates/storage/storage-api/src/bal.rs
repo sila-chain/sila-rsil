@@ -1,7 +1,7 @@
 use alloc::{sync::Arc, vec::Vec};
 use alloy_primitives::{BlockHash, BlockNumber, Bytes};
-use alloy_sip7928::bal::DecodedBal;
-pub use alloy_sip7928::bal::RawBal;
+use alloy_eip7928::bal::DecodedBal;
+pub use alloy_eip7928::bal::RawBal;
 use alloy_sips::NumHash;
 use revm::database::state::bal::Bal as RevmBal;
 use rsil_storage_errors::provider::ProviderResult;

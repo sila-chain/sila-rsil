@@ -9,7 +9,7 @@ use alloy_savm::{
     block::{CommitChanges, ExecutableTxParts},
     Evm as Savm, EvmEnv as SavmEnv, EvmFactory as SavmFactory, RecoveredTx, ToTxEnv,
 };
-use alloy_sip7928::{compute_block_access_list_hash, BlockAccessList};
+use alloy_eip7928::{compute_block_access_list_hash, BlockAccessList};
 use alloy_sips::eip2718::WithEncoded;
 use revm::{
     database::{states::bundle_state::BundleRetention, BundleState, State},

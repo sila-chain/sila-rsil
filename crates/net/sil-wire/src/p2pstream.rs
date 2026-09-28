@@ -1063,7 +1063,7 @@ mod tests {
             let unauthed_stream = UnauthedP2PStream::new(stream);
             let (p2p_stream, _) = unauthed_stream.handshake(server_hello).await.unwrap();
 
-            // ensure that the two share a single capability, eth67
+            // ensure that the two share a single capability, sil67
             assert_eq!(
                 *p2p_stream.shared_capabilities.iter_caps().next().unwrap(),
                 SharedCapability::Sil {
@@ -1081,7 +1081,7 @@ mod tests {
         let unauthed_stream = UnauthedP2PStream::new(sink);
         let (p2p_stream, _) = unauthed_stream.handshake(client_hello).await.unwrap();
 
-        // ensure that the two share a single capability, eth67
+        // ensure that the two share a single capability, sil67
         assert_eq!(
             *p2p_stream.shared_capabilities.iter_caps().next().unwrap(),
             SharedCapability::Sil {

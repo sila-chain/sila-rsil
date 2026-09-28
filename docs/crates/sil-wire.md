@@ -320,7 +320,7 @@ impl<S> Sink<Bytes> for P2PStream<S> {
 ## SilStream
 The SilStream wraps a stream and handles sil message (RLP) encoding/decoding with respect to the negotiated `SilVersion`.
 
-[File: crates/net/sil-wire/src/ethstream.rs](../../crates/net/sil-wire/src/ethstream.rs)
+[File: crates/net/sil-wire/src/silstream.rs](../../crates/net/sil-wire/src/silstream.rs)
 ```rust,ignore
 #[pin_project]
 pub struct SilStream<S, N = SilNetworkPrimitives> {
@@ -333,7 +333,7 @@ pub struct SilStream<S, N = SilNetworkPrimitives> {
 SilStream performs RLP decoding/encoding using `ProtocolMessage::decode_message(version, &mut bytes)`
 and `ProtocolMessage::encode()`, and enforces protocol rules (e.g., prohibiting `Status` after handshake).
 
-[File: crates/net/sil-wire/src/ethstream.rs](../../crates/net/sil-wire/src/ethstream.rs)
+[File: crates/net/sil-wire/src/silstream.rs](../../crates/net/sil-wire/src/silstream.rs)
 ```rust,ignore
 impl<S, E> Stream for SilStream<S> {
     // ...
@@ -405,7 +405,7 @@ impl<S> UnauthedP2PStream<S> {
 
 ```
 Similarly, `UnauthedSilStream` does the `Status` handshake and returns an `SilStream`. It accepts a `UnifiedStatus`
-and a `ForkFilter`, and provides a timeout wrapper. The code is [here](../../crates/net/sil-wire/src/ethstream.rs)
+and a `ForkFilter`, and provides a timeout wrapper. The code is [here](../../crates/net/sil-wire/src/silstream.rs)
 
 ### Multiplexing and satellites
 
@@ -414,11 +414,11 @@ additional "satellite" protocols (e.g. `snap`) using negotiated `SharedCapabilit
 
 ## Message variants and versions
 
-- `NewPooledTransactionHashes` differs between ETH66 (`NewPooledTransactionHashes66`) and ETH68 (`NewPooledTransactionHashes68`).
-- Starting with ETH67, `GetNodeData` and `NodeData` are removed (decoding them for >=67 yields an error).
-- Starting with ETH69:
+- `NewPooledTransactionHashes` differs between SIL66 (`NewPooledTransactionHashes66`) and SIL68 (`NewPooledTransactionHashes68`).
+- Starting with SIL67, `GetNodeData` and `NodeData` are removed (decoding them for >=67 yields an error).
+- Starting with SIL69:
   - `BlockRangeUpdate (0x11)` announces the historical block range served.
   - Receipts omit bloom: encoded as `Receipts69` instead of `Receipts`.
-- Starting with ETH70 (SIP-7975):
-  - Status reuses the ETH69 format (no additional block range fields).
+- Starting with SIL70 (SIP-7975):
+  - Status reuses the SIL69 format (no additional block range fields).
   - Receipts continue to omit bloom; `GetReceipts`/`Receipts` add the sil/70 variants to support partial receipt ranges (`firstBlockReceiptIndex` and `lastBlockIncomplete`).

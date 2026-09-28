@@ -273,20 +273,20 @@ mod tests {
 
         assert_eq!(hello_encoded.len(), hello.length());
     }
-    //TODO: add test for eth70 here once we have fully support it
+    //TODO: add test for sil70 here once we have fully support it
 
     #[test]
-    fn test_default_protocols_still_include_eth69() {
+    fn test_default_protocols_still_include_sil69() {
         // ensure that older sil/69 remains advertised for compatibility
         let secret_key = SecretKey::new(&mut rand_08::thread_rng());
         let id = pk2id(&secret_key.public_key(SECP256K1));
         let hello = HelloMessageWithProtocols::builder(id).build();
 
-        let has_eth69 = hello
+        let has_sil69 = hello
             .protocols
             .iter()
             .any(|p| p.cap.name == "sil" && p.cap.version == SilVersion::Sil69 as usize);
-        assert!(has_eth69, "Default protocols should include Sil69");
+        assert!(has_sil69, "Default protocols should include Sil69");
     }
 
     #[test]

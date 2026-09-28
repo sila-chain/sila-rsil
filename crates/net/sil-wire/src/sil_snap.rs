@@ -64,7 +64,7 @@ where
         sil_max_message_size: usize,
     ) -> Result<(Self, UnifiedStatus), SilStreamError> {
         let sil_version = conn.shared_capabilities().sil_version()?;
-        let snap_offset = eth_snap_layout(conn.shared_capabilities())?;
+        let snap_offset = sil_snap_layout(conn.shared_capabilities())?;
 
         let their_status =
             handshake.handshake(&mut conn, status, fork_filter, HANDSHAKE_TIMEOUT).await?;
@@ -211,8 +211,8 @@ where
 /// id at or above it as snap, so any other shared capability before `sil`, between `sil` and
 /// `snap/2`, or after `snap/2` would be routed incorrectly. Such layouts belong on the
 /// general-purpose satellite multiplexer and are rejected here.
-fn eth_snap_layout(caps: &SharedCapabilities) -> Result<u8, SilStreamError> {
-    if !caps.is_exact_eth_snap_v2() {
+fn sil_snap_layout(caps: &SharedCapabilities) -> Result<u8, SilStreamError> {
+    if !caps.is_exact_sil_snap_v2() {
         return Err(P2PStreamError::CapabilityNotShared.into());
     }
     let snap = caps
@@ -259,34 +259,34 @@ mod tests {
     }
 
     #[test]
-    fn eth_snap_layout_accepts_eth_then_snap() {
+    fn sil_snap_layout_accepts_sil_then_snap() {
         let caps = shared_caps(
             vec![SilVersion::Sil68.into(), Protocol::snap_2()],
             vec![SilVersion::Sil68.into(), Capability::snap_2()],
         );
-        let offset = eth_snap_layout(&caps).unwrap();
+        let offset = sil_snap_layout(&caps).unwrap();
         assert_eq!(offset, caps.sil().unwrap().num_messages());
     }
 
     #[test]
-    fn eth_snap_layout_rejects_missing_snap() {
+    fn sil_snap_layout_rejects_missing_snap() {
         let caps = shared_caps(vec![SilVersion::Sil68.into()], vec![SilVersion::Sil68.into()]);
-        assert!(eth_snap_layout(&caps).is_err());
+        assert!(sil_snap_layout(&caps).is_err());
     }
 
     #[test]
-    fn eth_snap_layout_rejects_capability_before_eth() {
+    fn sil_snap_layout_rejects_capability_before_sil() {
         // "aaa" sorts before "sil", so it takes relative offset 0 and sil no longer starts at 0.
         let cap = Capability::new_static("aaa", 1);
         let caps = shared_caps(
             vec![Protocol::new(cap.clone(), 5), SilVersion::Sil68.into(), Protocol::snap_2()],
             vec![cap, SilVersion::Sil68.into(), Capability::snap_2()],
         );
-        assert!(eth_snap_layout(&caps).is_err());
+        assert!(sil_snap_layout(&caps).is_err());
     }
 
     #[test]
-    fn eth_snap_layout_rejects_capability_between_eth_and_snap() {
+    fn sil_snap_layout_rejects_capability_between_sil_and_snap() {
         // "les" sorts between "sil" and "snap", leaving a gap so snap no longer directly follows
         // sil.
         let cap = Capability::new_static("les", 1);
@@ -294,11 +294,11 @@ mod tests {
             vec![SilVersion::Sil68.into(), Protocol::new(cap.clone(), 5), Protocol::snap_2()],
             vec![SilVersion::Sil68.into(), cap, Capability::snap_2()],
         );
-        assert!(eth_snap_layout(&caps).is_err());
+        assert!(sil_snap_layout(&caps).is_err());
     }
 
     #[test]
-    fn eth_snap_layout_rejects_capability_after_snap() {
+    fn sil_snap_layout_rejects_capability_after_snap() {
         // "zzz" sorts after "snap"; sil+snap still line up, but its frames would be routed
         // incorrectly as snap, so the layout must be rejected (it belongs on the satellite
         // multiplexer).
@@ -307,7 +307,7 @@ mod tests {
             vec![SilVersion::Sil68.into(), Protocol::snap_2(), Protocol::new(cap.clone(), 5)],
             vec![SilVersion::Sil68.into(), Capability::snap_2(), cap],
         );
-        assert!(eth_snap_layout(&caps).is_err());
+        assert!(sil_snap_layout(&caps).is_err());
     }
 
     #[test]
@@ -332,7 +332,7 @@ mod tests {
         let server = tokio::spawn(async move {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
-            let server_hello = eth_snap_hello();
+            let server_hello = sil_snap_hello();
             let (conn, _) = UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
 
             let (mut stream, _) = SilSnapStream::<_, SilNetworkPrimitives>::handshake(
@@ -357,7 +357,7 @@ mod tests {
         });
 
         // Client: connect, negotiate, send the request, and await the correlated response.
-        let conn = connect_passthrough(local_addr, eth_snap_hello()).await;
+        let conn = connect_passthrough(local_addr, sil_snap_hello()).await;
         let (mut stream, _) = SilSnapStream::<_, SilNetworkPrimitives>::handshake(
             conn,
             status,
@@ -392,7 +392,7 @@ mod tests {
     }
 
     /// Builds a hello advertising `sil` + `snap/2`.
-    fn eth_snap_hello() -> crate::HelloMessageWithProtocols {
+    fn sil_snap_hello() -> crate::HelloMessageWithProtocols {
         let mut hello = sil_hello().0;
         hello.try_add_protocol(Protocol::snap_2()).unwrap();
         hello

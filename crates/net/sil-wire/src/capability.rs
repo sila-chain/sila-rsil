@@ -304,8 +304,8 @@ pub fn shared_capability_offsets(
     // map of capability name to version
     let mut shared_capabilities: HashMap<_, ProtoVersion> = HashMap::default();
 
-    // The `Ord` implementation for capability names should be equivalent to geth (and every other
-    // client), since geth uses golang's default string comparison, which orders strings
+    // The `Ord` implementation for capability names should be equivalent to go-sila (and every other
+    // client), since go-sila uses golang's default string comparison, which orders strings
     // lexicographically.
     // https://golang.org/pkg/strings/#Compare
     //
@@ -529,11 +529,11 @@ mod tests {
 
         let shared = SharedCapabilities::try_new(local_capabilities, peer_capabilities).unwrap();
 
-        let shared_eth = shared.find_by_relative_offset(0).unwrap();
-        assert_eq!(shared_eth.name(), "sil");
+        let shared_capability = shared.find_by_relative_offset(0).unwrap();
+        assert_eq!(shared_capability.name(), "sil");
 
-        let shared_eth = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
-        assert_eq!(shared_eth.name(), "sil");
+        let shared_capability = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
+        assert_eq!(shared_capability.name(), "sil");
 
         // reserved message id space
         assert!(shared.find_by_offset(MAX_RESERVED_MESSAGE_ID).is_none());
@@ -548,21 +548,21 @@ mod tests {
 
         let shared = SharedCapabilities::try_new(local_capabilities, peer_capabilities).unwrap();
 
-        let shared_eth = shared.find_by_relative_offset(0).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
+        let shared_capability = shared.find_by_relative_offset(0).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
 
-        let shared_eth = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
+        let shared_capability = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
 
         // the 5th shared message (0,1,2,3,4) is the last message of the aaa capability
-        let shared_eth = shared.find_by_relative_offset(4).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
-        let shared_eth = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 5).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
+        let shared_capability = shared.find_by_relative_offset(4).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
+        let shared_capability = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 5).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
 
         // the 6th shared message is the first message of the sil capability
-        let shared_eth = shared.find_by_relative_offset(1 + proto.messages()).unwrap();
-        assert_eq!(shared_eth.name(), "sil");
+        let shared_capability = shared.find_by_relative_offset(1 + proto.messages()).unwrap();
+        assert_eq!(shared_capability.name(), "sil");
     }
 
     #[test]

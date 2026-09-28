@@ -359,7 +359,7 @@ mod tests {
     use crate::{
         broadcast::BlockHashNumber,
         errors::{SilHandshakeError, SilStreamError},
-        ethstream::RawCapabilityMessage,
+        silstream::RawCapabilityMessage,
         hello::DEFAULT_TCP_PORT,
         p2pstream::UnauthedP2PStream,
         HelloMessageWithProtocols, PassthroughCodec, ProtocolVersion, SilMessage, SilStream,
@@ -611,7 +611,7 @@ mod tests {
     }
 
     #[tokio::test(flavor = "multi_thread")]
-    async fn ethstream_over_p2p() {
+    async fn silstream_over_p2p() {
         // create a p2p stream and server, then confirm that the two are authed
         // create tcpstream
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();

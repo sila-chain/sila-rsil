@@ -133,10 +133,10 @@ async fn test_eth_subscribe_not_available_over_http() {
     rsil_tracing::init_test_tracing();
 
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let modules = RpcModuleSelection::Standard;
     let server =
-        builder.build(TransportRpcModuleConfig::set_http(modules), eth_api, EventSender::new(1));
+        builder.build(TransportRpcModuleConfig::set_http(modules), sil_api, EventSender::new(1));
     let handle = RpcServerConfig::http(Default::default())
         .with_http_address(crate::utils::test_address())
         .start(&server)
@@ -172,10 +172,10 @@ async fn test_eth_subscribe_pending_transactions_receives_tx() {
         .with_evm_config(SilEvmConfig::sila_mainnet())
         .with_consensus(NoopConsensus::default());
 
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let server = builder.build(
         TransportRpcModuleConfig::set_ws(RpcModuleSelection::Standard),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
     let handle = RpcServerConfig::ws(Default::default())

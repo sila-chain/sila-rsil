@@ -222,6 +222,7 @@ impl rsil_codecs::Compact for StorageRootMerkleCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct AccountHashingCheckpoint {
@@ -237,6 +238,7 @@ pub struct AccountHashingCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StorageHashingCheckpoint {
@@ -254,6 +256,7 @@ pub struct StorageHashingCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ExecutionCheckpoint {
@@ -267,6 +270,7 @@ pub struct ExecutionCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HeadersCheckpoint {
@@ -280,6 +284,7 @@ pub struct HeadersCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct IndexHistoryCheckpoint {
@@ -296,6 +301,7 @@ pub struct IndexHistoryCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct MerkleChangeSetsCheckpoint {
@@ -307,6 +313,7 @@ pub struct MerkleChangeSetsCheckpoint {
 #[derive(Debug, Default, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct EntitiesCheckpoint {
@@ -345,6 +352,7 @@ impl EntitiesCheckpoint {
 #[derive(Default, Debug, Copy, Clone, PartialEq, Eq)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct CheckpointBlockRange {
@@ -370,6 +378,7 @@ impl From<&RangeInclusive<BlockNumber>> for CheckpointBlockRange {
 #[derive(Debug, Default, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StageCheckpoint {
@@ -445,6 +454,7 @@ rsil_codecs::impl_compression_for_compact!(StageCheckpoint);
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(any(test, feature = "test-utils"), derive(arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum StageUnitCheckpoint {

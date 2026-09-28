@@ -3,9 +3,9 @@
 use super::LoadBlock;
 use crate::FromSilApiError;
 use alloy_consensus::BlockHeader;
-use alloy_sips::eip7840::BlobParams;
+use alloy_eips::eip7840::BlobParams;
 use alloy_primitives::U256;
-use alloy_rpc_types_sil::{BlockNumberOrTag, FeeHistory};
+use alloy_rpc_types_eth::{BlockNumberOrTag, FeeHistory};
 use futures::{Future, StreamExt};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_primitives_traits::BlockBody;

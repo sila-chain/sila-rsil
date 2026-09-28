@@ -66,7 +66,7 @@ pub struct SilConfig {
     /// Settings for the gas price oracle
     pub gas_oracle: GasPriceOracleConfig,
     /// The maximum number of blocks into the past for generating state proofs.
-    pub eth_proof_window: u64,
+    pub sil_proof_window: u64,
     /// The maximum number of tracing calls that can be executed in concurrently.
     pub max_tracing_requests: usize,
     /// The maximum number of blocking IO calls that can be executed in concurrently.
@@ -117,7 +117,7 @@ pub struct SilConfig {
 }
 
 impl SilConfig {
-    /// Returns the filter config for the `eth_filter` handler.
+    /// Returns the filter config for the `sil_filter` handler.
     pub fn filter_config(&self) -> SilFilterConfig {
         SilFilterConfig::default()
             .max_blocks_per_filter(self.max_blocks_per_filter)
@@ -131,7 +131,7 @@ impl Default for SilConfig {
         Self {
             cache: SilStateCacheConfig::default(),
             gas_oracle: GasPriceOracleConfig::default(),
-            eth_proof_window: DEFAULT_ETH_PROOF_WINDOW,
+            sil_proof_window: DEFAULT_ETH_PROOF_WINDOW,
             max_tracing_requests: default_max_tracing_requests(),
             max_blocking_io_requests: DEFAULT_MAX_BLOCKING_IO_REQUEST,
             max_trace_filter_blocks: DEFAULT_MAX_TRACE_FILTER_BLOCKS,
@@ -215,8 +215,8 @@ impl SilConfig {
     }
 
     /// Configures the maximum proof window for historical proof generation.
-    pub const fn eth_proof_window(mut self, window: u64) -> Self {
-        self.eth_proof_window = window;
+    pub const fn sil_proof_window(mut self, window: u64) -> Self {
+        self.sil_proof_window = window;
         self
     }
 

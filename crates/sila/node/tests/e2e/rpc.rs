@@ -1,4 +1,4 @@
-use crate::utils::{eth_payload_attributes, eth_payload_attributes_amsterdam};
+use crate::utils::{sil_payload_attributes, sil_payload_attributes_amsterdam};
 use alloy_eips::{sip2718::Encodable2718, sip7910::SilConfig};
 use alloy_genesis::Genesis;
 use alloy_primitives::{Address, Bytes, B256, U256};
@@ -68,7 +68,7 @@ async fn test_fee_history() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -153,7 +153,7 @@ async fn test_flashbots_validate_v3() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -235,7 +235,7 @@ async fn test_flashbots_validate_v4() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -318,7 +318,7 @@ async fn test_flashbots_validate_v6() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes_amsterdam,
+        sil_payload_attributes_amsterdam,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -460,7 +460,7 @@ async fn test_eth_config() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();

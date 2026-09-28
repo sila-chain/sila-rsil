@@ -39,8 +39,8 @@ pub trait GetBlockAccessList: Trace + Call + LoadBlock + RpcNodeCoreExt {
                 return Ok(Some(Vec::from(bal)));
             }
 
-            self.spawn_blocking_io(move |eth_api| {
-                let state = eth_api
+            self.spawn_blocking_io(move |sil_api| {
+                let state = sil_api
                     .provider()
                     .state_by_block_id(block.parent_hash().into())
                     .map_err(Self::Error::from_sil_err)?;
@@ -51,7 +51,7 @@ pub trait GetBlockAccessList: Trace + Call + LoadBlock + RpcNodeCoreExt {
                     .build();
 
                 let block_txs = block.transactions_recovered();
-                let mut executor = RpcNodeCore::evm_config(&eth_api)
+                let mut executor = RpcNodeCore::evm_config(&sil_api)
                     .executor_for_block(&mut db, block.sealed_block())
                     .map_err(RsilError::other)
                     .map_err(Self::Error::from_sil_err)?;

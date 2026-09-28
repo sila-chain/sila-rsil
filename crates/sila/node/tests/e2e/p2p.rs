@@ -1,4 +1,4 @@
-use crate::utils::{advance_with_random_transactions, eth_payload_attributes};
+use crate::utils::{advance_with_random_transactions, sil_payload_attributes};
 use alloy_consensus::{SignableTransaction, TxEip1559, TxEnvelope};
 use alloy_eips::Encodable2718;
 use alloy_network::TxSignerSync;
@@ -105,7 +105,7 @@ async fn can_sync() -> eyre::Result<()> {
                 .build(),
         ),
         false,
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -156,7 +156,7 @@ async fn e2e_test_send_transactions() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -198,7 +198,7 @@ async fn test_long_reorg() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -254,7 +254,7 @@ async fn test_reorg_through_backfill() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -318,7 +318,7 @@ async fn test_tx_propagation() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
         false,
     )
     .await?;

@@ -8,7 +8,7 @@ use alloy_primitives::{
     Address, B256, U256,
 };
 use rsil_chainspec::SilChainSpec;
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_config::config::EtlConfig;
 use rsil_db_api::{
     cursor::{DbCursorRW, DbDupCursorRW},

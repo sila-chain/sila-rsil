@@ -677,21 +677,21 @@ impl<Pool: TransactionPool, N: NetworkPrimitives> TransactionsManager<Pool, N> {
         let mut should_report_peer = false;
         let mut tx_types_counter = TxTypesCounter::default();
 
-        let has_eth68_metadata = partially_valid_msg
+        let has_sil68_metadata = partially_valid_msg
             .msg_version()
             .expect("partially valid announcement should have a version")
-            .has_eth68_metadata();
+            .has_sil68_metadata();
 
         partially_valid_msg.retain(|tx_hash, metadata_ref_mut| {
             let (ty_byte, size_val) = match *metadata_ref_mut {
                 Some((ty, size)) => {
-                    if !has_eth68_metadata {
+                    if !has_sil68_metadata {
                         should_report_peer = true;
                     }
                     (ty, size)
                 }
                 None => {
-                    if has_eth68_metadata {
+                    if has_sil68_metadata {
                         should_report_peer = true;
                         return false;
                     }
@@ -699,7 +699,7 @@ impl<Pool: TransactionPool, N: NetworkPrimitives> TransactionsManager<Pool, N> {
                 }
             };
 
-            if has_eth68_metadata && let Some((actual_ty_byte, _)) = *metadata_ref_mut {
+            if has_sil68_metadata && let Some((actual_ty_byte, _)) = *metadata_ref_mut {
                 match TxType::try_from(actual_ty_byte) {
                     Ok(parsed_tx_type) => tx_types_counter.increase_by_tx_type(parsed_tx_type),
                     Err(_) => tx_types_counter.increase_other(),
@@ -723,7 +723,7 @@ impl<Pool: TransactionPool, N: NetworkPrimitives> TransactionsManager<Pool, N> {
             }
         });
 
-        if has_eth68_metadata {
+        if has_sil68_metadata {
             self.announced_tx_types_metrics.update_eth68_announcement_metrics(tx_types_counter);
         }
 

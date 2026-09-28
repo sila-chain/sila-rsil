@@ -2,7 +2,7 @@
 
 use crate::{RpcConvert, RpcNodeCore, RpcReceipt, SilApiTypes};
 use alloy_consensus::{transaction::TxHashRef, BlockHeader, TxReceipt};
-use alloy_rpc_types_sil::{pubsub::TransactionReceiptsParams, Filter, Log};
+use alloy_rpc_types_eth::{pubsub::TransactionReceiptsParams, Filter, Log};
 use futures::StreamExt;
 use rsil_chain_state::CanonStateSubscriptions;
 use rsil_primitives_traits::TransactionMeta;

@@ -1,6 +1,6 @@
 use crate::{
     connection::ConnWrapper,
-    credentials::EthstatsCredentials,
+    credentials::SilStatsCredentials,
     error::SilStatsError,
     events::{
         AuthMsg, BlockMsg, BlockStats, HistoryMsg, LatencyMsg, NodeInfo, NodeStats, PayloadMsg,
@@ -53,7 +53,7 @@ const READ_TIMEOUT: Duration = Duration::from_secs(30);
 #[derive(Debug, Clone)]
 pub struct SilStatsService<Network, Provider, Pool> {
     /// Authentication credentials for the `SilStats` server
-    credentials: EthstatsCredentials,
+    credentials: SilStatsCredentials,
     /// `WebSocket` connection wrapper, wrapped in `Arc<RwLock>` for shared access
     conn: Arc<RwLock<Option<ConnWrapper>>>,
     /// Timestamp of the last ping sent to the server
@@ -85,7 +85,7 @@ where
         provider: Provider,
         pool: Pool,
     ) -> Result<Self, SilStatsError> {
-        let credentials = EthstatsCredentials::from_str(url)?;
+        let credentials = SilStatsCredentials::from_str(url)?;
         let service = Self {
             credentials,
             conn: Arc::new(RwLock::new(None)),
@@ -106,7 +106,7 @@ where
     /// on the credentials configuration.
     async fn connect(&self) -> Result<(), SilStatsError> {
         debug!(
-            target: "ethstats",
+            target: "silstats",
             "Attempting to connect to SilStats server at {}", self.credentials.host
         );
         let protocol = if self.credentials.use_tls { "wss" } else { "ws" };
@@ -116,7 +116,7 @@ where
         match timeout(CONNECT_TIMEOUT, connect_async(url.as_str())).await {
             Ok(Ok((ws_stream, _))) => {
                 debug!(
-                    target: "ethstats",
+                    target: "silstats",
                     "Successfully connected to SilStats server at {}", self.credentials.host
                 );
                 let conn: ConnWrapper = ConnWrapper::new(ws_stream);
@@ -126,7 +126,7 @@ where
             }
             Ok(Err(e)) => Err(SilStatsError::WebSocket(e)),
             Err(_) => {
-                debug!(target: "ethstats", "Connection to SilStats server timed out");
+                debug!(target: "silstats", "Connection to SilStats server timed out");
                 Err(SilStatsError::Timeout)
             }
         }
@@ -138,7 +138,7 @@ where
     /// and waits for a successful acknowledgment.
     async fn login(&self) -> Result<(), SilStatsError> {
         debug!(
-            target: "ethstats",
+            target: "silstats",
             "Attempting to login to SilStats server as node_id {}", self.credentials.node_id
         );
         let conn = self.conn.read().await;
@@ -186,13 +186,13 @@ where
             && ack.get(0) == Some(&Value::String("ready".to_string()))
         {
             info!(
-                target: "ethstats",
+                target: "silstats",
                 "Login successful to SilStats server as node_id {}", self.credentials.node_id
             );
             return Ok(());
         }
 
-        debug!(target: "ethstats", "Login failed: Unauthorized or unexpected login response");
+        debug!(target: "silstats", "Login failed: Unauthorized or unexpected login response");
         Err(SilStatsError::AuthError("Unauthorized or unexpected login response".into()))
     }
 
@@ -253,7 +253,7 @@ where
             };
 
             if timed_out {
-                debug!(target: "ethstats", "Ping timeout");
+                debug!(target: "silstats", "Ping timeout");
                 // Clear connection to trigger reconnect
                 if let Some(conn) = conn_ref.write().await.take() {
                     let _ = conn.close().await;
@@ -277,7 +277,7 @@ where
         if let Some(start) = start {
             let latency = start.elapsed().as_millis() as u64 / 2;
 
-            debug!(target: "ethstats", "Reporting latency: {}ms", latency);
+            debug!(target: "silstats", "Reporting latency: {}ms", latency);
 
             let latency_msg = LatencyMsg { id: self.credentials.node_id.clone(), latency };
 
@@ -299,7 +299,7 @@ where
         let conn = conn.as_ref().ok_or(SilStatsError::NotConnected)?;
         let pending = self.pool.pool_size().pending as u64;
 
-        debug!(target: "ethstats", "Reporting pending txs: {}", pending);
+        debug!(target: "silstats", "Reporting pending txs: {}", pending);
 
         let pending_msg =
             PendingMsg { id: self.credentials.node_id.clone(), stats: PendingStats { pending } };
@@ -340,18 +340,18 @@ where
                     block: self.block_to_stats(&block)?,
                 };
 
-                debug!(target: "ethstats", "Reporting block: {}", block_number);
+                debug!(target: "silstats", "Reporting block: {}", block_number);
 
                 let message = block_msg.generate_block_message();
                 conn.write_json(&message).await?;
             }
             Ok(None) => {
                 // Block not found, stop fetching
-                debug!(target: "ethstats", "Block {} not found", block_number);
+                debug!(target: "silstats", "Block {} not found", block_number);
                 return Err(SilStatsError::BlockNotFound(block_number));
             }
             Err(e) => {
-                debug!(target: "ethstats", "Error fetching block {}: {}", block_number, e);
+                debug!(target: "silstats", "Error fetching block {}: {}", block_number, e);
                 return Err(SilStatsError::DataFetchError(e.to_string()));
             }
         };
@@ -382,7 +382,7 @@ where
             PayloadMsg { id: self.credentials.node_id.clone(), payload: payload_stats };
 
         debug!(
-            target: "ethstats",
+            target: "silstats",
             "Reporting new payload: block={}, hash={:?}, processing_time={}ms",
             block_number,
             block_hash,
@@ -461,11 +461,11 @@ where
                 }
                 Ok(None) => {
                     // Block not found, stop fetching
-                    debug!(target: "ethstats", "Block {} not found", block_number);
+                    debug!(target: "silstats", "Block {} not found", block_number);
                     break;
                 }
                 Err(e) => {
-                    debug!(target: "ethstats", "Error fetching block {}: {}", block_number, e);
+                    debug!(target: "silstats", "Error fetching block {}: {}", block_number, e);
                     break;
                 }
             }
@@ -475,11 +475,11 @@ where
             blocks.iter().map(|block| self.block_to_stats(block)).collect::<Result<_, _>>()?;
 
         if history.is_empty() {
-            debug!(target: "ethstats", "No history to send to stats server");
+            debug!(target: "silstats", "No history to send to stats server");
         } else {
             debug!(
-                target: "ethstats",
-                "Sending historical blocks to ethstats, first: {}, last: {}",
+                target: "silstats",
+                "Sending historical blocks to silstats, first: {}, last: {}",
                 history.first().unwrap().number,
                 history.last().unwrap().number
             );
@@ -535,7 +535,7 @@ where
         let emit = match msg.get("emit") {
             Some(emit) => emit,
             None => {
-                debug!(target: "ethstats", "Stats server sent non-broadcast, msg {}", msg);
+                debug!(target: "silstats", "Stats server sent non-broadcast, msg {}", msg);
                 return Err(SilStatsError::InvalidRequest);
             }
         };
@@ -543,7 +543,7 @@ where
         let command = match emit.get(0) {
             Some(Value::String(command)) => command.as_str(),
             _ => {
-                debug!(target: "ethstats", "Invalid stats server message type, msg {}", msg);
+                debug!(target: "silstats", "Invalid stats server message type, msg {}", msg);
                 return Err(SilStatsError::InvalidRequest);
             }
         };
@@ -571,7 +571,7 @@ where
                     .map(|val| {
                         val.as_u64().ok_or_else(|| {
                             debug!(
-                                target: "ethstats",
+                                target: "silstats",
                                 "Invalid stats history block number, msg {}", msg
                             );
                             SilStatsError::InvalidRequest
@@ -581,7 +581,7 @@ where
 
                 self.report_history(Some(&block_numbers)).await?;
             }
-            other => debug!(target: "ethstats", "Unhandled command: {}", other),
+            other => debug!(target: "silstats", "Unhandled command: {}", other),
         }
 
         Ok(())
@@ -625,10 +625,10 @@ where
                             }
                             Err(e) => match e {
                                 crate::error::ConnectionError::Serialization(err) => {
-                                    debug!(target: "ethstats", "JSON parse error from stats server: {}", err);
+                                    debug!(target: "silstats", "JSON parse error from stats server: {}", err);
                                 }
                                 other => {
-                                    debug!(target: "ethstats", "Read error: {}", other);
+                                    debug!(target: "silstats", "Read error: {}", other);
                                     if let Some(conn) = conn_arc.write().await.take() {
                                         let _ = conn.close().await;
                                     }
@@ -671,14 +671,14 @@ where
             tokio::select! {
                 // Handle shutdown signal
                 _ = shutdown_rx.recv() => {
-                    info!(target: "ethstats", "Shutting down ethstats service");
+                    info!(target: "silstats", "Shutting down silstats service");
                     break;
                 }
 
                 // Handle messages from the read loop
                 Some(msg) = message_rx.recv() => {
                     if let Err(e) = self.handle_message(msg).await {
-                        debug!(target: "ethstats", "Error handling message: {}", e);
+                        debug!(target: "silstats", "Error handling message: {}", e);
                         self.disconnect().await;
                     }
                 }
@@ -686,12 +686,12 @@ where
                 // Handle new block
                 Some(head) = head_rx.recv() => {
                     if let Err(e) = self.report_block(Some(head)).await {
-                        debug!(target: "ethstats", "Failed to report block: {}", e);
+                        debug!(target: "silstats", "Failed to report block: {}", e);
                         self.disconnect().await;
                     }
 
                     if let Err(e) = self.report_pending().await {
-                        debug!(target: "ethstats", "Failed to report pending: {}", e);
+                        debug!(target: "silstats", "Failed to report pending: {}", e);
                         self.disconnect().await;
                     }
                 }
@@ -699,7 +699,7 @@ where
                 // Handle new pending tx
                 _= pending_tx_receiver.recv() => {
                     if let Err(e) = self.report_pending().await {
-                        debug!(target: "ethstats", "Failed to report pending: {}", e);
+                        debug!(target: "silstats", "Failed to report pending: {}", e);
                         self.disconnect().await;
                     }
                 }
@@ -707,7 +707,7 @@ where
                 // Handle stats reporting
                 _ = report_interval.tick() => {
                     if let Err(e) = self.report().await {
-                        debug!(target: "ethstats", "Failed to report: {}", e);
+                        debug!(target: "silstats", "Failed to report: {}", e);
                         self.disconnect().await;
                     }
                 }
@@ -716,8 +716,8 @@ where
                 _ = reconnect_interval.tick() => {
                     if self.conn.read().await.is_none() {
                         match self.connect().await {
-                            Ok(_) => info!(target: "ethstats", "Reconnected successfully"),
-                            Err(e) => debug!(target: "ethstats", "Reconnect failed: {}", e),
+                            Ok(_) => info!(target: "silstats", "Reconnected successfully"),
+                            Err(e) => debug!(target: "silstats", "Reconnect failed: {}", e),
                         }
                     }
                 }
@@ -740,7 +740,7 @@ where
         if let Some(conn) = self.conn.write().await.take()
             && let Err(e) = conn.close().await
         {
-            debug!(target: "ethstats", "Error closing connection: {}", e);
+            debug!(target: "silstats", "Error closing connection: {}", e);
         }
     }
 
@@ -806,13 +806,13 @@ mod tests {
     #[tokio::test]
     async fn test_connection_and_login() {
         let (server_url, server_handle) = setup_mock_server().await;
-        let ethstats_url = format!("test-node:test-secret@{server_url}");
+        let silstats_url = format!("test-node:test-secret@{server_url}");
 
         let network = NoopNetwork::default();
         let provider = NoopProvider::default();
         let pool = NoopTransactionPool::default();
 
-        let service = SilStatsService::new(&ethstats_url, network, provider, pool)
+        let service = SilStatsService::new(&silstats_url, network, provider, pool)
             .await
             .expect("Service should connect");
 
@@ -826,13 +826,13 @@ mod tests {
     #[tokio::test]
     async fn test_history_command_handling() {
         let (server_url, server_handle) = setup_mock_server().await;
-        let ethstats_url = format!("test-node:test-secret@{server_url}");
+        let silstats_url = format!("test-node:test-secret@{server_url}");
 
         let network = NoopNetwork::default();
         let provider = NoopProvider::default();
         let pool = NoopTransactionPool::default();
 
-        let service = SilStatsService::new(&ethstats_url, network, provider, pool)
+        let service = SilStatsService::new(&silstats_url, network, provider, pool)
             .await
             .expect("Service should connect");
 
@@ -878,13 +878,13 @@ mod tests {
     async fn report_latency_lock_order_regression() {
         // Simulate a live connection so a pong handler (report_latency) can grab conn.read().
         let (server_url, server_handle) = setup_mock_server().await;
-        let ethstats_url = format!("test-node:test-secret@{server_url}");
+        let silstats_url = format!("test-node:test-secret@{server_url}");
 
         let network = NoopNetwork::default();
         let provider = NoopProvider::default();
         let pool = NoopTransactionPool::default();
 
-        let service = SilStatsService::new(&ethstats_url, network, provider, pool)
+        let service = SilStatsService::new(&silstats_url, network, provider, pool)
             .await
             .expect("Service should connect");
 

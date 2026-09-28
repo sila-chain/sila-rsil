@@ -55,7 +55,7 @@ rsil-tracing = { workspace = true, features = ["std"] }
 rsil-transaction-pool.workspace = true
 rsil-trie-db = { workspace = true, features = ["metrics"] }
 rsil-basic-payload-builder.workspace = true
-rsil-node-ethstats.workspace = true
+rsil-node-silstats.workspace = true
 
 ## sila
 alloy-consensus.workspace = true

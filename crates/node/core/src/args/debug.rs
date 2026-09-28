@@ -113,10 +113,10 @@ pub struct DebugArgs {
     )]
     pub healthy_node_rpc_url: Option<String>,
 
-    /// The URL of the ethstats server to connect to.
+    /// The URL of the silstats server to connect to.
     /// Example: `nodename:secret@host:port`
-    #[arg(long = "ethstats", help_heading = "Debug")]
-    pub ethstats: Option<String>,
+    #[arg(long = "silstats", help_heading = "Debug")]
+    pub silstats: Option<String>,
 
     /// Set the node to idle state when the backfill is not running.
     ///
@@ -143,7 +143,7 @@ impl Default for DebugArgs {
             engine_api_store: None,
             invalid_block_hook: Some(InvalidBlockSelection::default()),
             healthy_node_rpc_url: None,
-            ethstats: None,
+            silstats: None,
             startup_sync_state_idle: false,
         }
     }

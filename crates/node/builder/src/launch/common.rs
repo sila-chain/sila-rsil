@@ -95,7 +95,7 @@ use tokio::sync::{
 };
 
 use futures::{future::Either, stream, Stream, StreamExt};
-use rsil_node_ethstats::SilStatsService;
+use rsil_node_silstats::SilStatsService;
 use rsil_node_events::{cl::ConsensusLayerHealthEvents, node::NodeEvent};
 
 /// Reusable setup for launching a node.
@@ -1159,14 +1159,14 @@ where
     }
 
     /// Spawns the [`SilStatsService`] service if configured.
-    pub async fn spawn_ethstats<St>(&self, mut engine_events: St) -> eyre::Result<()>
+    pub async fn spawn_silstats<St>(&self, mut engine_events: St) -> eyre::Result<()>
     where
         St: Stream<Item = rsil_engine_primitives::ConsensusEngineEvent<PrimitivesTy<T::Types>>>
             + Send
             + Unpin
             + 'static,
     {
-        let Some(url) = self.node_config().debug.ethstats.as_ref() else { return Ok(()) };
+        let Some(url) = self.node_config().debug.silstats.as_ref() else { return Ok(()) };
 
         let network = self.components().network().clone();
         let pool = self.components().pool().clone();
@@ -1174,10 +1174,10 @@ where
 
         info!(target: "rsil::cli", "Starting SilStats service at {}", url);
 
-        let ethstats = SilStatsService::new(url, network, provider, pool).await?;
+        let silstats = SilStatsService::new(url, network, provider, pool).await?;
 
         // If engine events are provided, spawn listener for new payload reporting
-        let ethstats_for_events = ethstats.clone();
+        let silstats_for_events = silstats.clone();
         let task_executor = self.task_executor().clone();
         task_executor.spawn_task(async move {
             while let Some(event) = engine_events.next().await {
@@ -1187,25 +1187,25 @@ where
                     | ConsensusEngineEvent::CanonicalBlockAdded(executed, duration) => {
                         let block_hash = executed.recovered_block.num_hash().hash;
                         let block_number = executed.recovered_block.num_hash().number;
-                        if let Err(e) = ethstats_for_events
+                        if let Err(e) = silstats_for_events
                             .report_new_payload(block_hash, block_number, duration)
                             .await
                         {
                             debug!(
-                                target: "ethstats",
+                                target: "silstats",
                                 "Failed to report new payload: {}", e
                             );
                         }
                     }
                     _ => {
-                        // Ignore other event types for ethstats reporting
+                        // Ignore other event types for silstats reporting
                     }
                 }
             }
         });
 
-        // Spawn main ethstats service
-        task_executor.spawn_task(async move { ethstats.run().await });
+        // Spawn main silstats service
+        task_executor.spawn_task(async move { silstats.run().await });
 
         Ok(())
     }

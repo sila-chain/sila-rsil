@@ -9584,7 +9584,7 @@ dependencies = [
  "rsil-network-p2p",
  "rsil-node-api",
  "rsil-node-core",
- "rsil-node-ethstats",
+ "rsil-node-silstats",
  "rsil-node-events",
  "rsil-node-metrics",
  "rsil-node-sila",
@@ -9672,7 +9672,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rsil-node-ethstats"
+name = "rsil-node-silstats"
 version = "2.4.0"
 dependencies = [
  "alloy-consensus",

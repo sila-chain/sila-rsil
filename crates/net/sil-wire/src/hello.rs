@@ -1,6 +1,6 @@
 use crate::{Capability, ProtocolVersion, SilVersion};
 use alloy_rlp::{RlpDecodable, RlpEncodable};
-use rsil_codecs::add_arbitrary_tests;
+use reth_codecs::add_arbitrary_tests;
 use rsil_network_peers::PeerId;
 const RSIL_CLIENT_VERSION: &str = concat!("rsil/v", env!("CARGO_PKG_VERSION"));
 

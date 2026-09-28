@@ -18,7 +18,7 @@ use rsil_provider::FullProvider;
 use rsil_sila_primitives::TxType;
 
 /// Helper function to create a new sil payload attributes
-pub(crate) const fn eth_payload_attributes(timestamp: u64) -> PayloadAttributes {
+pub(crate) const fn sil_payload_attributes(timestamp: u64) -> PayloadAttributes {
     PayloadAttributes {
         timestamp,
         prev_randao: B256::ZERO,
@@ -32,7 +32,7 @@ pub(crate) const fn eth_payload_attributes(timestamp: u64) -> PayloadAttributes 
 
 /// Helper function to create pre-SilaCancun (SilaShanghai) payload attributes.
 /// No `parent_beacon_block_root` field.
-pub(crate) const fn eth_payload_attributes_shanghai(timestamp: u64) -> PayloadAttributes {
+pub(crate) const fn sil_payload_attributes_shanghai(timestamp: u64) -> PayloadAttributes {
     PayloadAttributes {
         timestamp,
         prev_randao: B256::ZERO,
@@ -50,7 +50,7 @@ pub(crate) const fn eth_payload_attributes_shanghai(timestamp: u64) -> PayloadAt
 /// `slot_number` in the attributes once SilaAmsterdam is active. Tests use the timestamp as a
 /// deterministic dummy slot because the exact beacon slot is irrelevant for these local e2e
 /// payloads.
-pub(crate) const fn eth_payload_attributes_amsterdam(timestamp: u64) -> PayloadAttributes {
+pub(crate) const fn sil_payload_attributes_amsterdam(timestamp: u64) -> PayloadAttributes {
     PayloadAttributes {
         timestamp,
         prev_randao: B256::ZERO,

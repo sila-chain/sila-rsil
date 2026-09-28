@@ -2,7 +2,7 @@ use crate::{
     table::{Compress, Decode, Decompress, DupSort, Encode, IntoVec, Key, Table, Value},
     DatabaseError,
 };
-use rsil_codecs::DecompressError;
+use reth_codecs::DecompressError;
 use serde::{Deserialize, Serialize};
 
 /// Tuple with `RawKey<T::Key>` and `RawValue<T::Value>`.

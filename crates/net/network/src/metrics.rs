@@ -564,7 +564,7 @@ pub struct SilRequestHandlerMetrics {
     pub(crate) snap_requests_received_total: Counter,
 
     /// Duration in seconds of call to poll
-    /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
+    /// [`SilRequestHandler`](crate::sil_requests::SilRequestHandler).
     pub(crate) acc_duration_poll_sil_req_handler: Gauge,
 }
 

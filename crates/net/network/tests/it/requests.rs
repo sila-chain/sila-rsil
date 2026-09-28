@@ -7,7 +7,7 @@ use alloy_primitives::{BlockHash, BlockNumber, Bytes, B256};
 use rand::Rng;
 use rsil_sil_wire::{BlockAccessLists, GetBlockAccessLists, HeadersDirection, SilVersion};
 use rsil_network::{
-    eth_requests::{MAX_BLOCK_ACCESS_LISTS_SERVE, SOFT_RESPONSE_LIMIT},
+    sil_requests::{MAX_BLOCK_ACCESS_LISTS_SERVE, SOFT_RESPONSE_LIMIT},
     test_utils::{NetworkEventStream, PeerConfig, Testnet, TestnetHandle},
     BlockDownloaderProvider, NetworkEventListenerProvider,
 };

@@ -18,7 +18,7 @@ use rsil_sila::{
     chainspec::DEV,
     network::{
         config::rng_secret_key,
-        eth_requests::IncomingSilRequest,
+        sil_requests::IncomingSilRequest,
         p2p::HeadersClient,
         transactions::{
             constants::tx_manager::DEFAULT_TX_MANAGER_CHANNEL_MEMORY_LIMIT_BYTES,

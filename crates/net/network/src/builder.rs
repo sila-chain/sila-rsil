@@ -1,7 +1,7 @@
 //! Builder support for configuring the entire setup.
 
 use crate::{
-    eth_requests::SilRequestHandler,
+    sil_requests::SilRequestHandler,
     metrics::NETWORK_POOL_TRANSACTIONS_SCOPE,
     transactions::{
         config::{
@@ -21,7 +21,7 @@ use tokio::sync::mpsc;
 
 /// We set the max channel capacity of the `SilRequestHandler` to 256
 /// 256 requests with malicious 10MB body requests is 2.6GB which can be absorbed by the node.
-pub(crate) const ETH_REQUEST_CHANNEL_CAPACITY: usize = 256;
+pub(crate) const SIL_REQUEST_CHANNEL_CAPACITY: usize = 256;
 
 /// A builder that can configure all components of the network.
 #[expect(missing_debug_implementations)]
@@ -71,7 +71,7 @@ impl<Tx, Sil, N: NetworkPrimitives> NetworkBuilder<Tx, Sil, N> {
         Client: BalProvider,
     {
         let Self { mut network, transactions, .. } = self;
-        let (tx, rx) = mpsc::channel(ETH_REQUEST_CHANNEL_CAPACITY);
+        let (tx, rx) = mpsc::channel(SIL_REQUEST_CHANNEL_CAPACITY);
         network.set_sil_request_handler(tx);
         let peers = network.handle().peers_handle().clone();
         let request_handler = SilRequestHandler::new(client, peers, rx);

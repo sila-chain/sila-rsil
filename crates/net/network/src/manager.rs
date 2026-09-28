@@ -20,7 +20,7 @@ use crate::{
     config::NetworkConfig,
     discovery::Discovery,
     error::{NetworkError, ServiceKind},
-    eth_requests::IncomingSilRequest,
+    sil_requests::IncomingSilRequest,
     import::{BlockImport, BlockImportEvent, BlockImportOutcome, BlockValidation, NewBlockEvent},
     listener::ConnectionListener,
     message::{NewBlockMessage, PeerMessage},
@@ -120,7 +120,7 @@ pub struct NetworkManager<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// [`TransactionsManager`](crate::transactions::TransactionsManager) task, if configured.
     to_transactions_manager: Option<MemoryBoundedSender<NetworkTransactionEvent<N>>>,
     /// Sender half to send events to the
-    /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler) task, if configured.
+    /// [`SilRequestHandler`](crate::sil_requests::SilRequestHandler) task, if configured.
     ///
     /// The channel that originally receives and bundles all requests from all sessions is already
     /// bounded. However, since handling an sil request is more I/O intensive than delegating
@@ -131,7 +131,7 @@ pub struct NetworkManager<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// body requests with bogus data up until the allowed max message size limit.
     /// Thus, we use a bounded channel here to avoid unbounded build up if the node is flooded with
     /// requests. This channel size is set at
-    /// [`ETH_REQUEST_CHANNEL_CAPACITY`](crate::builder::ETH_REQUEST_CHANNEL_CAPACITY)
+    /// [`SIL_REQUEST_CHANNEL_CAPACITY`](crate::builder::SIL_REQUEST_CHANNEL_CAPACITY)
     to_sil_request_handler: Option<mpsc::Sender<IncomingSilRequest<N>>>,
     /// Tracks the number of active session (connected peers).
     ///
@@ -188,14 +188,14 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
     }
 
     /// Sets the dedicated channel for events intended for the
-    /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
+    /// [`SilRequestHandler`](crate::sil_requests::SilRequestHandler).
     pub fn with_sil_request_handler(mut self, tx: mpsc::Sender<IncomingSilRequest<N>>) -> Self {
         self.set_sil_request_handler(tx);
         self
     }
 
     /// Sets the dedicated channel for events intended for the
-    /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
+    /// [`SilRequestHandler`](crate::sil_requests::SilRequestHandler).
     pub fn set_sil_request_handler(&mut self, tx: mpsc::Sender<IncomingSilRequest<N>>) {
         self.to_sil_request_handler = Some(tx);
     }
@@ -509,7 +509,7 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
         }
     }
 
-    /// Sends an event to the [`SilRequestManager`](crate::eth_requests::SilRequestHandler) if
+    /// Sends an event to the [`SilRequestManager`](crate::sil_requests::SilRequestHandler) if
     /// configured.
     fn delegate_sil_request(&self, event: IncomingSilRequest<N>) {
         if let Some(ref reqs) = self.to_sil_request_handler {

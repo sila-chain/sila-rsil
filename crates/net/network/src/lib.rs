@@ -21,7 +21,7 @@
 //!          [`TransactionPool`](rsil_transaction_pool::TransactionPool) over the `Network`
 //!
 //!    - `SIL request Task`: is a spawned
-//!      [`SilRequestHandler`](crate::eth_requests::SilRequestHandler) future that:
+//!      [`SilRequestHandler`](crate::sil_requests::SilRequestHandler) future that:
 //!
 //!        * Responds to incoming SIL related requests: `Headers`, `Bodies`
 //!
@@ -126,7 +126,7 @@ pub mod test_utils;
 pub mod cache;
 pub mod config;
 pub mod error;
-pub mod eth_requests;
+pub mod sil_requests;
 pub mod import;
 pub mod message;
 pub mod peers;

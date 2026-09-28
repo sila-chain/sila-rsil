@@ -1,9 +1,9 @@
 //! A network implementation for testing purposes.
 
 use crate::{
-    builder::ETH_REQUEST_CHANNEL_CAPACITY,
+    builder::SIL_REQUEST_CHANNEL_CAPACITY,
     error::NetworkError,
-    eth_requests::SilRequestHandler,
+    sil_requests::SilRequestHandler,
     protocol::IntoRlpxSubProtocol,
     transactions::{
         config::{StrictEthAnnouncementFilter, TransactionPropagationKind},
@@ -469,8 +469,8 @@ where
     where
         C: BalProvider,
     {
-        let (tx, rx) = channel(ETH_REQUEST_CHANNEL_CAPACITY);
-        self.network.set_eth_request_handler(tx);
+        let (tx, rx) = channel(SIL_REQUEST_CHANNEL_CAPACITY);
+        self.network.set_sil_request_handler(tx);
         let peers = self.network.peers_handle();
         let request_handler = SilRequestHandler::new(self.client.clone(), peers, rx);
         self.request_handler = Some(request_handler);

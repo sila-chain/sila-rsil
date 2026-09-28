@@ -246,8 +246,8 @@ pub struct NetworkManager<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// [`TransactionsManager`](crate::transactions::TransactionsManager) task, if configured.
     to_transactions_manager: Option<UnboundedMeteredSender<NetworkTransactionEvent<N>>>,
     /// Sender half to send events to the
-    /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler) task, if configured.
-    to_eth_request_handler: Option<mpsc::Sender<IncomingEthRequest<N>>>,
+    /// [`SilRequestHandler`](crate::sil_requests::SilRequestHandler) task, if configured.
+    to_sil_request_handler: Option<mpsc::Sender<IncomingSilRequest<N>>>,
     /// Tracks the number of active sessions (connected peers).
     ///
     /// This is updated via internal events and shared via `Arc` with the [`NetworkHandle`]
@@ -492,7 +492,7 @@ The SIL requests task serves _incoming_ requests related to blocks in the [`sil`
 
 Similar to the network management task, it's implemented as an endless future, but it is meant to run as a background task (on a standalone `tokio::task`) and not to be interacted with directly from the pipeline. It's represented by the following `SilRequestHandler` struct:
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/sil_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/sil_requests.rs)
 ```rust,ignore
 pub struct SilRequestHandler<C, N: NetworkPrimitives = SilNetworkPrimitives> {
     /// The client type that can interact with the chain.
@@ -501,7 +501,7 @@ pub struct SilRequestHandler<C, N: NetworkPrimitives = SilNetworkPrimitives> {
     #[expect(dead_code)]
     peers: PeersHandle,
     /// Incoming request from the [`NetworkManager`](crate::NetworkManager).
-    incoming_requests: ReceiverStream<IncomingEthRequest<N>>,
+    incoming_requests: ReceiverStream<IncomingSilRequest<N>>,
     /// Metrics for the sil request handler.
     metrics: SilRequestHandlerMetrics,
 }
@@ -511,7 +511,7 @@ The `client` field here is a client that's used to fetch data from the database,
 
 ### Input Streams to the SIL Requests Task
 
-The `incoming_requests` field is the receiver end of a channel that accepts, as you might have guessed, incoming SIL requests from peers. The sender end of this channel is stored on the `NetworkManager` struct as the `to_eth_request_handler` field.
+The `incoming_requests` field is the receiver end of a channel that accepts, as you might have guessed, incoming SIL requests from peers. The sender end of this channel is stored on the `NetworkManager` struct as the `to_sil_request_handler` field.
 
 As the `NetworkManager` is polled and listens for events from peers passed through the `Swarm` struct it holds, it sends any received SIL requests into the channel.
 
@@ -519,7 +519,7 @@ As the `NetworkManager` is polled and listens for events from peers passed throu
 
 Being an endless future, the core of the SIL requests task's functionality is in its `poll` method implementation. As the `SilRequestHandler` is polled, it listens for any SIL requests coming through the channel, and handles them accordingly. At the time of writing, the SIL requests task can handle the [`GetBlockHeaders`](https://github.com/sila-chain/devp2p/blob/master/caps/sil.md#getblockheaders-0x03) and [`GetBlockBodies`](https://github.com/sila-chain/devp2p/blob/master/caps/sil.md#getblockbodies-0x05) requests.
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/sil_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/sil_requests.rs)
 ```rust,ignore
 fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
     let this = self.get_mut();
@@ -529,15 +529,15 @@ fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
             Poll::Pending => return Poll::Pending,
             Poll::Ready(None) => return Poll::Ready(()),
             Poll::Ready(Some(incoming)) => match incoming {
-                IncomingEthRequest::GetBlockHeaders { peer_id, request, response } => {
+                IncomingSilRequest::GetBlockHeaders { peer_id, request, response } => {
                     this.on_headers_request(peer_id, request, response)
                 }
-                IncomingEthRequest::GetBlockBodies { peer_id, request, response } => {
+                IncomingSilRequest::GetBlockBodies { peer_id, request, response } => {
                     this.on_bodies_request(peer_id, request, response)
                 }
-                IncomingEthRequest::GetNodeData { .. } => {}
-                IncomingEthRequest::GetReceipts { .. } => {}
-                IncomingEthRequest::GetReceipts69 { .. } => {}
+                IncomingSilRequest::GetNodeData { .. } => {}
+                IncomingSilRequest::GetReceipts { .. } => {}
+                IncomingSilRequest::GetReceipts69 { .. } => {}
             },
         }
     }
@@ -568,7 +568,7 @@ pub struct GetBlockHeaders {
 
 In handling this request, the SIL requests task attempts, starting with `start_block`, to fetch the associated header from the database, increment/decrement the block number to fetch by `skip` depending on the `direction` while checking for overflow/underflow, and checks that bounds specifying the maximum numbers of headers or bytes to send have not been breached.
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/sil_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/sil_requests.rs)
 ```rust,ignore
 fn get_headers_response(&self, request: GetBlockHeaders) -> Vec<Header> {
     let GetBlockHeaders { start_block, limit, skip, direction } = request;
@@ -648,7 +648,7 @@ pub struct GetBlockBodies(
 
 In handling this request, similarly, the SIL requests task attempts, for each hash in the requested order, to fetch the block body (transactions & ommers), while checking that bounds specifying the maximum numbers of bodies or bytes to send have not been breached.
 
-[File: crates/net/network/src/eth_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/eth_requests.rs)
+[File: crates/net/network/src/sil_requests.rs](https://github.com/sila-chain/sila-rsil/blob/1563506aea09049a85e5cc72c2894f3f7a371581/crates/net/network/src/sil_requests.rs)
 ```rust,ignore
 fn on_bodies_request(
     &mut self,

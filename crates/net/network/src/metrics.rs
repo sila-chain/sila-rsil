@@ -622,16 +622,16 @@ impl TxTypesCounter {
             TxType::Legacy => {
                 self.legacy += 1;
             }
-            TxType::Sip2930 => {
+            TxType::Eip2930 => {
                 self.sip2930 += 1;
             }
-            TxType::Sip1559 => {
+            TxType::Eip1559 => {
                 self.sip1559 += 1;
             }
-            TxType::Sip4844 => {
+            TxType::Eip4844 => {
                 self.sip4844 += 1;
             }
-            TxType::Sip7702 => {
+            TxType::Eip7702 => {
                 self.sip7702 += 1;
             }
         }

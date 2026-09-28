@@ -6,7 +6,7 @@ use alloy_rlp::{
     BufMut, Decodable, Encodable, Header, RlpDecodableWrapper, RlpEncodableWrapper,
     EMPTY_STRING_CODE,
 };
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// A request for block access lists from the given block hashes.
 #[derive(Clone, Debug, PartialEq, Eq, RlpEncodableWrapper, RlpDecodableWrapper, Default)]

@@ -12,7 +12,7 @@ use alloy_primitives::{
 use alloy_rlp::{Decodable, Encodable, Error as RlpError, EMPTY_LIST_CODE};
 use futures::{Sink, SinkExt, StreamExt};
 use pin_project::pin_project;
-use rsil_codecs::add_arbitrary_tests;
+use reth_codecs::add_arbitrary_tests;
 use rsil_metrics::metrics::counter;
 use rsil_primitives_traits::GotExpected;
 use std::{

@@ -62,14 +62,14 @@ where
 {
     /// Create a new instance of the [`DebugApi`]
     pub fn new(
-        eth_api: Sil,
+        sil_api: Sil,
         blocking_task_guard: BlockingTaskGuard,
         executor: &Runtime,
         mut stream: impl Stream<Item = ConsensusEngineEvent<Sil::Primitives>> + Send + Unpin + 'static,
     ) -> Self {
         let bad_block_store = BadBlockStore::default();
         let inner = Arc::new(DebugApiInner {
-            eth_api,
+            sil_api,
             blocking_task_guard,
             bad_block_store: bad_block_store.clone(),
         });
@@ -89,13 +89,13 @@ where
     }
 
     /// Access the underlying `Sil` API.
-    pub fn eth_api(&self) -> &Sil {
-        &self.inner.eth_api
+    pub fn sil_api(&self) -> &Sil {
+        &self.inner.sil_api
     }
 
     /// Access the underlying provider.
     pub fn provider(&self) -> &Sil::Provider {
-        self.inner.eth_api.provider()
+        self.inner.sil_api.provider()
     }
 }
 
@@ -117,19 +117,19 @@ where
         evm_env: SavmEnvFor<Sil::Savm>,
         opts: GethDebugTracingOptions,
     ) -> Result<Vec<TraceResult>, Sil::Error> {
-        self.eth_api()
-            .spawn_with_state_at_block(block.parent_hash(), move |eth_api, mut db| {
+        self.sil_api()
+            .spawn_with_state_at_block(block.parent_hash(), move |sil_api, mut db| {
                 let mut results = Vec::with_capacity(block.body().transactions().len());
 
-                eth_api.apply_pre_execution_changes(&block, &mut db)?;
+                sil_api.apply_pre_execution_changes(&block, &mut db)?;
 
                 let mut transactions = block.transactions_recovered().enumerate().peekable();
                 let mut inspector = DebugInspector::new(opts).map_err(Sil::Error::from_eth_err)?;
                 while let Some((index, tx)) = transactions.next() {
                     let tx_hash = *tx.tx_hash();
-                    let tx_env = eth_api.evm_config().tx_env(tx);
+                    let tx_env = sil_api.evm_config().tx_env(tx);
 
-                    let res = eth_api.inspect(
+                    let res = sil_api.inspect(
                         &mut db,
                         evm_env.clone(),
                         tx_env.clone(),
@@ -178,7 +178,7 @@ where
             .map_err(Sil::Error::from_eth_err)?;
 
         let evm_env = self
-            .eth_api()
+            .sil_api()
             .evm_config()
             .evm_env(block.header())
             .map_err(RsilError::other)
@@ -203,11 +203,11 @@ where
         opts: GethDebugTracingOptions,
     ) -> Result<Vec<TraceResult>, Sil::Error> {
         let block = self
-            .eth_api()
+            .sil_api()
             .recovered_block(block_id)
             .await?
             .ok_or(SilApiError::HeaderNotFound(block_id))?;
-        let evm_env = self.eth_api().evm_env_for_header(block.sealed_block().sealed_header())?;
+        let evm_env = self.sil_api().evm_env_for_header(block.sealed_block().sealed_header())?;
 
         self.trace_block(block, evm_env, opts).await
     }
@@ -220,39 +220,39 @@ where
         tx_hash: B256,
         opts: GethDebugTracingOptions,
     ) -> Result<GethTrace, Sil::Error> {
-        let (transaction, block) = match self.eth_api().transaction_and_block(tx_hash).await? {
+        let (transaction, block) = match self.sil_api().transaction_and_block(tx_hash).await? {
             None => return Err(SilApiError::TransactionNotFound.into()),
             Some(res) => res,
         };
-        let evm_env = self.eth_api().evm_env_for_header(block.sealed_block().sealed_header())?;
+        let evm_env = self.sil_api().evm_env_for_header(block.sealed_block().sealed_header())?;
 
         // we need to get the state of the parent block because we're essentially replaying the
         // block the transaction is included in
         let state_at: BlockId = block.parent_hash().into();
         let block_hash = block.hash();
 
-        self.eth_api()
-            .spawn_with_state_at_block(state_at, move |eth_api, mut db| {
+        self.sil_api()
+            .spawn_with_state_at_block(state_at, move |sil_api, mut db| {
                 let block_txs = block.transactions_recovered();
 
                 // configure env for the target transaction
                 let tx = transaction.into_recovered();
 
-                eth_api.apply_pre_execution_changes(&block, &mut db)?;
+                sil_api.apply_pre_execution_changes(&block, &mut db)?;
 
                 // replay all transactions prior to the targeted transaction
-                let index = eth_api.replay_transactions_until(
+                let index = sil_api.replay_transactions_until(
                     &mut db,
                     evm_env.clone(),
                     block_txs,
                     *tx.tx_hash(),
                 )?;
 
-                let tx_env = eth_api.evm_config().tx_env(&tx);
+                let tx_env = sil_api.evm_config().tx_env(&tx);
 
                 let mut inspector = DebugInspector::new(opts).map_err(Sil::Error::from_eth_err)?;
                 let res =
-                    eth_api.inspect(&mut db, evm_env.clone(), tx_env.clone(), &mut inspector)?;
+                    sil_api.inspect(&mut db, evm_env.clone(), tx_env.clone(), &mut inspector)?;
                 let trace = inspector
                     .get_result(
                         Some(TransactionContext {
@@ -304,11 +304,11 @@ where
         }
 
         let this = self.clone();
-        self.eth_api()
+        self.sil_api()
             .spawn_with_call_at(call, at, overrides, move |db, evm_env, tx_env| {
                 let mut inspector =
                     DebugInspector::new(tracing_options).map_err(Sil::Error::from_eth_err)?;
-                let res = this.eth_api().inspect(
+                let res = this.sil_api().inspect(
                     &mut *db,
                     evm_env.clone(),
                     tx_env.clone(),
@@ -335,7 +335,7 @@ where
     ) -> Result<GethTrace, Sil::Error> {
         // Get the target block to check transaction count
         let block = self
-            .eth_api()
+            .sil_api()
             .recovered_block(block_id)
             .await?
             .ok_or(SilApiError::HeaderNotFound(block_id))?;
@@ -350,18 +350,18 @@ where
             .into());
         }
 
-        let evm_env = self.eth_api().evm_env_for_header(block.sealed_block().sealed_header())?;
+        let evm_env = self.sil_api().evm_env_for_header(block.sealed_block().sealed_header())?;
 
         // execute after the parent block, replaying `tx_index` transactions
         let state_at = block.parent_hash();
 
-        self.eth_api()
-            .spawn_with_state_at_block(state_at, move |eth_api, mut db| {
+        self.sil_api()
+            .spawn_with_state_at_block(state_at, move |sil_api, mut db| {
                 // 1. apply pre-execution changes
-                eth_api.apply_pre_execution_changes(&block, &mut db)?;
+                sil_api.apply_pre_execution_changes(&block, &mut db)?;
 
                 // 2. replay the required number of transactions
-                eth_api.replay_transactions_until(
+                sil_api.replay_transactions_until(
                     &mut db,
                     evm_env.clone(),
                     block.transactions_recovered(),
@@ -370,12 +370,12 @@ where
 
                 // 3. now execute the trace call on this state
                 let (evm_env, tx_env) =
-                    eth_api.prepare_call_env(evm_env, call, &mut db, overrides)?;
+                    sil_api.prepare_call_env(evm_env, call, &mut db, overrides)?;
 
                 let mut inspector =
                     DebugInspector::new(tracing_options).map_err(Sil::Error::from_eth_err)?;
                 let res =
-                    eth_api.inspect(&mut db, evm_env.clone(), tx_env.clone(), &mut inspector)?;
+                    sil_api.inspect(&mut db, evm_env.clone(), tx_env.clone(), &mut inspector)?;
                 let trace = inspector
                     .get_result(None, &tx_env, &evm_env.block_env, &res, &mut db)
                     .map_err(Sil::Error::from_eth_err)?;
@@ -403,12 +403,12 @@ where
 
         let target_block = block_number.unwrap_or_default();
         let block = self
-            .eth_api()
+            .sil_api()
             .recovered_block(target_block)
             .await?
             .ok_or(SilApiError::HeaderNotFound(target_block))?;
         let mut evm_env =
-            self.eth_api().evm_env_for_header(block.sealed_block().sealed_header())?;
+            self.sil_api().evm_env_for_header(block.sealed_block().sealed_header())?;
 
         let opts = opts.unwrap_or_default();
         let GethDebugTracingCallOptions { tracing_options, mut state_overrides, .. } = opts;
@@ -429,22 +429,22 @@ where
             replay_block_txs = false;
         }
 
-        self.eth_api()
-            .spawn_with_state_at_block(at, move |eth_api, mut db| {
+        self.sil_api()
+            .spawn_with_state_at_block(at, move |sil_api, mut db| {
                 // the outer vec for the bundles
                 let mut all_bundles = Vec::with_capacity(bundles.len());
 
                 if replay_block_txs {
                     // only need to replay the transactions in the block if not all transactions are
                     // to be replayed
-                    eth_api.apply_pre_execution_changes(&block, &mut db)?;
+                    sil_api.apply_pre_execution_changes(&block, &mut db)?;
 
                     let transactions = block.transactions_recovered().take(num_txs);
 
                     // Execute all transactions until index
                     for tx in transactions {
-                        let tx_env = eth_api.evm_config().tx_env(tx);
-                        let res = eth_api.transact(&mut db, evm_env.clone(), tx_env)?;
+                        let tx_env = sil_api.evm_config().tx_env(tx);
+                        let res = sil_api.transact(&mut db, evm_env.clone(), tx_env)?;
                         db.commit(res.state);
                     }
                 }
@@ -467,9 +467,9 @@ where
                             SavmOverrides::new(state_overrides, block_overrides.clone());
 
                         let (evm_env, tx_env) =
-                            eth_api.prepare_call_env(evm_env.clone(), tx, &mut db, overrides)?;
+                            sil_api.prepare_call_env(evm_env.clone(), tx, &mut db, overrides)?;
 
-                        let res = eth_api.inspect(
+                        let res = sil_api.inspect(
                             &mut db,
                             evm_env.clone(),
                             tx_env.clone(),
@@ -507,7 +507,7 @@ where
     ) -> Result<ExecutionWitness, Sil::Error> {
         let this = self.clone();
         let block = this
-            .eth_api()
+            .sil_api()
             .recovered_block(hash.into())
             .await?
             .ok_or(SilApiError::HeaderNotFound(hash.into()))?;
@@ -526,7 +526,7 @@ where
     ) -> Result<ExecutionWitness, Sil::Error> {
         let this = self.clone();
         let block = this
-            .eth_api()
+            .sil_api()
             .recovered_block(block_id.into())
             .await?
             .ok_or(SilApiError::HeaderNotFound(block_id.into()))?;
@@ -541,9 +541,9 @@ where
         mode: ExecutionWitnessMode,
     ) -> Result<ExecutionWitness, Sil::Error> {
         let block_number = block.header().number();
-        self.eth_api()
-            .spawn_with_state_at_block(block.parent_hash(), move |eth_api, mut db| {
-                let block_executor = eth_api.evm_config().executor(&mut db);
+        self.sil_api()
+            .spawn_with_state_at_block(block.parent_hash(), move |sil_api, mut db| {
+                let block_executor = sil_api.evm_config().executor(&mut db);
 
                 let mut witness_record = ExecutionWitnessRecord::default();
 
@@ -554,7 +554,7 @@ where
                     .map_err(|err| SilApiError::Internal(err.into()))?;
 
                 Ok(witness_record
-                    .into_execution_witness(&db.database.0, eth_api.provider(), block_number, mode)
+                    .into_execution_witness(&db.database.0, sil_api.provider(), block_number, mode)
                     .map_err(SilApiError::from)?)
             })
             .await
@@ -597,7 +597,7 @@ where
         R: Send + 'static,
     {
         let block = self
-            .eth_api()
+            .sil_api()
             .recovered_block(block_id)
             .await?
             .ok_or(SilApiError::HeaderNotFound(block_id))?;
@@ -610,9 +610,9 @@ where
             .into());
         }
 
-        self.eth_api()
-            .spawn_with_state_at_block(block.parent_hash(), move |eth_api, mut db| {
-                let mut executor = eth_api
+        self.sil_api()
+            .spawn_with_state_at_block(block.parent_hash(), move |sil_api, mut db| {
+                let mut executor = sil_api
                     .evm_config()
                     .executor_for_block(&mut db, block.sealed_block())
                     .map_err(RsilError::other)
@@ -696,7 +696,7 @@ where
         block_id: Option<BlockId>,
     ) -> Result<(B256, TrieUpdates), Sil::Error> {
         self.inner
-            .eth_api
+            .sil_api
             .spawn_blocking_io(move |this| {
                 let state = this
                     .provider()
@@ -710,24 +710,24 @@ where
     /// Executes a block and returns the state root after each transaction.
     pub async fn intermediate_roots(&self, block_hash: B256) -> Result<Vec<B256>, Sil::Error> {
         let block = self
-            .eth_api()
+            .sil_api()
             .recovered_block(block_hash.into())
             .await?
             .ok_or(SilApiError::HeaderNotFound(block_hash.into()))?;
-        let evm_env = self.eth_api().evm_env_for_header(block.sealed_block().sealed_header())?;
+        let evm_env = self.sil_api().evm_env_for_header(block.sealed_block().sealed_header())?;
 
-        self.eth_api()
-            .spawn_with_state_at_block(block.parent_hash(), move |eth_api, mut db| {
+        self.sil_api()
+            .spawn_with_state_at_block(block.parent_hash(), move |sil_api, mut db| {
                 // Enable transition tracking so that merge_transitions works
                 db.transition_state = Some(Default::default());
 
-                eth_api.apply_pre_execution_changes(&block, &mut db)?;
+                sil_api.apply_pre_execution_changes(&block, &mut db)?;
 
                 let mut roots = Vec::with_capacity(block.body().transactions().len());
                 for tx in block.transactions_recovered() {
-                    let tx_env = eth_api.evm_config().tx_env(tx);
+                    let tx_env = sil_api.evm_config().tx_env(tx);
                     {
-                        let mut savm = eth_api.evm_config().evm_with_env(&mut db, evm_env.clone());
+                        let mut savm = sil_api.evm_config().evm_with_env(&mut db, evm_env.clone());
                         savm.transact_commit(tx_env).map_err(Sil::Error::from_evm_err)?;
                     }
                     // Merge transitions into cumulative bundle_state
@@ -788,7 +788,7 @@ where
     ///
     /// Returns the bytes of the transaction for the given hash.
     async fn raw_transaction(&self, hash: B256) -> RpcResult<Option<Bytes>> {
-        self.eth_api().raw_transaction_by_hash(hash).await.map_err(Into::into)
+        self.sil_api().raw_transaction_by_hash(hash).await.map_err(Into::into)
     }
 
     /// Handler for `debug_getRawTransactions`
@@ -835,8 +835,8 @@ where
                 .block
                 .clone_into_rpc_block(
                     BlockTransactionsKind::Full,
-                    |tx, tx_info| self.eth_api().converter().fill(tx, tx_info),
-                    |header, size| self.eth_api().converter().convert_header(header, size),
+                    |tx, tx_info| self.sil_api().converter().fill(tx, tx_info),
+                    |header, size| self.sil_api().converter().convert_header(header, size),
                 )
                 .map_err(|err| Sil::Error::from(err).into())?;
 
@@ -852,7 +852,7 @@ where
 
     /// Handler for `debug_clearTxpool`
     async fn debug_clear_txpool(&self) -> RpcResult<()> {
-        let pool = self.eth_api().pool();
+        let pool = self.sil_api().pool();
         let all_hashes = pool.all_transaction_hashes();
         let _ = pool.remove_transactions(all_hashes);
         Ok(())
@@ -1175,7 +1175,7 @@ where
             .ok_or_else(|| internal_rpc_err("bad block not found in cache"))?;
 
         let evm_env = self
-            .eth_api()
+            .sil_api()
             .evm_config()
             .evm_env(entry.block.header())
             .map_err(RsilError::other)
@@ -1200,7 +1200,7 @@ impl<Sil: RpcNodeCore> Clone for DebugApi<Sil> {
 
 struct DebugApiInner<Sil: RpcNodeCore> {
     /// The implementation of `sil` API
-    eth_api: Sil,
+    sil_api: Sil,
     // restrict the number of concurrent calls to blocking calls
     blocking_task_guard: BlockingTaskGuard,
     /// Cache for bad blocks.

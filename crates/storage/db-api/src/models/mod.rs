@@ -250,6 +250,7 @@ add_wrapper_struct!((U256, CompactU256));
 add_wrapper_struct!((u64, CompactU64));
 add_wrapper_struct!((ClientVersion, CompactClientVersion));
 
+#[allow(dead_code, unreachable_pub)]
 #[bitfield]
 #[derive(Clone, Copy, Debug, Default)]
 struct CompactU256Flags {
@@ -290,6 +291,7 @@ impl Compact for CompactU256 {
     }
 }
 
+#[allow(dead_code, unreachable_pub)]
 #[bitfield]
 #[derive(Clone, Copy, Debug, Default)]
 struct CompactU64Flags {

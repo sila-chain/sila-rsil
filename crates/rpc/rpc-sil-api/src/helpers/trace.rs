@@ -4,7 +4,7 @@ use super::{Call, LoadBlock, LoadState, LoadTransaction};
 use crate::{FromSilApiError, FromEvmError};
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_primitives::B256;
-use alloy_rpc_types_sil::{BlockId, TransactionInfo};
+use alloy_rpc_types_eth::{BlockId, TransactionInfo};
 use futures::Future;
 use revm::{context::Block, context_interface::result::ResultAndState};
 use revm_inspectors::tracing::{TracingInspector, TracingInspectorConfig};
@@ -16,7 +16,7 @@ use rsil_savm::{
 use rsil_primitives_traits::{BlockBody, Recovered, RecoveredBlock};
 use rsil_revm::{
     database::StateProviderDatabase,
-    db::{bal::SavmDatabaseError, State},
+    db::{bal::EvmDatabaseError, State},
 };
 use rsil_rpc_sil_types::cache::db::StateCacheDb;
 use rsil_storage_api::{ProviderBlock, ProviderTx};
@@ -34,7 +34,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
         inspector: I,
     ) -> Result<ResultAndState<HaltReasonFor<Self::Savm>>, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>>,
+        DB: Database<Error = EvmDatabaseError<ProviderError>>,
         I: InspectorFor<Self::Savm, DB>,
     {
         let mut savm = self.evm_config().evm_with_env_and_inspector(db, evm_env, inspector);

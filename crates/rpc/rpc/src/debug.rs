@@ -30,7 +30,7 @@ use rsil_rpc_api::DebugApiServer;
 use rsil_rpc_convert::RpcTxReq;
 use rsil_rpc_sil_api::{
     helpers::{SilTransactions, TraceExt},
-    FromEthApiError, FromEvmError, RpcConvert, RpcNodeCore,
+    FromSilApiError, FromEvmError, RpcConvert, RpcNodeCore,
 };
 use rsil_rpc_sil_types::{SilApiError, StateCacheDb};
 use rsil_rpc_server_types::{result::internal_rpc_err, ToRpcResult};
@@ -124,7 +124,7 @@ where
                 sil_api.apply_pre_execution_changes(&block, &mut db)?;
 
                 let mut transactions = block.transactions_recovered().enumerate().peekable();
-                let mut inspector = DebugInspector::new(opts).map_err(Sil::Error::from_eth_err)?;
+                let mut inspector = DebugInspector::new(opts).map_err(Sil::Error::from_sil_err)?;
                 while let Some((index, tx)) = transactions.next() {
                     let tx_hash = *tx.tx_hash();
                     let tx_env = sil_api.evm_config().tx_env(tx);
@@ -147,11 +147,11 @@ where
                             &res,
                             &mut db,
                         )
-                        .map_err(Sil::Error::from_eth_err)?;
+                        .map_err(Sil::Error::from_sil_err)?;
 
                     results.push(TraceResult::Success { result, tx_hash: Some(tx_hash) });
                     if transactions.peek().is_some() {
-                        inspector.fuse().map_err(Sil::Error::from_eth_err)?;
+                        inspector.fuse().map_err(Sil::Error::from_sil_err)?;
                         // need to apply the state changes of this transaction before executing the
                         // next transaction
                         db.commit(res.state)
@@ -175,14 +175,14 @@ where
     ) -> Result<Vec<TraceResult>, Sil::Error> {
         let block: ProviderBlock<Sil::Provider> = Decodable::decode(&mut rlp_block.as_ref())
             .map_err(BlockError::RlpDecodeRawBlock)
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
 
         let evm_env = self
             .sil_api()
             .evm_config()
             .evm_env(block.header())
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
 
         // Depending on SIP-2 we need to recover the transactions differently
         let senders =
@@ -191,7 +191,7 @@ where
             } else {
                 block.body().recover_signers_unchecked()
             }
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
 
         self.trace_block(Arc::new(block.into_recovered_with_signers(senders)), evm_env, opts).await
     }
@@ -250,7 +250,7 @@ where
 
                 let tx_env = sil_api.evm_config().tx_env(&tx);
 
-                let mut inspector = DebugInspector::new(opts).map_err(Sil::Error::from_eth_err)?;
+                let mut inspector = DebugInspector::new(opts).map_err(Sil::Error::from_sil_err)?;
                 let res =
                     sil_api.inspect(&mut db, evm_env.clone(), tx_env.clone(), &mut inspector)?;
                 let trace = inspector
@@ -265,7 +265,7 @@ where
                         &res,
                         &mut db,
                     )
-                    .map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
 
                 Ok(trace)
             })
@@ -307,7 +307,7 @@ where
         self.sil_api()
             .spawn_with_call_at(call, at, overrides, move |db, evm_env, tx_env| {
                 let mut inspector =
-                    DebugInspector::new(tracing_options).map_err(Sil::Error::from_eth_err)?;
+                    DebugInspector::new(tracing_options).map_err(Sil::Error::from_sil_err)?;
                 let res = this.sil_api().inspect(
                     &mut *db,
                     evm_env.clone(),
@@ -316,7 +316,7 @@ where
                 )?;
                 let trace = inspector
                     .get_result(None, &tx_env, &evm_env.block_env, &res, db)
-                    .map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
                 Ok(trace)
             })
             .await
@@ -373,12 +373,12 @@ where
                     sil_api.prepare_call_env(evm_env, call, &mut db, overrides)?;
 
                 let mut inspector =
-                    DebugInspector::new(tracing_options).map_err(Sil::Error::from_eth_err)?;
+                    DebugInspector::new(tracing_options).map_err(Sil::Error::from_sil_err)?;
                 let res =
                     sil_api.inspect(&mut db, evm_env.clone(), tx_env.clone(), &mut inspector)?;
                 let trace = inspector
                     .get_result(None, &tx_env, &evm_env.block_env, &res, &mut db)
-                    .map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
 
                 Ok(trace)
             })
@@ -452,7 +452,7 @@ where
                 // Trace all bundles
                 let mut bundles = bundles.into_iter().peekable();
                 let mut inspector = DebugInspector::new(tracing_options.clone())
-                    .map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
                 while let Some(bundle) = bundles.next() {
                     let mut results = Vec::with_capacity(bundle.transactions.len());
                     let Bundle { transactions, block_override } = bundle;
@@ -477,12 +477,12 @@ where
                         )?;
                         let trace = inspector
                             .get_result(None, &tx_env, &evm_env.block_env, &res, &mut db)
-                            .map_err(Sil::Error::from_eth_err)?;
+                            .map_err(Sil::Error::from_sil_err)?;
 
                         // If there is more transactions, commit the database
                         // If there is no transactions, but more bundles, commit to the database too
                         if transactions.peek().is_some() || bundles.peek().is_some() {
-                            inspector.fuse().map_err(Sil::Error::from_eth_err)?;
+                            inspector.fuse().map_err(Sil::Error::from_sil_err)?;
                             db.commit(res.state);
                         }
                         results.push(trace);
@@ -616,11 +616,11 @@ where
                     .evm_config()
                     .executor_for_block(&mut db, block.sealed_block())
                     .map_err(RsilError::other)
-                    .map_err(Sil::Error::from_eth_err)?;
-                executor.apply_pre_execution_changes().map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
+                executor.apply_pre_execution_changes().map_err(Sil::Error::from_sil_err)?;
 
                 for tx in block.transactions_recovered().take(tx_index + 1) {
-                    executor.execute_transaction(tx).map_err(Sil::Error::from_eth_err)?;
+                    executor.execute_transaction(tx).map_err(Sil::Error::from_sil_err)?;
                 }
                 drop(executor);
 
@@ -632,7 +632,7 @@ where
 
     /// Retrieves the account's balance, nonce, code hash, and storage root from the given state.
     fn account(db: &mut StateCacheDb, address: Address) -> Result<Option<Account>, Sil::Error> {
-        let account = db.basic(address).map_err(Sil::Error::from_eth_err)?;
+        let account = db.basic(address).map_err(Sil::Error::from_sil_err)?;
         let Some(account) = account else { return Ok(None) };
 
         let balance = account.balance;
@@ -649,7 +649,7 @@ where
             })
             .unwrap_or_default();
         let storage_root =
-            db.database.storage_root(address, hashed_storage).map_err(Sil::Error::from_eth_err)?;
+            db.database.storage_root(address, hashed_storage).map_err(Sil::Error::from_sil_err)?;
 
         Ok(Some(Account { balance, nonce, code_hash, storage_root }))
     }
@@ -660,13 +660,13 @@ where
         DB: Database,
         SilApiError: From<DB::Error>,
     {
-        let account = db.basic(address).map_err(Sil::Error::from_eth_err)?.unwrap_or_default();
+        let account = db.basic(address).map_err(Sil::Error::from_sil_err)?.unwrap_or_default();
         let code = if account.code_hash == KECCAK_EMPTY {
             Default::default()
         } else if let Some(code) = account.code {
             code.original_bytes()
         } else {
-            db.code_by_hash(account.code_hash).map_err(Sil::Error::from_eth_err)?.original_bytes()
+            db.code_by_hash(account.code_hash).map_err(Sil::Error::from_sil_err)?.original_bytes()
         };
 
         Ok(AccountInfo { balance: account.balance, nonce: account.nonce, code })
@@ -682,9 +682,9 @@ where
         Ok(self
             .provider()
             .state_by_block_id(block_id.unwrap_or_default())
-            .map_err(Sil::Error::from_eth_err)?
+            .map_err(Sil::Error::from_sil_err)?
             .bytecode_by_hash(&hash)
-            .map_err(Sil::Error::from_eth_err)?
+            .map_err(Sil::Error::from_sil_err)?
             .map(|b| b.original_bytes()))
     }
 
@@ -701,8 +701,8 @@ where
                 let state = this
                     .provider()
                     .state_by_block_id(block_id.unwrap_or_default())
-                    .map_err(Sil::Error::from_eth_err)?;
-                state.state_root_with_updates(hashed_state).map_err(Sil::Error::from_eth_err)
+                    .map_err(Sil::Error::from_sil_err)?;
+                state.state_root_with_updates(hashed_state).map_err(Sil::Error::from_sil_err)
             })
             .await
     }
@@ -735,7 +735,7 @@ where
                     // Compute state root from the accumulated state changes
                     let hashed_state = db.database.hashed_post_state(&db.bundle_state);
                     let root =
-                        db.database.state_root(hashed_state).map_err(Sil::Error::from_eth_err)?;
+                        db.database.state_root(hashed_state).map_err(Sil::Error::from_sil_err)?;
                     roots.push(root);
                 }
 

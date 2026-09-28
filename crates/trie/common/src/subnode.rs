@@ -13,7 +13,7 @@ pub struct StoredSubNode {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for StoredSubNode {
+impl reth_codecs::Compact for StoredSubNode {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -71,7 +71,7 @@ mod tests {
     use super::*;
     use crate::TrieMask;
     use alloy_primitives::B256;
-    use rsil_codecs::Compact;
+    use reth_codecs::Compact;
 
     #[test]
     fn subnode_roundtrip() {

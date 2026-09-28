@@ -310,7 +310,7 @@ impl<N: NetworkPrimitives> AnnouncementFilteringPolicy<N> for TypedStrictFilter 
 }
 
 /// Type alias for a `TypedStrictFilter`. This is the default strict announcement filter.
-pub type StrictEthAnnouncementFilter = TypedStrictFilter;
+pub type StrictSilAnnouncementFilter = TypedStrictFilter;
 
 /// An [`AnnouncementFilteringPolicy`] that permissively handles unknown type bytes
 /// based on a given type `T` using `T::try_from(u8)`.
@@ -338,7 +338,7 @@ impl<N: NetworkPrimitives> AnnouncementFilteringPolicy<N> for TypedRelaxedFilter
 
 /// Type alias for `TypedRelaxedFilter`. This filter accepts known Sila transaction types and
 /// ignores unknown ones without penalizing the peer.
-pub type RelaxedEthAnnouncementFilter = TypedRelaxedFilter;
+pub type RelaxedSilAnnouncementFilter = TypedRelaxedFilter;
 
 #[cfg(test)]
 mod tests {

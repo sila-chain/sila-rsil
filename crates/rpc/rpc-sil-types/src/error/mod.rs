@@ -1,4 +1,4 @@
-//! Implementation specific Errors for the `eth_` namespace.
+//! Implementation specific Errors for the `sil_` namespace.
 
 pub mod api;
 use alloy_eips::BlockId;
@@ -58,7 +58,7 @@ impl ToRpcError for RpcError<TransportErrorKind> {
 /// Result alias
 pub type SilResult<T> = Result<T, SilApiError>;
 
-/// Errors that can occur when interacting with the `eth_` namespace
+/// Errors that can occur when interacting with the `sil_` namespace
 #[derive(Debug, thiserror::Error)]
 pub enum SilApiError {
     /// When a raw transaction is empty
@@ -113,8 +113,8 @@ pub enum SilApiError {
     /// `excess_blob_gas` is not set for SilaCancun and above
     #[error("excess blob gas missing in the SAVM's environment after SilaCancun")]
     ExcessBlobGasNotSet,
-    /// Thrown when a call or transaction request (`eth_call`, `eth_estimateGas`,
-    /// `eth_sendTransaction`) contains conflicting fields (legacy, SIP-1559)
+    /// Thrown when a call or transaction request (`sil_call`, `sil_estimateGas`,
+    /// `sil_sendTransaction`) contains conflicting fields (legacy, SIP-1559)
     #[error("both gasPrice and (maxFeePerGas or maxPriorityFeePerGas) specified")]
     ConflictingFeeFieldsInRequest,
     /// Errors related to invalid transactions
@@ -539,16 +539,16 @@ where
         match err {
             EVMError::Transaction(invalid_tx) => {
                 // Try to get the underlying InvalidTransaction if available
-                if let Some(eth_tx_err) = invalid_tx.as_invalid_tx_err() {
+                if let Some(sil_tx_err) = invalid_tx.as_invalid_tx_err() {
                     // Handle the special NonceTooLow case
-                    match eth_tx_err {
+                    match sil_tx_err {
                         InvalidTransaction::NonceTooLow { tx, state } => {
                             Self::InvalidTransaction(RpcInvalidTransactionError::NonceTooLow {
                                 tx: *tx,
                                 state: *state,
                             })
                         }
-                        _ => RpcInvalidTransactionError::from(eth_tx_err.clone()).into(),
+                        _ => RpcInvalidTransactionError::from(sil_tx_err.clone()).into(),
                     }
                 } else {
                     // For custom transaction errors that don't wrap InvalidTransaction,
@@ -640,7 +640,7 @@ pub enum RpcInvalidTransactionError {
     /// This is similar to [`Self::InsufficientFunds`] but with a different error message and
     /// exists for compatibility reasons.
     ///
-    /// This error is used in `eth_estimateCall` when the highest available gas limit, capped with
+    /// This error is used in `sil_estimateCall` when the highest available gas limit, capped with
     /// the allowance of the caller is too low: [`Self::GasTooLow`].
     #[error("gas required exceeds allowance ({gas_limit})")]
     GasRequiredExceedsAllowance {
@@ -889,7 +889,7 @@ impl From<InvalidTransactionError> for RpcInvalidTransactionError {
     fn from(err: InvalidTransactionError) -> Self {
         use InvalidTransactionError;
         // This conversion is used to convert any transaction errors that could occur inside the
-        // txpool (e.g. `eth_sendRawTransaction`) to their corresponding RPC
+        // txpool (e.g. `sil_sendRawTransaction`) to their corresponding RPC
         match err {
             InvalidTransactionError::InsufficientFunds(res) => {
                 Self::InsufficientFunds { cost: res.expected, balance: res.got }

@@ -30,7 +30,7 @@ mod tests {
     };
     use alloy_rlp::{Decodable, Encodable};
     use alloy_sips::eip2718::Encodable2718;
-    use rsil_codecs::Compact;
+    use reth_codecs::Compact;
     use rsil_primitives_traits::proofs::{
         calculate_receipt_root, calculate_transaction_root, calculate_withdrawals_root,
     };
@@ -43,7 +43,7 @@ mod tests {
     #[test]
     #[cfg(feature = "rsil-codec")]
     fn test_decode_receipt() {
-        rsil_codecs::test_utils::test_decode::<Receipt<TxType>>(&hex!(
+        reth_codecs::test_utils::test_decode::<Receipt<TxType>>(&hex!(
             "c428b52ffd23fc42696156b10200f034792b6a94c3850215c2fef7aea361a0c31b79d9a32652eefc0d4e2e730036061cff7344b6fc6132b50cda0ed810a991ae58ef013150c12b2522533cb3b3a8b19b7786a8b5ff1d3cdc84225e22b02def168c8858df"
         ));
     }

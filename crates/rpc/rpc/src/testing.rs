@@ -16,7 +16,7 @@
 
 use alloy_consensus::{Header, Transaction};
 use alloy_eips::{sip1559::calculate_block_gas_limit, sip2718::Decodable2718};
-use alloy_savm::{RecoveredTx, Savm};
+use alloy_evm::{RecoveredTx, Savm};
 use alloy_primitives::{
     map::{DefaultHashBuilder, HashSet},
     Address, Bytes, B256, U256,

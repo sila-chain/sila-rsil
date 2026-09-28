@@ -5,7 +5,7 @@ use alloy_eips::{
     sip7840::BlobParams,
     sip7910::{SilConfig, SilForkConfig, SystemContract},
 };
-use alloy_savm::precompiles::Precompile;
+use alloy_evm::precompiles::Precompile;
 use alloy_primitives::Address;
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use rsil_chainspec::{ChainSpecProvider, Hardforks, Head, SilChainSpec, SilaHardforks};

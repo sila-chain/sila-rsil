@@ -58,11 +58,11 @@ pub struct TraceApi<Sil> {
 impl<Sil> TraceApi<Sil> {
     /// Create a new instance of the [`TraceApi`]
     pub fn new(
-        eth_api: Sil,
+        sil_api: Sil,
         blocking_task_guard: BlockingTaskGuard,
         eth_config: SilConfig,
     ) -> Self {
-        let inner = Arc::new(TraceApiInner { eth_api, blocking_task_guard, eth_config });
+        let inner = Arc::new(TraceApiInner { sil_api, blocking_task_guard, eth_config });
         Self { inner }
     }
 
@@ -74,15 +74,15 @@ impl<Sil> TraceApi<Sil> {
     }
 
     /// Access the underlying `Sil` API.
-    pub fn eth_api(&self) -> &Sil {
-        &self.inner.eth_api
+    pub fn sil_api(&self) -> &Sil {
+        &self.inner.sil_api
     }
 }
 
 impl<Sil: RpcNodeCore> TraceApi<Sil> {
     /// Access the underlying provider.
     pub fn provider(&self) -> &Sil::Provider {
-        self.inner.eth_api.provider()
+        self.inner.sil_api.provider()
     }
 }
 
@@ -105,9 +105,9 @@ where
             SavmOverrides::new(trace_request.state_overrides, trace_request.block_overrides);
         let mut inspector = TracingInspector::new(config);
         let this = self.clone();
-        self.eth_api()
+        self.sil_api()
             .spawn_with_call_at(trace_request.call, at, overrides, move |db, evm_env, tx_env| {
-                let res = this.eth_api().inspect(&mut *db, evm_env, tx_env, &mut inspector)?;
+                let res = this.sil_api().inspect(&mut *db, evm_env, tx_env, &mut inspector)?;
                 let trace_res = inspector
                     .into_parity_builder()
                     .into_trace_results_with_state(&res, &trace_request.trace_types, &db)
@@ -127,12 +127,12 @@ where
         let tx = recover_raw_transaction::<PoolPooledTx<Sil::Pool>>(&tx)?
             .map(<Sil::Pool as TransactionPool>::Transaction::pooled_into_consensus);
 
-        let (evm_env, at) = self.eth_api().evm_env_at(block_id.unwrap_or_default()).await?;
-        let tx_env = self.eth_api().evm_config().tx_env(tx);
+        let (evm_env, at) = self.sil_api().evm_env_at(block_id.unwrap_or_default()).await?;
+        let tx_env = self.sil_api().evm_config().tx_env(tx);
 
         let config = TracingInspectorConfig::from_parity_config(&trace_types);
 
-        self.eth_api()
+        self.sil_api()
             .spawn_trace_at_with_state(evm_env, tx_env, config, at, move |inspector, res, db| {
                 inspector
                     .into_parity_builder()
@@ -152,16 +152,16 @@ where
         block_id: Option<BlockId>,
     ) -> Result<Vec<TraceResults>, Sil::Error> {
         let at = block_id.unwrap_or(BlockId::pending());
-        let (evm_env, at) = self.eth_api().evm_env_at(at).await?;
+        let (evm_env, at) = self.sil_api().evm_env_at(at).await?;
 
         // execute all transactions on top of each other and record the traces
-        self.eth_api()
-            .spawn_with_state_at_block(at, move |eth_api, mut db| {
+        self.sil_api()
+            .spawn_with_state_at_block(at, move |sil_api, mut db| {
                 let mut results = Vec::with_capacity(calls.len());
                 let mut calls = calls.into_iter().peekable();
 
                 while let Some((call, trace_types)) = calls.next() {
-                    let (evm_env, tx_env) = eth_api.prepare_call_env(
+                    let (evm_env, tx_env) = sil_api.prepare_call_env(
                         evm_env.clone(),
                         call,
                         &mut db,
@@ -169,7 +169,7 @@ where
                     )?;
                     let config = TracingInspectorConfig::from_parity_config(&trace_types);
                     let mut inspector = TracingInspector::new(config);
-                    let res = eth_api.inspect(&mut db, evm_env, tx_env, &mut inspector)?;
+                    let res = sil_api.inspect(&mut db, evm_env, tx_env, &mut inspector)?;
 
                     let trace_res = inspector
                         .into_parity_builder()
@@ -197,7 +197,7 @@ where
         trace_types: HashSet<TraceType>,
     ) -> Result<TraceResults, Sil::Error> {
         let config = TracingInspectorConfig::from_parity_config(&trace_types);
-        self.eth_api()
+        self.sil_api()
             .spawn_trace_transaction_in_block(hash, config, move |_, inspector, res, db| {
                 let trace_res = inspector
                     .into_parity_builder()
@@ -244,7 +244,7 @@ where
         &self,
         hash: B256,
     ) -> Result<Option<Vec<LocalizedTransactionTrace>>, Sil::Error> {
-        self.eth_api()
+        self.sil_api()
             .spawn_trace_transaction_in_block(
                 hash,
                 TracingInspectorConfig::default_parity(),
@@ -263,7 +263,7 @@ where
         &self,
         tx_hash: B256,
     ) -> Result<Option<TransactionOpcodeGas>, Sil::Error> {
-        self.eth_api()
+        self.sil_api()
             .spawn_trace_transaction_in_block_with_inspector(
                 tx_hash,
                 OpcodeGasInspector::default(),
@@ -399,7 +399,7 @@ where
             let chunk_end = (chunk_start + TRACE_FILTER_FETCH_CHUNK_SIZE as u64 - 1).min(end);
 
             let blocks = self
-                .eth_api()
+                .sil_api()
                 .spawn_blocking_io(move |this| {
                     let blocks = this
                         .provider()
@@ -420,7 +420,7 @@ where
                     async move {
                         let permit = this.acquire_trace_permit().await;
                         let traces = this
-                            .eth_api()
+                            .sil_api()
                             .trace_block_until(
                                 block_hash.into(),
                                 Some(block.clone()),
@@ -498,12 +498,12 @@ where
         &self,
         block_id: BlockId,
     ) -> Result<Option<Vec<LocalizedTransactionTrace>>, Sil::Error> {
-        let Some(block) = self.eth_api().recovered_block(block_id).await? else {
+        let Some(block) = self.sil_api().recovered_block(block_id).await? else {
             return Err(SilApiError::HeaderNotFound(block_id).into());
         };
 
         let mut traces = self
-            .eth_api()
+            .sil_api()
             .trace_block_with(
                 block_id,
                 Some(block.clone()),
@@ -539,7 +539,7 @@ where
         block_id: BlockId,
         trace_types: HashSet<TraceType>,
     ) -> Result<Option<Vec<TraceResultsWithTransactionHash>>, Sil::Error> {
-        self.eth_api()
+        self.sil_api()
             .trace_block_with(
                 block_id,
                 None,
@@ -575,12 +575,12 @@ where
         &self,
         block_id: BlockId,
     ) -> Result<Option<BlockOpcodeGas>, Sil::Error> {
-        let Some(block) = self.eth_api().recovered_block(block_id).await? else {
+        let Some(block) = self.sil_api().recovered_block(block_id).await? else {
             return Err(SilApiError::HeaderNotFound(block_id).into());
         };
 
         let Some(transactions) = self
-            .eth_api()
+            .sil_api()
             .trace_block_inspector(
                 block_id,
                 Some(block.clone()),
@@ -611,12 +611,12 @@ where
         &self,
         block_id: BlockId,
     ) -> Result<Option<BlockStorageAccess>, Sil::Error> {
-        let Some(block) = self.eth_api().recovered_block(block_id).await? else {
+        let Some(block) = self.sil_api().recovered_block(block_id).await? else {
             return Err(SilApiError::HeaderNotFound(block_id).into());
         };
 
         let Some(transactions) = self
-            .eth_api()
+            .sil_api()
             .trace_block_inspector(
                 block_id,
                 Some(block.clone()),
@@ -811,7 +811,7 @@ impl<Sil> Clone for TraceApi<Sil> {
 
 struct TraceApiInner<Sil> {
     /// Access to commonly used code of the `sil` namespace
-    eth_api: Sil,
+    sil_api: Sil,
     // restrict the number of concurrent calls to `trace_*`
     blocking_task_guard: BlockingTaskGuard,
     // sil config settings

@@ -6,7 +6,6 @@ use crate::{
 };
 use alloy_primitives::{Address, B256, U256};
 use bytes::{BufMut, BytesMut};
-use modular_bitfield::prelude::*;
 use reth_codecs::{add_arbitrary_tests, impl_compression_for_compact, Compact};
 use rsil_prune_types::PruneSegment;
 use rsil_trie_common::{StoredNibbles, StoredNibblesSubKey, *};
@@ -251,13 +250,18 @@ add_wrapper_struct!((u64, CompactU64));
 add_wrapper_struct!((ClientVersion, CompactClientVersion));
 
 #[allow(dead_code, unreachable_pub)]
-#[bitfield]
-#[derive(Clone, Copy, Debug, Default)]
-struct CompactU256Flags {
-    placeholder_len: B6,
-    #[skip]
-    unused: B2,
+mod compact_u256_flags {
+    use modular_bitfield::prelude::*;
+
+    #[bitfield]
+    #[derive(Clone, Copy, Debug, Default)]
+    pub(super) struct CompactU256Flags {
+        placeholder_len: B6,
+        #[skip]
+        unused: B2,
+    }
 }
+use compact_u256_flags::CompactU256Flags;
 
 impl CompactU256 {
     /// Used bytes by the compact bitfield.
@@ -292,13 +296,18 @@ impl Compact for CompactU256 {
 }
 
 #[allow(dead_code, unreachable_pub)]
-#[bitfield]
-#[derive(Clone, Copy, Debug, Default)]
-struct CompactU64Flags {
-    placeholder_len: B4,
-    #[skip]
-    unused: B4,
+mod compact_u64_flags {
+    use modular_bitfield::prelude::*;
+
+    #[bitfield]
+    #[derive(Clone, Copy, Debug, Default)]
+    pub(super) struct CompactU64Flags {
+        placeholder_len: B4,
+        #[skip]
+        unused: B4,
+    }
 }
+use compact_u64_flags::CompactU64Flags;
 
 impl CompactU64 {
     /// Used bytes by the compact bitfield.

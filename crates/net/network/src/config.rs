@@ -777,7 +777,7 @@ impl NetworkMode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_sips::eip2124::ForkHash;
+    use alloy_eips::eip2124::ForkHash;
     use alloy_genesis::Genesis;
     use alloy_primitives::U256;
     use rsil_chainspec::{

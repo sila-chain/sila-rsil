@@ -9,7 +9,7 @@ use crate::{
     BlockClient,
 };
 use alloy_consensus::BlockHeader;
-use alloy_sip7928::bal::RawBal;
+use alloy_eip7928::bal::RawBal;
 use alloy_primitives::{Bytes, Sealable, B256};
 use core::marker::PhantomData;
 use futures::FutureExt;

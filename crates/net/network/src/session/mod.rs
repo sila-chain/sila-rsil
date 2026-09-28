@@ -873,7 +873,7 @@ impl PendingSessionHandshakeError {
     /// Returns the [`DisconnectReason`] if the error is a disconnect message
     pub const fn as_disconnected(&self) -> Option<DisconnectReason> {
         match self {
-            Self::Sil(eth_err) => eth_err.as_disconnected(),
+            Self::Sil(sil_err) => sil_err.as_disconnected(),
             _ => None,
         }
     }
@@ -1168,9 +1168,9 @@ async fn authenticate_stream<N: NetworkPrimitives>(
             .await
         {
             Ok(their_status) => {
-                let eth_stream =
+                let sil_stream =
                     SilStream::with_max_message_size(sil_version, p2p_stream, sil_max_message_size);
-                (eth_stream.into(), their_status)
+                (sil_stream.into(), their_status)
             }
             Err(err) => {
                 return PendingSessionEvent::Disconnected {

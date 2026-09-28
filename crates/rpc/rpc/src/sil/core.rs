@@ -228,7 +228,7 @@ pub struct SilApiInner<N: RpcNodeCore, Rpc: RpcConvert> {
     /// All configured Signers
     signers: SignersForRpc<N::Provider, Rpc::Network>,
     /// The async cache frontend for sil related data
-    eth_cache: SilStateCache<N::Primitives>,
+    sil_cache: SilStateCache<N::Primitives>,
     /// The async gas oracle frontend for gas price suggestions
     gas_oracle: GasPriceOracle<N::Provider>,
     /// Maximum gas limit for `sil_call` and call tracing RPC methods.
@@ -238,7 +238,7 @@ pub struct SilApiInner<N: RpcNodeCore, Rpc: RpcConvert> {
     /// Whether to compute state roots for `sil_simulateV1`.
     compute_state_root_for_eth_simulate: bool,
     /// The maximum number of blocks into the past for generating state proofs.
-    eth_proof_window: u64,
+    sil_proof_window: u64,
     /// The block number at which the node started
     starting_block: U256,
     /// The type that can spawn tasks which would otherwise block.
@@ -297,12 +297,12 @@ where
     #[expect(clippy::too_many_arguments)]
     pub fn new(
         components: N,
-        eth_cache: SilStateCache<N::Primitives>,
+        sil_cache: SilStateCache<N::Primitives>,
         gas_oracle: GasPriceOracle<N::Provider>,
         gas_cap: impl Into<GasCap>,
         max_simulate_blocks: u64,
         compute_state_root_for_eth_simulate: bool,
-        eth_proof_window: u64,
+        sil_proof_window: u64,
         blocking_task_pool: BlockingTaskPool,
         fee_history_cache: FeeHistoryCache<ProviderHeader<N::Provider>>,
         task_spawner: Runtime,
@@ -339,12 +339,12 @@ where
         Self {
             components,
             signers,
-            eth_cache,
+            sil_cache,
             gas_oracle,
             gas_cap: gas_cap.into().into(),
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             starting_block,
             task_spawner,
             pending_block: Default::default(),
@@ -386,7 +386,7 @@ where
     /// Returns a handle to data in memory.
     #[inline]
     pub const fn cache(&self) -> &SilStateCache<N::Primitives> {
-        &self.eth_cache
+        &self.sil_cache
     }
 
     /// Returns a handle to the pending block.
@@ -478,8 +478,8 @@ where
 
     /// The maximum number of blocks into the past for generating state proofs.
     #[inline]
-    pub const fn eth_proof_window(&self) -> u64 {
-        self.eth_proof_window
+    pub const fn sil_proof_window(&self) -> u64 {
+        self.sil_proof_window
     }
 
     /// Returns reference to [`BlockingTaskGuard`].
@@ -597,7 +597,7 @@ mod tests {
         SilRpcConverter<ChainSpec>,
     >;
 
-    fn build_test_eth_api<
+    fn build_test_sil_api<
         P: BlockReaderIdExt<
                 Block = rsil_sila_primitives::Block,
                 Receipt = rsil_sila_primitives::Receipt,
@@ -626,7 +626,7 @@ mod tests {
     }
 
     // Function to prepare the SilApi with mock data
-    fn prepare_eth_api(
+    fn prepare_sil_api(
         newest_block: u64,
         mut oldest_block: Option<B256>,
         block_count: u64,
@@ -707,16 +707,16 @@ mod tests {
                 as u128,
         );
 
-        let eth_api = build_test_eth_api(mock_provider);
+        let sil_api = build_test_sil_api(mock_provider);
 
-        (eth_api, base_fees_per_gas, gas_used_ratios)
+        (sil_api, base_fees_per_gas, gas_used_ratios)
     }
 
     /// Invalid block range
     #[tokio::test]
     async fn test_fee_history_empty() {
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &build_test_eth_api(NoopProvider::default()),
+            &build_test_sil_api(NoopProvider::default()),
             U64::from(1),
             BlockNumberOrTag::Latest,
             None,
@@ -734,11 +734,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
+        let (sil_api, _, _) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &eth_api,
+            &sil_api,
             U64::from(newest_block + 1),
             newest_block.into(),
             Some(vec![10.0]),
@@ -757,11 +757,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
+        let (sil_api, _, _) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &eth_api,
+            &sil_api,
             U64::from(1),
             (newest_block + 1000).into(),
             Some(vec![10.0]),
@@ -774,15 +774,15 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_call_many_maps_provider_block_lookup_error_with_eth_api_conversion() {
-        let eth_api = build_test_eth_api(MockSilProvider::default());
+    async fn test_call_many_maps_provider_block_lookup_error_with_sil_api_conversion() {
+        let sil_api = build_test_sil_api(MockSilProvider::default());
         let bundles = vec![Bundle {
             transactions: vec![TransactionRequest::default()],
             block_override: None,
         }];
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::call_many(
-            &eth_api, bundles, None, None,
+            &sil_api, bundles, None, None,
         )
         .await;
 
@@ -800,14 +800,14 @@ mod tests {
 
     #[tokio::test]
     async fn test_call_many_keeps_header_not_found_when_block_hash_absent() {
-        let eth_api = build_test_eth_api(NoopProvider::default());
+        let sil_api = build_test_sil_api(NoopProvider::default());
         let bundles = vec![Bundle {
             transactions: vec![TransactionRequest::default()],
             block_override: None,
         }];
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::call_many(
-            &eth_api, bundles, None, None,
+            &sil_api, bundles, None, None,
         )
         .await;
 
@@ -827,11 +827,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
+        let (sil_api, _, _) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &eth_api,
+            &sil_api,
             U64::from(0),
             newest_block.into(),
             None,
@@ -852,11 +852,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, base_fees_per_gas, gas_used_ratios) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
+        let (sil_api, base_fees_per_gas, gas_used_ratios) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let fee_history =
-            eth_api.fee_history(U64::from(1), newest_block.into(), None).await.unwrap();
+            sil_api.fee_history(U64::from(1), newest_block.into(), None).await.unwrap();
         assert_eq!(
             fee_history.base_fee_per_gas,
             &base_fees_per_gas[base_fees_per_gas.len() - 2..],
@@ -886,11 +886,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, base_fees_per_gas, gas_used_ratios) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockSilProvider::default());
+        let (sil_api, base_fees_per_gas, gas_used_ratios) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let fee_history =
-            eth_api.fee_history(U64::from(block_count), newest_block.into(), None).await.unwrap();
+            sil_api.fee_history(U64::from(block_count), newest_block.into(), None).await.unwrap();
 
         assert_eq!(
             &fee_history.base_fee_per_gas, &base_fees_per_gas,

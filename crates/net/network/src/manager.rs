@@ -478,7 +478,7 @@ impl<N: NetworkPrimitives> NetworkManager<N> {
         NetworkStatus {
             client_version: hello_message.client_version,
             protocol_version: hello_message.protocol_version as u64,
-            eth_protocol_info: SilProtocolInfo {
+            sil_protocol_info: SilProtocolInfo {
                 difficulty: None,
                 head: status.blockhash,
                 network: status.chain.id(),

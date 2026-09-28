@@ -69,13 +69,13 @@ pub struct SilSimBundle<Sil> {
 
 impl<Sil> SilSimBundle<Sil> {
     /// Create a new `SilSimBundle` instance.
-    pub fn new(eth_api: Sil, blocking_task_guard: BlockingTaskGuard) -> Self {
-        Self { inner: Arc::new(SilSimBundleInner { eth_api, blocking_task_guard }) }
+    pub fn new(sil_api: Sil, blocking_task_guard: BlockingTaskGuard) -> Self {
+        Self { inner: Arc::new(SilSimBundleInner { sil_api, blocking_task_guard }) }
     }
 
     /// Access the underlying `Sil` API.
-    pub fn eth_api(&self) -> &Sil {
-        &self.inner.eth_api
+    pub fn sil_api(&self) -> &Sil {
+        &self.inner.sil_api
     }
 
     /// Builds a hierarchical `SimBundleLogs` structure from flattened transaction logs.
@@ -291,13 +291,13 @@ where
 
         let block_id = parent_block.unwrap_or(BlockId::Number(BlockNumberOrTag::Latest));
         let (current_block, mut evm_env, current_block_id) =
-            self.eth_api().evm_env_and_recovered_block_at(block_id).await?;
+            self.sil_api().evm_env_and_recovered_block_at(block_id).await?;
 
-        let eth_api = self.inner.eth_api.clone();
+        let sil_api = self.inner.sil_api.clone();
 
         let sim_response = self
             .inner
-            .eth_api
+            .sil_api
             .spawn_with_state_at_block(current_block_id, move |_, mut db| {
                 // Setup environment
                 let current_block_number = current_block.number();
@@ -318,7 +318,7 @@ where
                 let mut refundable_value = U256::ZERO;
                 let mut flat_logs: Vec<Vec<Log>> = Vec::new();
 
-                let mut savm = eth_api.evm_config().evm_with_env(db, evm_env);
+                let mut savm = sil_api.evm_config().evm_with_env(db, evm_env);
                 let mut log_index = 0;
 
                 for (tx_index, item) in flattened_bundle.iter().enumerate() {
@@ -337,7 +337,7 @@ where
                     }
 
                     let ResultAndState { result, state } = savm
-                        .transact(eth_api.evm_config().tx_env(&item.tx))
+                        .transact(sil_api.evm_config().tx_env(&item.tx))
                         .map_err(Sil::Error::from_evm_err)?;
 
                     if !result.is_success() && !item.can_revert {
@@ -503,7 +503,7 @@ where
 #[derive(Debug)]
 struct SilSimBundleInner<Sil> {
     /// Access to commonly used code of the `sil` namespace
-    eth_api: Sil,
+    sil_api: Sil,
     // restrict the number of concurrent tracing calls.
     #[expect(dead_code)]
     blocking_task_guard: BlockingTaskGuard,

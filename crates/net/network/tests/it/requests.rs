@@ -291,14 +291,14 @@ async fn test_get_header_range_falling() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
-async fn test_eth68_get_receipts() {
+async fn test_sil68_get_receipts() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
     let mock_provider = Arc::new(MockSilProvider::default());
 
     let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
-    // Create peers with ETH68 protocol explicitly
+    // Create peers with SIL68 protocol explicitly
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil68.into()));
     net.add_peer_with_config(p0).await.unwrap();
 
@@ -362,14 +362,14 @@ async fn test_eth68_get_receipts() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
-async fn test_eth69_get_headers() {
+async fn test_sil69_get_headers() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
     let mock_provider = Arc::new(MockSilProvider::default());
 
     let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
-    // Create peers with ETH69 protocol
+    // Create peers with SIL69 protocol
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil69.into()));
     net.add_peer_with_config(p0).await.unwrap();
 
@@ -414,7 +414,7 @@ async fn test_eth69_get_headers() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
-async fn test_eth69_get_bodies() {
+async fn test_sil69_get_bodies() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
     let mock_provider = Arc::new(MockSilProvider::default());
@@ -422,7 +422,7 @@ async fn test_eth69_get_bodies() {
 
     let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
-    // Create peers with ETH69 protocol
+    // Create peers with SIL69 protocol
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil69.into()));
     net.add_peer_with_config(p0).await.unwrap();
 
@@ -463,14 +463,14 @@ async fn test_eth69_get_bodies() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
-async fn test_eth69_get_receipts() {
+async fn test_sil69_get_receipts() {
     rsil_tracing::init_test_tracing();
     let mut rng = rand::rng();
     let mock_provider = Arc::new(MockSilProvider::default());
 
     let mut net: Testnet<Arc<MockSilProvider>, TestPool> = Testnet::default();
 
-    // Create peers with ETH69 protocol
+    // Create peers with SIL69 protocol
     let p0 = PeerConfig::with_protocols(mock_provider.clone(), Some(SilVersion::Sil69.into()));
     net.add_peer_with_config(p0).await.unwrap();
 
@@ -531,7 +531,7 @@ async fn test_eth69_get_receipts() {
         };
         assert_eq!(receipts_response.0.len(), 1);
         assert_eq!(receipts_response.0[0].len(), 2);
-        // ETH69 receipts do not include bloom filters - verify the structure
+        // SIL69 receipts do not include bloom filters - verify the structure
         assert_eq!(receipts_response.0[0][0].cumulative_gas_used, 21000);
         assert_eq!(receipts_response.0[0][1].cumulative_gas_used, 42000);
     }

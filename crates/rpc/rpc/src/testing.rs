@@ -54,7 +54,7 @@ pub struct TestingApi<
     Savm,
     Payload: PayloadTypes = rsil_sila_engine_primitives::SilEngineTypes,
 > {
-    eth_api: Sil,
+    sil_api: Sil,
     evm_config: Savm,
     /// Desired gas limit to move toward while respecting the consensus gas limit bounds.
     desired_gas_limit: u64,
@@ -68,13 +68,13 @@ pub struct TestingApi<
 impl<Sil, Savm, Payload: PayloadTypes> TestingApi<Sil, Savm, Payload> {
     /// Create a new testing API handler.
     pub const fn new(
-        eth_api: Sil,
+        sil_api: Sil,
         evm_config: Savm,
         desired_gas_limit: u64,
         engine_handle: ConsensusEngineHandle<Payload>,
     ) -> Self {
         Self {
-            eth_api,
+            sil_api,
             evm_config,
             desired_gas_limit,
             engine_handle,
@@ -120,17 +120,17 @@ where
         let evm_config = self.evm_config.clone();
         let desired_gas_limit = self.desired_gas_limit;
         let gas_limit_override = self.gas_limit_override;
-        self.eth_api
-            .spawn_with_state_at_block(request.parent_block_hash, move |eth_api, state| {
+        self.sil_api
+            .spawn_with_state_at_block(request.parent_block_hash, move |sil_api, state| {
                 let state = state.database.0;
-                let parent = eth_api
+                let parent = sil_api
                     .provider()
                     .sealed_header_by_hash(request.parent_block_hash)?
                     .ok_or_else(|| {
                     SilApiError::HeaderNotFound(request.parent_block_hash.into())
                 })?;
 
-                let chain_spec = eth_api.provider().chain_spec();
+                let chain_spec = sil_api.provider().chain_spec();
                 let is_amsterdam = chain_spec
                     .is_amsterdam_active_at_timestamp(request.payload_attributes.timestamp);
                 let is_osaka =
@@ -171,7 +171,7 @@ where
 
                 // If no transactions are provided in the request, use transactions from the pool.
                 let recovered_txs = if use_pool_transactions {
-                    let mut best_txs = eth_api.pool().best_transactions_with_attributes(
+                    let mut best_txs = sil_api.pool().best_transactions_with_attributes(
                         BestTransactionsAttributes::new(
                             base_fee,
                             builder
@@ -296,20 +296,20 @@ where
         extra_data: Option<Bytes>,
     ) -> Result<B256, Sil::Error> {
         let parent = self
-            .eth_api
+            .sil_api
             .provider()
             .latest_header()
             .map_err(SilApiError::from)?
             .ok_or_else(|| SilApiError::HeaderNotFound(alloy_eips::BlockId::latest()))?;
         let safe_block_hash = self
-            .eth_api
+            .sil_api
             .provider()
             .safe_header()
             .map_err(SilApiError::from)?
             .map(|header| header.hash())
             .unwrap_or_else(|| parent.hash());
         let finalized_block_hash = self
-            .eth_api
+            .sil_api
             .provider()
             .finalized_header()
             .map_err(SilApiError::from)?

@@ -11,7 +11,7 @@
 
 // Feature-only dep: activated by `rsil-codec` feature for downstream consumers.
 #[cfg(feature = "rsil-codec")]
-use rsil_codecs as _;
+use reth_codecs as _;
 
 mod receipt;
 pub use receipt::*;

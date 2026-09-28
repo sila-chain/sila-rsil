@@ -1,4 +1,4 @@
-//! `eth_` RPC API for pubsub subscription.
+//! `sil_` RPC API for pubsub subscription.
 
 use alloy_json_rpc::RpcObject;
 use alloy_rpc_types_eth::pubsub::{Params, SubscriptionKind};

@@ -1,4 +1,4 @@
-use crate::utils::eth_payload_attributes;
+use crate::utils::sil_payload_attributes;
 use alloy_primitives::{bytes, Address, U256};
 use alloy_provider::{network::EthereumWallet as SilaWallet, Provider, ProviderBuilder};
 use alloy_rpc_types_sil::{
@@ -24,7 +24,7 @@ async fn test_simulate_v1_explicit_gas_uses_remaining_block_gas() -> eyre::Resul
     );
 
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), sil_payload_attributes)
             .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
@@ -58,7 +58,7 @@ async fn test_simulate_v1_no_fields_call_defaults_to_remaining_block_gas() -> ey
     );
 
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), sil_payload_attributes)
             .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
@@ -102,7 +102,7 @@ async fn test_simulate_v1_blockhash_reads_prior_simulated_block() -> eyre::Resul
     );
 
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), sil_payload_attributes)
             .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
@@ -152,7 +152,7 @@ async fn test_simulate_v1_explicit_gas_over_remaining_block_gas_errors() -> eyre
     );
 
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), sil_payload_attributes)
             .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()
@@ -199,7 +199,7 @@ async fn test_simulate_v1_with_max_fee_per_blob_gas_only() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -260,7 +260,7 @@ async fn test_simulate_v1_too_many_blocks_error() -> eyre::Result<()> {
     );
 
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), eth_payload_attributes)
+        setup_engine::<SilaNode>(1, chain_spec, false, Default::default(), sil_payload_attributes)
             .await?;
     let node = nodes.pop().unwrap();
     let provider = ProviderBuilder::new()

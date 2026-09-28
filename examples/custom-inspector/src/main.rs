@@ -45,7 +45,7 @@ fn main() {
             let mut pending_transactions = node.pool.new_pending_pool_transactions_listener();
 
             // get an instance of the `eth_` API handler
-            let eth_api = node.rpc_registry.eth_api().clone();
+            let sil_api = node.rpc_registry.sil_api().clone();
 
             println!("Spawning trace task!");
 
@@ -65,7 +65,7 @@ fn main() {
 
                         let evm_config = node.evm_config.clone();
 
-                        let result = eth_api
+                        let result = sil_api
                             .spawn_with_call_at(
                                 call_request,
                                 BlockNumberOrTag::Latest.into(),

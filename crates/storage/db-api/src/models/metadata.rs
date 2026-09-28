@@ -1,7 +1,6 @@
 //! Storage metadata models.
 
 use bytes::{BufMut, BytesMut};
-use modular_bitfield::prelude::*;
 use reth_codecs::{add_arbitrary_tests, Compact};
 use serde::{Deserialize, Serialize};
 
@@ -29,13 +28,18 @@ pub struct StorageSettings {
 }
 
 #[allow(dead_code, unreachable_pub)]
-#[bitfield]
-#[derive(Clone, Copy, Debug, Default)]
-struct StorageSettingsFlags {
-    storage_v2_len: B1,
-    #[skip]
-    unused: B7,
+mod storage_settings_flags {
+    use modular_bitfield::prelude::*;
+
+    #[bitfield]
+    #[derive(Clone, Copy, Debug, Default)]
+    pub(super) struct StorageSettingsFlags {
+        storage_v2_len: B1,
+        #[skip]
+        unused: B7,
+    }
 }
+use storage_settings_flags::StorageSettingsFlags;
 
 impl StorageSettings {
     /// Used bytes by the compact bitfield.

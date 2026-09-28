@@ -11,8 +11,6 @@
 
 extern crate alloc;
 
-#[cfg(any(test, feature = "rsil-codec"))]
-
 /// Accounts
 pub mod accounts;
 pub use accounts::AccountBeforeTx;

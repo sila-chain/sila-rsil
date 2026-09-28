@@ -14,7 +14,7 @@ pub type SilRpcConverter<ChainSpec> =
 mod tests {
     use super::*;
     use alloy_consensus::{Transaction, TxType};
-    use alloy_rpc_types_sil::TransactionRequest;
+    use alloy_rpc_types_eth::TransactionRequest;
     use revm::database::CacheDB;
     use rsil_chainspec::SILA_MAINNET;
     use rsil_rpc_sil_types::simulate::resolve_transaction;

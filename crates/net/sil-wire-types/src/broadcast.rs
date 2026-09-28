@@ -15,7 +15,7 @@ use alloy_rlp::{
 use alloy_sips::eip2718::Typed2718;
 use core::{fmt::Debug, mem};
 use derive_more::{Constructor, Deref, DerefMut, From, IntoIterator};
-use rsil_codecs_derive::{add_arbitrary_tests, generate_tests};
+use reth_codecs_derive::{add_arbitrary_tests, generate_tests};
 use rsil_primitives_traits::{sync::OnceLock, Block, InMemorySize, SignedTransaction};
 use rsil_sila_primitives::TransactionSigned;
 

@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: sila-chain/sila-rsil
-          ref: c320c544be324755225a2470069efd85dd37ae31
+          ref: aa0815fbb9eb46dc117235ccce92cc437e47b9a6
           persist-credentials: false
       - name: Generate baseline Sila compact vectors
         run: cargo run --bin rsil --features "dev" -- test-vectors compact --write

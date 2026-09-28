@@ -1,7 +1,7 @@
 use alloy_primitives::{keccak256, Address};
 use clap::Parser;
 use human_bytes::human_bytes;
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_db_api::{cursor::DbDupCursorRO, database::Database, tables, transaction::DbTx};
 use rsil_db_common::DbTool;
 use rsil_node_builder::NodeTypesWithDB;

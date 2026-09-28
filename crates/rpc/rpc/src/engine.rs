@@ -27,13 +27,13 @@ macro_rules! engine_span {
 #[derive(Debug, Clone)]
 pub struct EngineEthApi<Sil, SilFilter> {
     sil: Sil,
-    eth_filter: SilFilter,
+    sil_filter: SilFilter,
 }
 
 impl<Sil, SilFilter> EngineEthApi<Sil, SilFilter> {
     /// Create a new `EngineEthApi` instance.
-    pub const fn new(sil: Sil, eth_filter: SilFilter) -> Self {
-        Self { sil, eth_filter }
+    pub const fn new(sil: Sil, sil_filter: SilFilter) -> Self {
+        Self { sil, sil_filter }
     }
 }
 
@@ -134,7 +134,7 @@ where
 
     /// Handler for `eth_getLogs`
     async fn logs(&self, filter: Filter) -> Result<Vec<Log>> {
-        self.eth_filter.logs(filter, QueryLimits::no_limits()).instrument(engine_span!()).await
+        self.sil_filter.logs(filter, QueryLimits::no_limits()).instrument(engine_span!()).await
     }
 
     /// Handler for `eth_getProof`

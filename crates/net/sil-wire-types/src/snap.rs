@@ -9,7 +9,7 @@ use crate::BlockAccessLists;
 use alloc::vec::Vec;
 use alloy_primitives::{Bytes, B256};
 use alloy_rlp::{Decodable, Encodable, RlpDecodable, RlpEncodable};
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// Supported SNAP protocol versions.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Hash)]

@@ -15,7 +15,7 @@
 //! on public-facing RPC endpoints without proper authentication.
 
 use alloy_consensus::{Header, Transaction};
-use alloy_eips::{sip1559::calculate_block_gas_limit, sip2718::Decodable2718};
+use alloy_eips::{eip1559::calculate_block_gas_limit, eip2718::Decodable2718};
 use alloy_evm::{RecoveredTx, Savm};
 use alloy_primitives::{
     map::{DefaultHashBuilder, HashSet},

@@ -15,7 +15,7 @@ use crate::transactions::constants::{
         DEFAULT_MAX_COUNT_PENDING_POOL_IMPORTS, DEFAULT_TX_MANAGER_CHANNEL_MEMORY_LIMIT_BYTES,
     },
 };
-use alloy_eips::sip2718::IsTyped2718;
+use alloy_eips::eip2718::IsTyped2718;
 use alloy_primitives::B256;
 use derive_more::{Constructor, Display};
 use rsil_sil_wire::NetworkPrimitives;

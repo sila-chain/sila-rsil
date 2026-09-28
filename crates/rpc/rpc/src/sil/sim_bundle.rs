@@ -2,9 +2,9 @@
 
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_eips::BlockNumberOrTag;
-use alloy_savm::{env::BlockEnvironment, overrides::apply_block_overrides};
+use alloy_evm::{env::BlockEnvironment, overrides::apply_block_overrides};
 use alloy_primitives::U256;
-use alloy_rpc_types_sil::{BlockId, Log};
+use alloy_rpc_types_eth::{BlockId, Log};
 use alloy_rpc_types_mev::{
     BundleItem, Inclusion, MevSendBundle, Privacy, RefundConfig, SimBundleLogs, SimBundleOverrides,
     SimBundleResponse, Validity,
@@ -18,7 +18,7 @@ use rsil_primitives_traits::Recovered;
 use rsil_rpc_api::MevSimApiServer;
 use rsil_rpc_sil_api::{
     helpers::{block::LoadBlock, Call, SilTransactions},
-    FromEthApiError, FromEvmError,
+    FromSilApiError, FromEvmError,
 };
 use rsil_rpc_sil_types::{utils::recover_raw_transaction, SilApiError};
 use rsil_storage_api::ProviderTx;
@@ -308,7 +308,7 @@ where
                 apply_block_overrides(block_overrides, &mut db, evm_env.block_env.inner_mut());
 
                 let initial_coinbase_balance = DatabaseRef::basic_ref(&db, coinbase)
-                    .map_err(SilApiError::from_eth_err)?
+                    .map_err(SilApiError::from_sil_err)?
                     .map(|acc| acc.balance)
                     .unwrap_or_default();
 

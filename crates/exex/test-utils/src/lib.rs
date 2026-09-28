@@ -43,7 +43,7 @@ use rsil_node_builder::{
 use rsil_node_core::node_config::NodeConfig;
 use rsil_node_sila::{
     node::{
-        SilaAddOns, SilaEngineValidatorBuilder, SilaEthApiBuilder, SilaNetworkBuilder,
+        SilaAddOns, SilaEngineValidatorBuilder, SilaSilApiBuilder, SilaNetworkBuilder,
         SilaPayloadBuilder,
     },
     SilEngineTypes,
@@ -138,7 +138,7 @@ where
         TestExecutorBuilder,
         TestConsensusBuilder,
     >;
-    type AddOns = SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
+    type AddOns = SilaAddOns<NodeAdapter<N>, SilaSilApiBuilder, SilaEngineValidatorBuilder>;
 
     fn components_builder(&self) -> Self::ComponentsBuilder {
         ComponentsBuilder::default()

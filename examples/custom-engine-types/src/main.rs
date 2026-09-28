@@ -45,7 +45,7 @@ use rsil_sila::{
         },
         core::{args::RpcServerArgs, node_config::NodeConfig},
         node::{SilaConsensusBuilder, SilaExecutorBuilder, SilaNetworkBuilder, SilaPoolBuilder},
-        SilaEthApiBuilder,
+        SilaSilApiBuilder,
     },
     pool::{PoolTransaction, TransactionPool},
     primitives::{Block, SealedBlock},
@@ -237,7 +237,7 @@ impl NodeTypes for MyCustomNode {
 }
 
 /// Custom addons configuring RPC types
-pub type MyNodeAddOns<N> = RpcAddOns<N, SilaEthApiBuilder, CustomEngineValidatorBuilder>;
+pub type MyNodeAddOns<N> = RpcAddOns<N, SilaSilApiBuilder, CustomEngineValidatorBuilder>;
 
 /// Implement the Node trait for the custom node
 ///

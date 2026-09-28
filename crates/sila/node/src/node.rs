@@ -134,15 +134,15 @@ impl NodeTypes for SilaNode {
 
 /// Builds [`SilApi`](rsil_rpc::SilApi) for Sila.
 #[derive(Debug)]
-pub struct SilaEthApiBuilder<NetworkT = Sila>(PhantomData<NetworkT>);
+pub struct SilaSilApiBuilder<NetworkT = Sila>(PhantomData<NetworkT>);
 
-impl<NetworkT> Default for SilaEthApiBuilder<NetworkT> {
+impl<NetworkT> Default for SilaSilApiBuilder<NetworkT> {
     fn default() -> Self {
         Self(Default::default())
     }
 }
 
-impl<N, NetworkT> SilApiBuilder<N> for SilaEthApiBuilder<NetworkT>
+impl<N, NetworkT> SilApiBuilder<N> for SilaSilApiBuilder<NetworkT>
 where
     N: FullNodeComponents<
         Types: NodeTypes<ChainSpec: Hardforks + SilaHardforks>,
@@ -192,7 +192,7 @@ where
     }
 }
 
-impl<N> Default for SilaAddOns<N, SilaEthApiBuilder, SilaEngineValidatorBuilder>
+impl<N> Default for SilaAddOns<N, SilaSilApiBuilder, SilaEngineValidatorBuilder>
 where
     N: FullNodeComponents<
         Types: NodeTypes<
@@ -202,11 +202,11 @@ where
             Primitives = SilPrimitives,
         >,
     >,
-    SilaEthApiBuilder: SilApiBuilder<N>,
+    SilaSilApiBuilder: SilApiBuilder<N>,
 {
     fn default() -> Self {
         Self::new(RpcAddOns::new(
-            SilaEthApiBuilder::default(),
+            SilaSilApiBuilder::default(),
             SilaEngineValidatorBuilder::default(),
             BasicEngineApiBuilder::default(),
             BasicEngineValidatorBuilder::default(),
@@ -448,7 +448,7 @@ where
         SilaConsensusBuilder,
     >;
 
-    type AddOns = SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
+    type AddOns = SilaAddOns<NodeAdapter<N>, SilaSilApiBuilder, SilaEngineValidatorBuilder>;
 
     fn components_builder(&self) -> Self::ComponentsBuilder {
         Self::components()

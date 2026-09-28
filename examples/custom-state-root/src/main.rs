@@ -45,7 +45,7 @@ use rsil_sila::{
             FullNodeComponents, NodeBuilder, NodeHandle,
         },
         core::{args::RpcServerArgs, node_config::NodeConfig},
-        SilaAddOns, SilaEngineValidatorBuilder, SilaEthApiBuilder, SilaNode,
+        SilaAddOns, SilaEngineValidatorBuilder, SilaSilApiBuilder, SilaNode,
     },
     tasks::Runtime,
     SilPrimitives,
@@ -175,7 +175,7 @@ async fn main() -> eyre::Result<()> {
     // Build add-ons with our custom engine validator builder.
     let add_ons: SilaAddOns<_, _, _, _, ZeroStateRootValidatorBuilder> =
         SilaAddOns::new(RpcAddOns::new(
-            SilaEthApiBuilder::<alloy_network::Sila>::default(),
+            SilaSilApiBuilder::<alloy_network::Sila>::default(),
             SilaEngineValidatorBuilder::default(),
             BasicEngineApiBuilder::<SilaEngineValidatorBuilder>::default(),
             ZeroStateRootValidatorBuilder {

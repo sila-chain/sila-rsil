@@ -27,7 +27,7 @@ use rsil_node_builder::{
 };
 use rsil_node_core::args::DefaultEngineValues;
 use rsil_node_sila::{
-    SilPayloadTypes, SilaEngineValidator, SilaEthApiBuilder, SilaNetworkBuilder, SilaNode,
+    SilPayloadTypes, SilaEngineValidator, SilaSilApiBuilder, SilaNetworkBuilder, SilaNode,
     SilaPayloadBuilder, SilaPoolBuilder,
 };
 use rsil_primitives_traits::SealedBlock;
@@ -174,7 +174,7 @@ where
 
     type AddOns = RpcAddOns<
         NodeAdapter<N>,
-        SilaEthApiBuilder,
+        SilaSilApiBuilder,
         BbEngineValidatorBuilder,
         NoopEngineApiBuilder,
     >;

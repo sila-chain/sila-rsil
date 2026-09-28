@@ -4,7 +4,7 @@ use crate::{segments, segments::Segment, StaticFileProducerEvent};
 use alloy_primitives::BlockNumber;
 use parking_lot::Mutex;
 use rayon::prelude::*;
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_db_api::table::Value;
 use rsil_primitives_traits::{FastInstant as Instant, NodePrimitives};
 use rsil_provider::{

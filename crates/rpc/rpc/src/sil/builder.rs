@@ -32,11 +32,11 @@ pub struct SilApiBuilder<N: RpcNodeCore, Rpc, NextEnv = ()> {
     gas_cap: GasCap,
     max_simulate_blocks: u64,
     compute_state_root_for_eth_simulate: bool,
-    eth_proof_window: u64,
+    sil_proof_window: u64,
     fee_history_cache_config: FeeHistoryCacheConfig,
     proof_permits: usize,
-    eth_state_cache_config: SilStateCacheConfig,
-    eth_cache: Option<SilStateCache<N::Primitives>>,
+    sil_state_cache_config: SilStateCacheConfig,
+    sil_cache: Option<SilStateCache<N::Primitives>>,
     gas_oracle_config: GasPriceOracleConfig,
     gas_oracle: Option<GasPriceOracle<N::Provider>>,
     blocking_task_pool: Option<BlockingTaskPool>,
@@ -86,11 +86,11 @@ impl<N: RpcNodeCore, Rpc, NextEnv> SilApiBuilder<N, Rpc, NextEnv> {
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             fee_history_cache_config,
             proof_permits,
-            eth_state_cache_config,
-            eth_cache,
+            sil_state_cache_config,
+            sil_cache,
             gas_oracle_config,
             gas_oracle,
             blocking_task_pool,
@@ -110,11 +110,11 @@ impl<N: RpcNodeCore, Rpc, NextEnv> SilApiBuilder<N, Rpc, NextEnv> {
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             fee_history_cache_config,
             proof_permits,
-            eth_state_cache_config,
-            eth_cache,
+            sil_state_cache_config,
+            sil_cache,
             gas_oracle_config,
             gas_oracle,
             blocking_task_pool,
@@ -142,18 +142,18 @@ where
         Self {
             components,
             rpc_converter,
-            eth_cache: None,
+            sil_cache: None,
             gas_oracle: None,
             gas_cap: GasCap::default(),
             max_simulate_blocks: DEFAULT_MAX_SIMULATE_BLOCKS,
             compute_state_root_for_eth_simulate: false,
-            eth_proof_window: DEFAULT_ETH_PROOF_WINDOW,
+            sil_proof_window: DEFAULT_ETH_PROOF_WINDOW,
             blocking_task_pool: None,
             fee_history_cache_config: FeeHistoryCacheConfig::default(),
             proof_permits: DEFAULT_PROOF_PERMITS,
             task_spawner: Runtime::test(),
             gas_oracle_config: Default::default(),
-            eth_state_cache_config: Default::default(),
+            sil_state_cache_config: Default::default(),
             next_env: Default::default(),
             max_batch_size: 1,
             max_blocking_io_requests: DEFAULT_MAX_BLOCKING_IO_REQUEST,
@@ -187,11 +187,11 @@ where
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             fee_history_cache_config,
             proof_permits,
-            eth_state_cache_config,
-            eth_cache,
+            sil_state_cache_config,
+            sil_cache,
             gas_oracle,
             blocking_task_pool,
             task_spawner,
@@ -211,11 +211,11 @@ where
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             fee_history_cache_config,
             proof_permits,
-            eth_state_cache_config,
-            eth_cache,
+            sil_state_cache_config,
+            sil_cache,
             gas_oracle,
             blocking_task_pool,
             task_spawner,
@@ -242,11 +242,11 @@ where
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             fee_history_cache_config,
             proof_permits,
-            eth_state_cache_config,
-            eth_cache,
+            sil_state_cache_config,
+            sil_cache,
             gas_oracle,
             blocking_task_pool,
             task_spawner,
@@ -266,11 +266,11 @@ where
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             fee_history_cache_config,
             proof_permits,
-            eth_state_cache_config,
-            eth_cache,
+            sil_state_cache_config,
+            sil_cache,
             gas_oracle,
             blocking_task_pool,
             task_spawner,
@@ -286,19 +286,19 @@ where
         }
     }
 
-    /// Sets `eth_cache` config for the cache that will be used if no [`SilStateCache`] is
+    /// Sets `sil_cache` config for the cache that will be used if no [`SilStateCache`] is
     /// configured.
-    pub const fn eth_state_cache_config(
+    pub const fn sil_state_cache_config(
         mut self,
-        eth_state_cache_config: SilStateCacheConfig,
+        sil_state_cache_config: SilStateCacheConfig,
     ) -> Self {
-        self.eth_state_cache_config = eth_state_cache_config;
+        self.sil_state_cache_config = sil_state_cache_config;
         self
     }
 
-    /// Sets `eth_cache` instance
-    pub fn eth_cache(mut self, eth_cache: SilStateCache<N::Primitives>) -> Self {
-        self.eth_cache = Some(eth_cache);
+    /// Sets `sil_cache` instance
+    pub fn sil_cache(mut self, sil_cache: SilStateCache<N::Primitives>) -> Self {
+        self.sil_cache = Some(sil_cache);
         self
     }
 
@@ -334,8 +334,8 @@ where
     }
 
     /// Sets the maximum number of blocks into the past for generating state proofs.
-    pub const fn eth_proof_window(mut self, eth_proof_window: u64) -> Self {
-        self.eth_proof_window = eth_proof_window;
+    pub const fn sil_proof_window(mut self, sil_proof_window: u64) -> Self {
+        self.sil_proof_window = sil_proof_window;
         self
     }
 
@@ -400,8 +400,8 @@ where
     }
 
     /// Returns the SIL proof window.
-    pub const fn get_eth_proof_window(&self) -> u64 {
-        self.eth_proof_window
+    pub const fn get_sil_proof_window(&self) -> u64 {
+        self.sil_proof_window
     }
 
     /// Returns a reference to the fee history cache config.
@@ -415,8 +415,8 @@ where
     }
 
     /// Returns a reference to the SIL state cache config.
-    pub const fn get_eth_state_cache_config(&self) -> &SilStateCacheConfig {
-        &self.eth_state_cache_config
+    pub const fn get_sil_state_cache_config(&self) -> &SilStateCacheConfig {
+        &self.sil_state_cache_config
     }
 
     /// Returns a reference to the gas oracle config.
@@ -445,8 +445,8 @@ where
     }
 
     /// Returns a mutable reference to the SIL state cache config.
-    pub const fn eth_state_cache_config_mut(&mut self) -> &mut SilStateCacheConfig {
-        &mut self.eth_state_cache_config
+    pub const fn sil_state_cache_config_mut(&mut self) -> &mut SilStateCacheConfig {
+        &mut self.sil_state_cache_config
     }
 
     /// Returns a mutable reference to the gas oracle config.
@@ -469,11 +469,11 @@ where
     }
 
     /// Modifies the SIL state cache configuration using a closure.
-    pub fn modify_eth_state_cache_config<F>(mut self, f: F) -> Self
+    pub fn modify_sil_state_cache_config<F>(mut self, f: F) -> Self
     where
         F: FnOnce(&mut SilStateCacheConfig),
     {
-        f(&mut self.eth_state_cache_config);
+        f(&mut self.sil_state_cache_config);
         self
     }
 
@@ -511,14 +511,14 @@ where
         let Self {
             components,
             rpc_converter,
-            eth_state_cache_config,
+            sil_state_cache_config,
             gas_oracle_config,
-            eth_cache,
+            sil_cache,
             gas_oracle,
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             blocking_task_pool,
             fee_history_cache_config,
             proof_permits,
@@ -535,21 +535,21 @@ where
 
         let provider = components.provider().clone();
 
-        let eth_cache = eth_cache.unwrap_or_else(|| {
+        let sil_cache = sil_cache.unwrap_or_else(|| {
             SilStateCache::spawn_with(
                 provider.clone(),
-                eth_state_cache_config,
+                sil_state_cache_config,
                 task_spawner.clone(),
             )
         });
         let gas_oracle = gas_oracle.unwrap_or_else(|| {
-            GasPriceOracle::new(provider.clone(), gas_oracle_config, eth_cache.clone())
+            GasPriceOracle::new(provider.clone(), gas_oracle_config, sil_cache.clone())
         });
         let fee_history_cache =
             FeeHistoryCache::<HeaderTy<N::Primitives>>::new(fee_history_cache_config);
         let new_canonical_blocks = provider.canonical_state_stream();
         let fhc = fee_history_cache.clone();
-        let cache = eth_cache.clone();
+        let cache = sil_cache.clone();
         task_spawner.spawn_critical_task(
             "cache canonical blocks for fee history task",
             async move {
@@ -559,12 +559,12 @@ where
 
         SilApiInner::new(
             components,
-            eth_cache,
+            sil_cache,
             gas_oracle,
             gas_cap,
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             blocking_task_pool.unwrap_or_else(|| {
                 BlockingTaskPool::builder()
                     .thread_name(|i| format!("blocking-{i:02}"))

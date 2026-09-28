@@ -74,4 +74,5 @@ test-utils = [
     "rsil-chainspec/test-utils",
     "rsil-trie-sparse?/test-utils",
     "rsil-sila-primitives/test-utils",
+    "rsil-savm/test-utils",
 ]

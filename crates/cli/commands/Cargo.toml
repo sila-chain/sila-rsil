@@ -15,7 +15,7 @@ rsil-chainspec.workspace = true
 rsil-cli.workspace = true
 rsil-cli-runner.workspace = true
 rsil-cli-util.workspace = true
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-config = { workspace = true, features = ["serde"] }
 rsil-consensus.workspace = true
 rsil-db = { workspace = true, features = ["mdbx"] }
@@ -124,11 +124,11 @@ arbitrary = [
     "alloy-chains/arbitrary",
     "alloy-sips/arbitrary",
     "alloy-primitives/arbitrary",
-    "rsil-codecs/test-utils",
+    "reth-codecs/test-utils",
     "rsil-prune-types/test-utils",
     "rsil-stages-types/test-utils",
     "rsil-trie-common?/test-utils",
-    "rsil-codecs/arbitrary",
+    "reth-codecs/arbitrary",
     "rsil-prune-types/arbitrary",
     "rsil-stages-types/arbitrary",
     "rsil-trie-common?/arbitrary",

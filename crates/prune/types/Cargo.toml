@@ -12,7 +12,7 @@ description = "Commonly used types for prune usage in rsil."
 workspace = true
 
 [dependencies]
-rsil-codecs = { workspace = true, optional = true }
+reth-codecs = { version = "0.5.0", default-features = false, optional = true }
 
 alloy-primitives.workspace = true
 derive_more.workspace = true
@@ -25,7 +25,7 @@ serde = { workspace = true, features = ["derive"], optional = true }
 arbitrary = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 
 alloy-primitives = { workspace = true, features = ["serde"] }
 serde.workspace = true
@@ -46,23 +46,23 @@ std = [
     "strum/std",
     "thiserror/std",
     "tracing/std",
-    "rsil-codecs?/std",
+    "reth-codecs?/std",
 ]
 test-utils = [
     "std",
     "dep:arbitrary",
-    "rsil-codecs?/test-utils",
+    "reth-codecs?/test-utils",
 ]
 arbitrary = [
     "alloy-primitives/arbitrary",
-    "rsil-codecs?/arbitrary",
+    "reth-codecs?/arbitrary",
 ]
 rsil-codec = [
-    "dep:rsil-codecs",
+    "dep:reth-codecs",
     "dep:modular-bitfield",
 ]
 serde = [
     "dep:serde",
     "alloy-primitives/serde",
-    "rsil-codecs?/serde",
+    "reth-codecs?/serde",
 ]

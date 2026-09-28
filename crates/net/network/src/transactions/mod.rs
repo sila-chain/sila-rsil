@@ -35,7 +35,7 @@ use crate::{
     cache::LruCache,
     duration_metered_exec, metered_poll_nested_stream_with_budget,
     metrics::{AnnouncedTxTypesMetrics, TransactionsManagerMetrics},
-    transactions::config::{StrictEthAnnouncementFilter, TransactionPropagationKind},
+    transactions::config::{StrictSilAnnouncementFilter, TransactionPropagationKind},
     NetworkHandle, TxTypesCounter,
 };
 use alloy_eips::eip2718::Typed2718;
@@ -363,7 +363,7 @@ impl<Pool: TransactionPool, N: NetworkPrimitives> TransactionsManager<Pool, N> {
             transactions_manager_config,
             NetworkPolicies::new(
                 TransactionPropagationKind::default(),
-                StrictEthAnnouncementFilter::default(),
+                StrictSilAnnouncementFilter::default(),
             ),
         )
     }
@@ -2334,7 +2334,7 @@ mod tests {
             transactions::{buffer_hash_to_tx_fetcher, new_mock_session, new_tx_manager},
             Testnet,
         },
-        transactions::config::RelaxedEthAnnouncementFilter,
+        transactions::config::RelaxedSilAnnouncementFilter,
         NetworkConfigBuilder, NetworkManager,
     };
     use alloy_consensus::{Transaction as _, TxEip1559, TxLegacy};
@@ -2376,7 +2376,7 @@ mod tests {
         InMemoryBlobStore,
     >;
 
-    async fn new_eth_tx_manager() -> (
+    async fn new_sil_tx_manager() -> (
         TransactionsManager<SilTestPool, SilNetworkPrimitives>,
         NetworkManager<SilNetworkPrimitives>,
     ) {
@@ -3261,7 +3261,7 @@ mod tests {
     async fn test_propagate_full() {
         rsil_tracing::init_test_tracing();
 
-        let (mut tx_manager, network) = new_eth_tx_manager().await;
+        let (mut tx_manager, network) = new_sil_tx_manager().await;
         let peer_id = PeerId::random();
 
         // ensure not syncing
@@ -3319,7 +3319,7 @@ mod tests {
     async fn test_truncated_hash_announcement_not_marked_seen() {
         rsil_tracing::init_test_tracing();
 
-        let (mut tx_manager, network) = new_eth_tx_manager().await;
+        let (mut tx_manager, network) = new_sil_tx_manager().await;
         // all peers receive hash announcements only
         tx_manager.config.propagation_mode = TransactionPropagationMode::Max(0);
 
@@ -3356,7 +3356,7 @@ mod tests {
     async fn test_propagate_pending_txs_while_initially_syncing() {
         rsil_tracing::init_test_tracing();
 
-        let (mut tx_manager, network) = new_eth_tx_manager().await;
+        let (mut tx_manager, network) = new_sil_tx_manager().await;
         let peer_id = PeerId::random();
 
         // Keep the node in initial sync mode.
@@ -3389,7 +3389,7 @@ mod tests {
         let transactions_manager_config = TransactionsManagerConfig::default();
 
         let propagation_policy = TransactionPropagationKind::default();
-        let announcement_policy = RelaxedEthAnnouncementFilter::default();
+        let announcement_policy = RelaxedSilAnnouncementFilter::default();
 
         let policy_bundle = NetworkPolicies::new(propagation_policy, announcement_policy);
 

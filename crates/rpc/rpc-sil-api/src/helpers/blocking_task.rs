@@ -17,7 +17,7 @@ use crate::SilApiTypes;
 /// Operations can be blocking because they require lots of CPU work and/or IO.
 ///
 /// This differentiates between workloads that are primarily CPU bound and heavier in general (such
-/// as tracing tasks) and tasks that have a more balanced profile (io and cpu), such as `eth_call`
+/// as tracing tasks) and tasks that have a more balanced profile (io and cpu), such as `sil_call`
 /// and alike.
 ///
 /// This provides access to semaphores that permit how many of those are permitted concurrently.
@@ -39,8 +39,8 @@ pub trait SpawnBlocking: SilApiTypes + Clone + Send + Sync + 'static {
 
     /// Returns handle to semaphore for blocking IO tasks.
     ///
-    /// This semaphore is used to limit concurrent blocking IO operations like `eth_call`,
-    /// `eth_estimateGas`, and similar methods that require SAVM execution.
+    /// This semaphore is used to limit concurrent blocking IO operations like `sil_call`,
+    /// `sil_estimateGas`, and similar methods that require SAVM execution.
     fn blocking_io_task_guard(&self) -> &Arc<Semaphore>;
 
     /// Acquires a permit from the tracing task semaphore.
@@ -51,7 +51,7 @@ pub trait SpawnBlocking: SilApiTypes + Clone + Send + Sync + 'static {
     /// - Can accumulate significant memory for trace results
     /// - Expected to have lower concurrency limits than general blocking IO tasks
     ///
-    /// For blocking IO tasks like `eth_call` or `eth_estimateGas`, use
+    /// For blocking IO tasks like `sil_call` or `sil_estimateGas`, use
     /// [`acquire_owned_blocking_io`](Self::acquire_owned_blocking_io) instead.
     ///
     /// See also [`Semaphore::acquire_owned`](`tokio::sync::Semaphore::acquire_owned`).
@@ -80,7 +80,7 @@ pub trait SpawnBlocking: SilApiTypes + Clone + Send + Sync + 'static {
 
     /// Acquires a permit from the blocking IO request semaphore.
     ///
-    /// This should be used for operations like `eth_call`, `eth_estimateGas`, and similar methods
+    /// This should be used for operations like `sil_call`, `sil_estimateGas`, and similar methods
     /// that require SAVM execution and are spawned as blocking tasks.
     ///
     /// See also [`Semaphore::acquire_owned`](`tokio::sync::Semaphore::acquire_owned`).

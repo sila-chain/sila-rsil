@@ -5,7 +5,7 @@ use bytes::BufMut;
 use core::fmt;
 use derive_more::Deref;
 use roaring::RoaringTreemap;
-use reth_codecs::DecompressError;
+use rsil_codecs::DecompressError;
 
 /// A data structure that uses Roaring Bitmaps to efficiently store a list of integers.
 ///

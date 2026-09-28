@@ -15,7 +15,7 @@ where
     Self: LoadPendingBlock,
 {
     fn max_proof_window(&self) -> u64 {
-        self.inner.eth_proof_window()
+        self.inner.sil_proof_window()
     }
 }
 
@@ -46,7 +46,7 @@ mod tests {
     use rsil_rpc_sil_api::{helpers::SilState, node::RpcNodeCoreAdapter};
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
 
-    fn noop_eth_api() -> SilApi<
+    fn noop_sil_api() -> SilApi<
         RpcNodeCoreAdapter<NoopProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
@@ -57,7 +57,7 @@ mod tests {
         SilApi::builder(provider, pool, NoopNetwork::default(), evm_config).build()
     }
 
-    fn mock_eth_api(
+    fn mock_sil_api(
         accounts: AddressMap<ExtendedAccount>,
     ) -> SilApi<
         RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
@@ -75,9 +75,9 @@ mod tests {
     #[tokio::test]
     async fn test_storage() {
         // === Noop ===
-        let eth_api = noop_eth_api();
+        let sil_api = noop_sil_api();
         let address = Address::random();
-        let storage = eth_api.storage_at(address, U256::ZERO.into(), None).await.unwrap();
+        let storage = sil_api.storage_at(address, U256::ZERO.into(), None).await.unwrap();
         assert_eq!(storage, U256::ZERO.to_be_bytes());
 
         // === Mock ===
@@ -89,18 +89,18 @@ mod tests {
             address,
             ExtendedAccount::new(0, U256::ZERO).extend_storage(storage),
         )]);
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let storage_key: U256 = storage_key.into();
-        let storage = eth_api.storage_at(address, storage_key.into(), None).await.unwrap();
+        let storage = sil_api.storage_at(address, storage_key.into(), None).await.unwrap();
         assert_eq!(storage, storage_value.to_be_bytes());
     }
 
     #[tokio::test]
     async fn test_get_account_missing() {
-        let eth_api = noop_eth_api();
+        let sil_api = noop_sil_api();
         let address = Address::random();
-        let account = eth_api.get_account(address, Default::default()).await.unwrap();
+        let account = sil_api.get_account(address, Default::default()).await.unwrap();
         assert!(account.is_none());
     }
 }

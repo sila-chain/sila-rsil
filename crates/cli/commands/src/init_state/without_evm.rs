@@ -1,7 +1,7 @@
 use alloy_consensus::BlockHeader;
 use alloy_primitives::{BlockNumber, B256};
 use alloy_rlp::Decodable;
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_node_builder::NodePrimitives;
 use rsil_primitives_traits::{SealedBlock, SealedHeader, SealedHeaderFor};
 use rsil_provider::{

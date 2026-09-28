@@ -707,11 +707,11 @@ impl SilMessageID {
 
     /// Returns the max value for the given version.
     pub const fn max(version: SilVersion) -> u8 {
-        if version.is_eth72() {
+        if version.is_sil72() {
             Self::Cells.to_u8()
-        } else if version.is_eth71() {
+        } else if version.is_sil71() {
             Self::BlockAccessLists.to_u8()
-        } else if version.is_eth69_or_newer() {
+        } else if version.is_sil69_or_newer() {
             Self::BlockRangeUpdate.to_u8()
         } else {
             Self::Receipts.to_u8()

@@ -7,7 +7,7 @@ use revm::{
     database_interface::{bal::EvmDatabaseError as SavmDatabaseError, DBErrorMarker},
     state::bal::BalError,
 };
-use rsil_codecs::DecompressError;
+use reth_codecs::DecompressError;
 use rsil_primitives_traits::{transaction::signed::RecoveryError, GotExpected};
 use rsil_prune_types::PruneSegmentError;
 use rsil_static_file_types::StaticFileSegment;

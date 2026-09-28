@@ -28,6 +28,7 @@ pub struct StorageSettings {
     pub storage_v2: bool,
 }
 
+#[allow(dead_code, unreachable_pub)]
 #[bitfield]
 #[derive(Clone, Copy, Debug, Default)]
 struct StorageSettingsFlags {

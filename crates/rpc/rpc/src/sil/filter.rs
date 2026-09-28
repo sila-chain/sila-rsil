@@ -136,11 +136,11 @@ where
     /// .build();
     /// let filter = SilFilter::new(sil_api, Default::default(), Runtime::test());
     /// ```
-    pub fn new(eth_api: Sil, config: SilFilterConfig, task_spawner: Runtime) -> Self {
+    pub fn new(sil_api: Sil, config: SilFilterConfig, task_spawner: Runtime) -> Self {
         let SilFilterConfig { max_blocks_per_filter, max_logs_per_response, stale_filter_ttl } =
             config;
         let inner = SilFilterInner {
-            eth_api,
+            sil_api,
             active_filters: ActiveFilters::new(),
             id_provider: Arc::new(SilSubscriptionIdProvider::default()),
             max_headers_range: MAX_HEADERS_RANGE,
@@ -149,17 +149,17 @@ where
             query_limits: QueryLimits { max_blocks_per_filter, max_logs_per_response },
         };
 
-        let eth_filter = Self { inner: Arc::new(inner) };
+        let sil_filter = Self { inner: Arc::new(inner) };
 
-        let this = eth_filter.clone();
-        eth_filter.inner.task_spawner.spawn_critical_task(
+        let this = sil_filter.clone();
+        sil_filter.inner.task_spawner.spawn_critical_task(
             "sil-filters_stale-filters-clean",
             async move {
                 this.watch_and_clear_stale_filters().await;
             },
         );
 
-        eth_filter
+        sil_filter
     }
 
     /// Returns all currently active filters
@@ -209,12 +209,12 @@ where
 {
     /// Access the underlying provider.
     fn provider(&self) -> &Sil::Provider {
-        self.inner.eth_api.provider()
+        self.inner.sil_api.provider()
     }
 
     /// Access the underlying pool.
     fn pool(&self) -> &Sil::Pool {
-        self.inner.eth_api.pool()
+        self.inner.sil_api.pool()
     }
 
     /// Returns all the filter changes for the given id, if any
@@ -365,7 +365,7 @@ where
                 let stream = self.pool().new_pending_pool_transactions_listener();
                 let full_txs_receiver = FullTransactionsReceiver::new(
                     stream,
-                    dyn_clone::clone(self.inner.eth_api.converter()),
+                    dyn_clone::clone(self.inner.sil_api.converter()),
                 );
                 FilterKind::PendingTransaction(PendingTransactionKind::FullTransaction(Arc::new(
                     full_txs_receiver,
@@ -430,7 +430,7 @@ where
 #[derive(Debug)]
 struct SilFilterInner<Sil: SilApiTypes> {
     /// Inner `sil` API implementation.
-    eth_api: Sil,
+    sil_api: Sil,
     /// All currently installed filters.
     active_filters: ActiveFilters<RpcTransaction<Sil::NetworkTypes>>,
     /// Provides ids to identify filters
@@ -455,12 +455,12 @@ where
 {
     /// Access the underlying provider.
     fn provider(&self) -> &Sil::Provider {
-        self.eth_api.provider()
+        self.sil_api.provider()
     }
 
     /// Access the underlying [`SilStateCache`].
-    fn eth_cache(&self) -> &SilStateCache<Sil::Primitives> {
-        self.eth_api.cache()
+    fn sil_cache(&self) -> &SilStateCache<Sil::Primitives> {
+        self.sil_api.cache()
     }
 
     /// Returns logs matching given filter object.
@@ -473,7 +473,7 @@ where
             FilterBlockOption::AtBlockHash(block_hash) => {
                 // First try to get cached block and receipts, as it's likely they're already cached
                 let Some((receipts, maybe_block)) =
-                    self.eth_cache().get_receipts_and_maybe_block(block_hash).await?
+                    self.sil_cache().get_receipts_and_maybe_block(block_hash).await?
                 else {
                     return Err(ProviderError::HeaderNotFound(block_hash.into()).into());
                 };
@@ -521,7 +521,7 @@ where
                         return Ok(Vec::new());
                     }
                     // Try to get pending block and receipts
-                    if let Ok(Some(pending_block)) = self.eth_api.local_pending_block().await {
+                    if let Ok(Some(pending_block)) = self.sil_api.local_pending_block().await {
                         if let BlockNumberOrTag::Number(to_block) = to_block
                             && to_block < pending_block.block.number()
                         {
@@ -1141,7 +1141,7 @@ impl<
         for header in self.headers_iter.by_ref() {
             // Use get_receipts_and_maybe_block which has automatic fallback to provider
             if let Some((receipts, maybe_block)) =
-                self.filter_inner.eth_cache().get_receipts_and_maybe_block(header.hash()).await?
+                self.filter_inner.sil_cache().get_receipts_and_maybe_block(header.hash()).await?
             {
                 return Ok(Some(ReceiptBlockResult {
                     receipts,
@@ -1254,7 +1254,7 @@ impl<
             // First check if already cached to avoid unnecessary provider calls
             let (maybe_block, maybe_receipts) = self
                 .filter_inner
-                .eth_cache()
+                .sil_cache()
                 .maybe_cached_block_and_receipts(header.hash())
                 .await?;
 
@@ -1388,7 +1388,7 @@ mod tests {
 
     // Helper function to create a test SilApi instance
     #[expect(clippy::type_complexity)]
-    fn build_test_eth_api(
+    fn build_test_sil_api(
         provider: MockSilProvider,
     ) -> SilApi<
         RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
@@ -1406,11 +1406,11 @@ mod tests {
     #[tokio::test]
     async fn test_range_block_mode_empty_range() {
         let provider = MockSilProvider::default();
-        let eth_api = build_test_eth_api(provider);
+        let sil_api = build_test_sil_api(provider);
 
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers = vec![];
         let max_range = 100;
@@ -1431,11 +1431,11 @@ mod tests {
     #[tokio::test]
     async fn test_range_block_mode_queued_results_priority() {
         let provider = MockSilProvider::default();
-        let eth_api = build_test_eth_api(provider);
+        let sil_api = build_test_sil_api(provider);
 
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers = vec![
             SealedHeader::new(
@@ -1546,11 +1546,11 @@ mod tests {
     #[tokio::test]
     async fn test_range_block_mode_single_block_no_receipts() {
         let provider = MockSilProvider::default();
-        let eth_api = build_test_eth_api(provider);
+        let sil_api = build_test_sil_api(provider);
 
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers = vec![SealedHeader::new(
             alloy_consensus::Header { number: 100, ..Default::default() },
@@ -1613,11 +1613,11 @@ mod tests {
         provider.add_receipts(100, vec![receipt_100_1.clone(), receipt_100_2.clone()]);
         provider.add_receipts(101, vec![receipt_101_1.clone()]);
 
-        let eth_api = build_test_eth_api(provider);
+        let sil_api = build_test_sil_api(provider);
 
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers = vec![
             SealedHeader::new(header_1, block_hash_1),
@@ -1704,11 +1704,11 @@ mod tests {
         provider.add_receipts(100, vec![mock_receipt.clone()]);
         provider.add_receipts(101, vec![mock_receipt.clone()]);
 
-        let eth_api = build_test_eth_api(provider);
+        let sil_api = build_test_sil_api(provider);
 
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers = vec![
             SealedHeader::new(header_100, block_hash_100),
@@ -1773,10 +1773,10 @@ mod tests {
         provider.add_header(test_hash, test_header.header().clone());
         provider.add_receipts(test_block_number, vec![mock_receipt.clone()]);
 
-        let eth_api = build_test_eth_api(provider);
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_api = build_test_sil_api(provider);
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers = vec![test_header.clone()];
 
@@ -1804,11 +1804,11 @@ mod tests {
     #[tokio::test]
     async fn test_cached_mode_empty_headers() {
         let provider = MockSilProvider::default();
-        let eth_api = build_test_eth_api(provider);
+        let sil_api = build_test_sil_api(provider);
 
-        let eth_filter =
-            super::SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let filter_inner = eth_filter.inner;
+        let sil_filter =
+            super::SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let filter_inner = sil_filter.inner;
 
         let headers: Vec<SealedHeader<alloy_consensus::Header>> = vec![];
 
@@ -1877,9 +1877,9 @@ mod tests {
             );
         }
 
-        let eth_api = build_test_eth_api(provider);
-        let eth_filter = SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
-        let err = eth_filter
+        let sil_api = build_test_sil_api(provider);
+        let sil_filter = SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
+        let err = sil_filter
             .inner
             .clone()
             .get_logs_in_block_range(
@@ -1980,14 +1980,14 @@ mod tests {
         provider
             .add_block_body_indices(103, StoredBlockBodyIndices { first_tx_num: 2, tx_count: 0 });
 
-        let eth_api = build_test_eth_api(provider);
-        let eth_filter = SilFilter::new(eth_api, SilFilterConfig::default(), Runtime::test());
+        let sil_api = build_test_sil_api(provider);
+        let sil_filter = SilFilter::new(sil_api, SilFilterConfig::default(), Runtime::test());
 
         // Use default filter which will match any non-empty bloom
         let filter = Filter::default();
 
         // Get logs in the range - this will trigger the bloom filtering
-        let logs = eth_filter
+        let logs = sil_filter
             .inner
             .clone()
             .get_logs_in_block_range(filter, 100, 103, QueryLimits::default())

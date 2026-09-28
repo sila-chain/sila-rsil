@@ -6,7 +6,7 @@ use alloy_rlp::{Decodable, Encodable, Error as RlpError};
 use bytes::BufMut;
 use core::{fmt, str::FromStr};
 use derive_more::Display;
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// Error thrown when failed to parse a valid [`SilVersion`].
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]

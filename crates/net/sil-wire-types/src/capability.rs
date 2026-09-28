@@ -6,7 +6,7 @@ use alloy_primitives::bytes::Bytes;
 use alloy_rlp::{Decodable, Encodable, RlpDecodable, RlpEncodable};
 use bytes::BufMut;
 use core::fmt;
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// A Capability message consisting of the message-id and the payload.
 #[derive(Debug, Clone, Eq, PartialEq)]

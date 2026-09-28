@@ -8,11 +8,11 @@ use crate::{
     helpers::estimate::EstimateCall, FromEvmError, FullSilApiTypes, RpcBlock, RpcNodeCore,
 };
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
-use alloy_sips::eip2930::AccessListResult;
-use alloy_savm::overrides::{apply_block_overrides, apply_state_overrides, OverrideBlockHashes};
+use alloy_eips::eip2930::AccessListResult;
+use alloy_evm::overrides::{apply_block_overrides, apply_state_overrides, OverrideBlockHashes};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{Bytes, B256, U256};
-use alloy_rpc_types_sil::{
+use alloy_rpc_types_eth::{
     simulate::{SimBlock, SimulatePayload, SimulatedBlock},
     state::{SavmOverrides, StateOverride},
     BlockId, Bundle, SilCallResponse, StateContext, TransactionInfo,
@@ -35,7 +35,7 @@ use rsil_primitives_traits::Recovered;
 use rsil_revm::{
     cancelled::CancelOnDrop,
     database::StateProviderDatabase,
-    db::{bal::SavmDatabaseError, State},
+    db::{bal::EvmDatabaseError, State},
 };
 use rsil_rpc_convert::{RpcConvert, RpcTxReq};
 use rsil_rpc_sil_types::{
@@ -554,7 +554,7 @@ pub trait Call:
         _evm_env: &SavmEnvFor<Self::Savm>,
         tx_env: &TxEnvFor<Self::Savm>,
     ) -> Result<u64, Self::Error> {
-        alloy_savm::call::caller_gas_allowance(&mut db, tx_env).map_err(Self::Error::from_sil_err)
+        alloy_evm::call::caller_gas_allowance(&mut db, tx_env).map_err(Self::Error::from_sil_err)
     }
 
     /// Executes the closure with the state that corresponds to the given [`BlockId`].
@@ -582,7 +582,7 @@ pub trait Call:
         tx_env: TxEnvFor<Self::Savm>,
     ) -> Result<ResultAndState<HaltReasonFor<Self::Savm>>, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>> + fmt::Debug,
+        DB: Database<Error = EvmDatabaseError<ProviderError>> + fmt::Debug,
     {
         let mut savm = self.evm_config().evm_with_env(db, evm_env);
         let res = savm.transact(tx_env).map_err(Self::Error::from_evm_err)?;
@@ -600,7 +600,7 @@ pub trait Call:
         inspector: I,
     ) -> Result<ResultAndState<HaltReasonFor<Self::Savm>>, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>> + fmt::Debug,
+        DB: Database<Error = EvmDatabaseError<ProviderError>> + fmt::Debug,
         I: InspectorFor<Self::Savm, DB>,
     {
         let mut savm = self.evm_config().evm_with_env_and_inspector(db, evm_env, inspector);
@@ -633,7 +633,7 @@ pub trait Call:
                 .spawn_with_call_at(request, at, overrides, move |db, evm_env, tx_env| {
                     if cancel.is_cancelled() {
                         // callsite dropped the guard
-                        return Err(SilApiError::InternalEthError.into());
+                        return Err(SilApiError::InternalSilError.into());
                     }
                     this.transact(db, evm_env, tx_env)
                 })
@@ -787,7 +787,7 @@ pub trait Call:
         target_tx_hash: B256,
     ) -> Result<usize, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>> + DatabaseCommit + core::fmt::Debug,
+        DB: Database<Error = EvmDatabaseError<ProviderError>> + DatabaseCommit + core::fmt::Debug,
         I: IntoIterator<Item = Recovered<&'a ProviderTx<Self::Provider>>>,
     {
         let mut savm = self.evm_config().evm_with_env(db, evm_env);

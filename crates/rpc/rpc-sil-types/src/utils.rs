@@ -28,10 +28,10 @@ pub fn calculate_gas_used_and_next_log_index(
 /// This is a helper function that returns the appropriate RPC-specific error if the input data is
 /// malformed.
 ///
-/// This function uses [`alloy_sips::eip2718::Decodable2718::decode_2718_exact`] to ensure
+/// This function uses [`alloy_eips::eip2718::Decodable2718::decode_2718_exact`] to ensure
 /// that the entire input buffer is consumed and no trailing bytes are allowed.
 ///
-/// See [`alloy_sips::eip2718::Decodable2718::decode_2718_exact`]
+/// See [`alloy_eips::eip2718::Decodable2718::decode_2718_exact`]
 pub fn recover_raw_transaction<T: SignedTransaction>(data: &[u8]) -> SilResult<Recovered<T>> {
     if data.is_empty() {
         return Err(SilApiError::EmptyRawTransactionData);

@@ -1,15 +1,15 @@
 //! Utilities for serving `eth_simulateV1`
 
 use crate::{
-    error::{api::FromEthApiError, FromEvmError, ToRpcError},
+    error::{api::FromSilApiError, FromEvmError, ToRpcError},
     SilApiError,
 };
 use alloy_chains::Chain;
 use alloy_consensus::{transaction::TxHashRef, BlockHeader, Transaction as _};
-use alloy_sips::eip2718::WithEncoded;
-use alloy_savm::{block::TxResult, precompiles::PrecompilesMap};
+use alloy_eips::eip2718::WithEncoded;
+use alloy_evm::{block::TxResult, precompiles::PrecompilesMap};
 use alloy_network::{NetworkTransactionBuilder, TransactionBuilder};
-use alloy_rpc_types_sil::{
+use alloy_rpc_types_eth::{
     simulate::{SimBlock, SimCallResult, SimulateError, SimulatedBlock},
     state::StateOverride,
     BlockId, BlockOverrides, BlockTransactionsKind,
@@ -279,7 +279,7 @@ pub fn apply_precompile_overrides(
     }
 
     precompiles.move_precompiles(moves).map_err(
-        |alloy_savm::precompiles::MovePrecompileError::NotAPrecompile(addr)| {
+        |alloy_evm::precompiles::MovePrecompileError::NotAPrecompile(addr)| {
             SilSimulateError::NotAPrecompile(addr)
         },
     )?;
@@ -297,7 +297,7 @@ pub fn apply_precompile_overrides(
 /// execution. This matches the spec rule `"gasLimit: blockGasLimit - soFarUsedGasInBlock"` and
 /// geth's per-call `sanitizeCall` behavior.
 ///
-/// [`TransactionRequest`]: alloy_rpc_types_sil::TransactionRequest
+/// [`TransactionRequest`]: alloy_rpc_types_eth::TransactionRequest
 #[expect(clippy::type_complexity)]
 pub fn execute_transactions<S, T>(
     mut builder: S,
@@ -411,7 +411,7 @@ where
 ///
 /// This will set the defaults as defined in <https://github.com/sila-chain/execution-apis/blob/e56d3208789259d0b09fa68e9d8594aa4d73c725/docs/ethsimulatev1-notes.md#default-values-for-transactions>
 ///
-/// [`TransactionRequest`]: alloy_rpc_types_sil::TransactionRequest
+/// [`TransactionRequest`]: alloy_rpc_types_eth::TransactionRequest
 pub fn resolve_transaction<DB: Database, Tx, T>(
     mut tx: RpcTxReq<T::Network>,
     default_gas_limit: u64,
@@ -495,7 +495,7 @@ pub fn build_simulated_block<Err, T>(
 ) -> Result<SimulatedBlock<RpcBlock<T::Network>>, Err>
 where
     Err: std::error::Error
-        + FromEthApiError
+        + FromSilApiError
         + FromEvmError<T::Savm>
         + From<T::Error>
         + Into<jsonrpsee_types::ErrorObject<'static>>,
@@ -545,7 +545,7 @@ where
                     .into_iter()
                     .map(|log| {
                         log_index += 1;
-                        alloy_rpc_types_sil::Log {
+                        alloy_rpc_types_eth::Log {
                             inner: log,
                             log_index: Some(log_index - 1),
                             transaction_index: Some(index as u64),
@@ -580,9 +580,9 @@ mod tests {
     use crate::{error::ToRpcError, SilApiError};
     use alloy_chains::Chain;
     use alloy_consensus::Header;
-    use alloy_savm::precompiles::PrecompilesMap;
+    use alloy_evm::precompiles::PrecompilesMap;
     use alloy_primitives::{address, U256};
-    use alloy_rpc_types_sil::{
+    use alloy_rpc_types_eth::{
         simulate::SimBlock,
         state::{AccountOverride, StateOverride},
         BlockOverrides, TransactionRequest,

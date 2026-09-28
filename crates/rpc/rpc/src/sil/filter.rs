@@ -1,9 +1,9 @@
 //! `sil_` `Filter` RPC handler implementation
 
 use alloy_consensus::BlockHeader;
-use alloy_sips::BlockNumberOrTag;
+use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::{Sealable, TxHash};
-use alloy_rpc_types_sil::{
+use alloy_rpc_types_eth::{
     BlockNumHash, Filter, FilterBlockOption, FilterChanges, FilterId, Log,
     PendingTransactionFilterKind,
 };

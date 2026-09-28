@@ -23,8 +23,8 @@ rsil-storage-errors.workspace = true
 
 # sila
 alloy-consensus.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-sip7928.workspace = true
-alloy-sips.workspace = true
 alloy-primitives = { workspace = true, features = ["rand"] }
 
 # async
@@ -59,7 +59,7 @@ std = [
     "rsil-consensus/std",
     "rsil-sila-primitives/std",
     "alloy-sip7928/std",
-    "alloy-sips/std",
+    "alloy-eips/std",
     "alloy-primitives/std",
     "rsil-primitives-traits/std",
     "alloy-consensus/std",

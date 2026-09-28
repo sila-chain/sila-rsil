@@ -8,7 +8,7 @@ use crate::{
     BlockClient,
 };
 use alloy_consensus::Header;
-use alloy_sips::{BlockHashOrNumber, BlockNumHash};
+use alloy_eips::{BlockHashOrNumber, BlockNumHash};
 use alloy_primitives::{map::B256Map, Bytes, B256};
 use parking_lot::Mutex;
 use rsil_sil_wire_types::{BlockAccessLists, HeadersDirection};

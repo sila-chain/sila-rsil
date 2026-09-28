@@ -1,7 +1,7 @@
 //! Loads chain metadata.
 
 use alloy_primitives::{U256, U64};
-use alloy_rpc_types_sil::{Stage, SyncInfo, SyncStatus};
+use alloy_rpc_types_eth::{Stage, SyncInfo, SyncStatus};
 use futures::Future;
 use rsil_chainspec::ChainInfo;
 use rsil_errors::{RsilError, RsilResult};

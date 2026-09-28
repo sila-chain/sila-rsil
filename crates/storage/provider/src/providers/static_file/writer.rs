@@ -5,7 +5,7 @@ use crate::providers::static_file::metrics::StaticFileProviderOperation;
 use alloy_consensus::BlockHeader;
 use alloy_primitives::{BlockHash, BlockNumber, TxNumber, U256};
 use parking_lot::{lock_api::RwLockWriteGuard, RawRwLock, RwLock};
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_db::models::{AccountBeforeTx, StorageBeforeTx};
 use rsil_db_api::models::CompactU256;
 use rsil_nippy_jar::{NippyJar, NippyJarError, NippyJarWriter};

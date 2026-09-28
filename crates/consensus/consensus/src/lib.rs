@@ -104,7 +104,7 @@ pub trait Consensus<B: Block>: HeaderValidator<B::Header> {
     /// recovery and execution.
     ///
     /// See the Yellow Paper sections 4.4.2 "Holistic Validity", 4.4.4 "Block Header Validity".
-    /// Note: Ommer Validation (previously section 11.1) has been deprecated since the SilaParis hard
+    /// Note: Ommer Validation (previously section 11.1) has been deprecated since the `SilaParis` hard
     /// fork transition to proof of stake.
     ///
     /// **This should not be called for the genesis block**.

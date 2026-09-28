@@ -1,7 +1,7 @@
 //! Trait for specifying `sil` network dependent API types.
 
 use crate::{AsSilApiError, FromSilApiError, RpcNodeCore};
-use alloy_rpc_types_sil::Block;
+use alloy_rpc_types_eth::Block;
 use rsil_rpc_convert::{RpcConvert, SignableTxRequest};
 pub use rsil_rpc_convert::{RpcTransaction, RpcTxReq, RpcTypes};
 use rsil_storage_api::ProviderTx;

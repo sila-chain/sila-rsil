@@ -5,7 +5,7 @@ use alloy_consensus::{ReceiptWithBloom, RlpDecodableReceipt, RlpEncodableReceipt
 use alloy_primitives::B256;
 use alloy_rlp::{RlpDecodableWrapper, RlpEncodableWrapper};
 use derive_more::{Deref, IntoIterator};
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 use rsil_sila_primitives::Receipt;
 
 /// A request for transaction receipts from the given block hashes.

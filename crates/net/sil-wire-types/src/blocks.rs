@@ -7,7 +7,7 @@ use alloy_primitives::B256;
 use alloy_rlp::{RlpDecodable, RlpDecodableWrapper, RlpEncodable, RlpEncodableWrapper};
 use alloy_sips::BlockHashOrNumber;
 use derive_more::{Deref, IntoIterator};
-use rsil_codecs_derive::{add_arbitrary_tests, generate_tests};
+use reth_codecs_derive::{add_arbitrary_tests, generate_tests};
 
 /// A request for a peer to return block headers starting at the requested block.
 /// The peer must return at most [`limit`](#structfield.limit) headers.

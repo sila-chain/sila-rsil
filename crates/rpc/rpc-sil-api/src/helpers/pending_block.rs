@@ -4,9 +4,9 @@
 use super::SpawnBlocking;
 use crate::{FromSilApiError, FromEvmError, RpcNodeCore, SilApiTypes};
 use alloy_consensus::{BlockHeader, Transaction};
-use alloy_sips::eip7840::BlobParams;
+use alloy_eips::eip7840::BlobParams;
 use alloy_primitives::{B256, U256};
-use alloy_rpc_types_sil::{BlockNumberOrTag, BlockOverrides};
+use alloy_rpc_types_eth::{BlockNumberOrTag, BlockOverrides};
 use futures::Future;
 use revm::context_interface::{Block, Cfg as _};
 use rsil_chain_state::{BlockState, ExecutedBlock};

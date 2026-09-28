@@ -352,7 +352,7 @@ async fn test_tx_propagation() -> eyre::Result<()> {
     // Assert that all nodes have the transaction
     for (i, node) in nodes.iter().enumerate() {
         assert!(
-            node.rpc.inner.eth_api().transaction_by_hash(tx_hash).await?.is_some(),
+            node.rpc.inner.sil_api().transaction_by_hash(tx_hash).await?.is_some(),
             "Node {i} should have the transaction"
         );
     }
@@ -366,7 +366,7 @@ async fn test_tx_propagation() -> eyre::Result<()> {
 
     // Assert that all nodes have the transaction
     for node in nodes {
-        assert!(node.rpc.inner.eth_api().transaction_by_hash(tx_hash).await?.is_some());
+        assert!(node.rpc.inner.sil_api().transaction_by_hash(tx_hash).await?.is_some());
     }
 
     Ok(())

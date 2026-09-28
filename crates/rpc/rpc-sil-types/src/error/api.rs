@@ -6,7 +6,7 @@ use alloy_primitives::Bytes;
 use revm::{context::result::ExecutionResult, context_interface::result::HaltReason};
 use rsil_errors::ProviderError;
 use rsil_savm::{ConfigureEvm, HaltReasonFor, SavmErrorFor};
-use rsil_revm::db::bal::SavmDatabaseError;
+use rsil_revm::db::bal::EvmDatabaseError;
 
 use super::RpcInvalidTransactionError;
 
@@ -112,12 +112,12 @@ impl AsSilApiError for SilApiError {
 
 /// Helper trait to convert from revm errors.
 pub trait FromEvmError<Savm: ConfigureEvm>:
-    From<SavmErrorFor<Savm, SavmDatabaseError<ProviderError>>>
+    From<SavmErrorFor<Savm, EvmDatabaseError<ProviderError>>>
     + FromEvmHalt<HaltReasonFor<Savm>>
     + FromRevert
 {
     /// Converts from SAVM error to this type.
-    fn from_evm_err(err: SavmErrorFor<Savm, SavmDatabaseError<ProviderError>>) -> Self {
+    fn from_evm_err(err: SavmErrorFor<Savm, EvmDatabaseError<ProviderError>>) -> Self {
         err.into()
     }
 
@@ -135,7 +135,7 @@ pub trait FromEvmError<Savm: ConfigureEvm>:
 
 impl<T, Savm> FromEvmError<Savm> for T
 where
-    T: From<SavmErrorFor<Savm, SavmDatabaseError<ProviderError>>>
+    T: From<SavmErrorFor<Savm, EvmDatabaseError<ProviderError>>>
         + FromEvmHalt<HaltReasonFor<Savm>>
         + FromRevert,
     Savm: ConfigureEvm,

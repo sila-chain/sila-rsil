@@ -7,7 +7,7 @@
 //! We disable prewarming to ensure deterministic cache behavior and verify the execution
 //! output state contains the expected account status after SELFDESTRUCT.
 
-use crate::utils::{eth_payload_attributes, eth_payload_attributes_shanghai};
+use crate::utils::{sil_payload_attributes, sil_payload_attributes_shanghai};
 use alloy_network::{EthereumWallet as SilaWallet, TransactionBuilder};
 use alloy_primitives::{bytes, Address, Bytes, TxKind, U256};
 use alloy_provider::{Provider, ProviderBuilder};
@@ -143,7 +143,7 @@ async fn test_selfdestruct_post_dencun() -> eyre::Result<()> {
 
     let tree_config = TreeConfig::default().without_prewarming(true).without_state_cache(false);
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, eth_payload_attributes)
+        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, sil_payload_attributes)
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
@@ -236,7 +236,7 @@ async fn test_selfdestruct_same_tx_post_dencun() -> eyre::Result<()> {
 
     let tree_config = TreeConfig::default().without_prewarming(true).without_state_cache(false);
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, eth_payload_attributes)
+        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, sil_payload_attributes)
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
@@ -314,7 +314,7 @@ async fn test_selfdestruct_pre_dencun() -> eyre::Result<()> {
         shanghai_spec(),
         false,
         tree_config,
-        eth_payload_attributes_shanghai,
+        sil_payload_attributes_shanghai,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -419,7 +419,7 @@ async fn test_selfdestruct_same_tx_preexisting_account_post_dencun() -> eyre::Re
 
     let tree_config = TreeConfig::default().without_prewarming(true).without_state_cache(false);
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, eth_payload_attributes)
+        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, sil_payload_attributes)
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();

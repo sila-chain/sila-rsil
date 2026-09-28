@@ -324,8 +324,6 @@ rsil-cli = { path = "crates/cli/cli" }
 rsil-cli-commands = { path = "crates/cli/commands" }
 rsil-cli-runner = { path = "crates/cli/runner" }
 rsil-cli-util = { path = "crates/cli/util" }
-rsil-codecs = { package = "reth-codecs", version = "0.5.0", default-features = false }
-rsil-codecs-derive = { package = "reth-codecs-derive", version = "0.5.0" }
 rsil-config = { path = "crates/config", default-features = false }
 rsil-consensus = { path = "crates/consensus/consensus", default-features = false }
 rsil-consensus-common = { path = "crates/consensus/common", default-features = false }

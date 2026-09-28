@@ -5,7 +5,7 @@ use alloy_primitives::{hex, B256, U256};
 use alloy_rlp::{BufMut, Encodable, RlpDecodable, RlpEncodable};
 use core::fmt::{Debug, Display};
 use rsil_chainspec::{Hardforks, SilChainSpec, SILA_MAINNET};
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// `UnifiedStatus` is an internal superset of all SIL status fields for all `sil/` versions.
 ///

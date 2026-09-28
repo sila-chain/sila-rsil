@@ -2,7 +2,7 @@
 use alloy_consensus::BlockHeader;
 use alloy_eip7928::{bal::DecodedBal, BlockAccessList};
 use alloy_primitives::Bytes;
-use alloy_rpc_types_sil::BlockId;
+use alloy_rpc_types_eth::BlockId;
 use rsil_errors::RsilError;
 use rsil_evm::{block::BlockExecutor, ConfigureEvm, Savm};
 use rsil_revm::{database::StateProviderDatabase, State};

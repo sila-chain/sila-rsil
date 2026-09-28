@@ -12,7 +12,7 @@ workspace = true
 
 [dependencies]
 # rsil
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-primitives-traits.workspace = true
 rsil-prune-types.workspace = true
 rsil-static-file-types.workspace = true
@@ -40,5 +40,5 @@ std = [
     "rsil-prune-types/std",
     "rsil-static-file-types/std",
     "revm/std",
-    "rsil-codecs/std",
+    "reth-codecs/std",
 ]

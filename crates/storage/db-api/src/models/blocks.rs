@@ -2,7 +2,7 @@
 
 use alloy_consensus::Header;
 use alloy_primitives::B256;
-use rsil_codecs::{add_arbitrary_tests, Compact};
+use reth_codecs::{add_arbitrary_tests, Compact};
 use serde::{Deserialize, Serialize};
 
 /// The storage representation of a block's ommers.
@@ -57,7 +57,7 @@ mod tests {
 
     #[test_fuzz::test_fuzz]
     fn fuzz_test_stored_block_ommers(obj: StoredBlockOmmers) {
-        use rsil_codecs::Compact;
+        use reth_codecs::Compact;
         let mut buf = vec![];
         let len = obj.to_compact(&mut buf);
         let (same_obj, _) = StoredBlockOmmers::from_compact(buf.as_ref(), len);

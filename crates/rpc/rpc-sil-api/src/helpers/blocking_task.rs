@@ -168,7 +168,7 @@ pub trait SpawnBlocking: SilApiTypes + Clone + Send + Sync + 'static {
             let _ = tx.send(res);
         });
 
-        async move { rx.await.map_err(|_| SilApiError::InternalEthError)? }
+        async move { rx.await.map_err(|_| SilApiError::InternalSilError)? }
     }
 
     /// Executes the future on a new blocking task.
@@ -191,7 +191,7 @@ pub trait SpawnBlocking: SilApiTypes + Clone + Send + Sync + 'static {
             let _ = tx.send(res);
         });
 
-        async move { rx.await.map_err(|_| SilApiError::InternalEthError)? }
+        async move { rx.await.map_err(|_| SilApiError::InternalSilError)? }
     }
 
     /// Executes a blocking task on the tracing pool.

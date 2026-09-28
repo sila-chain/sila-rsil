@@ -2,7 +2,7 @@
 
 use bytes::{BufMut, BytesMut};
 use modular_bitfield::prelude::*;
-use rsil_codecs::{add_arbitrary_tests, Compact};
+use reth_codecs::{add_arbitrary_tests, Compact};
 use serde::{Deserialize, Serialize};
 
 /// Storage configuration settings for this node.

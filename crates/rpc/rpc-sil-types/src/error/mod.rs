@@ -7,7 +7,7 @@ use alloy_primitives::{Address, Bytes, B256, U256};
 use alloy_rpc_types_eth::{error::SilRpcErrorCode, request::TransactionInputError, BlockError};
 use alloy_sol_types::{ContractError, RevertReason};
 use alloy_transport::{RpcError, TransportErrorKind};
-pub use api::{AsEthApiError, FromEthApiError, FromEvmError, IntoEthApiError};
+pub use api::{AsSilApiError, FromEvmError, FromSilApiError, IntoSilApiError};
 use core::time::Duration;
 use revm::{
     context_interface::result::{
@@ -18,7 +18,7 @@ use revm::{
 use revm_inspectors::tracing::{DebugInspectorError, MuxError};
 use rsil_errors::{BlockExecutionError, BlockValidationError, RsilError};
 use rsil_primitives_traits::transaction::{error::InvalidTransactionError, signed::RecoveryError};
-use rsil_revm::db::bal::SavmDatabaseError;
+use rsil_revm::db::bal::EvmDatabaseError;
 use rsil_rpc_convert::{CallFeesError, SilTxEnvError, TransactionConversionError};
 use rsil_rpc_server_types::result::{
     block_id_to_str, internal_rpc_err, invalid_params_rpc_err, rpc_err, rpc_error_with_code,
@@ -155,7 +155,7 @@ pub enum SilApiError {
     InternalBlockingTaskError,
     /// Error thrown when a spawned blocking task failed to deliver an anticipated response
     #[error("internal sil error")]
-    InternalEthError,
+    InternalSilError,
     /// Error thrown when a (tracing) call exceeds the configured timeout
     #[error("execution aborted (timeout = {0:?})")]
     ExecutionTimedOut(Duration),
@@ -327,7 +327,7 @@ impl From<SilApiError> for jsonrpsee_types::error::ErrorObject<'static> {
                 jsonrpsee_types::error::CALL_EXECUTION_FAILED_CODE,
                 err.to_string(),
             ),
-            err @ (SilApiError::InternalBlockingTaskError | SilApiError::InternalEthError) => {
+            err @ (SilApiError::InternalBlockingTaskError | SilApiError::InternalSilError) => {
                 internal_rpc_err(err.to_string())
             }
             err @ SilApiError::TransactionInputError(_) => invalid_params_rpc_err(err.to_string()),
@@ -414,14 +414,14 @@ impl From<SilTxEnvError> for SilApiError {
     }
 }
 
-impl<E> From<SavmDatabaseError<E>> for SilApiError
+impl<E> From<EvmDatabaseError<E>> for SilApiError
 where
     E: Into<Self>,
 {
-    fn from(value: SavmDatabaseError<E>) -> Self {
+    fn from(value: EvmDatabaseError<E>) -> Self {
         match value {
-            SavmDatabaseError::Bal(err) => err.into(),
-            SavmDatabaseError::Database(err) => err.into(),
+            EvmDatabaseError::Bal(err) => err.into(),
+            EvmDatabaseError::Database(err) => err.into(),
         }
     }
 }

@@ -11,9 +11,8 @@ pub type NumTransactions = u64;
 /// transaction in the block and the total number of transactions.
 #[derive(Debug, Default, Eq, PartialEq, Clone, Copy)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
-#[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
-#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
-#[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), derive(reth_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StoredBlockBodyIndices {
     /// The number of the first transaction in this block
@@ -73,14 +72,13 @@ impl StoredBlockBodyIndices {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(StoredBlockBodyIndices);
+reth_codecs::impl_compression_for_compact!(StoredBlockBodyIndices);
 
 /// The storage representation of block withdrawals.
 #[derive(Debug, Default, Eq, PartialEq, Clone)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
-#[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
-#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
-#[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), derive(reth_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StoredBlockWithdrawals {
     /// The block withdrawals.
@@ -88,13 +86,13 @@ pub struct StoredBlockWithdrawals {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(StoredBlockWithdrawals);
+reth_codecs::impl_compression_for_compact!(StoredBlockWithdrawals);
 
 /// A storage representation of block withdrawals that is static file friendly. An inner `None`
 /// represents a pre-merge block.
 #[derive(Debug, Default, Eq, PartialEq, Clone)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
-#[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct StaticFileBlockWithdrawals {
     /// The block withdrawals. A `None` value represents a pre-merge block.
@@ -102,7 +100,7 @@ pub struct StaticFileBlockWithdrawals {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for StaticFileBlockWithdrawals {
+impl reth_codecs::Compact for StaticFileBlockWithdrawals {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -125,7 +123,7 @@ impl rsil_codecs::Compact for StaticFileBlockWithdrawals {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(StaticFileBlockWithdrawals);
+reth_codecs::impl_compression_for_compact!(StaticFileBlockWithdrawals);
 
 #[cfg(test)]
 mod tests {

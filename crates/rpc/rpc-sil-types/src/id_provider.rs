@@ -1,4 +1,4 @@
-//! Helper type for `rsil_rpc_eth_api::SilPubSubApiServer` implementation.
+//! Helper type for `rsil_rpc_sil_api::SilPubSubApiServer` implementation.
 //!
 //! Generates IDs for tracking subscriptions.
 

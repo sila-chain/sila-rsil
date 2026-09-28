@@ -7,7 +7,7 @@ use rsil_node_api::{BlockTy, FullNodeComponents};
 use rsil_node_builder::{rpc::RpcRegistry, NodeTypes};
 use rsil_provider::BlockReader;
 use rsil_rpc_api::DebugApiServer;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{SilApiSpec, SilTransactions, TraceExt},
     SilApiTypes,
 };

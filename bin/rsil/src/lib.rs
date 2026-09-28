@@ -183,9 +183,9 @@ pub mod rpc {
     /// Re-exported from `rsil_rpc_server_types`.
     pub mod server_types {
         pub use rsil_rpc_server_types::*;
-        /// Re-exported from `rsil_rpc_eth_types`.
+        /// Re-exported from `rsil_rpc_sil_types`.
         pub mod sil {
-            pub use rsil_rpc_eth_types::*;
+            pub use rsil_rpc_sil_types::*;
         }
     }
 

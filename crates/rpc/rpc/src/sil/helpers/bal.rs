@@ -1,8 +1,8 @@
 //! Contains RPC handler implementations specific to block access lists.
 
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{helpers::bal::GetBlockAccessList, FromEvmError, RpcNodeCore};
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_api::{helpers::bal::GetBlockAccessList, FromEvmError, RpcNodeCore};
+use rsil_rpc_sil_types::SilApiError;
 
 use crate::SilApi;
 

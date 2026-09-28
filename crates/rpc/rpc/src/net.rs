@@ -2,7 +2,7 @@ use alloy_primitives::U64;
 use jsonrpsee::core::RpcResult as Result;
 use rsil_network_api::PeersInfo;
 use rsil_rpc_api::NetApiServer;
-use rsil_rpc_eth_api::helpers::SilApiSpec;
+use rsil_rpc_sil_api::helpers::SilApiSpec;
 
 /// `Net` API implementation.
 ///

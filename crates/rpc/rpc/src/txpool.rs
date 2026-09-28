@@ -11,7 +11,7 @@ use jsonrpsee::core::RpcResult;
 use rsil_primitives_traits::NodePrimitives;
 use rsil_rpc_api::TxPoolApiServer;
 use rsil_rpc_convert::{RpcConvert, RpcTypes};
-use rsil_rpc_eth_api::RpcTransaction;
+use rsil_rpc_sil_api::RpcTransaction;
 use rsil_transaction_pool::{
     AllPoolTransactions, PoolConsensusTx, PoolTransaction, TransactionPool,
 };

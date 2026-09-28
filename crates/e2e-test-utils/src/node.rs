@@ -19,7 +19,7 @@ use rsil_provider::{
 };
 use rsil_rpc_api::TestingBuildBlockRequestV1;
 use rsil_rpc_builder::auth::AuthServerHandle;
-use rsil_rpc_eth_api::helpers::{SilApiSpec, SilTransactions, TraceExt};
+use rsil_rpc_sil_api::helpers::{SilApiSpec, SilTransactions, TraceExt};
 use rsil_stages_types::StageId;
 use std::pin::Pin;
 use tokio_stream::StreamExt;

@@ -16,7 +16,7 @@ use jsonrpsee::{
 use rsil_chain_state::CanonStateSubscriptions;
 use rsil_network_api::NetworkInfo;
 use rsil_rpc_convert::RpcHeader;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::SilSubscriptions, pubsub::SilPubSubApiServer, RpcConvert, RpcNodeCore, RpcTransaction,
 };
 use rsil_rpc_server_types::result::{internal_rpc_err, invalid_params_rpc_err};

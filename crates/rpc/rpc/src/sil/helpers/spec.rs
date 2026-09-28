@@ -1,7 +1,7 @@
 use alloy_primitives::U256;
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{helpers::SilApiSpec, RpcNodeCore};
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_api::{helpers::SilApiSpec, RpcNodeCore};
+use rsil_rpc_sil_types::SilApiError;
 
 use crate::SilApi;
 

@@ -6,8 +6,8 @@ use alloy_primitives::{map::AddressMap, sip191_hash_message, Address, Signature,
 use alloy_signer::SignerSync;
 use alloy_signer_local::{coins_bip39::English, MnemonicBuilder, PrivateKeySigner};
 use rsil_rpc_convert::SignableTxRequest;
-use rsil_rpc_eth_api::helpers::{signer::Result, SilSigner};
-use rsil_rpc_eth_types::SignError;
+use rsil_rpc_sil_api::helpers::{signer::Result, SilSigner};
+use rsil_rpc_sil_types::SignError;
 
 /// Holds developer keys
 #[derive(Debug, Clone)]

@@ -8,7 +8,7 @@ use rsil_node_core::args::DevArgs;
 use rsil_node_sila::{node::SilaAddOns, SilaNode};
 use rsil_primitives_traits::transaction::TxHashRef;
 use rsil_provider::{providers::BlockchainProvider, CanonStateSubscriptions};
-use rsil_rpc_eth_api::{helpers::SilTransactions, SilApiServer};
+use rsil_rpc_sil_api::{helpers::SilTransactions, SilApiServer};
 use rsil_tasks::Runtime;
 use std::sync::Arc;
 

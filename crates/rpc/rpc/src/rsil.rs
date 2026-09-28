@@ -15,7 +15,7 @@ use rsil_evm::{execute::Executor, ConfigureEvm};
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::{NodePrimitives, SealedHeader};
 use rsil_rpc_api::{RsilApiServer, RsilJitAction};
-use rsil_rpc_eth_types::{SilApiError, SilResult};
+use rsil_rpc_sil_types::{SilApiError, SilResult};
 use rsil_storage_api::{
     BlockReader, BlockReaderIdExt, ChangeSetReader, StateProviderFactory, TransactionVariant,
 };

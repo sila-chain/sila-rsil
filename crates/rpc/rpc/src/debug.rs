@@ -28,11 +28,11 @@ use rsil_primitives_traits::{
 use rsil_revm::{db::State, witness::ExecutionWitnessRecord};
 use rsil_rpc_api::DebugApiServer;
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{SilTransactions, TraceExt},
     FromEthApiError, FromEvmError, RpcConvert, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{SilApiError, StateCacheDb};
+use rsil_rpc_sil_types::{SilApiError, StateCacheDb};
 use rsil_rpc_server_types::{result::internal_rpc_err, ToRpcResult};
 use rsil_storage_api::{
     BlockIdReader, BlockReaderIdExt, HashedPostStateProvider, HeaderProvider, ProviderBlock,

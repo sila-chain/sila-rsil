@@ -29,11 +29,11 @@ use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{BlockBody, BlockHeader};
 use rsil_rpc_api::TraceApiServer;
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{Call, LoadPendingBlock, LoadTransaction, Trace, TraceExt},
     FromEthApiError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{error::SilApiError, utils::recover_raw_transaction, SilConfig};
+use rsil_rpc_sil_types::{error::SilApiError, utils::recover_raw_transaction, SilConfig};
 use rsil_storage_api::{BlockNumReader, BlockReader};
 use rsil_tasks::pool::BlockingTaskGuard;
 use rsil_transaction_pool::{PoolPooledTx, PoolTransaction, TransactionPool};

@@ -1,6 +1,6 @@
 use rsil_rpc::{SilFilter, SilPubSub};
-use rsil_rpc_eth_api::SilApiTypes;
-use rsil_rpc_eth_types::SilConfig;
+use rsil_rpc_sil_api::SilApiTypes;
+use rsil_rpc_sil_types::SilConfig;
 use rsil_tasks::Runtime;
 
 /// Handlers for core, filter and pubsub `sil` namespace APIs.

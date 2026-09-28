@@ -43,7 +43,7 @@ use rsil_rpc_builder::{
     RpcModuleBuilder, RpcRegistryInner, RpcServerConfig, RpcServerHandle, TransportRpcModules,
 };
 use rsil_rpc_engine_api::{capabilities::EngineCapabilities, EngineApi};
-use rsil_rpc_eth_types::{cache::cache_new_blocks_task, SilConfig, SilStateCache};
+use rsil_rpc_sil_types::{cache::cache_new_blocks_task, SilConfig, SilStateCache};
 use rsil_tokio_util::EventSender;
 use rsil_tracing::tracing::{debug, info};
 use std::{

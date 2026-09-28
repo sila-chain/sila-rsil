@@ -10,7 +10,7 @@ use rsil_rpc_api::{EngineEthApiServer, SilApiServer};
 use rsil_rpc_convert::RpcTxReq;
 /// Re-export for convenience
 pub use rsil_rpc_engine_api::EngineApi;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     EngineEthFilter, FullEthApiTypes, QueryLimits, RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use serde_json::Value;

@@ -1,4 +1,4 @@
-//! Helper types for `rsil_rpc_eth_api::SilApiServer` implementation.
+//! Helper types for `rsil_rpc_sil_api::SilApiServer` implementation.
 //!
 //! Transaction wrapper that labels transaction with its origin.
 

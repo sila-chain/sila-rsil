@@ -8,7 +8,7 @@ use crate::{
 use alloy_consensus::{transaction::TxHashRef, TxReceipt};
 use alloy_eips::BlockId;
 use alloy_rlp::Encodable;
-use alloy_rpc_types_sil::{Block, BlockTransactions, Index};
+use alloy_rpc_types_eth::{Block, BlockTransactions, Index};
 use futures::Future;
 use rsil_node_api::BlockBody;
 use rsil_primitives_traits::{AlloyBlockHeader, RecoveredBlock, SealedHeader, TransactionMeta};

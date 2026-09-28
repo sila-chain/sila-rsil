@@ -11,9 +11,6 @@
 
 extern crate alloc;
 
-// Compatibility name required by the upstream Compact derive expansion.
-#[cfg(any(test, feature = "rsil-codec"))]
-
 mod checkpoint;
 mod event;
 mod mode;

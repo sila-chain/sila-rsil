@@ -40,7 +40,7 @@ const ENGINE_CAPABILITIES_ROUTE: &str = "/engine/v1/capabilities";
 const ENGINE_IDENTITY_ROUTE: &str = "/engine/v1/identity";
 
 #[tokio::test]
-async fn can_run_eth_node() -> eyre::Result<()> {
+async fn can_run_sila_node() -> eyre::Result<()> {
     rsil_tracing::init_test_tracing();
 
     let (mut nodes, wallet) = setup::<SilaNode>(
@@ -77,7 +77,7 @@ async fn can_run_eth_node() -> eyre::Result<()> {
 
 #[tokio::test]
 #[cfg(unix)]
-async fn can_run_eth_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
+async fn can_run_sila_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
     rsil_tracing::init_test_tracing();
     let runtime = Runtime::test();
 
@@ -124,7 +124,7 @@ async fn can_run_eth_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
 
 #[tokio::test]
 #[cfg(unix)]
-async fn test_failed_run_eth_node_with_no_auth_engine_api_over_ipc_opts() -> eyre::Result<()> {
+async fn test_failed_run_sila_node_with_no_auth_engine_api_over_ipc_opts() -> eyre::Result<()> {
     rsil_tracing::init_test_tracing();
     let runtime = Runtime::test();
 

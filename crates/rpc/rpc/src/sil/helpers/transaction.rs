@@ -136,7 +136,7 @@ mod tests {
         BlobTransactionSidecar, Block, Header, SidecarBuilder, SimpleCoder, Transaction,
     };
     use alloy_primitives::{map::AddressMap, Address, Bytes, U256};
-    use alloy_rpc_types_sil::request::TransactionRequest;
+    use alloy_rpc_types_eth::request::TransactionRequest;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
     use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;

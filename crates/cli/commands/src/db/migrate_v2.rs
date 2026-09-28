@@ -45,7 +45,7 @@ impl Command {
     ) -> eyre::Result<()>
     where
         N::Primitives: rsil_primitives_traits::NodePrimitives<
-            Receipt: rsil_db_api::table::Value + rsil_codecs::Compact,
+            Receipt: rsil_db_api::table::Value + reth_codecs::Compact,
         >,
     {
         // === Phase 0: Preflight ===
@@ -222,7 +222,7 @@ impl Command {
     ) -> eyre::Result<()>
     where
         N::Primitives: rsil_primitives_traits::NodePrimitives<
-            Receipt: rsil_db_api::table::Value + rsil_codecs::Compact,
+            Receipt: rsil_db_api::table::Value + reth_codecs::Compact,
         >,
     {
         let provider = factory.provider()?;

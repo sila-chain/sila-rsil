@@ -5,10 +5,10 @@ use crate::{
     RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use alloy_dyn_abi::TypedData;
-use alloy_sips::{sip2930::AccessListResult, BlockId, BlockNumberOrTag};
+use alloy_eips::{sip2930::AccessListResult, BlockId, BlockNumberOrTag};
 use alloy_json_rpc::RpcObject;
 use alloy_primitives::{Address, Bytes, B256, B64, U256, U64};
-use alloy_rpc_types_sil::{
+use alloy_rpc_types_eth::{
     simulate::{SimulatePayload, SimulatedBlock},
     state::{EvmOverrides as SavmOverrides, StateOverride},
     BlockOverrides, Bundle, FeeHistory, Index, EIP1186AccountProofResponse as SIP1186AccountProofResponse, EthCallResponse as SilCallResponse,
@@ -318,7 +318,7 @@ pub trait SilApi<
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<Option<alloy_rpc_types_sil::Account>>;
+    ) -> RpcResult<Option<alloy_rpc_types_eth::Account>>;
 
     /// Introduced in SIP-1559, returns suggestion for the priority for dynamic fee transactions.
     #[method(name = "maxPriorityFeePerGas")]
@@ -423,7 +423,7 @@ pub trait SilApi<
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<alloy_rpc_types_sil::AccountInfo>;
+    ) -> RpcResult<alloy_rpc_types_eth::AccountInfo>;
 
     /// Returns the SIP-7928 block access list for a block by hash.
     #[method(name = "getBlockAccessListByBlockHash")]
@@ -831,7 +831,7 @@ where
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<Option<alloy_rpc_types_sil::Account>> {
+    ) -> RpcResult<Option<alloy_rpc_types_eth::Account>> {
         trace!(target: "rpc::sil", "Serving sil_getAccount");
         Ok(SilState::get_account(self, address, block).await?)
     }
@@ -959,7 +959,7 @@ where
         &self,
         address: Address,
         block: BlockId,
-    ) -> RpcResult<alloy_rpc_types_sil::AccountInfo> {
+    ) -> RpcResult<alloy_rpc_types_eth::AccountInfo> {
         trace!(target: "rpc::sil", "Serving sil_getAccountInfo");
         Ok(SilState::get_account_info(self, address, block).await?)
     }

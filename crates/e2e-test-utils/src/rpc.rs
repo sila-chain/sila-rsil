@@ -26,8 +26,8 @@ where
 {
     /// Injects a raw transaction into the node tx pool via RPC server
     pub async fn inject_tx(&self, raw_tx: Bytes) -> Result<B256, SilApi::Error> {
-        let eth_api = self.inner.eth_api();
-        eth_api.send_raw_transaction(raw_tx).await
+        let sil_api = self.inner.sil_api();
+        sil_api.send_raw_transaction(raw_tx).await
     }
 
     /// Retrieves a transaction envelope by its hash

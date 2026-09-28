@@ -6,7 +6,7 @@ use proptest::{
     prelude::{ProptestConfig, RngCore},
     test_runner::{TestRng, TestRunner},
 };
-use rsil_codecs::alloy::{
+use reth_codecs::alloy::{
     authorization_list::Authorization,
     genesis_account::GenesisAccount,
     header::{Header, HeaderExt},
@@ -71,13 +71,13 @@ macro_rules! compact_types {
 }
 
 // The type that **actually** implements `Compact` should go here. If it's an alloy type, import the
-// auxiliary type from rsil_codecs::alloy instead.
+// auxiliary type from reth_codecs::alloy instead.
 compact_types!(
     regular: [
         // rsil-primitives
         Account,
         Receipt,
-        // rsil_codecs::alloy
+        // reth_codecs::alloy
         Authorization,
         GenesisAccount,
         Header,
@@ -191,7 +191,7 @@ pub fn read_vectors_with(read: &[fn() -> eyre::Result<()>]) -> Result<()> {
 /// Generates test vectors for a specific type `T`.
 pub fn generate_vector<T>(runner: &mut TestRunner) -> Result<()>
 where
-    T: for<'a> Arbitrary<'a> + rsil_codecs::Compact,
+    T: for<'a> Arbitrary<'a> + reth_codecs::Compact,
 {
     let type_name = type_name::<T>();
     print!("{}", type_name);
@@ -244,7 +244,7 @@ where
 /// using `T::from_compact`.
 pub fn read_vector<T>() -> Result<()>
 where
-    T: rsil_codecs::Compact,
+    T: reth_codecs::Compact,
 {
     let type_name = type_name::<T>();
     print!("{}", type_name);

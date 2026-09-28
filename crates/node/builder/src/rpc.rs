@@ -277,7 +277,7 @@ pub struct RpcContext<'a, Node: FullNodeComponents, SilApi: SilApiTypes> {
 
     /// A Helper type the holds instances of the configured modules.
     ///
-    /// This provides easy access to rpc handlers, such as [`RpcRegistryInner::eth_api`].
+    /// This provides easy access to rpc handlers, such as [`RpcRegistryInner::sil_api`].
     pub registry: &'a mut RpcRegistry<Node, SilApi>,
     /// Holds installed modules per transport type.
     ///
@@ -403,8 +403,8 @@ impl<Node: FullNodeComponents, SilApi: SilApiTypes> RpcHandle<Node, SilApi> {
     }
 
     /// Returns the `SilApi` instance of the rpc server.
-    pub const fn eth_api(&self) -> &SilApi {
-        self.rpc_registry.registry.eth_api()
+    pub const fn sil_api(&self) -> &SilApi {
+        self.rpc_registry.registry.sil_api()
     }
 
     /// Returns an instance of the [`AdminApi`] for the rpc server.
@@ -528,7 +528,7 @@ pub struct RpcAddOns<
     /// Additional RPC add-ons.
     pub hooks: RpcHooks<Node, SilB::SilApi>,
     /// Builder for `SilApi`
-    eth_api_builder: SilB,
+    sil_api_builder: SilB,
     /// Payload validator builder
     payload_validator_builder: PVB,
     /// Builder for `EngineApi`
@@ -561,7 +561,7 @@ where
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("RpcAddOns")
             .field("hooks", &self.hooks)
-            .field("eth_api_builder", &"...")
+            .field("sil_api_builder", &"...")
             .field("payload_validator_builder", &self.payload_validator_builder)
             .field("engine_api_builder", &self.engine_api_builder)
             .field("engine_validator_builder", &self.engine_validator_builder)
@@ -578,7 +578,7 @@ where
 {
     /// Creates a new instance of the RPC add-ons.
     pub fn new(
-        eth_api_builder: SilB,
+        sil_api_builder: SilB,
         payload_validator_builder: PVB,
         engine_api_builder: EB,
         engine_validator_builder: EVB,
@@ -587,7 +587,7 @@ where
     ) -> Self {
         Self {
             hooks: RpcHooks::default(),
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -604,7 +604,7 @@ where
     ) -> RpcAddOns<Node, SilB, PVB, T, EVB, RpcMiddleware, AuthHttpMiddleware> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_validator_builder,
             rpc_middleware,
@@ -614,7 +614,7 @@ where
         } = self;
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -631,7 +631,7 @@ where
     ) -> RpcAddOns<Node, SilB, T, EB, EVB, RpcMiddleware, AuthHttpMiddleware> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             engine_api_builder,
             engine_validator_builder,
             rpc_middleware,
@@ -641,7 +641,7 @@ where
         } = self;
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -658,7 +658,7 @@ where
     ) -> RpcAddOns<Node, SilB, PVB, EB, T, RpcMiddleware, AuthHttpMiddleware> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             rpc_middleware,
@@ -668,7 +668,7 @@ where
         } = self;
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -722,7 +722,7 @@ where
     ) -> RpcAddOns<Node, SilB, PVB, EB, EVB, T, AuthHttpMiddleware> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -732,7 +732,7 @@ where
         } = self;
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -752,7 +752,7 @@ where
     ) -> RpcAddOns<Node, SilB, PVB, EB, EVB, RpcMiddleware, T> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -762,7 +762,7 @@ where
         } = self;
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -779,7 +779,7 @@ where
     ) -> RpcAddOns<Node, SilB, PVB, EB, EVB, RpcMiddleware, Stack<AuthHttpMiddleware, T>> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -790,7 +790,7 @@ where
         let auth_http_middleware = Stack::new(auth_http_middleware, layer);
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -824,7 +824,7 @@ where
     pub fn with_tokio_runtime(self, tokio_runtime: Option<tokio::runtime::Handle>) -> Self {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_validator_builder,
             engine_api_builder,
@@ -834,7 +834,7 @@ where
         } = self;
         Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_validator_builder,
             engine_api_builder,
@@ -851,7 +851,7 @@ where
     ) -> RpcAddOns<Node, SilB, PVB, EB, EVB, Stack<RpcMiddleware, T>, AuthHttpMiddleware> {
         let Self {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -862,7 +862,7 @@ where
         let rpc_middleware = Stack::new(rpc_middleware, layer);
         RpcAddOns {
             hooks,
-            eth_api_builder,
+            sil_api_builder,
             payload_validator_builder,
             engine_api_builder,
             engine_validator_builder,
@@ -1096,7 +1096,7 @@ where
     where
         F: FnOnce(RpcModuleContainer<'_, N, SilB::SilApi>) -> eyre::Result<()>,
     {
-        let Self { eth_api_builder, engine_api_builder, hooks, .. } = self;
+        let Self { sil_api_builder, engine_api_builder, hooks, .. } = self;
 
         let engine_api = engine_api_builder.build_engine_api(&ctx).await?;
         let AddOnsContext { node, config, beacon_engine_handle, jwt_secret, engine_events } = ctx;
@@ -1122,7 +1122,7 @@ where
             cache,
             engine_handle: beacon_engine_handle.clone(),
         };
-        let eth_api = eth_api_builder.build_eth_api(ctx).await?;
+        let sil_api = sil_api_builder.build_sil_api(ctx).await?;
 
         let auth_config = config.rpc.auth_server_config(jwt_secret)?;
         let module_config = config.rpc.transport_rpc_module_config();
@@ -1138,7 +1138,7 @@ where
             .build_with_auth_server(
                 module_config,
                 engine_api,
-                eth_api,
+                sil_api,
                 engine_events.clone(),
                 beacon_engine_handle.clone(),
             );
@@ -1146,7 +1146,7 @@ where
         // in dev mode we generate 20 random dev-signer accounts
         if config.dev.dev {
             let signers = DevSigner::from_mnemonic(config.dev.dev_mnemonic.as_str(), 20);
-            registry.eth_api().signers().write().extend(signers);
+            registry.sil_api().signers().write().extend(signers);
         }
 
         let mut registry = RpcRegistry { registry };
@@ -1299,14 +1299,14 @@ impl<'a, N: FullNodeComponents<Types: NodeTypes<ChainSpec: Hardforks + SilaHardf
     SilApiCtx<'a, N>
 {
     /// Provides a [`SilApiBuilder`] with preconfigured config and components.
-    pub fn eth_api_builder(self) -> rsil_rpc::SilApiBuilder<N, SilRpcConverterFor<N>> {
+    pub fn sil_api_builder(self) -> rsil_rpc::SilApiBuilder<N, SilRpcConverterFor<N>> {
         rsil_rpc::SilApiBuilder::new_with_components(self.components.clone())
-            .eth_cache(self.cache)
+            .sil_cache(self.cache)
             .task_spawner(self.components.task_executor().clone())
             .gas_cap(self.config.rpc_gas_cap.into())
             .max_simulate_blocks(self.config.rpc_max_simulate_blocks)
             .compute_state_root_for_eth_simulate(self.config.compute_state_root_for_eth_simulate)
-            .eth_proof_window(self.config.eth_proof_window)
+            .sil_proof_window(self.config.sil_proof_window)
             .fee_history_cache_config(self.config.fee_history_cache)
             .proof_permits(self.config.proof_permits)
             .gas_oracle_config(self.config.gas_oracle)
@@ -1325,7 +1325,7 @@ pub trait SilApiBuilder<N: FullNodeComponents>: Default + Send + 'static {
     type SilApi: FullSilApiServer<Provider = N::Provider, Pool = N::Pool>;
 
     /// Builds the [`SilApiServer`](rsil_rpc_api::sil::SilApiServer) from the given context.
-    fn build_eth_api(
+    fn build_sil_api(
         self,
         ctx: SilApiCtx<'_, N>,
     ) -> impl Future<Output = eyre::Result<Self::SilApi>> + Send;

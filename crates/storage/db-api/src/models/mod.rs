@@ -5,6 +5,8 @@ use crate::{
     DatabaseError,
 };
 use alloy_primitives::{Address, B256, U256};
+use bytes::{BufMut, BytesMut};
+use modular_bitfield::prelude::*;
 use rsil_codecs::{add_arbitrary_tests, impl_compression_for_compact, Compact};
 use rsil_prune_types::PruneSegment;
 use rsil_trie_common::{StoredNibbles, StoredNibblesSubKey, *};
@@ -215,7 +217,7 @@ macro_rules! add_wrapper_struct {
     ($(($name:tt, $wrapper:tt)),+) => {
         $(
             /// Wrapper struct so it can use `StructFlags` from Compact, when used as pure table values.
-            #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize, Compact)]
+            #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
             #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
             #[add_arbitrary_tests(compact)]
             pub struct $wrapper(pub $name);
@@ -247,6 +249,112 @@ macro_rules! add_wrapper_struct {
 add_wrapper_struct!((U256, CompactU256));
 add_wrapper_struct!((u64, CompactU64));
 add_wrapper_struct!((ClientVersion, CompactClientVersion));
+
+#[bitfield]
+#[derive(Clone, Copy, Debug, Default)]
+struct CompactU256Flags {
+    placeholder_len: B6,
+    #[skip]
+    unused: B2,
+}
+
+impl CompactU256 {
+    /// Used bytes by the compact bitfield.
+    pub const fn bitflag_encoded_bytes() -> usize {
+        1
+    }
+
+    /// Unused bits available in the compact bitfield.
+    pub const fn bitflag_unused_bits() -> usize {
+        2
+    }
+}
+
+impl Compact for CompactU256 {
+    fn to_compact<B>(&self, buf: &mut B) -> usize
+    where
+        B: BufMut + AsMut<[u8]>,
+    {
+        let mut payload = BytesMut::new();
+        let mut flags = CompactU256Flags::default();
+        flags.set_placeholder_len(self.0.to_compact(&mut payload) as u8);
+        buf.put_slice(&flags.into_bytes());
+        buf.put_slice(&payload);
+        1 + payload.len()
+    }
+
+    fn from_compact(buf: &[u8], _len: usize) -> (Self, &[u8]) {
+        let flags = CompactU256Flags::from_bytes([buf[0]]);
+        let (value, buf) = U256::from_compact(&buf[1..], flags.placeholder_len() as usize);
+        (Self(value), buf)
+    }
+}
+
+#[bitfield]
+#[derive(Clone, Copy, Debug, Default)]
+struct CompactU64Flags {
+    placeholder_len: B4,
+    #[skip]
+    unused: B4,
+}
+
+impl CompactU64 {
+    /// Used bytes by the compact bitfield.
+    pub const fn bitflag_encoded_bytes() -> usize {
+        1
+    }
+
+    /// Unused bits available in the compact bitfield.
+    pub const fn bitflag_unused_bits() -> usize {
+        4
+    }
+}
+
+impl Compact for CompactU64 {
+    fn to_compact<B>(&self, buf: &mut B) -> usize
+    where
+        B: BufMut + AsMut<[u8]>,
+    {
+        let mut payload = BytesMut::new();
+        let mut flags = CompactU64Flags::default();
+        flags.set_placeholder_len(self.0.to_compact(&mut payload) as u8);
+        buf.put_slice(&flags.into_bytes());
+        buf.put_slice(&payload);
+        1 + payload.len()
+    }
+
+    fn from_compact(buf: &[u8], _len: usize) -> (Self, &[u8]) {
+        let flags = CompactU64Flags::from_bytes([buf[0]]);
+        let (value, buf) = u64::from_compact(&buf[1..], flags.placeholder_len() as usize);
+        (Self(value), buf)
+    }
+}
+
+impl CompactClientVersion {
+    /// Used bytes by the compact bitfield.
+    pub const fn bitflag_encoded_bytes() -> usize {
+        0
+    }
+
+    /// Unused bits available in the compact bitfield.
+    pub const fn bitflag_unused_bits() -> usize {
+        0
+    }
+}
+
+impl Compact for CompactClientVersion {
+    fn to_compact<B>(&self, buf: &mut B) -> usize
+    where
+        B: BufMut + AsMut<[u8]>,
+    {
+        self.0.to_compact(buf)
+    }
+
+    fn from_compact(buf: &[u8], len: usize) -> (Self, &[u8]) {
+        let (value, buf) = ClientVersion::from_compact(buf, len);
+        (Self(value), buf)
+    }
+}
 
 #[cfg(test)]
 mod tests {

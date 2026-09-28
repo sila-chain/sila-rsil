@@ -6,6 +6,7 @@ use alloy_primitives::{BlockNumber, TxNumber};
 /// Saves the pruning progress of a stage.
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs(crate = "rsil_codecs"))]
 #[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(any(test, feature = "test-utils"), derive(Default, arbitrary::Arbitrary))]
 #[cfg_attr(any(test, feature = "serde"), derive(serde::Serialize, serde::Deserialize))]

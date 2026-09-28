@@ -159,8 +159,8 @@ where
 {
     type SilApi = SilApiFor<N, NetworkT>;
 
-    async fn build_eth_api(self, ctx: SilApiCtx<'_, N>) -> eyre::Result<Self::SilApi> {
-        Ok(ctx.eth_api_builder().map_converter(|r| r.with_network()).build())
+    async fn build_sil_api(self, ctx: SilApiCtx<'_, N>) -> eyre::Result<Self::SilApi> {
+        Ok(ctx.sil_api_builder().map_converter(|r| r.with_network()).build())
     }
 }
 
@@ -360,7 +360,7 @@ where
                 // testing_buildBlockV1: only wire when the hidden testing module is explicitly
                 // requested on any transport. Default stays disabled to honor security guidance.
                 let mut testing_api = TestingApi::new(
-                    container.registry.eth_api().clone(),
+                    container.registry.sil_api().clone(),
                     container.registry.evm_config().clone(),
                     testing_desired_gas_limit,
                     testing_engine_handle,

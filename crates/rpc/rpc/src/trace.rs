@@ -1,11 +1,11 @@
 use alloy_consensus::BlockHeader as _;
 use alloy_eips::BlockId;
-use alloy_savm::block::calc::{base_block_reward_pre_merge, block_reward, ommer_reward};
+use alloy_evm::block::calc::{base_block_reward_pre_merge, block_reward, ommer_reward};
 use alloy_primitives::{
     map::{HashMap, HashSet},
     Address, BlockHash, Bytes, B256, U256,
 };
-use alloy_rpc_types_sil::{
+use alloy_rpc_types_eth::{
     state::{SavmOverrides, StateOverride},
     BlockOverrides, Index,
 };
@@ -31,7 +31,7 @@ use rsil_rpc_api::TraceApiServer;
 use rsil_rpc_convert::RpcTxReq;
 use rsil_rpc_sil_api::{
     helpers::{Call, LoadPendingBlock, LoadTransaction, Trace, TraceExt},
-    FromEthApiError, RpcNodeCore,
+    FromSilApiError, RpcNodeCore,
 };
 use rsil_rpc_sil_types::{error::SilApiError, utils::recover_raw_transaction, SilConfig};
 use rsil_storage_api::{BlockNumReader, BlockReader};
@@ -60,9 +60,9 @@ impl<Sil> TraceApi<Sil> {
     pub fn new(
         sil_api: Sil,
         blocking_task_guard: BlockingTaskGuard,
-        eth_config: SilConfig,
+        sil_config: SilConfig,
     ) -> Self {
-        let inner = Arc::new(TraceApiInner { sil_api, blocking_task_guard, eth_config });
+        let inner = Arc::new(TraceApiInner { sil_api, blocking_task_guard, sil_config });
         Self { inner }
     }
 
@@ -111,7 +111,7 @@ where
                 let trace_res = inspector
                     .into_parity_builder()
                     .into_trace_results_with_state(&res, &trace_request.trace_types, &db)
-                    .map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
                 Ok(trace_res)
             })
             .await
@@ -137,7 +137,7 @@ where
                 inspector
                     .into_parity_builder()
                     .into_trace_results_with_state(&res, &trace_types, &db)
-                    .map_err(Sil::Error::from_eth_err)
+                    .map_err(Sil::Error::from_sil_err)
             })
             .await
     }
@@ -174,7 +174,7 @@ where
                     let trace_res = inspector
                         .into_parity_builder()
                         .into_trace_results_with_state(&res, &trace_types, &db)
-                        .map_err(Sil::Error::from_eth_err)?;
+                        .map_err(Sil::Error::from_sil_err)?;
 
                     results.push(trace_res);
 
@@ -202,7 +202,7 @@ where
                 let trace_res = inspector
                     .into_parity_builder()
                     .into_trace_results_with_state(&res, &trace_types, &db)
-                    .map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
                 Ok(trace_res)
             })
             .await
@@ -356,7 +356,7 @@ where
         let TraceFilter { from_block, to_block, mut after, count, .. } = filter;
         let start = from_block.unwrap_or(0);
 
-        let latest_block = self.provider().best_block_number().map_err(Sil::Error::from_eth_err)?;
+        let latest_block = self.provider().best_block_number().map_err(Sil::Error::from_sil_err)?;
         if start > latest_block {
             // can't trace that range
             return Err(SilApiError::HeaderNotFound(start.into()).into());
@@ -368,7 +368,7 @@ where
 
         // Check if the requested range overlaps with pruned history (SIP-4444)
         let earliest_block =
-            self.provider().earliest_block_number().map_err(Sil::Error::from_eth_err)?;
+            self.provider().earliest_block_number().map_err(Sil::Error::from_sil_err)?;
         if start < earliest_block {
             return Err(SilApiError::PrunedHistoryUnavailable.into());
         }
@@ -382,17 +382,17 @@ where
 
         // ensure that the range is not too large, since every block in the range may be replayed
         let distance = end.saturating_sub(start);
-        if distance > self.inner.eth_config.max_trace_filter_blocks {
+        if distance > self.inner.sil_config.max_trace_filter_blocks {
             return Err(SilApiError::InvalidParams(format!(
                 "Block range too large; currently limited to {} blocks",
-                self.inner.eth_config.max_trace_filter_blocks
+                self.inner.sil_config.max_trace_filter_blocks
             ))
             .into());
         }
 
         let mut all_traces = Vec::new();
         let block_buffer_size =
-            self.inner.eth_config.max_tracing_requests.clamp(1, TRACE_FILTER_BLOCK_BUFFER_SIZE);
+            self.inner.sil_config.max_tracing_requests.clamp(1, TRACE_FILTER_BLOCK_BUFFER_SIZE);
         let mut include_reward_traces = true;
 
         for chunk_start in (start..=end).step_by(TRACE_FILTER_FETCH_CHUNK_SIZE) {
@@ -404,7 +404,7 @@ where
                     let blocks = this
                         .provider()
                         .recovered_block_range(chunk_start..=chunk_end)
-                        .map_err(Sil::Error::from_eth_err)?;
+                        .map_err(Sil::Error::from_sil_err)?;
 
                     Ok(blocks.into_iter().map(Arc::new).collect::<Vec<_>>())
                 })
@@ -554,7 +554,7 @@ where
                     // nonce from pre-state
                     if let Some(ref mut state_diff) = full_trace.state_diff {
                         populate_state_diff(state_diff, &ctx.db, ctx.state.iter())
-                            .map_err(Sil::Error::from_eth_err)?;
+                            .map_err(Sil::Error::from_sil_err)?;
                     }
 
                     let trace = TraceResultsWithTransactionHash {
@@ -815,7 +815,7 @@ struct TraceApiInner<Sil> {
     // restrict the number of concurrent calls to `trace_*`
     blocking_task_guard: BlockingTaskGuard,
     // sil config settings
-    eth_config: SilConfig,
+    sil_config: SilConfig,
 }
 
 /// Response type for storage tracing that contains all accessed storage slots

@@ -50,7 +50,7 @@ macro_rules! fuzz_type_and_name {
 pub mod fuzz_rlp {
     use crate::roundtrip_encoding;
     use alloy_rlp::{RlpDecodableWrapper, RlpEncodableWrapper};
-    use rsil_codecs::add_arbitrary_tests;
+    use reth_codecs::add_arbitrary_tests;
     use rsil_sil_wire::{
         BlockBodies, BlockHeaders, DisconnectReason, GetBlockBodies, GetBlockHeaders, GetNodeData,
         GetPooledTransactions, GetReceipts, HelloMessage, NewBlock, NewBlockHashes,

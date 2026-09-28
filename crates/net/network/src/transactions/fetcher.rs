@@ -245,7 +245,7 @@ impl<N: NetworkPrimitives> TransactionFetcher<N> {
         hashes_to_request: &mut RequestTxHashes,
         hashes_from_announcement: ValidAnnouncementData,
     ) -> RequestTxHashes {
-        if hashes_from_announcement.msg_version().has_eth68_metadata() {
+        if hashes_from_announcement.msg_version().has_sil68_metadata() {
             return self.pack_request_eth68(hashes_to_request, hashes_from_announcement);
         }
         self.pack_request_eth66(hashes_to_request, hashes_from_announcement)

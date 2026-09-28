@@ -126,7 +126,7 @@ impl rsil_storage_api::BlockHashReader for StateProviderTraitObjWrapper {
 
     fn convert_block_hash(
         &self,
-        hash_or_number: alloy_rpc_types_sil::BlockHashOrNumber,
+        hash_or_number: alloy_rpc_types_eth::BlockHashOrNumber,
     ) -> rsil_errors::ProviderResult<Option<B256>> {
         self.0.convert_block_hash(hash_or_number)
     }

@@ -2,9 +2,9 @@
 
 use crate::SilApiError;
 use alloy_consensus::{ReceiptEnvelope, Transaction};
-use alloy_sips::eip7840::BlobParams;
+use alloy_eips::eip7840::BlobParams;
 use alloy_primitives::{Address, TxKind};
-use alloy_rpc_types_sil::{Log, TransactionReceipt};
+use alloy_rpc_types_eth::{Log, TransactionReceipt};
 use rsil_chainspec::SilChainSpec;
 use rsil_primitives_traits::{NodePrimitives, TransactionMeta};
 use rsil_rpc_convert::transaction::{ConvertReceiptInput, ReceiptConverter};

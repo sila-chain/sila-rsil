@@ -5,7 +5,7 @@ use crate::{
     metrics::NETWORK_POOL_TRANSACTIONS_SCOPE,
     transactions::{
         config::{
-            AnnouncementFilteringPolicy, StrictEthAnnouncementFilter, TransactionPropagationKind,
+            AnnouncementFilteringPolicy, StrictSilAnnouncementFilter, TransactionPropagationKind,
         },
         policy::NetworkPolicies,
         TransactionPropagationPolicy, TransactionsManager, TransactionsManagerConfig,
@@ -108,7 +108,7 @@ impl<Tx, Sil, N: NetworkPrimitives> NetworkBuilder<Tx, Sil, N> {
 
     /// Creates a new [`TransactionsManager`] and wires it to the network.
     ///
-    /// Uses the default [`StrictEthAnnouncementFilter`] for announcement filtering.
+    /// Uses the default [`StrictSilAnnouncementFilter`] for announcement filtering.
     pub fn transactions_with_policy<Pool: TransactionPool, P: TransactionPropagationPolicy<N>>(
         self,
         pool: Pool,
@@ -119,7 +119,7 @@ impl<Tx, Sil, N: NetworkPrimitives> NetworkBuilder<Tx, Sil, N> {
             pool,
             transactions_manager_config,
             propagation_policy,
-            StrictEthAnnouncementFilter::default(),
+            StrictSilAnnouncementFilter::default(),
         )
     }
 

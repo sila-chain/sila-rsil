@@ -44,7 +44,7 @@ impl From<Vec<u8>> for StoredNibbles {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for StoredNibbles {
+impl reth_codecs::Compact for StoredNibbles {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -64,7 +64,7 @@ impl rsil_codecs::Compact for StoredNibbles {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(StoredNibbles);
+reth_codecs::impl_compression_for_compact!(StoredNibbles);
 
 /// The representation of nibbles of the merkle trie stored in the database.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Deref)]
@@ -110,7 +110,7 @@ impl StoredNibblesSubKey {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for StoredNibblesSubKey {
+impl reth_codecs::Compact for StoredNibblesSubKey {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -135,7 +135,7 @@ impl rsil_codecs::Compact for StoredNibblesSubKey {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(StoredNibblesSubKey);
+reth_codecs::impl_compression_for_compact!(StoredNibblesSubKey);
 
 /// Packed representation of nibbles for the `AccountsTrie` (storage v2).
 ///
@@ -190,7 +190,7 @@ impl PackedStoredNibbles {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for PackedStoredNibbles {
+impl reth_codecs::Compact for PackedStoredNibbles {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -212,7 +212,7 @@ impl rsil_codecs::Compact for PackedStoredNibbles {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(PackedStoredNibbles);
+reth_codecs::impl_compression_for_compact!(PackedStoredNibbles);
 
 /// Packed representation of nibbles as a `DupSort` subkey for `StoragesTrie` (storage v2).
 ///
@@ -274,7 +274,7 @@ impl PackedStoredNibblesSubKey {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for PackedStoredNibblesSubKey {
+impl reth_codecs::Compact for PackedStoredNibblesSubKey {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -296,13 +296,13 @@ impl rsil_codecs::Compact for PackedStoredNibblesSubKey {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(PackedStoredNibblesSubKey);
+reth_codecs::impl_compression_for_compact!(PackedStoredNibblesSubKey);
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use bytes::BytesMut;
-    use rsil_codecs::Compact;
+    use reth_codecs::Compact;
 
     #[test]
     fn test_stored_nibbles_from_nibbles() {

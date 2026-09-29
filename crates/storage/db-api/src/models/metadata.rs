@@ -38,6 +38,16 @@ mod storage_settings_flags {
         #[skip]
         unused: B7,
     }
+
+    impl StorageSettingsFlags {
+        pub(super) fn set_compact_len(&mut self, len: u8) {
+            self.set_storage_v2_len(len);
+        }
+
+        pub(super) fn compact_len(&self) -> u8 {
+            self.storage_v2_len()
+        }
+    }
 }
 use storage_settings_flags::StorageSettingsFlags;
 
@@ -60,7 +70,7 @@ impl Compact for StorageSettings {
     {
         let mut payload = BytesMut::new();
         let mut flags = StorageSettingsFlags::default();
-        flags.set_storage_v2_len(self.storage_v2.to_compact(&mut payload) as u8);
+        flags.set_compact_len(self.storage_v2.to_compact(&mut payload) as u8);
         buf.put_slice(&flags.into_bytes());
         buf.put_slice(&payload);
         1 + payload.len()
@@ -70,7 +80,7 @@ impl Compact for StorageSettings {
         let flags = StorageSettingsFlags::from_bytes([buf[0]]);
         let payload = &buf[1..];
         let (storage_v2, payload) =
-            bool::from_compact(payload, flags.storage_v2_len() as usize);
+            bool::from_compact(payload, flags.compact_len() as usize);
         (Self { storage_v2 }, payload)
     }
 }

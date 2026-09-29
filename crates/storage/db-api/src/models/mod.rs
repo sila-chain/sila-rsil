@@ -260,6 +260,16 @@ mod compact_u256_flags {
         #[skip]
         unused: B2,
     }
+
+    impl CompactU256Flags {
+        pub(super) fn set_compact_len(&mut self, len: u8) {
+            self.set_placeholder_len(len);
+        }
+
+        pub(super) fn compact_len(&self) -> u8 {
+            self.placeholder_len()
+        }
+    }
 }
 use compact_u256_flags::CompactU256Flags;
 
@@ -282,7 +292,7 @@ impl Compact for CompactU256 {
     {
         let mut payload = BytesMut::new();
         let mut flags = CompactU256Flags::default();
-        flags.set_placeholder_len(self.0.to_compact(&mut payload) as u8);
+        flags.set_compact_len(self.0.to_compact(&mut payload) as u8);
         buf.put_slice(&flags.into_bytes());
         buf.put_slice(&payload);
         1 + payload.len()
@@ -290,7 +300,7 @@ impl Compact for CompactU256 {
 
     fn from_compact(buf: &[u8], _len: usize) -> (Self, &[u8]) {
         let flags = CompactU256Flags::from_bytes([buf[0]]);
-        let (value, buf) = U256::from_compact(&buf[1..], flags.placeholder_len() as usize);
+        let (value, buf) = U256::from_compact(&buf[1..], flags.compact_len() as usize);
         (Self(value), buf)
     }
 }
@@ -305,6 +315,16 @@ mod compact_u64_flags {
         placeholder_len: B4,
         #[skip]
         unused: B4,
+    }
+
+    impl CompactU64Flags {
+        pub(super) fn set_compact_len(&mut self, len: u8) {
+            self.set_placeholder_len(len);
+        }
+
+        pub(super) fn compact_len(&self) -> u8 {
+            self.placeholder_len()
+        }
     }
 }
 use compact_u64_flags::CompactU64Flags;
@@ -328,7 +348,7 @@ impl Compact for CompactU64 {
     {
         let mut payload = BytesMut::new();
         let mut flags = CompactU64Flags::default();
-        flags.set_placeholder_len(self.0.to_compact(&mut payload) as u8);
+        flags.set_compact_len(self.0.to_compact(&mut payload) as u8);
         buf.put_slice(&flags.into_bytes());
         buf.put_slice(&payload);
         1 + payload.len()
@@ -336,7 +356,7 @@ impl Compact for CompactU64 {
 
     fn from_compact(buf: &[u8], _len: usize) -> (Self, &[u8]) {
         let flags = CompactU64Flags::from_bytes([buf[0]]);
-        let (value, buf) = u64::from_compact(&buf[1..], flags.placeholder_len() as usize);
+        let (value, buf) = u64::from_compact(&buf[1..], flags.compact_len() as usize);
         (Self(value), buf)
     }
 }

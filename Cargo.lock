@@ -2860,6 +2860,7 @@ dependencies = [
  "alloy-consensus",
  "alloy-eips",
  "alloy-genesis",
+ "alloy-hardforks 0.4.7",
  "alloy-primitives",
  "rsil-chainspec",
  "rsil-network-peers",
@@ -9622,6 +9623,7 @@ version = "2.4.0"
 dependencies = [
  "alloy-consensus",
  "alloy-eips",
+ "alloy-hardforks 0.4.7",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "clap",
@@ -10649,6 +10651,7 @@ version = "2.4.0"
 dependencies = [
  "alloy-consensus",
  "alloy-eips",
+ "alloy-hardforks 0.4.7",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",

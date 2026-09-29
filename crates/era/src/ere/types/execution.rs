@@ -618,7 +618,7 @@ mod tests {
     use super::*;
     use crate::test_utils::{create_header, create_test_receipt, create_test_receipts};
     use alloy_primitives::{Bytes, U256};
-    use alloy_sips::eip4895::Withdrawals;
+    use alloy_eips::eip4895::Withdrawals;
     use rsil_sila_primitives::{Receipt, TxType};
 
     #[test]

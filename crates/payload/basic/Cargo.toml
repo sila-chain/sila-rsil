@@ -27,7 +27,7 @@ rsil-chain-state.workspace = true
 # sila
 alloy-primitives.workspace = true
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 
 # async
 tokio = { workspace = true, features = ["sync", "time"] }

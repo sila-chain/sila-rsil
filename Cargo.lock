@@ -11156,7 +11156,6 @@ dependencies = [
  "metrics",
  "rand 0.9.4",
  "reth-primitives-traits",
- "revm",
  "rsil-chainspec",
  "rsil-execution-errors",
  "rsil-metrics",

@@ -28,7 +28,6 @@ alloy-rlp.workspace = true
 # tracing
 tracing.workspace = true
 
-
 # misc
 thiserror.workspace = true
 crossbeam-channel.workspace = true

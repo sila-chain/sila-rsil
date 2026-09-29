@@ -872,12 +872,12 @@ impl From<InvalidTransaction> for RpcInvalidTransactionError {
             }
             InvalidTransaction::AuthorizationListInvalidFields
             | InvalidTransaction::EmptyAuthorizationList => Self::AuthorizationListInvalidFields,
-            InvalidTransaction::Sip2930NotSupported
-            | InvalidTransaction::Sip1559NotSupported
-            | InvalidTransaction::Sip4844NotSupported
-            | InvalidTransaction::Sip7702NotSupported
-            | InvalidTransaction::Sip7873NotSupported => Self::TxTypeNotSupported,
-            InvalidTransaction::Sip7873MissingTarget => {
+            InvalidTransaction::Eip2930NotSupported
+            | InvalidTransaction::Eip1559NotSupported
+            | InvalidTransaction::Eip4844NotSupported
+            | InvalidTransaction::Eip7702NotSupported
+            | InvalidTransaction::Eip7873NotSupported => Self::TxTypeNotSupported,
+            InvalidTransaction::Eip7873MissingTarget => {
                 Self::other(internal_rpc_err(err.to_string()))
             }
             InvalidTransaction::Str(_) => Self::other(internal_rpc_err(err.to_string())),
@@ -902,10 +902,10 @@ impl From<InvalidTransactionError> for RpcInvalidTransactionError {
                 Self::OldLegacyChainId
             }
             InvalidTransactionError::ChainIdMismatch => Self::InvalidChainId,
-            InvalidTransactionError::Sip2930Disabled
-            | InvalidTransactionError::Sip1559Disabled
-            | InvalidTransactionError::Sip4844Disabled
-            | InvalidTransactionError::Sip7702Disabled
+            InvalidTransactionError::Eip2930Disabled
+            | InvalidTransactionError::Eip1559Disabled
+            | InvalidTransactionError::Eip4844Disabled
+            | InvalidTransactionError::Eip7702Disabled
             | InvalidTransactionError::TxTypeNotSupported => Self::TxTypeNotSupported,
             InvalidTransactionError::GasUintOverflow => Self::GasUintOverflow,
             InvalidTransactionError::GasTooLow => Self::GasTooLow,

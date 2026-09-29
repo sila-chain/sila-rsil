@@ -4,8 +4,8 @@
 
 use alloy_consensus::{Header, SignableTransaction, Transaction as _, TxLegacy};
 use alloy_eips::{
-    sip1898::BlockWithParent,
-    sip4895::{Withdrawal, Withdrawals},
+    eip1898::BlockWithParent,
+    eip4895::{Withdrawal, Withdrawals},
     NumHash,
 };
 use alloy_primitives::{Address, BlockNumber, Bytes, TxKind, B256, B64, U256};

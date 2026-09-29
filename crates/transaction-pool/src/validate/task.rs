@@ -4,12 +4,12 @@ use crate::{
     blobstore::BlobStore,
     metrics::TxPoolValidatorMetrics,
     validate::{SilTransactionValidatorBuilder, TransactionValidatorError},
-    SilTransactionValidator, PoolTransaction, TransactionOrigin, TransactionValidationOutcome,
+    PoolTransaction, SilTransactionValidator, TransactionOrigin, TransactionValidationOutcome,
     TransactionValidator,
 };
 use futures_util::{lock::Mutex, StreamExt};
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{HeaderTy, SealedBlock};
 use rsil_storage_api::BlockReaderIdExt;
 use rsil_tasks::Runtime;
@@ -150,12 +150,19 @@ impl<V> TransactionValidationTaskExecutor<V> {
     }
 }
 
-impl<Client, Tx, Savm> TransactionValidationTaskExecutor<SilTransactionValidator<Client, Tx, Savm>> {
+impl<Client, Tx, Savm>
+    TransactionValidationTaskExecutor<SilTransactionValidator<Client, Tx, Savm>>
+{
     /// Creates a new instance for the given client
     ///
     /// This will spawn a single validation tasks that performs the actual validation.
     /// See [`TransactionValidationTaskExecutor::eth_with_additional_tasks`]
-    pub fn sil<S: BlobStore>(client: Client, evm_config: Savm, blob_store: S, tasks: Runtime) -> Self
+    pub fn sil<S: BlobStore>(
+        client: Client,
+        evm_config: Savm,
+        blob_store: S,
+        tasks: Runtime,
+    ) -> Self
     where
         Client: ChainSpecProvider<ChainSpec: SilaHardforks>
             + BlockReaderIdExt<Header = HeaderTy<Savm::Primitives>>,
@@ -287,7 +294,7 @@ where
                 self.to_validation_task.lock().await.send(fut).await
             };
             if res.is_err() {
-                return validation_service_error_outcomes(hashes)
+                return validation_service_error_outcomes(hashes);
             }
         }
         match rx.await {
@@ -311,7 +318,7 @@ where
         });
 
         if self.to_validation_task.lock().await.send(fut).await.is_err() {
-            return validation_service_error_outcomes(hashes)
+            return validation_service_error_outcomes(hashes);
         }
 
         match rx.await {

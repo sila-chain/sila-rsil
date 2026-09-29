@@ -7,11 +7,11 @@
 //! We disable prewarming to ensure deterministic cache behavior and verify the execution
 //! output state contains the expected account status after SELFDESTRUCT.
 
-use crate::utils::{eth_payload_attributes, eth_payload_attributes_shanghai};
-use alloy_network::{SilaWallet, TransactionBuilder};
+use crate::utils::{sil_payload_attributes, sil_payload_attributes_shanghai};
+use alloy_network::{EthereumWallet as SilaWallet, TransactionBuilder};
 use alloy_primitives::{bytes, Address, Bytes, TxKind, U256};
 use alloy_provider::{Provider, ProviderBuilder};
-use alloy_rpc_types_eth::TransactionRequest;
+use alloy_rpc_types_sil::TransactionRequest;
 use futures::StreamExt;
 use rsil_chainspec::{ChainSpec, ChainSpecBuilder, SILA_MAINNET};
 use rsil_e2e_test_utils::setup_engine;
@@ -143,13 +143,12 @@ async fn test_selfdestruct_post_dencun() -> eyre::Result<()> {
 
     let tree_config = TreeConfig::default().without_prewarming(true).without_state_cache(false);
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, eth_payload_attributes)
+        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, sil_payload_attributes)
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Deploy contract that stores 0x42 at slot 0 and selfdestructs on any call
     let pending = provider
@@ -237,13 +236,12 @@ async fn test_selfdestruct_same_tx_post_dencun() -> eyre::Result<()> {
 
     let tree_config = TreeConfig::default().without_prewarming(true).without_state_cache(false);
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, eth_payload_attributes)
+        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, sil_payload_attributes)
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Deploy contract that selfdestructs during its constructor
     let pending = provider
@@ -316,14 +314,13 @@ async fn test_selfdestruct_pre_dencun() -> eyre::Result<()> {
         shanghai_spec(),
         false,
         tree_config,
-        eth_payload_attributes_shanghai,
+        sil_payload_attributes_shanghai,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Deploy contract that stores 0x42 at slot 0 and selfdestructs on any call
     let pending = provider
@@ -422,13 +419,12 @@ async fn test_selfdestruct_same_tx_preexisting_account_post_dencun() -> eyre::Re
 
     let tree_config = TreeConfig::default().without_prewarming(true).without_state_cache(false);
     let (mut nodes, wallet) =
-        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, eth_payload_attributes)
+        setup_engine::<SilaNode>(1, cancun_spec(), false, tree_config, sil_payload_attributes)
             .await?;
     let mut node = nodes.pop().unwrap();
     let signer = wallet.inner.clone();
-    let provider = ProviderBuilder::new()
-        .wallet(SilaWallet::new(signer.clone()))
-        .connect_http(node.rpc_url());
+    let provider =
+        ProviderBuilder::new().wallet(SilaWallet::new(signer.clone())).connect_http(node.rpc_url());
 
     // Calculate where the contract will be deployed (CREATE uses sender + nonce)
     // We'll use nonce 1 for deployment, so first send SIL with nonce 0

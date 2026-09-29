@@ -1,28 +1,28 @@
 //! Helper traits to wrap generic l1 errors, in network specific error type configured in
-//! `rsil_rpc_eth_api::SilApiTypes`.
+//! `rsil_rpc_sil_api::SilApiTypes`.
 
-use crate::{simulate::SilSimulateError, SilApiError, RevertError};
+use crate::{simulate::SilSimulateError, RevertError, SilApiError};
 use alloy_primitives::Bytes;
-use rsil_errors::ProviderError;
-use rsil_evm::{ConfigureEvm, SavmErrorFor, HaltReasonFor};
-use rsil_revm::db::bal::SavmDatabaseError;
 use revm::{context::result::ExecutionResult, context_interface::result::HaltReason};
+use rsil_errors::ProviderError;
+use rsil_savm::{ConfigureEvm, HaltReasonFor, SavmErrorFor};
+use rsil_revm::db::bal::EvmDatabaseError;
 
 use super::RpcInvalidTransactionError;
 
 /// Helper trait to wrap core [`SilApiError`].
-pub trait FromEthApiError: From<SilApiError> {
+pub trait FromSilApiError: From<SilApiError> {
     /// Converts from error via [`SilApiError`].
-    fn from_eth_err<E>(err: E) -> Self
+    fn from_sil_err<E>(err: E) -> Self
     where
         SilApiError: From<E>;
 }
 
-impl<T> FromEthApiError for T
+impl<T> FromSilApiError for T
 where
     T: From<SilApiError>,
 {
-    fn from_eth_err<E>(err: E) -> Self
+    fn from_sil_err<E>(err: E) -> Self
     where
         SilApiError: From<E>,
     {
@@ -31,27 +31,27 @@ where
 }
 
 /// Helper trait to wrap core [`SilApiError`].
-pub trait IntoEthApiError: Into<SilApiError> {
+pub trait IntoSilApiError: Into<SilApiError> {
     /// Converts into error via [`SilApiError`].
-    fn into_eth_err<E>(self) -> E
+    fn into_sil_err<E>(self) -> E
     where
-        E: FromEthApiError;
+        E: FromSilApiError;
 }
 
-impl<T> IntoEthApiError for T
+impl<T> IntoSilApiError for T
 where
     SilApiError: From<T>,
 {
-    fn into_eth_err<E>(self) -> E
+    fn into_sil_err<E>(self) -> E
     where
-        E: FromEthApiError,
+        E: FromSilApiError,
     {
-        E::from_eth_err(self)
+        E::from_sil_err(self)
     }
 }
 
 /// Helper trait to access wrapped core error.
-pub trait AsEthApiError {
+pub trait AsSilApiError {
     /// Returns a reference to [`SilApiError`] if this is an error variant inherited from core
     /// functionality.
     fn as_err(&self) -> Option<&SilApiError>;
@@ -60,7 +60,7 @@ pub trait AsEthApiError {
     /// [`RpcInvalidTransactionError::GasTooHigh`].
     fn is_gas_too_high(&self) -> bool {
         if let Some(err) = self.as_err() {
-            return err.is_gas_too_high()
+            return err.is_gas_too_high();
         }
 
         false
@@ -70,7 +70,7 @@ pub trait AsEthApiError {
     /// [`RpcInvalidTransactionError::GasTooLow`].
     fn is_gas_too_low(&self) -> bool {
         if let Some(err) = self.as_err() {
-            return err.is_gas_too_low()
+            return err.is_gas_too_low();
         }
 
         false
@@ -104,7 +104,7 @@ pub trait AsEthApiError {
     }
 }
 
-impl AsEthApiError for SilApiError {
+impl AsSilApiError for SilApiError {
     fn as_err(&self) -> Option<&SilApiError> {
         Some(self)
     }
@@ -112,12 +112,12 @@ impl AsEthApiError for SilApiError {
 
 /// Helper trait to convert from revm errors.
 pub trait FromEvmError<Savm: ConfigureEvm>:
-    From<SavmErrorFor<Savm, SavmDatabaseError<ProviderError>>>
+    From<SavmErrorFor<Savm, EvmDatabaseError<ProviderError>>>
     + FromEvmHalt<HaltReasonFor<Savm>>
     + FromRevert
 {
     /// Converts from SAVM error to this type.
-    fn from_evm_err(err: SavmErrorFor<Savm, SavmDatabaseError<ProviderError>>) -> Self {
+    fn from_evm_err(err: SavmErrorFor<Savm, EvmDatabaseError<ProviderError>>) -> Self {
         err.into()
     }
 
@@ -135,7 +135,7 @@ pub trait FromEvmError<Savm: ConfigureEvm>:
 
 impl<T, Savm> FromEvmError<Savm> for T
 where
-    T: From<SavmErrorFor<Savm, SavmDatabaseError<ProviderError>>>
+    T: From<SavmErrorFor<Savm, EvmDatabaseError<ProviderError>>>
         + FromEvmHalt<HaltReasonFor<Savm>>
         + FromRevert,
     Savm: ConfigureEvm,

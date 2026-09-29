@@ -10,12 +10,12 @@ use jsonrpsee::{
     core::client::{ClientT, SubscriptionClientT},
     server::{HttpRequest, HttpResponse},
 };
-use rsil_sila_engine_primitives::SilEngineTypes;
-use rsil_sila_primitives::{Block, TransactionSigned};
 use rsil_primitives_traits::block::Block as _;
 use rsil_rpc_api::clients::EngineApiClient;
 use rsil_rpc_builder::auth::AuthServerConfig;
 use rsil_rpc_layer::{secret_to_bearer_header, JwtSecret};
+use rsil_sila_engine_primitives::SilEngineTypes;
+use rsil_sila_primitives::{Block, TransactionSigned};
 use std::{
     sync::{
         atomic::{AtomicUsize, Ordering},

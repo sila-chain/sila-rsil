@@ -21,7 +21,7 @@ jobs:
   sync:
     if: github.repository == 'sila-chain/sila-rsil'
     name: sync (${{ matrix.chain.bin }})
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     env:

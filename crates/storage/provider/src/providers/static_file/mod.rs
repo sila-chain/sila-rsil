@@ -98,8 +98,8 @@ mod tests {
         test_utils::create_test_static_files_dir,
     };
     use rsil_db_api::{transaction::DbTxMut, CanonicalHeaders, HeaderNumbers, Headers};
-    use rsil_sila_primitives::{SilPrimitives, Receipt, TransactionSigned};
     use rsil_primitives_traits::Account;
+    use rsil_sila_primitives::{Receipt, SilPrimitives, TransactionSigned};
     use rsil_static_file_types::{
         find_fixed_range, SegmentRangeInclusive, DEFAULT_BLOCKS_PER_STATIC_FILE,
     };
@@ -350,9 +350,9 @@ mod tests {
                 // Append transaction/receipt if there's still a transaction count to append
                 if tx_count > 0 {
                     match segment {
-                        StaticFileSegment::Headers |
-                        StaticFileSegment::AccountChangeSets |
-                        StaticFileSegment::StorageChangeSets => {
+                        StaticFileSegment::Headers
+                        | StaticFileSegment::AccountChangeSets
+                        | StaticFileSegment::StorageChangeSets => {
                             panic!("non tx based segment")
                         }
                         StaticFileSegment::Transactions => {
@@ -469,9 +469,9 @@ mod tests {
 
             // Prune transactions or receipts based on the segment type
             match segment {
-                StaticFileSegment::Headers |
-                StaticFileSegment::AccountChangeSets |
-                StaticFileSegment::StorageChangeSets => {
+                StaticFileSegment::Headers
+                | StaticFileSegment::AccountChangeSets
+                | StaticFileSegment::StorageChangeSets => {
                     panic!("non tx based segment")
                 }
                 StaticFileSegment::Transactions => {
@@ -496,9 +496,9 @@ mod tests {
             // cumulative_gas_used & nonce as ids.
             if let Some(id) = expected_tx_tip {
                 match segment {
-                    StaticFileSegment::Headers |
-                    StaticFileSegment::AccountChangeSets |
-                    StaticFileSegment::StorageChangeSets => {
+                    StaticFileSegment::Headers
+                    | StaticFileSegment::AccountChangeSets
+                    | StaticFileSegment::StorageChangeSets => {
                         panic!("non tx based segment")
                     }
                     StaticFileSegment::Transactions => assert_eyre(

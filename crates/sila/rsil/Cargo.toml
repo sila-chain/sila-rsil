@@ -19,7 +19,7 @@ rsil-network-api = { workspace = true, optional = true }
 rsil-sil-wire = { workspace = true, optional = true }
 rsil-provider = { workspace = true, optional = true }
 rsil-db = { workspace = true, optional = true, features = ["mdbx"] }
-rsil-codecs = { workspace = true, optional = true }
+reth-codecs = { version = "0.5.0", default-features = false, optional = true }
 rsil-storage-api = { workspace = true, optional = true }
 rsil-node-api = { workspace = true, optional = true }
 rsil-node-core = { workspace = true, optional = true }
@@ -66,7 +66,7 @@ std = [
     "rsil-savm-sila?/std",
     "rsil-revm?/std",
     "alloy-rpc-types-engine?/std",
-    "rsil-codecs?/std",
+    "reth-codecs?/std",
 ]
 arbitrary = [
     "std",
@@ -78,7 +78,7 @@ arbitrary = [
     "rsil-transaction-pool?/arbitrary",
     "rsil-sil-wire?/arbitrary",
     "alloy-rpc-types-engine?/arbitrary",
-    "rsil-codecs?/arbitrary",
+    "reth-codecs?/arbitrary",
 ]
 keccak-cache-global = [
     "rsil-node-sila?/keccak-cache-global",
@@ -100,7 +100,7 @@ test-utils = [
     "rsil-savm-sila?/test-utils",
     "rsil-node-builder?/test-utils",
     "rsil-trie-db?/test-utils",
-    "rsil-codecs?/test-utils",
+    "reth-codecs?/test-utils",
     "rsil-tasks?/test-utils",
 ]
 
@@ -185,7 +185,7 @@ gmp = [
     "rsil-node-sila?/gmp",
     "rsil-revm?/gmp",
 ]
-provider = ["storage-api", "tasks", "dep:rsil-provider", "dep:rsil-db", "dep:rsil-codecs"]
+provider = ["storage-api", "tasks", "dep:rsil-provider", "dep:rsil-db", "dep:reth-codecs"]
 storage-api = ["dep:rsil-storage-api"]
 trie = ["dep:rsil-trie"]
 trie-db = ["trie", "dep:rsil-trie-db"]

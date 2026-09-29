@@ -1,12 +1,12 @@
 use crate::upgrade_status::{UpgradeStatus, UpgradeStatusExtension};
 use alloy_rlp::Decodable;
 use futures::SinkExt;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::{SilHandshakeError, SilStreamError},
-    handshake::{SilRlpxHandshake, SilaEthHandshake, UnauthEth},
+    handshake::{SilRlpxHandshake, SilaSilHandshake, UnauthSil},
     UnifiedStatus,
 };
-use rsil_eth_wire_types::{DisconnectReason, SilVersion};
+use rsil_sil_wire_types::{DisconnectReason, SilVersion};
 use rsil_sila_forks::ForkFilter;
 use std::{future::Future, pin::Pin};
 use tokio::time::{timeout, Duration};
@@ -21,7 +21,7 @@ pub struct BscHandshake;
 impl BscHandshake {
     /// Negotiate the upgrade status message.
     pub async fn upgrade_status(
-        unauth: &mut dyn UnauthEth,
+        unauth: &mut dyn UnauthSil,
         negotiated_status: UnifiedStatus,
     ) -> Result<UnifiedStatus, SilStreamError> {
         if negotiated_status.version > SilVersion::Sil66 {
@@ -66,7 +66,7 @@ impl BscHandshake {
 impl SilRlpxHandshake for BscHandshake {
     fn handshake<'a>(
         &'a self,
-        unauth: &'a mut dyn UnauthEth,
+        unauth: &'a mut dyn UnauthSil,
         status: UnifiedStatus,
         fork_filter: ForkFilter,
         timeout_limit: Duration,
@@ -74,7 +74,7 @@ impl SilRlpxHandshake for BscHandshake {
         Box::pin(async move {
             let fut = async {
                 let negotiated_status =
-                    SilaEthHandshake(unauth).eth_handshake(status, fork_filter).await?;
+                    SilaSilHandshake(unauth).sil_handshake(status, fork_filter).await?;
                 Self::upgrade_status(unauth, negotiated_status).await
             };
             timeout(timeout_limit, fut).await.map_err(|_| SilStreamError::StreamTimeout)?

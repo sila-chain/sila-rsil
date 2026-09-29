@@ -4,10 +4,10 @@ use crate::NewBlockPayload;
 use alloy_consensus::{RlpDecodableReceipt, RlpEncodableReceipt, TxReceipt};
 use alloy_rlp::{Decodable, Encodable};
 use core::fmt::Debug;
-use rsil_sila_primitives::{SilPrimitives, PooledTransactionVariant};
 use rsil_primitives_traits::{
     Block, BlockBody, BlockHeader, BlockTy, NodePrimitives, SignedTransaction,
 };
+use rsil_sila_primitives::{PooledTransactionVariant, SilPrimitives};
 
 /// Abstraction over primitive types which might appear in network messages.
 ///

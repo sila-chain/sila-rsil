@@ -13,10 +13,10 @@ workspace = true
 
 [dependencies]
 # rsil
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-db-models = { workspace = true, features = ["serde", "rsil-codec"] }
 rsil-sila-primitives = { workspace = true, features = ["serde", "rsil-codec"] }
-rsil-primitives-traits = { workspace = true, features = ["serde", "rsil-codec"] }
+rsil-primitives-traits = { workspace = true, features = ["serde", "reth-codec"] }
 rsil-stages-types = { workspace = true, features = ["serde", "rsil-codec"] }
 rsil-prune-types = { workspace = true, features = ["serde", "rsil-codec"] }
 rsil-storage-errors.workspace = true
@@ -45,7 +45,7 @@ proptest = { workspace = true, optional = true }
 
 [dev-dependencies]
 # rsil libs with arbitrary
-rsil-codecs = { workspace = true, features = ["test-utils"] }
+reth-codecs = { version = "0.5.0", default-features = false, features = ["test-utils"] }
 rsil-db-models = { workspace = true, features = ["arbitrary"] }
 
 alloy-primitives = { workspace = true, features = ["rand"] }
@@ -61,7 +61,7 @@ proptest-arbitrary-interop.workspace = true
 test-utils = [
     "arbitrary",
     "rsil-primitives-traits/test-utils",
-    "rsil-codecs/test-utils",
+    "reth-codecs/test-utils",
     "rsil-db-models/test-utils",
     "rsil-trie-common/test-utils",
     "rsil-prune-types/test-utils",
@@ -75,7 +75,7 @@ arbitrary = [
     "rsil-primitives-traits/arbitrary",
     "rsil-trie-common/arbitrary",
     "alloy-primitives/arbitrary",
-    "rsil-codecs/arbitrary",
+    "reth-codecs/arbitrary",
     "rsil-prune-types/arbitrary",
     "rsil-stages-types/arbitrary",
     "alloy-consensus/arbitrary",

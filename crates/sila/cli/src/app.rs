@@ -4,7 +4,7 @@ use crate::{
 };
 use clap::Subcommand;
 use eyre::{eyre, Result};
-use rsil_chainspec::{ChainSpec, SilChainSpec, Hardforks};
+use rsil_chainspec::{ChainSpec, Hardforks, SilChainSpec};
 use rsil_cli::chainspec::ChainSpecParser;
 use rsil_cli_commands::{
     common::{CliComponentsBuilder, CliNodeTypes, HeaderMut},
@@ -14,8 +14,8 @@ use rsil_cli_runner::CliRunner;
 use rsil_db::DatabaseEnv;
 use rsil_node_api::NodePrimitives;
 use rsil_node_builder::{NodeBuilder, WithLaunchContext};
-use rsil_node_sila::{consensus::SilBeaconConsensus, SilaNode};
 use rsil_node_metrics::recorder::install_prometheus_recorder;
+use rsil_node_sila::{consensus::SilBeaconConsensus, SilaNode};
 use rsil_rpc_server_types::RpcModuleValidator;
 use rsil_tasks::RayonConfig;
 use rsil_tracing::{Layers, TracingGuards};

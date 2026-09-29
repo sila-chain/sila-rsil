@@ -422,7 +422,7 @@ pub struct NetworkArgs {
 
     /// Maximum allowed SIL message size in bytes. Default is 10 MiB.
     #[arg(long = "sil-max-message-size", value_name = "BYTES")]
-    pub eth_max_message_size: Option<NonZeroUsize>,
+    pub sil_max_message_size: Option<NonZeroUsize>,
 
     /// Restrict network communication to the given IP networks (CIDR masks).
     ///
@@ -606,7 +606,7 @@ impl NetworkArgs {
             .discovery_addr(SocketAddr::new(discovery_addr, self.discovery.port))
             .disable_tx_gossip(self.disable_tx_gossip)
             .required_block_hashes(self.required_block_hashes.clone())
-            .eth_max_message_size_opt(self.eth_max_message_size.map(NonZeroUsize::get))
+            .sil_max_message_size_opt(self.sil_max_message_size.map(NonZeroUsize::get))
             .network_id(self.network_id)
     }
 
@@ -746,7 +746,7 @@ impl Default for NetworkArgs {
             propagation_mode,
             required_block_hashes: vec![],
             network_id: None,
-            eth_max_message_size: None,
+            sil_max_message_size: None,
             netrestrict: None,
             enforce_enr_fork_id,
         }
@@ -1389,7 +1389,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_eth_max_message_size() {
+    fn parse_sil_max_message_size() {
         let args = CommandParser::<NetworkArgs>::parse_from([
             "rsil",
             "--sil-max-message-size",
@@ -1397,18 +1397,18 @@ mod tests {
         ])
         .args;
 
-        assert_eq!(args.eth_max_message_size, Some(NonZeroUsize::new(15 * 1024 * 1024).unwrap()));
+        assert_eq!(args.sil_max_message_size, Some(NonZeroUsize::new(15 * 1024 * 1024).unwrap()));
     }
 
     #[test]
-    fn parse_eth_max_message_size_zero_rejected() {
+    fn parse_sil_max_message_size_zero_rejected() {
         let result =
             CommandParser::<NetworkArgs>::try_parse_from(["rsil", "--sil-max-message-size", "0"]);
         assert!(result.is_err());
     }
 
     #[test]
-    fn parse_eth_max_message_size_above_rlpx_cap() {
+    fn parse_sil_max_message_size_above_rlpx_cap() {
         let result = CommandParser::<NetworkArgs>::try_parse_from([
             "rsil",
             "--sil-max-message-size",
@@ -1416,7 +1416,7 @@ mod tests {
         ]);
         assert!(result.is_ok());
         let args = result.unwrap().args;
-        assert_eq!(args.eth_max_message_size, Some(NonZeroUsize::new(16 * 1024 * 1024).unwrap()));
+        assert_eq!(args.sil_max_message_size, Some(NonZeroUsize::new(16 * 1024 * 1024).unwrap()));
     }
 
     #[test]

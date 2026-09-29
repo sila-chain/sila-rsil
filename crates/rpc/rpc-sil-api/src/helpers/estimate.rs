@@ -1,36 +1,36 @@
 //! Estimate gas needed implementation
 
 use super::{Call, LoadPendingBlock};
-use crate::{AsEthApiError, FromEthApiError, IntoEthApiError};
+use crate::{AsSilApiError, FromSilApiError, IntoSilApiError};
 use alloy_evm::overrides::{apply_block_overrides, apply_state_overrides};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{TxKind, U256};
 use alloy_rpc_types_eth::{state::SavmOverrides, BlockId};
 use futures::Future;
-use rsil_chainspec::MIN_TRANSACTION_GAS;
-use rsil_errors::ProviderError;
-use rsil_evm::{
-    env::BlockEnvironment, ConfigureEvm, Database, Savm, SavmEnvFor, SavmFor, TransactionEnvMut,
-    TxEnvFor,
-};
-use rsil_revm::{
-    database::{SavmStateProvider, StateProviderDatabase},
-    db::{bal::SavmDatabaseError, State},
-};
-use rsil_rpc_convert::{RpcConvert, RpcTxReq};
-use rsil_rpc_eth_types::{
-    error::{
-        api::{FromEvmHalt, FromRevert},
-        FromEvmError,
-    },
-    SilApiError, RpcInvalidTransactionError,
-};
-use rsil_rpc_server_types::constants::gas_oracle::{CALL_STIPEND_GAS, ESTIMATE_GAS_ERROR_RATIO};
 use revm::{
     context::Block,
     context_interface::{result::ExecutionResult, Cfg, Transaction},
     primitives::KECCAK_EMPTY,
 };
+use rsil_chainspec::MIN_TRANSACTION_GAS;
+use rsil_errors::ProviderError;
+use rsil_savm::{
+    env::BlockEnvironment, ConfigureEvm, Database, Savm, SavmEnvFor, SavmFor, TransactionEnvMut,
+    TxEnvFor,
+};
+use rsil_revm::{
+    database::{SavmStateProvider, StateProviderDatabase},
+    db::{bal::EvmDatabaseError, State},
+};
+use rsil_rpc_convert::{RpcConvert, RpcTxReq};
+use rsil_rpc_sil_types::{
+    error::{
+        api::{FromEvmHalt, FromRevert},
+        FromEvmError,
+    },
+    RpcInvalidTransactionError, SilApiError,
+};
+use rsil_rpc_server_types::constants::gas_oracle::{CALL_STIPEND_GAS, ESTIMATE_GAS_ERROR_RATIO};
 use tracing::trace;
 
 /// Gas execution estimates
@@ -90,7 +90,7 @@ pub trait EstimateCall: Call {
 
         // Apply any state overrides if specified.
         if let Some(state_override) = overrides.state {
-            apply_state_overrides(state_override, &mut db).map_err(Self::Error::from_eth_err)?;
+            apply_state_overrides(state_override, &mut db).map_err(Self::Error::from_sil_err)?;
         }
 
         // the gas limit of the corresponding block
@@ -117,8 +117,8 @@ pub trait EstimateCall: Call {
         let mut tx_env = self.create_txn_env(&evm_env, request, &mut db)?;
 
         // Check if this is a basic transfer (no input data to account with no code)
-        let is_basic_transfer = if tx_env.input().is_empty() &&
-            let TxKind::Call(to) = tx_env.kind()
+        let is_basic_transfer = if tx_env.input().is_empty()
+            && let TxKind::Call(to) = tx_env.kind()
         {
             match db.database.basic_account(&to) {
                 Ok(Some(account)) => {
@@ -156,10 +156,10 @@ pub trait EstimateCall: Call {
             min_tx_env.set_gas_limit(MIN_TRANSACTION_GAS);
 
             // Reuse the same SAVM instance
-            if let Ok(res) = savm.transact(min_tx_env).map_err(Self::Error::from_evm_err) &&
-                res.result.is_success()
+            if let Ok(res) = savm.transact(min_tx_env).map_err(Self::Error::from_evm_err)
+                && res.result.is_success()
             {
-                return Ok(U256::from(MIN_TRANSACTION_GAS))
+                return Ok(U256::from(MIN_TRANSACTION_GAS));
             }
         }
 
@@ -172,8 +172,8 @@ pub trait EstimateCall: Call {
             // retry the transaction with the block's gas limit to determine if
             // the failure was due to insufficient gas.
             Err(err)
-                if err.is_gas_too_high() &&
-                    (tx_request_gas_limit.is_some() || tx_request_gas_price.is_some()) =>
+                if err.is_gas_too_high()
+                    && (tx_request_gas_limit.is_some() || tx_request_gas_price.is_some()) =>
             {
                 return Self::map_out_of_gas_err(&mut savm, tx_env, max_gas_limit);
             }
@@ -185,7 +185,7 @@ pub trait EstimateCall: Call {
                 return Err(RpcInvalidTransactionError::GasRequiredExceedsAllowance {
                     gas_limit: tx_env.gas_limit(),
                 }
-                .into_eth_err());
+                .into_sil_err());
             }
             // Propagate other results (successful or other errors).
             ethres => ethres?,
@@ -196,7 +196,7 @@ pub trait EstimateCall: Call {
             ExecutionResult::Halt { reason, .. } => {
                 // here we don't check for invalid opcode because already executed with highest gas
                 // limit
-                return Err(Self::Error::from_evm_halt(reason, tx_env.gas_limit()))
+                return Err(Self::Error::from_evm_halt(reason, tx_env.gas_limit()));
             }
             ExecutionResult::Revert { output, .. } => {
                 // if price or limit was included in the request then we can execute the request
@@ -266,7 +266,7 @@ pub trait EstimateCall: Call {
             // <https://github.com/sila-chain/go-sila/blob/a5a4fa7032bb248f5a7c40f4e8df2b131c4186a4/sil/gasestimator/gasestimator.go#L152
             let ratio = (highest_gas_limit - lowest_gas_limit) as f64 / (highest_gas_limit as f64);
             if ratio < ESTIMATE_GAS_ERROR_RATIO {
-                break
+                break;
             };
 
             let mut mid_tx_env = tx_env.clone();
@@ -333,7 +333,7 @@ pub trait EstimateCall: Call {
         max_gas_limit: u64,
     ) -> Result<U256, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>>,
+        DB: Database<Error = EvmDatabaseError<ProviderError>>,
         SilApiError: From<DB::Error>,
     {
         let req_gas_limit = tx_env.gas_limit();
@@ -345,7 +345,7 @@ pub trait EstimateCall: Call {
             ExecutionResult::Success { .. } => {
                 // Transaction succeeded by manually increasing the gas limit,
                 // which means the caller lacks funds to pay for the tx
-                Err(RpcInvalidTransactionError::BasicOutOfGas(req_gas_limit).into_eth_err())
+                Err(RpcInvalidTransactionError::BasicOutOfGas(req_gas_limit).into_sil_err())
             }
             ExecutionResult::Revert { output, .. } => {
                 // reverted again after bumping the limit

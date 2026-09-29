@@ -365,8 +365,8 @@ where
         if number <= last_header_number {
             continue;
         }
-        if let Some(target) = target &&
-            number > target
+        if let Some(target) = target
+            && number > target
         {
             break;
         }
@@ -413,9 +413,9 @@ where
         provider.tx_ref().cursor_write::<RawTable<tables::HeaderNumbers>>()?;
     // If we only have the genesis block hash, then we are at first sync, and we can remove it,
     // add it to the collector and use tx.append on all hashes.
-    let first_sync = if provider.tx_ref().entries::<RawTable<tables::HeaderNumbers>>()? == 1 &&
-        let Some((hash, block_number)) = cursor_header_numbers.last()? &&
-        block_number.value()? == 0
+    let first_sync = if provider.tx_ref().entries::<RawTable<tables::HeaderNumbers>>()? == 1
+        && let Some((hash, block_number)) = cursor_header_numbers.last()?
+        && block_number.value()? == 0
     {
         hash_collector.insert(hash.key()?, 0)?;
         cursor_header_numbers.delete_current()?;
@@ -477,11 +477,11 @@ mod tests {
     use super::*;
     use alloy_consensus::Header;
     use rsil_db_common::init::init_genesis;
-    use rsil_sila_primitives::{Block, BlockBody};
     use rsil_provider::{
         test_utils::create_test_provider_factory, DatabaseProviderFactory,
         StaticFileProviderFactory, StaticFileSegment, StaticFileWriter,
     };
+    use rsil_sila_primitives::{Block, BlockBody};
     use std::{cell::Cell, path::Path};
     use tempfile::tempdir;
 

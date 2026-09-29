@@ -2,39 +2,39 @@
 
 #![warn(unused_crate_dependencies)]
 
-use alloy_evm::{
-    sil::SilEvmContext,
+use alloy_savm::{
     precompiles::PrecompilesMap,
     revm::{
         context::DBErrorMarker,
-        handler::SilPrecompiles,
+        handler::EthPrecompiles as SilPrecompiles,
         precompile::{Precompile, PrecompileId},
     },
-    SavmFactory,
+    eth::EthEvmContext as SilEvmContext,
+    EvmFactory as SavmFactory,
 };
 use alloy_genesis::Genesis;
 use alloy_primitives::{address, Bytes};
 use rsil_sila::{
     chainspec::{Chain, ChainSpec},
-    savm::{
-        primitives::{Database, SavmEnv},
-        revm::{
-            context::{BlockEnv, Context, TxEnv},
-            context_interface::result::{EVMError, HaltReason},
-            inspector::{Inspector, NoOpInspector},
-            interpreter::interpreter::SilInterpreter,
-            precompile::{PrecompileOutput, Precompiles},
-            primitives::hardfork::SpecId,
-            MainBuilder, MainContext,
-        },
-        SilEvm, SilEvmConfig,
-    },
     node::{
         api::{FullNodeTypes, NodeTypes},
         builder::{components::ExecutorBuilder, BuilderContext, NodeBuilder},
         core::{args::RpcServerArgs, node_config::NodeConfig},
         node::SilaAddOns,
         SilaNode,
+    },
+    savm::{
+        primitives::{Database, SavmEnv},
+        revm::{
+            context::{BlockEnv, Context, TxEnv},
+            context_interface::result::{EVMError, HaltReason},
+            inspector::{Inspector, NoOpInspector},
+            interpreter::interpreter::EthInterpreter as SilInterpreter,
+            precompile::{PrecompileOutput, Precompiles},
+            primitives::hardfork::SpecId,
+            MainBuilder, MainContext,
+        },
+        SilEvm, SilEvmConfig,
     },
     tasks::Runtime,
     SilPrimitives,
@@ -48,7 +48,7 @@ use std::sync::OnceLock;
 pub struct MyEvmFactory;
 
 impl SavmFactory for MyEvmFactory {
-    type Savm<DB: Database, I: Inspector<SilEvmContext<DB>, SilInterpreter>> =
+    type Evm<DB: Database, I: Inspector<SilEvmContext<DB>, SilInterpreter>> =
         SilEvm<DB, I, Self::Precompiles>;
     type Tx = TxEnv;
     type Error<DBError: DBErrorMarker> = EVMError<DBError>;
@@ -58,9 +58,9 @@ impl SavmFactory for MyEvmFactory {
     type BlockEnv = BlockEnv;
     type Precompiles = PrecompilesMap;
 
-    fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Savm<DB, NoOpInspector> {
+    fn create_evm<DB: Database>(&self, db: DB, input: SavmEnv) -> Self::Evm<DB, NoOpInspector> {
         let spec = input.cfg_env.spec;
-        let mut savm = Context::sila-mainnet()
+        let mut savm = Context::mainnet()
             .with_db(db)
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
@@ -79,7 +79,7 @@ impl SavmFactory for MyEvmFactory {
         db: DB,
         input: SavmEnv,
         inspector: I,
-    ) -> Self::Savm<DB, I> {
+    ) -> Self::Evm<DB, I> {
         SilEvm::new(self.create_evm(db, input).into_inner().with_inspector(inspector), true)
     }
 }
@@ -126,7 +126,7 @@ async fn main() -> eyre::Result<()> {
 
     // create a custom chain spec
     let spec = ChainSpec::builder()
-        .chain(Chain::sila-mainnet())
+        .chain(Chain::sila_mainnet())
         .genesis(Genesis::default())
         .london_activated()
         .paris_activated()

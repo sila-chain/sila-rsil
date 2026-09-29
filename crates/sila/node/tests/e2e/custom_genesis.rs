@@ -1,4 +1,4 @@
-use crate::utils::eth_payload_attributes;
+use crate::utils::sil_payload_attributes;
 use alloy_genesis::Genesis;
 use alloy_primitives::B256;
 use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
@@ -28,7 +28,7 @@ async fn can_run_eth_node_with_custom_genesis_number() -> eyre::Result<()> {
     );
 
     let (mut nodes, wallet) =
-        setup::<SilaNode>(1, chain_spec, false, eth_payload_attributes).await?;
+        setup::<SilaNode>(1, chain_spec, false, sil_payload_attributes).await?;
 
     let mut node = nodes.pop().unwrap();
 
@@ -82,7 +82,7 @@ async fn custom_genesis_block_query_boundaries() -> eyre::Result<()> {
     );
 
     let (mut nodes, _wallet) =
-        setup::<SilaNode>(1, chain_spec, false, eth_payload_attributes).await?;
+        setup::<SilaNode>(1, chain_spec, false, sil_payload_attributes).await?;
 
     let node = nodes.pop().unwrap();
 

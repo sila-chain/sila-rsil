@@ -1,8 +1,8 @@
 //! Storage for blob data of SIP4844 transactions.
 
-use alloy_eips::{
-    sip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
-    sip7594::{BlobTransactionSidecarVariant, Cell},
+use alloy_sips::{
+    eip4844::{BlobAndProofV1, BlobAndProofV2, BlobCellsAndProofsV1},
+    eip7594::{BlobTransactionSidecarVariant, Cell},
 };
 use alloy_primitives::{TxHash, B128, B256};
 pub use converter::BlobSidecarConverter;
@@ -222,8 +222,8 @@ impl BlobStoreSize {
 
 impl PartialEq for BlobStoreSize {
     fn eq(&self, other: &Self) -> bool {
-        self.data_size.load(Ordering::Relaxed) == other.data_size.load(Ordering::Relaxed) &&
-            self.num_blobs.load(Ordering::Relaxed) == other.num_blobs.load(Ordering::Relaxed)
+        self.data_size.load(Ordering::Relaxed) == other.data_size.load(Ordering::Relaxed)
+            && self.num_blobs.load(Ordering::Relaxed) == other.num_blobs.load(Ordering::Relaxed)
     }
 }
 

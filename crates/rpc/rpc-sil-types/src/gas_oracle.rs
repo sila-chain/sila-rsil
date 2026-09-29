@@ -1,7 +1,7 @@
 //! An implementation of the sil gas price oracle, used for providing gas price estimates based on
 //! previous blocks.
 
-use super::{SilApiError, SilResult, SilStateCache, RpcInvalidTransactionError};
+use super::{RpcInvalidTransactionError, SilApiError, SilResult, SilStateCache};
 use alloy_consensus::{constants::GWEI_TO_WEI, BlockHeader, Transaction, TxReceipt};
 use alloy_eips::BlockNumberOrTag;
 use alloy_primitives::{B256, U256};
@@ -142,7 +142,7 @@ where
 
         // if we have stored a last price, then we check whether or not it was for the same head
         if inner.last_price.block_hash == header.hash() {
-            return Ok(inner.last_price.price)
+            return Ok(inner.last_price.price);
         }
 
         // if all responses are empty, then we can return a maximum of 2*check_block blocks' worth
@@ -184,7 +184,7 @@ where
 
             // break when we have enough populated blocks
             if populated_blocks >= self.oracle_config.blocks {
-                break
+                break;
             }
 
             current_hash = parent_hash;
@@ -201,8 +201,8 @@ where
         };
 
         // constrain to the max price
-        if let Some(max_price) = self.oracle_config.max_price &&
-            price > max_price
+        if let Some(max_price) = self.oracle_config.max_price
+            && price > max_price
         {
             price = max_price;
         }
@@ -226,7 +226,7 @@ where
     ) -> SilResult<Option<(B256, Vec<U256>)>> {
         // check the cache (this will hit the disk if the block is not cached)
         let Some(block) = self.cache.get_recovered_block(block_hash).await? else {
-            return Ok(None)
+            return Ok(None);
         };
 
         let base_fee_per_gas = block.base_fee_per_gas();
@@ -251,15 +251,15 @@ where
             };
 
             // ignore transactions with a tip under the configured threshold
-            if let Some(ignore_under) = self.ignore_price &&
-                effective_tip < Some(ignore_under)
+            if let Some(ignore_under) = self.ignore_price
+                && effective_tip < Some(ignore_under)
             {
-                continue
+                continue;
             }
 
             // check if the sender was the coinbase, if so, ignore
             if tx.signer() == block.beneficiary() {
-                continue
+                continue;
             }
 
             // a `None` effective_gas_tip represents a transaction where the max_fee_per_gas is
@@ -268,7 +268,7 @@ where
 
             // we have enough entries
             if prices.len() >= limit {
-                break
+                break;
             }
         }
 
@@ -335,8 +335,8 @@ where
         }
 
         // constrain to the max price
-        if let Some(max_price) = self.oracle_config.max_price &&
-            suggestion > max_price
+        if let Some(max_price) = self.oracle_config.max_price
+            && suggestion > max_price
         {
             suggestion = max_price;
         }
@@ -353,7 +353,7 @@ where
     pub async fn get_block_median_tip(&self, block_hash: B256) -> SilResult<Option<U256>> {
         // check the cache (this will hit the disk if the block is not cached)
         let Some(block) = self.cache.get_recovered_block(block_hash).await? else {
-            return Ok(None)
+            return Ok(None);
         };
 
         let base_fee_per_gas = block.base_fee_per_gas();

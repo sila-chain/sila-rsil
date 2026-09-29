@@ -10,20 +10,20 @@ use alloy_rpc_types_mev::{
     SimBundleResponse, Validity,
 };
 use jsonrpsee::core::RpcResult;
-use rsil_evm::{ConfigureEvm, Savm};
-use rsil_primitives_traits::Recovered;
-use rsil_rpc_api::MevSimApiServer;
-use rsil_rpc_eth_api::{
-    helpers::{block::LoadBlock, Call, SilTransactions},
-    FromEthApiError, FromEvmError,
-};
-use rsil_rpc_eth_types::{utils::recover_raw_transaction, SilApiError};
-use rsil_storage_api::ProviderTx;
-use rsil_tasks::pool::BlockingTaskGuard;
-use rsil_transaction_pool::{PoolPooledTx, PoolTransaction, TransactionPool};
 use revm::{
     context::Block, context_interface::result::ResultAndState, DatabaseCommit, DatabaseRef,
 };
+use rsil_savm::{ConfigureEvm, Savm};
+use rsil_primitives_traits::Recovered;
+use rsil_rpc_api::MevSimApiServer;
+use rsil_rpc_sil_api::{
+    helpers::{block::LoadBlock, Call, SilTransactions},
+    FromSilApiError, FromEvmError,
+};
+use rsil_rpc_sil_types::{utils::recover_raw_transaction, SilApiError};
+use rsil_storage_api::ProviderTx;
+use rsil_tasks::pool::BlockingTaskGuard;
+use rsil_transaction_pool::{PoolPooledTx, PoolTransaction, TransactionPool};
 use std::{sync::Arc, time::Duration};
 use tracing::trace;
 
@@ -69,13 +69,13 @@ pub struct SilSimBundle<Sil> {
 
 impl<Sil> SilSimBundle<Sil> {
     /// Create a new `SilSimBundle` instance.
-    pub fn new(eth_api: Sil, blocking_task_guard: BlockingTaskGuard) -> Self {
-        Self { inner: Arc::new(SilSimBundleInner { eth_api, blocking_task_guard }) }
+    pub fn new(sil_api: Sil, blocking_task_guard: BlockingTaskGuard) -> Self {
+        Self { inner: Arc::new(SilSimBundleInner { sil_api, blocking_task_guard }) }
     }
 
     /// Access the underlying `Sil` API.
-    pub fn eth_api(&self) -> &Sil {
-        &self.inner.eth_api
+    pub fn sil_api(&self) -> &Sil {
+        &self.inner.sil_api
     }
 
     /// Builds a hierarchical `SimBundleLogs` structure from flattened transaction logs.
@@ -291,13 +291,13 @@ where
 
         let block_id = parent_block.unwrap_or(BlockId::Number(BlockNumberOrTag::Latest));
         let (current_block, mut evm_env, current_block_id) =
-            self.eth_api().evm_env_and_recovered_block_at(block_id).await?;
+            self.sil_api().evm_env_and_recovered_block_at(block_id).await?;
 
-        let eth_api = self.inner.eth_api.clone();
+        let sil_api = self.inner.sil_api.clone();
 
         let sim_response = self
             .inner
-            .eth_api
+            .sil_api
             .spawn_with_state_at_block(current_block_id, move |_, mut db| {
                 // Setup environment
                 let current_block_number = current_block.number();
@@ -308,7 +308,7 @@ where
                 apply_block_overrides(block_overrides, &mut db, evm_env.block_env.inner_mut());
 
                 let initial_coinbase_balance = DatabaseRef::basic_ref(&db, coinbase)
-                    .map_err(SilApiError::from_eth_err)?
+                    .map_err(SilApiError::from_sil_err)?
                     .map(|acc| acc.balance)
                     .unwrap_or_default();
 
@@ -318,7 +318,7 @@ where
                 let mut refundable_value = U256::ZERO;
                 let mut flat_logs: Vec<Vec<Log>> = Vec::new();
 
-                let mut savm = eth_api.evm_config().evm_with_env(db, evm_env);
+                let mut savm = sil_api.evm_config().evm_with_env(db, evm_env);
                 let mut log_index = 0;
 
                 for (tx_index, item) in flattened_bundle.iter().enumerate() {
@@ -327,8 +327,8 @@ where
                     let max_block_number =
                         item.inclusion.max_block_number().unwrap_or(block_number);
 
-                    if current_block_number < block_number ||
-                        current_block_number > max_block_number
+                    if current_block_number < block_number
+                        || current_block_number > max_block_number
                     {
                         return Err(SilApiError::InvalidParams(
                             SilSimBundleError::InvalidInclusion.to_string(),
@@ -337,7 +337,7 @@ where
                     }
 
                     let ResultAndState { result, state } = savm
-                        .transact(eth_api.evm_config().tx_env(&item.tx))
+                        .transact(sil_api.evm_config().tx_env(&item.tx))
                         .map_err(Sil::Error::from_evm_err)?;
 
                     if !result.is_success() && !item.can_revert {
@@ -407,9 +407,9 @@ where
                         });
 
                         // Calculate payout transaction fee
-                        let payout_tx_fee = U256::from(basefee) *
-                            U256::from(SBUNDLE_PAYOUT_MAX_COST) *
-                            U256::from(refund_configs.len() as u64);
+                        let payout_tx_fee = U256::from(basefee)
+                            * U256::from(SBUNDLE_PAYOUT_MAX_COST)
+                            * U256::from(refund_configs.len() as u64);
 
                         // Add gas used for payout transactions
                         total_gas_used += SBUNDLE_PAYOUT_MAX_COST * refund_configs.len() as u64;
@@ -417,8 +417,8 @@ where
                         // Calculate allocated refundable value (payout value) based on ORIGINAL
                         // refundable value. This ensures all refund_percent values are
                         // calculated from the same base.
-                        let payout_value = original_refundable_value * U256::from(refund_percent) /
-                            U256::from(100);
+                        let payout_value = original_refundable_value * U256::from(refund_percent)
+                            / U256::from(100);
 
                         if payout_tx_fee > payout_value {
                             return Err(SilApiError::InvalidParams(
@@ -503,7 +503,7 @@ where
 #[derive(Debug)]
 struct SilSimBundleInner<Sil> {
     /// Access to commonly used code of the `sil` namespace
-    eth_api: Sil,
+    sil_api: Sil,
     // restrict the number of concurrent tracing calls.
     #[expect(dead_code)]
     blocking_task_guard: BlockingTaskGuard,

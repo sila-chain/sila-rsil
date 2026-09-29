@@ -1,5 +1,5 @@
 //! Implementation of the [`jsonrpsee`] generated [`SilApiServer`](crate::SilApi) trait
-//! Handles RPC requests for the `eth_` namespace.
+//! Handles RPC requests for the `sil_` namespace.
 
 use std::{sync::Arc, time::Duration};
 
@@ -11,18 +11,18 @@ use alloy_primitives::{Bytes, U256};
 use alloy_rpc_client::RpcClient;
 use derive_more::Deref;
 use rsil_chainspec::{ChainSpec, ChainSpecProvider};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_network_api::noop::NoopNetwork;
 use rsil_node_api::{FullNodeComponents, FullNodeTypes};
 use rsil_rpc_convert::{RpcConvert, RpcConverter};
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{pending_block::PendingEnvBuilder, spec::SignersForRpc, SpawnBlocking},
     node::{RpcNodeCoreAdapter, RpcNodeCoreExt},
-    SilApiTypes, RpcNodeCore,
+    RpcNodeCore, SilApiTypes,
 };
-use rsil_rpc_eth_types::{
-    builder::config::PendingBlockKind, receipt::SilReceiptConverter, SilApiError, SilStateCache,
-    FeeHistoryCache, GasCap, GasPriceOracle, PendingBlock,
+use rsil_rpc_sil_types::{
+    builder::config::PendingBlockKind, receipt::SilReceiptConverter, FeeHistoryCache, GasCap,
+    GasPriceOracle, PendingBlock, SilApiError, SilStateCache,
 };
 use rsil_storage_api::{noop::NoopProvider, BlockReaderIdExt, ProviderHeader};
 use rsil_tasks::{
@@ -48,15 +48,14 @@ pub type SilRpcConverterFor<N, NetworkT = Sila> = RpcConverter<
 pub type SilApiFor<N, NetworkT = Sila> = SilApi<N, SilRpcConverterFor<N, NetworkT>>;
 
 /// Helper type alias for [`SilApi`] with components from the given [`FullNodeComponents`].
-pub type SilApiBuilderFor<N, NetworkT = Sila> =
-    SilApiBuilder<N, SilRpcConverterFor<N, NetworkT>>;
+pub type SilApiBuilderFor<N, NetworkT = Sila> = SilApiBuilder<N, SilRpcConverterFor<N, NetworkT>>;
 
 /// `Sil` API implementation.
 ///
-/// This type provides the functionality for handling `eth_` related requests.
+/// This type provides the functionality for handling `sil_` related requests.
 /// These are implemented two-fold: Core functionality is implemented as
-/// [`SilApiSpec`](rsil_rpc_eth_api::helpers::SilApiSpec) trait. Additionally, the required server
-/// implementations (e.g. [`SilApiServer`](rsil_rpc_eth_api::SilApiServer)) are implemented
+/// [`SilApiSpec`](rsil_rpc_sil_api::helpers::SilApiSpec) trait. Additionally, the required server
+/// implementations (e.g. [`SilApiServer`](rsil_rpc_sil_api::SilApiServer)) are implemented
 /// separately in submodules. The rpc handler implementation can then delegate to the main impls.
 /// This way [`SilApi`] is not limited to [`jsonrpsee`] and can be used standalone or in other
 /// network handlers (for example ipc).
@@ -93,24 +92,24 @@ impl
     /// Creating an [`SilApi`] requires a few mandatory components:
     ///  - provider: The type responsible for fetching requested data from disk.
     ///  - transaction pool: To interact with the pool, submitting new transactions (e.g.
-    ///    `eth_sendRawTransactions`).
-    ///  - network: required to handle requests related to network state (e.g. `eth_syncing`).
+    ///    `sil_sendRawTransactions`).
+    ///  - network: required to handle requests related to network state (e.g. `sil_syncing`).
     ///  - savm config: Knows how create a new SAVM instance to transact,estimate,call,trace.
     ///
     /// # Create an instance with noop sila implementations
     ///
     /// ```no_run
     /// use alloy_network::Sila;
-    /// use rsil_evm_sila::SilEvmConfig;
+    /// use rsil_savm_sila::SilEvmConfig;
     /// use rsil_network_api::noop::NoopNetwork;
     /// use rsil_provider::noop::NoopProvider;
     /// use rsil_rpc::SilApi;
     /// use rsil_transaction_pool::noop::NoopTransactionPool;
-    /// let eth_api = SilApi::builder(
+    /// let sil_api = SilApi::builder(
     ///     NoopProvider::default(),
     ///     NoopTransactionPool::default(),
     ///     NoopNetwork::default(),
-    ///     SilEvmConfig::sila-mainnet(),
+    ///     SilEvmConfig::sila_mainnet(),
     /// )
     /// .build();
     /// ```
@@ -229,17 +228,17 @@ pub struct SilApiInner<N: RpcNodeCore, Rpc: RpcConvert> {
     /// All configured Signers
     signers: SignersForRpc<N::Provider, Rpc::Network>,
     /// The async cache frontend for sil related data
-    eth_cache: SilStateCache<N::Primitives>,
+    sil_cache: SilStateCache<N::Primitives>,
     /// The async gas oracle frontend for gas price suggestions
     gas_oracle: GasPriceOracle<N::Provider>,
-    /// Maximum gas limit for `eth_call` and call tracing RPC methods.
+    /// Maximum gas limit for `sil_call` and call tracing RPC methods.
     gas_cap: u64,
-    /// Maximum number of blocks for `eth_simulateV1`.
+    /// Maximum number of blocks for `sil_simulateV1`.
     max_simulate_blocks: u64,
-    /// Whether to compute state roots for `eth_simulateV1`.
+    /// Whether to compute state roots for `sil_simulateV1`.
     compute_state_root_for_eth_simulate: bool,
     /// The maximum number of blocks into the past for generating state proofs.
-    eth_proof_window: u64,
+    sil_proof_window: u64,
     /// The block number at which the node started
     starting_block: U256,
     /// The type that can spawn tasks which would otherwise block.
@@ -254,7 +253,7 @@ pub struct SilApiInner<N: RpcNodeCore, Rpc: RpcConvert> {
     /// Guard for getproof calls
     blocking_task_guard: BlockingTaskGuard,
 
-    /// Semaphore to limit concurrent blocking IO requests (`eth_call`, `eth_estimateGas`, etc.)
+    /// Semaphore to limit concurrent blocking IO requests (`sil_call`, `sil_estimateGas`, etc.)
     blocking_io_request_semaphore: Arc<Semaphore>,
 
     /// Transaction broadcast channel
@@ -298,12 +297,12 @@ where
     #[expect(clippy::too_many_arguments)]
     pub fn new(
         components: N,
-        eth_cache: SilStateCache<N::Primitives>,
+        sil_cache: SilStateCache<N::Primitives>,
         gas_oracle: GasPriceOracle<N::Provider>,
         gas_cap: impl Into<GasCap>,
         max_simulate_blocks: u64,
         compute_state_root_for_eth_simulate: bool,
-        eth_proof_window: u64,
+        sil_proof_window: u64,
         blocking_task_pool: BlockingTaskPool,
         fee_history_cache: FeeHistoryCache<ProviderHeader<N::Provider>>,
         task_spawner: Runtime,
@@ -340,12 +339,12 @@ where
         Self {
             components,
             signers,
-            eth_cache,
+            sil_cache,
             gas_oracle,
             gas_cap: gas_cap.into().into(),
             max_simulate_blocks,
             compute_state_root_for_eth_simulate,
-            eth_proof_window,
+            sil_proof_window,
             starting_block,
             task_spawner,
             pending_block: Default::default(),
@@ -387,7 +386,7 @@ where
     /// Returns a handle to data in memory.
     #[inline]
     pub const fn cache(&self) -> &SilStateCache<N::Primitives> {
-        &self.eth_cache
+        &self.sil_cache
     }
 
     /// Returns a handle to the pending block.
@@ -396,7 +395,7 @@ where
         &self.pending_block
     }
 
-    /// Returns a type that knows how to build a [`rsil_evm::ConfigureEvm::NextBlockEnvCtx`] for a
+    /// Returns a type that knows how to build a [`rsil_savm::ConfigureEvm::NextBlockEnvCtx`] for a
     /// pending block.
     #[inline]
     pub const fn pending_env_builder(&self) -> &dyn PendingEnvBuilder<N::Savm> {
@@ -441,7 +440,7 @@ where
         self.max_simulate_blocks
     }
 
-    /// Returns whether state roots are computed for `eth_simulateV1`.
+    /// Returns whether state roots are computed for `sil_simulateV1`.
     #[inline]
     pub const fn compute_state_root_for_eth_simulate(&self) -> bool {
         self.compute_state_root_for_eth_simulate
@@ -479,8 +478,8 @@ where
 
     /// The maximum number of blocks into the past for generating state proofs.
     #[inline]
-    pub const fn eth_proof_window(&self) -> u64 {
-        self.eth_proof_window
+    pub const fn sil_proof_window(&self) -> u64 {
+        self.sil_proof_window
     }
 
     /// Returns reference to [`BlockingTaskGuard`].
@@ -521,7 +520,7 @@ where
 
         self.tx_batch_sender()
             .send(request)
-            .map_err(|_| rsil_rpc_eth_types::SilApiError::BatchTxSendError)?;
+            .map_err(|_| rsil_rpc_sil_types::SilApiError::BatchTxSendError)?;
 
         Ok(response_rx.await??)
     }
@@ -581,24 +580,24 @@ mod tests {
     use rand::Rng;
     use rsil_chain_state::CanonStateSubscriptions;
     use rsil_chainspec::{ChainSpec, ChainSpecProvider, SilChainSpec};
-    use rsil_sila_primitives::TransactionSigned;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
-        test_utils::{MockEthProvider, NoopProvider},
+        test_utils::{MockSilProvider, NoopProvider},
         PruneCheckpointReader, StageCheckpointReader,
     };
-    use rsil_rpc_eth_api::{node::RpcNodeCoreAdapter, SilApiServer};
+    use rsil_rpc_sil_api::{node::RpcNodeCoreAdapter, SilApiServer};
+    use rsil_sila_primitives::TransactionSigned;
     use rsil_storage_api::{BalProvider, BlockReader, BlockReaderIdExt, StateProviderFactory};
     use rsil_testing_utils::generators;
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
 
-    type FakeEthApi<P = MockEthProvider> = SilApi<
+    type FakeEthApi<P = MockSilProvider> = SilApi<
         RpcNodeCoreAdapter<P, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     >;
 
-    fn build_test_eth_api<
+    fn build_test_sil_api<
         P: BlockReaderIdExt<
                 Block = rsil_sila_primitives::Block,
                 Receipt = rsil_sila_primitives::Receipt,
@@ -627,11 +626,11 @@ mod tests {
     }
 
     // Function to prepare the SilApi with mock data
-    fn prepare_eth_api(
+    fn prepare_sil_api(
         newest_block: u64,
         mut oldest_block: Option<B256>,
         block_count: u64,
-        mock_provider: MockEthProvider,
+        mock_provider: MockSilProvider,
     ) -> (FakeEthApi, Vec<u128>, Vec<f64>) {
         let mut rng = generators::rng();
 
@@ -667,13 +666,11 @@ mod tests {
 
                 if let Some(base_fee_per_gas) = header.base_fee_per_gas {
                     let transaction = TransactionSigned::new_unhashed(
-                        rsil_sila_primitives::Transaction::Sip1559(
-                            alloy_consensus::TxEip1559 {
-                                max_priority_fee_per_gas: random_fee,
-                                max_fee_per_gas: random_fee + base_fee_per_gas as u128,
-                                ..Default::default()
-                            },
-                        ),
+                        rsil_sila_primitives::Transaction::Sip1559(alloy_consensus::TxEip1559 {
+                            max_priority_fee_per_gas: random_fee,
+                            max_fee_per_gas: random_fee + base_fee_per_gas as u128,
+                            ..Default::default()
+                        }),
                         Signature::test_signature(),
                     );
 
@@ -710,16 +707,16 @@ mod tests {
                 as u128,
         );
 
-        let eth_api = build_test_eth_api(mock_provider);
+        let sil_api = build_test_sil_api(mock_provider);
 
-        (eth_api, base_fees_per_gas, gas_used_ratios)
+        (sil_api, base_fees_per_gas, gas_used_ratios)
     }
 
     /// Invalid block range
     #[tokio::test]
     async fn test_fee_history_empty() {
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &build_test_eth_api(NoopProvider::default()),
+            &build_test_sil_api(NoopProvider::default()),
             U64::from(1),
             BlockNumberOrTag::Latest,
             None,
@@ -737,11 +734,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+        let (sil_api, _, _) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &eth_api,
+            &sil_api,
             U64::from(newest_block + 1),
             newest_block.into(),
             Some(vec![10.0]),
@@ -760,11 +757,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+        let (sil_api, _, _) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &eth_api,
+            &sil_api,
             U64::from(1),
             (newest_block + 1000).into(),
             Some(vec![10.0]),
@@ -777,15 +774,15 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_call_many_maps_provider_block_lookup_error_with_eth_api_conversion() {
-        let eth_api = build_test_eth_api(MockEthProvider::default());
+    async fn test_call_many_maps_provider_block_lookup_error_with_sil_api_conversion() {
+        let sil_api = build_test_sil_api(MockSilProvider::default());
         let bundles = vec![Bundle {
             transactions: vec![TransactionRequest::default()],
             block_override: None,
         }];
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::call_many(
-            &eth_api, bundles, None, None,
+            &sil_api, bundles, None, None,
         )
         .await;
 
@@ -803,14 +800,14 @@ mod tests {
 
     #[tokio::test]
     async fn test_call_many_keeps_header_not_found_when_block_hash_absent() {
-        let eth_api = build_test_eth_api(NoopProvider::default());
+        let sil_api = build_test_sil_api(NoopProvider::default());
         let bundles = vec![Bundle {
             transactions: vec![TransactionRequest::default()],
             block_override: None,
         }];
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::call_many(
-            &eth_api, bundles, None, None,
+            &sil_api, bundles, None, None,
         )
         .await;
 
@@ -830,11 +827,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, _, _) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+        let (sil_api, _, _) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let response = <SilApi<_, _> as SilApiServer<_, _, _, _, _, _>>::fee_history(
-            &eth_api,
+            &sil_api,
             U64::from(0),
             newest_block.into(),
             None,
@@ -855,11 +852,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, base_fees_per_gas, gas_used_ratios) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+        let (sil_api, base_fees_per_gas, gas_used_ratios) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let fee_history =
-            eth_api.fee_history(U64::from(1), newest_block.into(), None).await.unwrap();
+            sil_api.fee_history(U64::from(1), newest_block.into(), None).await.unwrap();
         assert_eq!(
             fee_history.base_fee_per_gas,
             &base_fees_per_gas[base_fees_per_gas.len() - 2..],
@@ -889,11 +886,11 @@ mod tests {
         let newest_block = 1337;
         let oldest_block = None;
 
-        let (eth_api, base_fees_per_gas, gas_used_ratios) =
-            prepare_eth_api(newest_block, oldest_block, block_count, MockEthProvider::default());
+        let (sil_api, base_fees_per_gas, gas_used_ratios) =
+            prepare_sil_api(newest_block, oldest_block, block_count, MockSilProvider::default());
 
         let fee_history =
-            eth_api.fee_history(U64::from(block_count), newest_block.into(), None).await.unwrap();
+            sil_api.fee_history(U64::from(block_count), newest_block.into(), None).await.unwrap();
 
         assert_eq!(
             &fee_history.base_fee_per_gas, &base_fees_per_gas,

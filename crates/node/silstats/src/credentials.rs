@@ -6,7 +6,7 @@ use std::str::FromStr;
 /// Contains the node identifier, authentication secret, and server host
 /// information needed to establish a connection with the `SilStats` service.
 #[derive(Debug, Clone)]
-pub(crate) struct EthstatsCredentials {
+pub(crate) struct SilStatsCredentials {
     /// Unique identifier for this node in the `SilStats` network
     pub node_id: String,
     /// Authentication secret for the `SilStats` server
@@ -17,7 +17,7 @@ pub(crate) struct EthstatsCredentials {
     pub use_tls: bool,
 }
 
-impl FromStr for EthstatsCredentials {
+impl FromStr for SilStatsCredentials {
     type Err = SilStatsError;
 
     /// Parse credentials from a string in the format "`node_id:secret@host`" or
@@ -32,7 +32,7 @@ impl FromStr for EthstatsCredentials {
     /// * `s` - String containing credentials
     ///
     /// # Returns
-    /// * `Ok(EthstatsCredentials)` - Successfully parsed credentials
+    /// * `Ok(SilStatsCredentials)` - Successfully parsed credentials
     /// * `Err(SilStatsError::InvalidUrl)` - Invalid format or missing separators
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let parts: Vec<&str> = s.split('@').collect();

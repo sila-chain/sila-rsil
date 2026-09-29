@@ -24,7 +24,7 @@ revm.workspace = true
 
 # alloy
 alloy-primitives.workspace = true
-alloy-sip7928.workspace = true
+alloy-eip7928.workspace = true
 alloy-sips.workspace = true
 alloy-savm.workspace = true
 alloy-consensus.workspace = true
@@ -56,7 +56,7 @@ std = [
     "rsil-storage-api/std",
     "rsil-trie-common/std",
     "rsil-sila-primitives/std",
-    "alloy-sip7928/std",
+    "alloy-eip7928/std",
 ]
 metrics = ["std", "dep:metrics", "dep:rsil-metrics"]
 test-utils = [

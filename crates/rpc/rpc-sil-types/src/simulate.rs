@@ -1,12 +1,12 @@
-//! Utilities for serving `eth_simulateV1`
+//! Utilities for serving `sil_simulateV1`
 
 use crate::{
-    error::{api::FromEthApiError, FromEvmError, ToRpcError},
+    error::{api::FromSilApiError, FromEvmError, ToRpcError},
     SilApiError,
 };
 use alloy_chains::Chain;
 use alloy_consensus::{transaction::TxHashRef, BlockHeader, Transaction as _};
-use alloy_eips::sip2718::WithEncoded;
+use alloy_eips::eip2718::WithEncoded;
 use alloy_evm::{block::TxResult, precompiles::PrecompilesMap};
 use alloy_network::{NetworkTransactionBuilder, TransactionBuilder};
 use alloy_rpc_types_eth::{
@@ -15,9 +15,15 @@ use alloy_rpc_types_eth::{
     BlockId, BlockOverrides, BlockTransactionsKind,
 };
 use jsonrpsee_types::{error::INTERNAL_ERROR_CODE, ErrorObject};
-use rsil_evm::{
+use revm::{
+    context::Block,
+    context_interface::result::ExecutionResult,
+    primitives::{Address, Bytes, TxKind, U256},
+    Database,
+};
+use rsil_savm::{
     execute::{BlockBuilder, BlockBuilderOutcome, BlockExecutor},
-    Savm, HaltReasonFor,
+    HaltReasonFor, Savm,
 };
 use rsil_primitives_traits::{
     BlockBody as _, BlockTy, NodePrimitives, Recovered, RecoveredBlock, SealedHeader,
@@ -25,30 +31,24 @@ use rsil_primitives_traits::{
 use rsil_rpc_convert::{RpcBlock, RpcConvert, RpcTxReq};
 use rsil_rpc_server_types::result::{block_id_to_str, rpc_err};
 use rsil_storage_api::{noop::NoopProvider, StateProvider};
-use revm::{
-    context::Block,
-    context_interface::result::ExecutionResult,
-    primitives::{Address, Bytes, TxKind, U256},
-    Database,
-};
 
 /// Fallback seconds added between simulated block timestamps when neither the user nor the chain
 /// hint provides a value.
 const SIMULATE_FALLBACK_TIMESTAMP_INCREMENT: u64 = 12;
 
-/// Error code for execution reverted in `eth_simulateV1`.
+/// Error code for execution reverted in `sil_simulateV1`.
 ///
-/// Consistent with `eth_call` revert error code.
+/// Consistent with `sil_call` revert error code.
 ///
 /// <https://github.com/sila-chain/execution-apis/pull/748>
 pub const SIMULATE_REVERT_CODE: i32 = 3;
 
-/// Error code for VM execution errors (e.g., out of gas) in `eth_simulateV1`.
+/// Error code for VM execution errors (e.g., out of gas) in `sil_simulateV1`.
 ///
 /// <https://github.com/sila-chain/execution-apis>
 pub const SIMULATE_VM_ERROR_CODE: i32 = -32015;
 
-/// Errors which may occur during `eth_simulateV1` execution.
+/// Errors which may occur during `sil_simulateV1` execution.
 #[derive(Debug, thiserror::Error)]
 pub enum SilSimulateError {
     /// Total gas limit of transactions for the block exceeds the block gas limit.
@@ -125,7 +125,7 @@ pub enum SilSimulateError {
 }
 
 impl SilSimulateError {
-    /// Returns the JSON-RPC error code for a `eth_simulateV1` error.
+    /// Returns the JSON-RPC error code for a `sil_simulateV1` error.
     pub const fn error_code(&self) -> i32 {
         match self {
             Self::NonceTooLow { .. } => -38010,
@@ -152,7 +152,7 @@ impl ToRpcError for SilSimulateError {
     }
 }
 
-/// Sanitizes and gap-fills the chain of [`SimBlock`]s for `eth_simulateV1`.
+/// Sanitizes and gap-fills the chain of [`SimBlock`]s for `sil_simulateV1`.
 ///
 /// Walks the provided block-state calls in order and:
 /// - validates that each block number and timestamp strictly increases relative to the parent and
@@ -272,9 +272,9 @@ pub fn apply_precompile_overrides(
     for (source, dest) in &moves {
         if source == dest {
             if precompiles.get(source).is_none() {
-                return Err(SilSimulateError::NotAPrecompile(*source))
+                return Err(SilSimulateError::NotAPrecompile(*source));
             }
-            return Err(SilSimulateError::MovePrecompileToSelf(*source))
+            return Err(SilSimulateError::MovePrecompileToSelf(*source));
         }
     }
 
@@ -310,12 +310,12 @@ pub fn execute_transactions<S, T>(
 ) -> Result<
     (
         BlockBuilderOutcome<S::Primitives>,
-        Vec<ExecutionResult<<<S::Executor as BlockExecutor>::Savm as Savm>::HaltReason>>,
+        Vec<ExecutionResult<<<S::Executor as BlockExecutor>::Evm as Savm>::HaltReason>>,
     ),
     SilApiError,
 >
 where
-    S: BlockBuilder<Executor: BlockExecutor<Savm: Savm<DB: Database<Error: Into<SilApiError>>>>>,
+    S: BlockBuilder<Executor: BlockExecutor<Evm: Savm<DB: Database<Error: Into<SilApiError>>>>>,
     T: RpcConvert<Primitives = S::Primitives>,
 {
     builder.apply_pre_execution_changes()?;
@@ -349,7 +349,7 @@ where
             };
 
             if exceeds_gas_limit {
-                return Err(SilApiError::other(SilSimulateError::BlockGasLimitExceeded))
+                return Err(SilApiError::other(SilSimulateError::BlockGasLimitExceeded));
             }
         }
 
@@ -387,7 +387,7 @@ where
         let gas_used = gas_output.tx_gas_used();
         if let Some(remaining_call_gas_limit) = remaining_call_gas_limit.as_mut() {
             if gas_used > *remaining_call_gas_limit {
-                return Err(SilApiError::other(SilSimulateError::GasLimitReached))
+                return Err(SilApiError::other(SilSimulateError::GasLimitReached));
             }
             *remaining_call_gas_limit -= gas_used;
         }
@@ -462,7 +462,7 @@ where
     //
     // Per the eth_simulateV1 spec, unspecified fee fields default to 0 (not the block base fee),
     // matching geth's `CallDefaults` behavior. This lets simulation behave like a free-gas
-    // `eth_call` when validation is off, and surfaces "max fee per gas less than block base fee"
+    // `sil_call` when validation is off, and surfaces "max fee per gas less than block base fee"
     // errors when validation is on with a real base fee.
     let _ = block_base_fee_per_gas;
     if tx.as_ref().output_tx_type_checked().is_none() {
@@ -495,7 +495,7 @@ pub fn build_simulated_block<Err, T>(
 ) -> Result<SimulatedBlock<RpcBlock<T::Network>>, Err>
 where
     Err: std::error::Error
-        + FromEthApiError
+        + FromSilApiError
         + FromEvmError<T::Savm>
         + From<T::Error>
         + Into<jsonrpsee_types::ErrorObject<'static>>,
@@ -587,8 +587,8 @@ mod tests {
         state::{AccountOverride, StateOverride},
         BlockOverrides, TransactionRequest,
     };
-    use rsil_primitives_traits::SealedHeader;
     use revm::precompile::Precompiles;
+    use rsil_primitives_traits::SealedHeader;
 
     #[test]
     fn nonce_max_value_error_uses_internal_error_code() {
@@ -674,7 +674,7 @@ mod tests {
         let parent = parent_at(5, 100);
         let blocks = vec![block_with_number(8)];
 
-        let out = sanitize_chain(blocks, &parent, Chain::sila-mainnet().id(), 256).unwrap();
+        let out = sanitize_chain(blocks, &parent, Chain::sila_mainnet().id(), 256).unwrap();
         assert_eq!(out.len(), 3);
 
         let numbers: Vec<u64> = out
@@ -698,7 +698,7 @@ mod tests {
         let blocks: Vec<SimBlock<TransactionRequest>> =
             vec![SimBlock::default(), SimBlock::default()];
 
-        let out = sanitize_chain(blocks, &parent, Chain::sila-mainnet().id(), 256).unwrap();
+        let out = sanitize_chain(blocks, &parent, Chain::sila_mainnet().id(), 256).unwrap();
         assert_eq!(out.len(), 2);
 
         let overrides = out[0].block_overrides.as_ref().unwrap();
@@ -750,16 +750,18 @@ mod tests {
     #[test]
     fn sanitize_chain_rejects_non_increasing_number() {
         let parent = parent_at(10, 100);
-        let err = sanitize_chain(vec![block_with_number(10)], &parent, Chain::sila-mainnet().id(), 256)
-            .unwrap_err();
+        let err =
+            sanitize_chain(vec![block_with_number(10)], &parent, Chain::sila_mainnet().id(), 256)
+                .unwrap_err();
         assert!(matches!(err, SilApiError::Other(_)));
     }
 
     #[test]
     fn sanitize_chain_enforces_max_blocks() {
         let parent = parent_at(0, 0);
-        let err = sanitize_chain(vec![block_with_number(257)], &parent, Chain::sila-mainnet().id(), 256)
-            .unwrap_err();
+        let err =
+            sanitize_chain(vec![block_with_number(257)], &parent, Chain::sila_mainnet().id(), 256)
+                .unwrap_err();
         assert!(matches!(err, SilApiError::Other(_)));
     }
 }

@@ -1,4 +1,4 @@
-use crate::utils::{eth_payload_attributes, eth_payload_attributes_amsterdam};
+use crate::utils::{sil_payload_attributes, sil_payload_attributes_amsterdam};
 use alloy_eips::{sip2718::Encodable2718, sip7910::SilConfig};
 use alloy_genesis::Genesis;
 use alloy_primitives::{Address, Bytes, B256, U256};
@@ -68,7 +68,7 @@ async fn test_fee_history() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -79,9 +79,9 @@ async fn test_fee_history() -> eyre::Result<()> {
     let fee_history = provider.get_fee_history(10, 0_u64.into(), &[]).await?;
 
     let genesis_base_fee = chain_spec.initial_base_fee().unwrap() as u128;
-    let expected_first_base_fee = genesis_base_fee -
-        genesis_base_fee /
-            chain_spec
+    let expected_first_base_fee = genesis_base_fee
+        - genesis_base_fee
+            / chain_spec
                 .base_fee_params_at_timestamp(chain_spec.genesis_timestamp())
                 .max_change_denominator;
     assert_eq!(fee_history.base_fee_per_gas[0], genesis_base_fee);
@@ -153,7 +153,7 @@ async fn test_flashbots_validate_v3() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -235,7 +235,7 @@ async fn test_flashbots_validate_v4() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -318,7 +318,7 @@ async fn test_flashbots_validate_v6() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes_amsterdam,
+        sil_payload_attributes_amsterdam,
     )
     .await?;
     let mut node = nodes.pop().unwrap();
@@ -460,7 +460,7 @@ async fn test_eth_config() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
     let mut node = nodes.pop().unwrap();

@@ -206,7 +206,6 @@ jobs:
           GITHUB_USER: ${{ github.repository_owner }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # The formatting here is borrowed from Lighthouse (which is borrowed from OpenSila):
-        # https://github.com/opensila/opensila/blob/6c2d392d867b058ff867c4373e40850ca3f96969/.github/workflows/build.yml
         run: |
           prerelease_flag=""
           if [[ "${GITHUB_REF}" == *-rc* ]]; then

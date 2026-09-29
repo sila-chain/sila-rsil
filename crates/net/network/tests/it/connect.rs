@@ -2,9 +2,9 @@
 
 use alloy_primitives::map::HashSet;
 use futures::StreamExt;
-use rsil_chainspec::{SILA_MAINNET, SEPOLIA};
+use rsil_chainspec::{SEPOLIA, SILA_MAINNET};
 use rsil_discv4::Discv4Config;
-use rsil_eth_wire::{DisconnectReason, SilNetworkPrimitives, HeadersDirection};
+use rsil_sil_wire::{DisconnectReason, HeadersDirection, SilNetworkPrimitives};
 use rsil_network::{
     test_utils::{NetworkEventStream, PeerConfig, Testnet},
     BlockDownloaderProvider, NetworkConfigBuilder, NetworkEvent, NetworkEventListenerProvider,
@@ -19,7 +19,7 @@ use rsil_network_p2p::{
     sync::{NetworkSyncUpdater, SyncState},
 };
 use rsil_network_peers::{mainnet_nodes, NodeRecord, TrustedPeer};
-use rsil_provider::test_utils::MockEthProvider;
+use rsil_provider::test_utils::MockSilProvider;
 use rsil_storage_api::noop::NoopProvider;
 use rsil_tasks::Runtime;
 use rsil_tracing::init_test_tracing;
@@ -64,8 +64,8 @@ async fn test_establish_connections() {
                 NetworkEvent::Peer(PeerEvent::SessionClosed { .. } | PeerEvent::PeerRemoved(_)) => {
                     panic!("unexpected event")
                 }
-                NetworkEvent::ActivePeerSession { info, .. } |
-                NetworkEvent::Peer(PeerEvent::SessionEstablished(info)) => {
+                NetworkEvent::ActivePeerSession { info, .. }
+                | NetworkEvent::Peer(PeerEvent::SessionEstablished(info)) => {
                     let SessionInfo { peer_id, .. } = info;
                     assert!(expected_connections.remove(&peer_id));
                 }
@@ -662,7 +662,7 @@ async fn new_random_peer(
 async fn test_connect_many() {
     rsil_tracing::init_test_tracing();
 
-    let provider = MockEthProvider::default().with_genesis_block();
+    let provider = MockSilProvider::default().with_genesis_block();
     let net = Testnet::create_with(5, provider).await;
 
     // install request handlers

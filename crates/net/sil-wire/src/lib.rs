@@ -16,8 +16,8 @@
 pub mod capability;
 mod disconnect;
 pub mod errors;
-pub mod eth_snap;
-mod ethstream;
+pub mod sil_snap;
+mod silstream;
 mod hello;
 pub mod multiplex;
 mod p2pstream;
@@ -37,8 +37,8 @@ pub use tokio_util::codec::{
 
 pub use crate::{
     disconnect::CanDisconnect,
-    eth_snap::{SilSnapMessage, SilSnapStream},
-    ethstream::{SilStream, SilStreamInner, UnauthedEthStream},
+    sil_snap::{SilSnapMessage, SilSnapStream},
+    silstream::{SilStream, SilStreamInner, UnauthedSilStream},
     hello::{HelloMessage, HelloMessageBuilder, HelloMessageWithProtocols},
     p2pstream::{
         DisconnectP2P, P2PMessage, P2PMessageID, P2PStream, UnauthedP2PStream, HANDSHAKE_TIMEOUT,
@@ -49,4 +49,4 @@ pub use crate::{
 
 // Re-export wire types
 #[doc(inline)]
-pub use rsil_eth_wire_types::*;
+pub use rsil_sil_wire_types::*;

@@ -13,7 +13,7 @@ workspace = true
 
 [dependencies]
 # rsil
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-primitives-traits.workspace = true
 rsil-ecies.workspace = true
 alloy-rlp = { workspace = true, features = ["derive"] }
@@ -68,7 +68,7 @@ arbitrary = [
     "dep:arbitrary",
     "alloy-sips/arbitrary",
     "alloy-primitives/arbitrary",
-    "rsil-codecs/arbitrary",
+    "reth-codecs/arbitrary",
     "alloy-chains/arbitrary",
     "rsil-primitives-traits/arbitrary",
     "rsil-sila-forks/arbitrary",
@@ -82,7 +82,7 @@ serde = [
     "bytes/serde",
     "rand/serde",
     "secp256k1/serde",
-    "rsil-codecs/serde",
+    "reth-codecs/serde",
     "alloy-chains/serde",
     "rsil-primitives-traits/serde",
     "rsil-sila-forks/serde",

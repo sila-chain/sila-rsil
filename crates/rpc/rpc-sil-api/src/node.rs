@@ -1,12 +1,12 @@
 //! Helper trait for interfacing with [`FullNodeComponents`].
 
 use rsil_chain_state::CanonStateSubscriptions;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks, Hardforks};
-use rsil_evm::ConfigureEvm;
+use rsil_chainspec::{ChainSpecProvider, Hardforks, SilChainSpec, SilaHardforks};
+use rsil_savm::ConfigureEvm;
 use rsil_network_api::NetworkInfo;
 use rsil_node_api::{FullNodeComponents, NodePrimitives, PrimitivesTy};
 use rsil_primitives_traits::{BlockTy, HeaderTy, ReceiptTy, TxTy};
-use rsil_rpc_eth_types::SilStateCache;
+use rsil_rpc_sil_types::SilStateCache;
 use rsil_storage_api::{
     BalProvider, BlockReader, BlockReaderIdExt, PruneCheckpointReader, StageCheckpointReader,
     StateProviderFactory,
@@ -119,7 +119,8 @@ impl<Provider, Pool, Network, Savm> RpcNodeCoreAdapter<Provider, Pool, Network, 
     }
 }
 
-impl<Provider, Pool, Network, Savm> RpcNodeCore for RpcNodeCoreAdapter<Provider, Pool, Network, Savm>
+impl<Provider, Pool, Network, Savm> RpcNodeCore
+    for RpcNodeCoreAdapter<Provider, Pool, Network, Savm>
 where
     Provider: BlockReaderIdExt<
             Block = BlockTy<Savm::Primitives>,

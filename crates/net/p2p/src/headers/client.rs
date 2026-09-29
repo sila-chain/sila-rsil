@@ -2,7 +2,7 @@ use crate::{download::DownloadClient, error::PeerRequestResult, priority::Priori
 use alloy_consensus::Header;
 use alloy_eips::BlockHashOrNumber;
 use futures::{Future, FutureExt};
-pub use rsil_eth_wire_types::{BlockHeaders, HeadersDirection};
+pub use rsil_sil_wire_types::{BlockHeaders, HeadersDirection};
 use rsil_primitives_traits::BlockHeader;
 use std::{
     fmt::Debug,

@@ -31,20 +31,20 @@ pub mod trace;
 pub mod transaction;
 
 pub use bal::GetBlockAccessList;
-pub use block::{SilBlocks, LoadBlock};
+pub use block::{LoadBlock, SilBlocks};
 pub use blocking_task::SpawnBlocking;
 pub use call::{Call, SilCall};
-pub use fee::{SilFees, LoadFee};
+pub use fee::{LoadFee, SilFees};
 pub use pending_block::LoadPendingBlock;
 pub use receipt::LoadReceipt;
 pub use signer::SilSigner;
 pub use spec::SilApiSpec;
-pub use state::{SilState, LoadState};
+pub use state::{LoadState, SilState};
 pub use subscriptions::SilSubscriptions;
 pub use trace::Trace;
-pub use transaction::{SilTransactions, LoadTransaction};
+pub use transaction::{LoadTransaction, SilTransactions};
 
-use crate::FullEthApiTypes;
+use crate::FullSilApiTypes;
 
 /// Extension trait that bundles traits needed for tracing transactions.
 pub trait TraceExt:
@@ -57,8 +57,8 @@ impl<T> TraceExt for T where T: LoadTransaction + LoadBlock + Trace + Call + Get
 /// Helper trait to unify all `sil` rpc server building block traits, for simplicity.
 ///
 /// This trait is automatically implemented for any type that implements all the `Sil` traits.
-pub trait FullEthApi:
-    FullEthApiTypes
+pub trait FullSilApi:
+    FullSilApiTypes
     + SilApiSpec
     + SilTransactions
     + SilBlocks
@@ -72,8 +72,8 @@ pub trait FullEthApi:
 {
 }
 
-impl<T> FullEthApi for T where
-    T: FullEthApiTypes
+impl<T> FullSilApi for T where
+    T: FullSilApiTypes
         + SilApiSpec
         + SilTransactions
         + SilBlocks

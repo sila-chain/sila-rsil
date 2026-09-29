@@ -37,7 +37,7 @@ rsil-network-types = { workspace = true, features = ["serde"] }
 
 # sila
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-primitives.workspace = true
 alloy-rlp.workspace = true
 enr = { workspace = true, features = ["serde", "rust-secp256k1"] }
@@ -107,7 +107,7 @@ serde = [
     "rsil-sil-wire/serde",
     "rsil-sil-wire-types/serde",
     "alloy-consensus/serde",
-    "alloy-sips/serde",
+    "alloy-eips/serde",
     "alloy-primitives/serde",
     "discv5/serde",
     "parking_lot/serde",

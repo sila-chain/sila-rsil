@@ -2,8 +2,16 @@ use alloy_consensus::BlockHeader;
 use alloy_primitives::{keccak256, Address, Bytes, B256, U256};
 use alloy_rpc_types_debug::ExecutionWitness;
 use pretty_assertions::Comparison;
+use revm::{
+    bytecode::Bytecode,
+    database::{
+        states::{reverts::AccountInfoRevert, StorageSlot},
+        AccountStatus, RevertToSlot,
+    },
+    state::AccountInfo,
+};
 use rsil_engine_primitives::InvalidBlockHook;
-use rsil_evm::{execute::Executor, ConfigureEvm};
+use rsil_savm::{execute::Executor, ConfigureEvm};
 use rsil_primitives_traits::{NodePrimitives, RecoveredBlock, SealedHeader};
 use rsil_provider::{BlockExecutionOutput, StateProvider, StateProviderBox, StateProviderFactory};
 use rsil_revm::{
@@ -13,14 +21,6 @@ use rsil_revm::{
 use rsil_rpc_api::DebugApiClient;
 use rsil_tracing::tracing::warn;
 use rsil_trie::{updates::TrieUpdates, HashedStorage};
-use revm::{
-    bytecode::Bytecode,
-    database::{
-        states::{reverts::AccountInfoRevert, StorageSlot},
-        AccountStatus, RevertToSlot,
-    },
-    state::AccountInfo,
-};
 use serde::Serialize;
 use std::{collections::BTreeMap, fmt::Debug, fs::File, io::Write, path::PathBuf};
 
@@ -415,19 +415,19 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eips::sip7685::Requests;
+    use alloy_sips::eip7685::Requests;
     use alloy_primitives::{map::HashMap, Address, Bytes, B256, U256};
-    use rsil_chainspec::ChainSpec;
-    use rsil_sila_primitives::SilPrimitives;
-    use rsil_evm_sila::SilEvmConfig;
-    use rsil_provider::test_utils::MockEthProvider;
-    use rsil_revm::db::{BundleAccount, BundleState};
     use revm::database::states::reverts::AccountRevert;
+    use rsil_chainspec::ChainSpec;
+    use rsil_savm_sila::SilEvmConfig;
+    use rsil_provider::test_utils::MockSilProvider;
+    use rsil_revm::db::{BundleAccount, BundleState};
+    use rsil_sila_primitives::SilPrimitives;
     use tempfile::TempDir;
 
+    use revm::bytecode::Bytecode;
     use rsil_revm::test_utils::StateProviderTest;
     use rsil_testing_utils::generators::{self, random_block, random_eoa_accounts, BlockParams};
-    use revm::bytecode::Bytecode;
 
     /// Creates a test `BundleState` with realistic accounts, contracts, and reverts
     fn create_bundle_state() -> BundleState {
@@ -598,15 +598,15 @@ mod tests {
 
     /// Creates test `InvalidBlockWitnessHook` with temporary directory
     fn create_test_hook() -> (
-        InvalidBlockWitnessHook<MockEthProvider<SilPrimitives, ChainSpec>, SilEvmConfig>,
+        InvalidBlockWitnessHook<MockSilProvider<SilPrimitives, ChainSpec>, SilEvmConfig>,
         PathBuf,
         TempDir,
     ) {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
         let output_directory = temp_dir.path().to_path_buf();
 
-        let provider = MockEthProvider::<SilPrimitives, ChainSpec>::default();
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let provider = MockSilProvider::<SilPrimitives, ChainSpec>::default();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         let hook =
             InvalidBlockWitnessHook::new(provider, evm_config, output_directory.clone(), None);
@@ -675,8 +675,8 @@ mod tests {
 
     #[test]
     fn test_proof_generator_generate() {
-        // Use existing MockEthProvider
-        let mock_provider = MockEthProvider::default();
+        // Use existing MockSilProvider
+        let mock_provider = MockSilProvider::default();
         let state_provider: Box<dyn StateProvider> = Box::new(mock_provider);
 
         // Mock Data
@@ -697,7 +697,7 @@ mod tests {
         assert!(result.is_ok(), "generate function should succeed");
         let execution_witness = result.unwrap();
 
-        assert!(execution_witness.state.is_empty(), "State should be empty from MockEthProvider");
+        assert!(execution_witness.state.is_empty(), "State should be empty from MockSilProvider");
 
         let expected_codes: Vec<Bytes> = codes.into_values().collect();
         assert_eq!(
@@ -738,8 +738,8 @@ mod tests {
 
         // Modify the state to create a mismatch
         let addr = Address::from([1u8; 20]);
-        if let Some(account) = modified_state.state.get_mut(&addr) &&
-            let Some(ref mut info) = account.info
+        if let Some(account) = modified_state.state.get_mut(&addr)
+            && let Some(ref mut info) = account.info
         {
             info.balance = U256::from(999);
         }

@@ -11,7 +11,7 @@ use rsil_consensus::noop::NoopConsensus;
 use rsil_db::{init_db, open_db_read_only, DatabaseEnv};
 use rsil_db_common::init::init_genesis_with_settings;
 use rsil_downloaders::{bodies::noop::NoopBodiesDownloader, headers::noop::NoopHeaderDownloader};
-use rsil_eth_wire::NetPrimitivesFor;
+use rsil_sil_wire::NetPrimitivesFor;
 use rsil_evm::{noop::NoopEvmConfig, ConfigureEvm};
 use rsil_network::NetworkEventListenerProvider;
 use rsil_node_api::FullNodeTypesAdapter;
@@ -213,13 +213,13 @@ impl<C: ChainSpecParser> EnvironmentArgs<C> {
         .with_bal_store(bal_store);
 
         // Check for consistency between database and static files.
-        if !access.is_read_only_inconsistent() &&
-            let Some(unwind_target) =
+        if !access.is_read_only_inconsistent()
+            && let Some(unwind_target) =
                 factory.static_file_provider().check_consistency(&factory.provider()?)?
         {
             if factory.db_ref().is_read_only()? {
                 warn!(target: "rsil::cli", ?unwind_target, "Inconsistent storage. Restart node to heal.");
-                return Ok(factory)
+                return Ok(factory);
             }
 
             // Highly unlikely to happen, and given its destructive nature, it's better to panic

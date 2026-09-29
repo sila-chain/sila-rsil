@@ -2,15 +2,15 @@
 
 use futures::{Sink, SinkExt, Stream, StreamExt};
 use rsil_ecies::stream::ECIESStream;
-use rsil_eth_wire::{
-    errors::{SilStreamError, P2PStreamError},
+use rsil_sil_wire::{
+    errors::{P2PStreamError, SilStreamError},
     message::SilBroadcastMessage,
     multiplex::{ProtocolProxy, RlpxSatelliteStream},
     snap::SnapProtocolMessage,
-    SilMessage, SilNetworkPrimitives, SilSnapMessage, SilSnapStream, SilStream, SilVersion,
-    NetworkPrimitives, P2PStream,
+    NetworkPrimitives, P2PStream, SilMessage, SilNetworkPrimitives, SilSnapMessage, SilSnapStream,
+    SilStream, SilVersion,
 };
-use rsil_eth_wire_types::RawCapabilityMessage;
+use rsil_sil_wire_types::RawCapabilityMessage;
 use std::{
     pin::Pin,
     task::{Context, Poll},

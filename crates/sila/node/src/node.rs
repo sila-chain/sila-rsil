@@ -1,21 +1,19 @@
 //! Sila Node types config.
 
 use crate::{SilEngineTypes, SilEvmConfig};
-use alloy_eips::{sip7840::BlobParams, merge::EPOCH_SLOTS};
+use alloy_sips::{merge::EPOCH_SLOTS, sip7840::BlobParams};
 use alloy_network::Sila;
 use alloy_rpc_types_engine::ExecutionData;
-use rsil_chainspec::{ChainSpec, SilChainSpec, SilaHardforks, Hardforks};
+use revm::context::TxEnv;
+use rsil_chainspec::{ChainSpec, Hardforks, SilChainSpec, SilaHardforks};
 use rsil_engine_local::LocalPayloadAttributesBuilder;
 use rsil_engine_primitives::EngineTypes;
-use rsil_sila_consensus::SilBeaconConsensus;
-use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};
-use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
-use rsil_evm::{
-    sil::spec::SilExecutorSpec, ConfigureEvm, SavmFactory, SavmFactoryFor, NextBlockEnvAttributes,
+use rsil_savm::{
+    sil::spec::SilExecutorSpec, ConfigureEvm, NextBlockEnvAttributes, SavmFactory, SavmFactoryFor,
 };
-use rsil_evm_sila::factory::RsilEvmFactory;
+use rsil_savm_sila::factory::RsilEvmFactory;
 #[cfg(feature = "jit")]
-use rsil_evm_sila::factory::{JitBackend, JitMode, RevmcMetrics, RuntimeConfig, RuntimeTuning};
+use rsil_savm_sila::factory::{JitBackend, JitMode, RevmcMetrics, RuntimeConfig, RuntimeTuning};
 use rsil_network::{primitives::BasicNetworkPrimitives, NetworkHandle, PeersInfo};
 use rsil_node_api::{
     AddOnsContext, FullNodeComponents, HeaderTy, NodeAddOns, NodePrimitives,
@@ -29,9 +27,9 @@ use rsil_node_builder::{
     node::{FullNodeTypes, NodeTypes},
     rpc::{
         BasicEngineApiBuilder, BasicEngineValidatorBuilder, Either, EngineApiBuilder,
-        EngineValidatorAddOn, EngineValidatorBuilder, SilApiBuilder, SilApiCtx, Identity,
-        PayloadValidatorBuilder, RsilAuthHttpMiddleware, RsilRpcAddOns, RsilRpcMiddleware,
-        RpcAddOns, RpcHandle, Stack,
+        EngineValidatorAddOn, EngineValidatorBuilder, Identity, PayloadValidatorBuilder, RpcAddOns,
+        RpcHandle, RsilAuthHttpMiddleware, RsilRpcAddOns, RsilRpcMiddleware, SilApiBuilder,
+        SilApiCtx, Stack,
     },
     BuilderContext, DebugNode, Node, NodeAdapter, PayloadBuilderConfig,
 };
@@ -44,26 +42,28 @@ use rsil_rpc::{
 };
 use rsil_rpc_api::servers::{BlockSubmissionValidationApiServer, TestingApiServer};
 use rsil_rpc_builder::config::RsilRpcServerConfig;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{
         config::{SilConfigApiServer, SilConfigHandler},
         pending_block::BuildPendingEnv,
     },
     RpcConvert, RpcTypes, SignableTxRequest,
 };
-use rsil_rpc_eth_types::{error::FromEvmError, SilApiError};
+use rsil_rpc_sil_types::{error::FromEvmError, SilApiError};
 use rsil_rpc_server_types::RsilRpcModule;
+use rsil_sila_consensus::SilBeaconConsensus;
+use rsil_sila_engine_primitives::{SilBuiltPayload, SilPayloadAttributes};
+use rsil_sila_primitives::{SilPrimitives, TransactionSigned};
 use rsil_tracing::tracing::{debug, info};
 use rsil_transaction_pool::{
-    blobstore::DiskFileBlobStore, SilTransactionPool, PoolPooledTx, PoolTransaction,
+    blobstore::DiskFileBlobStore, PoolPooledTx, PoolTransaction, SilTransactionPool,
     TransactionPool, TransactionValidationTaskExecutor,
 };
-use revm::context::TxEnv;
 use std::{marker::PhantomData, sync::Arc, time::SystemTime};
 
 pub use crate::{payload::SilaPayloadBuilder, SilaEngineValidator};
 #[cfg(feature = "jit")]
-pub use rsil_evm_sila::factory::maybe_run_jit_helper;
+pub use rsil_savm_sila::factory::maybe_run_jit_helper;
 
 /// Type configuration for a regular Sila node.
 #[derive(Debug, Default, Clone, Copy)]
@@ -134,15 +134,15 @@ impl NodeTypes for SilaNode {
 
 /// Builds [`SilApi`](rsil_rpc::SilApi) for Sila.
 #[derive(Debug)]
-pub struct SilaEthApiBuilder<NetworkT = Sila>(PhantomData<NetworkT>);
+pub struct SilaSilApiBuilder<NetworkT = Sila>(PhantomData<NetworkT>);
 
-impl<NetworkT> Default for SilaEthApiBuilder<NetworkT> {
+impl<NetworkT> Default for SilaSilApiBuilder<NetworkT> {
     fn default() -> Self {
         Self(Default::default())
     }
 }
 
-impl<N, NetworkT> SilApiBuilder<N> for SilaEthApiBuilder<NetworkT>
+impl<N, NetworkT> SilApiBuilder<N> for SilaSilApiBuilder<NetworkT>
 where
     N: FullNodeComponents<
         Types: NodeTypes<ChainSpec: Hardforks + SilaHardforks>,
@@ -159,8 +159,8 @@ where
 {
     type SilApi = SilApiFor<N, NetworkT>;
 
-    async fn build_eth_api(self, ctx: SilApiCtx<'_, N>) -> eyre::Result<Self::SilApi> {
-        Ok(ctx.eth_api_builder().map_converter(|r| r.with_network()).build())
+    async fn build_sil_api(self, ctx: SilApiCtx<'_, N>) -> eyre::Result<Self::SilApi> {
+        Ok(ctx.sil_api_builder().map_converter(|r| r.with_network()).build())
     }
 }
 
@@ -192,7 +192,7 @@ where
     }
 }
 
-impl<N> Default for SilaAddOns<N, SilaEthApiBuilder, SilaEngineValidatorBuilder>
+impl<N> Default for SilaAddOns<N, SilaSilApiBuilder, SilaEngineValidatorBuilder>
 where
     N: FullNodeComponents<
         Types: NodeTypes<
@@ -202,11 +202,11 @@ where
             Primitives = SilPrimitives,
         >,
     >,
-    SilaEthApiBuilder: SilApiBuilder<N>,
+    SilaSilApiBuilder: SilApiBuilder<N>,
 {
     fn default() -> Self {
         Self::new(RpcAddOns::new(
-            SilaEthApiBuilder::default(),
+            SilaSilApiBuilder::default(),
             SilaEngineValidatorBuilder::default(),
             BasicEngineApiBuilder::default(),
             BasicEngineValidatorBuilder::default(),
@@ -360,7 +360,7 @@ where
                 // testing_buildBlockV1: only wire when the hidden testing module is explicitly
                 // requested on any transport. Default stays disabled to honor security guidance.
                 let mut testing_api = TestingApi::new(
-                    container.registry.eth_api().clone(),
+                    container.registry.sil_api().clone(),
                     container.registry.evm_config().clone(),
                     testing_desired_gas_limit,
                     testing_engine_handle,
@@ -448,8 +448,7 @@ where
         SilaConsensusBuilder,
     >;
 
-    type AddOns =
-        SilaAddOns<NodeAdapter<N>, SilaEthApiBuilder, SilaEngineValidatorBuilder>;
+    type AddOns = SilaAddOns<NodeAdapter<N>, SilaSilApiBuilder, SilaEngineValidatorBuilder>;
 
     fn components_builder(&self) -> Self::ComponentsBuilder {
         Self::components()
@@ -461,7 +460,7 @@ where
 }
 
 impl<N: FullNodeComponents<Types = Self>> DebugNode<N> for SilaNode {
-    type RpcBlock = alloy_rpc_types_eth::Block;
+    type RpcBlock = alloy_rpc_types_sil::Block;
 
     fn rpc_to_primitive_block(rpc_block: Self::RpcBlock) -> rsil_sila_primitives::Block {
         rpc_block.into_consensus().convert_transactions()
@@ -659,8 +658,8 @@ where
     ) -> eyre::Result<Self::Pool> {
         let pool_config = ctx.pool_config();
 
-        let blobs_disabled = ctx.config().txpool.disable_blobs_support ||
-            ctx.config().txpool.blobpool_max_count == 0;
+        let blobs_disabled = ctx.config().txpool.disable_blobs_support
+            || ctx.config().txpool.blobpool_max_count == 0;
 
         let blob_cache_size = if let Some(blob_cache_size) = pool_config.blob_cache_size {
             Some(blob_cache_size)

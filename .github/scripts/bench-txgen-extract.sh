@@ -82,7 +82,7 @@ TAIL_PID=$!
 for i in $(seq 1 60); do
   if curl -sf http://127.0.0.1:8545 -X POST \
     -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+    -d '{"jsonrpc":"2.0","method":"sil_blockNumber","params":[],"id":1}' \
     > /dev/null 2>&1; then
     echo "rsil (extract) RPC is up after ${i}s"
     break
@@ -97,7 +97,7 @@ done
 
 HEAD_JSON=$(curl -sf http://127.0.0.1:8545 -X POST \
   -H 'Content-Type: application/json' \
-  -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
+  -d '{"jsonrpc":"2.0","method":"sil_blockNumber","params":[],"id":1}')
 HEAD_HEX=$(jq -r '.result' <<< "$HEAD_JSON")
 HEAD_DEC=$((16#${HEAD_HEX#0x}))
 echo "Snapshot chain tip: ${HEAD_DEC}"

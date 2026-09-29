@@ -13,8 +13,8 @@ extern crate alloc;
 
 use alloc::{fmt::Debug, sync::Arc};
 use alloy_consensus::{constants::MAXIMUM_EXTRA_DATA_SIZE, EMPTY_OMMER_ROOT_HASH};
-use alloy_eips::sip7840::BlobParams;
 use alloy_primitives::B256;
+use alloy_sips::eip7840::BlobParams;
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
 use rsil_consensus::{
     Consensus, ConsensusError, FullConsensus, HeaderValidator, ReceiptRootBloom, TransactionRoot,
@@ -129,8 +129,8 @@ where
             self.allow_bal_hashes,
         );
 
-        if self.skip_requests_hash_check &&
-            let Err(ConsensusError::BodyRequestsHashDiff(_)) = &res
+        if self.skip_requests_hash_check
+            && let Err(ConsensusError::BodyRequestsHashDiff(_)) = &res
         {
             return Ok(());
         }
@@ -194,8 +194,8 @@ where
                     .unwrap()
                     .as_secs();
 
-                if header.timestamp() >
-                    present_timestamp + alloy_eips::merge::ALLOWED_FUTURE_BLOCK_TIME_SECONDS
+                if header.timestamp()
+                    > present_timestamp + alloy_sips::merge::ALLOWED_FUTURE_BLOCK_TIME_SECONDS
                 {
                     return Err(ConsensusError::TimestampIsInFuture {
                         timestamp: header.timestamp(),
@@ -209,14 +209,14 @@ where
         validate_header_base_fee(header, &self.chain_spec)?;
 
         // SIP-4895: Beacon chain push withdrawals as operations
-        if self.chain_spec.is_shanghai_active_at_timestamp(header.timestamp()) &&
-            header.withdrawals_root().is_none()
+        if self.chain_spec.is_shanghai_active_at_timestamp(header.timestamp())
+            && header.withdrawals_root().is_none()
         {
-            return Err(ConsensusError::WithdrawalsRootMissing)
-        } else if !self.chain_spec.is_shanghai_active_at_timestamp(header.timestamp()) &&
-            header.withdrawals_root().is_some()
+            return Err(ConsensusError::WithdrawalsRootMissing);
+        } else if !self.chain_spec.is_shanghai_active_at_timestamp(header.timestamp())
+            && header.withdrawals_root().is_some()
         {
-            return Err(ConsensusError::WithdrawalsRootUnexpected)
+            return Err(ConsensusError::WithdrawalsRootUnexpected);
         }
 
         // Ensures that SIP-4844 fields are valid once cancun is active.
@@ -230,34 +230,34 @@ where
                 )?;
             }
         } else if header.blob_gas_used().is_some() {
-            return Err(ConsensusError::BlobGasUsedUnexpected)
+            return Err(ConsensusError::BlobGasUsedUnexpected);
         } else if header.excess_blob_gas().is_some() {
-            return Err(ConsensusError::ExcessBlobGasUnexpected)
+            return Err(ConsensusError::ExcessBlobGasUnexpected);
         } else if header.parent_beacon_block_root().is_some() {
-            return Err(ConsensusError::ParentBeaconBlockRootUnexpected)
+            return Err(ConsensusError::ParentBeaconBlockRootUnexpected);
         }
 
         if self.chain_spec.is_prague_active_at_timestamp(header.timestamp()) {
             if header.requests_hash().is_none() {
-                return Err(ConsensusError::RequestsHashMissing)
+                return Err(ConsensusError::RequestsHashMissing);
             }
         } else if header.requests_hash().is_some() {
-            return Err(ConsensusError::RequestsHashUnexpected)
+            return Err(ConsensusError::RequestsHashUnexpected);
         }
 
         if self.chain_spec.is_amsterdam_active_at_timestamp(header.timestamp()) {
             if header.block_access_list_hash().is_none() {
-                return Err(ConsensusError::BlockAccessListHashMissing)
+                return Err(ConsensusError::BlockAccessListHashMissing);
             }
             if header.slot_number().is_none() {
-                return Err(ConsensusError::SlotNumberMissing)
+                return Err(ConsensusError::SlotNumberMissing);
             }
         } else {
             if header.block_access_list_hash().is_some() && !self.allow_bal_hashes {
-                return Err(ConsensusError::BlockAccessListHashUnexpected)
+                return Err(ConsensusError::BlockAccessListHashUnexpected);
             }
             if header.slot_number().is_some() {
-                return Err(ConsensusError::SlotNumberUnexpected)
+                return Err(ConsensusError::SlotNumberUnexpected);
             }
         }
 
@@ -296,15 +296,15 @@ where
 mod tests {
     use super::*;
     use alloy_consensus::Header;
-    use alloy_eips::sip7685::EMPTY_REQUESTS_HASH;
     use alloy_primitives::B256;
+    use alloy_sips::eip7685::EMPTY_REQUESTS_HASH;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
     use rsil_consensus_common::validation::validate_against_parent_gas_limit;
-    use rsil_sila_primitives::{Block as SilBlock, SilPrimitives, Receipt};
     use rsil_primitives_traits::{
         constants::{GAS_LIMIT_BOUND_DIVISOR, MINIMUM_GAS_LIMIT},
         proofs,
     };
+    use rsil_sila_primitives::{Block as SilBlock, Receipt, SilPrimitives};
 
     fn header_with_gas_limit(gas_limit: u64) -> SealedHeader {
         let header = rsil_primitives_traits::Header { gas_limit, ..Default::default() };
@@ -399,7 +399,7 @@ mod tests {
     fn shanghai_block_zero_withdrawals() {
         // ensures that if shanghai is activated, and we include a block with a withdrawals root,
         // that the header is valid
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().shanghai_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().shanghai_activated().build());
 
         let header = rsil_primitives_traits::Header {
             base_fee_per_gas: Some(1337),
@@ -414,7 +414,7 @@ mod tests {
 
     #[test]
     fn prague_header_rejects_block_access_list_hash_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
 
@@ -428,7 +428,7 @@ mod tests {
 
     #[test]
     fn prague_header_allows_block_access_list_hash_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
 
@@ -440,7 +440,7 @@ mod tests {
 
     #[test]
     fn prague_header_rejects_slot_number_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.slot_number = Some(0);
 
@@ -454,7 +454,7 @@ mod tests {
 
     #[test]
     fn prague_header_rejects_slot_number_with_allowed_bal_hashes_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
         header.slot_number = Some(0);
@@ -470,7 +470,7 @@ mod tests {
 
     #[test]
     fn prague_post_execution_allows_block_access_list_hash_before_amsterdam() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().prague_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().prague_activated().build());
         let expected_hash = B256::repeat_byte(0x42);
         let block = prague_recovered_block_with_bal_hash(expected_hash);
         let result = BlockExecutionResult::<Receipt>::default();
@@ -505,7 +505,7 @@ mod tests {
 
     #[test]
     fn amsterdam_header_requires_block_access_list_hash() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let mut header = valid_prague_header();
         header.slot_number = Some(0);
 
@@ -519,7 +519,7 @@ mod tests {
 
     #[test]
     fn amsterdam_header_requires_slot_number() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
 
@@ -533,7 +533,7 @@ mod tests {
 
     #[test]
     fn amsterdam_header_accepts_block_access_list_hash_and_slot_number() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
         let mut header = valid_prague_header();
         header.block_access_list_hash = Some(B256::ZERO);
         header.slot_number = Some(0);

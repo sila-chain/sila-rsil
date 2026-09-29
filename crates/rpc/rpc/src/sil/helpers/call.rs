@@ -2,11 +2,11 @@
 
 use crate::SilApi;
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{estimate::EstimateCall, Call, SilCall},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_types::SilApiError;
 
 impl<N, Rpc> SilCall for SilApi<N, Rpc>
 where

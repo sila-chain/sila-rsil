@@ -1,24 +1,24 @@
 //! Implementation of the [`jsonrpsee`] generated [`SilApiServer`] trait. Handles RPC requests for
-//! the `eth_` namespace.
+//! the `sil_` namespace.
 use crate::{
-    helpers::{SilApiSpec, SilBlocks, SilCall, SilFees, SilState, SilTransactions, FullEthApi},
+    helpers::{FullSilApi, SilApiSpec, SilBlocks, SilCall, SilFees, SilState, SilTransactions},
     RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use alloy_dyn_abi::TypedData;
-use alloy_eips::{sip2930::AccessListResult, BlockId, BlockNumberOrTag};
+use alloy_eips::{eip2930::AccessListResult, BlockId, BlockNumberOrTag};
 use alloy_json_rpc::RpcObject;
 use alloy_primitives::{Address, Bytes, B256, B64, U256, U64};
 use alloy_rpc_types_eth::{
     simulate::{SimulatePayload, SimulatedBlock},
-    state::{SavmOverrides, StateOverride},
-    BlockOverrides, Bundle, SIP1186AccountProofResponse, SilCallResponse, FeeHistory, Index,
+    state::{EvmOverrides as SavmOverrides, StateOverride},
+    BlockOverrides, Bundle, FeeHistory, Index, EIP1186AccountProofResponse as SIP1186AccountProofResponse, EthCallResponse as SilCallResponse,
     StateContext, SyncStatus, Work,
 };
 use alloy_serde::JsonStorageKey;
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use rsil_primitives_traits::TxTy;
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_types::{SilApiError, SilCapabilities, FillTransaction};
+use rsil_rpc_sil_types::{FillTransaction, SilApiError, SilCapabilities};
 use rsil_rpc_server_types::{result::internal_rpc_err, ToRpcResult};
 use serde_json::Value;
 use std::collections::HashMap;
@@ -26,7 +26,7 @@ use tracing::trace;
 
 /// Helper trait, unifies functionality that must be supported to implement all RPC methods for
 /// server.
-pub trait FullEthApiServer:
+pub trait FullSilApiServer:
     SilApiServer<
         RpcTxReq<Self::NetworkTypes>,
         RpcTransaction<Self::NetworkTypes>,
@@ -34,12 +34,12 @@ pub trait FullEthApiServer:
         RpcReceipt<Self::NetworkTypes>,
         RpcHeader<Self::NetworkTypes>,
         TxTy<Self::Primitives>,
-    > + FullEthApi
+    > + FullSilApi
     + Clone
 {
 }
 
-impl<T> FullEthApiServer for T where
+impl<T> FullSilApiServer for T where
     T: SilApiServer<
             RpcTxReq<T::NetworkTypes>,
             RpcTransaction<T::NetworkTypes>,
@@ -47,7 +47,7 @@ impl<T> FullEthApiServer for T where
             RpcReceipt<T::NetworkTypes>,
             RpcHeader<T::NetworkTypes>,
             TxTy<T::Primitives>,
-        > + FullEthApi
+        > + FullSilApi
         + Clone
 {
 }
@@ -90,7 +90,7 @@ pub trait SilApi<
 
     /// Returns effective routing capabilities for this node.
     ///
-    /// See the `eth_capabilities` execution API proposal:
+    /// See the `sil_capabilities` execution API proposal:
     /// <https://github.com/sila-chain/execution-apis/pull/755>.
     #[method(name = "capabilities")]
     fn capabilities(&self) -> RpcResult<SilCapabilities>;
@@ -242,7 +242,7 @@ pub trait SilApi<
     #[method(name = "getHeaderByHash")]
     async fn header_by_hash(&self, hash: B256) -> RpcResult<Option<H>>;
 
-    /// `eth_simulateV1` executes an arbitrary number of transactions on top of the requested state.
+    /// `sil_simulateV1` executes an arbitrary number of transactions on top of the requested state.
     /// The transactions are packed into individual blocks. Overrides can be provided.
     #[method(name = "simulateV1")]
     async fn simulate_v1(
@@ -285,7 +285,7 @@ pub trait SilApi<
     /// It returns list of addresses and storage keys used by the transaction, plus the gas
     /// consumed when the access list is added. That is, it gives you the list of addresses and
     /// storage keys that will be used by that transaction, plus the gas consumed if the access
-    /// list is included. Like `eth_estimateGas`, this is an estimation; the list could change
+    /// list is included. Like `sil_estimateGas`, this is an estimation; the list could change
     /// when the transaction is actually mined. Adding an accessList to your transaction does
     /// not necessary result in lower gas usage compared to a transaction without an access
     /// list.
@@ -417,7 +417,7 @@ pub trait SilApi<
 
     /// Returns the account's balance, nonce, and code.
     ///
-    /// This is similar to `eth_getAccount` but does not return the storage root.
+    /// This is similar to `sil_getAccount` but does not return the storage root.
     #[method(name = "getAccountInfo")]
     async fn get_account_info(
         &self,
@@ -456,90 +456,90 @@ impl<T>
         TxTy<T::Primitives>,
     > for T
 where
-    T: FullEthApi,
+    T: FullSilApi,
     jsonrpsee_types::error::ErrorObject<'static>: From<T::Error>,
 {
-    /// Handler for: `eth_protocolVersion`
+    /// Handler for: `sil_protocolVersion`
     async fn protocol_version(&self) -> RpcResult<U64> {
-        trace!(target: "rpc::sil", "Serving eth_protocolVersion");
+        trace!(target: "rpc::sil", "Serving sil_protocolVersion");
         SilApiSpec::protocol_version(self).await.to_rpc_result()
     }
 
-    /// Handler for: `eth_syncing`
+    /// Handler for: `sil_syncing`
     fn syncing(&self) -> RpcResult<SyncStatus> {
-        trace!(target: "rpc::sil", "Serving eth_syncing");
+        trace!(target: "rpc::sil", "Serving sil_syncing");
         SilApiSpec::sync_status(self).to_rpc_result()
     }
 
-    /// Handler for: `eth_coinbase`
+    /// Handler for: `sil_coinbase`
     async fn author(&self) -> RpcResult<Address> {
         Err(internal_rpc_err("unimplemented"))
     }
 
-    /// Handler for: `eth_accounts`
+    /// Handler for: `sil_accounts`
     fn accounts(&self) -> RpcResult<Vec<Address>> {
-        trace!(target: "rpc::sil", "Serving eth_accounts");
+        trace!(target: "rpc::sil", "Serving sil_accounts");
         Ok(SilTransactions::accounts(self))
     }
 
-    /// Handler for: `eth_blockNumber`
+    /// Handler for: `sil_blockNumber`
     fn block_number(&self) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", "Serving eth_blockNumber");
+        trace!(target: "rpc::sil", "Serving sil_blockNumber");
         Ok(U256::from(
             SilApiSpec::chain_info(self).with_message("failed to read chain info")?.best_number,
         ))
     }
 
-    /// Handler for: `eth_chainId`
+    /// Handler for: `sil_chainId`
     async fn chain_id(&self) -> RpcResult<Option<U64>> {
-        trace!(target: "rpc::sil", "Serving eth_chainId");
+        trace!(target: "rpc::sil", "Serving sil_chainId");
         Ok(Some(SilApiSpec::chain_id(self)))
     }
 
-    /// Handler for: `eth_capabilities`
+    /// Handler for: `sil_capabilities`
     fn capabilities(&self) -> RpcResult<SilCapabilities> {
-        trace!(target: "rpc::sil", "Serving eth_capabilities");
+        trace!(target: "rpc::sil", "Serving sil_capabilities");
         SilApiSpec::capabilities(self).to_rpc_result()
     }
 
-    /// Handler for: `eth_getBlockByHash`
+    /// Handler for: `sil_getBlockByHash`
     async fn block_by_hash(
         &self,
         hash: B256,
         full: bool,
     ) -> RpcResult<Option<RpcBlock<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?hash, ?full, "Serving eth_getBlockByHash");
+        trace!(target: "rpc::sil", ?hash, ?full, "Serving sil_getBlockByHash");
         Ok(SilBlocks::rpc_block(self, hash.into(), full).await?)
     }
 
-    /// Handler for: `eth_getBlockByNumber`
+    /// Handler for: `sil_getBlockByNumber`
     async fn block_by_number(
         &self,
         number: BlockNumberOrTag,
         full: bool,
     ) -> RpcResult<Option<RpcBlock<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?number, ?full, "Serving eth_getBlockByNumber");
+        trace!(target: "rpc::sil", ?number, ?full, "Serving sil_getBlockByNumber");
         Ok(SilBlocks::rpc_block(self, number.into(), full).await?)
     }
 
-    /// Handler for: `eth_getBlockTransactionCountByHash`
+    /// Handler for: `sil_getBlockTransactionCountByHash`
     async fn block_transaction_count_by_hash(&self, hash: B256) -> RpcResult<Option<U256>> {
-        trace!(target: "rpc::sil", ?hash, "Serving eth_getBlockTransactionCountByHash");
+        trace!(target: "rpc::sil", ?hash, "Serving sil_getBlockTransactionCountByHash");
         Ok(SilBlocks::block_transaction_count(self, hash.into()).await?.map(U256::from))
     }
 
-    /// Handler for: `eth_getBlockTransactionCountByNumber`
+    /// Handler for: `sil_getBlockTransactionCountByNumber`
     async fn block_transaction_count_by_number(
         &self,
         number: BlockNumberOrTag,
     ) -> RpcResult<Option<U256>> {
-        trace!(target: "rpc::sil", ?number, "Serving eth_getBlockTransactionCountByNumber");
+        trace!(target: "rpc::sil", ?number, "Serving sil_getBlockTransactionCountByNumber");
         Ok(SilBlocks::block_transaction_count(self, number.into()).await?.map(U256::from))
     }
 
-    /// Handler for: `eth_getUncleCountByBlockHash`
+    /// Handler for: `sil_getUncleCountByBlockHash`
     async fn block_uncles_count_by_hash(&self, hash: B256) -> RpcResult<Option<U256>> {
-        trace!(target: "rpc::sil", ?hash, "Serving eth_getUncleCountByBlockHash");
+        trace!(target: "rpc::sil", ?hash, "Serving sil_getUncleCountByBlockHash");
 
         if let Some(block) = self.block_by_hash(hash, false).await? {
             Ok(Some(U256::from(block.uncles.len())))
@@ -548,12 +548,12 @@ where
         }
     }
 
-    /// Handler for: `eth_getUncleCountByBlockNumber`
+    /// Handler for: `sil_getUncleCountByBlockNumber`
     async fn block_uncles_count_by_number(
         &self,
         number: BlockNumberOrTag,
     ) -> RpcResult<Option<U256>> {
-        trace!(target: "rpc::sil", ?number, "Serving eth_getUncleCountByBlockNumber");
+        trace!(target: "rpc::sil", ?number, "Serving sil_getUncleCountByBlockNumber");
 
         if let Some(block) = self.block_by_number(number, false).await? {
             Ok(Some(U256::from(block.uncles.len())))
@@ -562,47 +562,47 @@ where
         }
     }
 
-    /// Handler for: `eth_getBlockReceipts`
+    /// Handler for: `sil_getBlockReceipts`
     async fn block_receipts(
         &self,
         block_id: BlockId,
     ) -> RpcResult<Option<Vec<RpcReceipt<T::NetworkTypes>>>> {
-        trace!(target: "rpc::sil", ?block_id, "Serving eth_getBlockReceipts");
+        trace!(target: "rpc::sil", ?block_id, "Serving sil_getBlockReceipts");
         Ok(SilBlocks::block_receipts(self, block_id).await?)
     }
 
-    /// Handler for: `eth_getUncleByBlockHashAndIndex`
+    /// Handler for: `sil_getUncleByBlockHashAndIndex`
     async fn uncle_by_block_hash_and_index(
         &self,
         hash: B256,
         index: Index,
     ) -> RpcResult<Option<RpcBlock<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?hash, ?index, "Serving eth_getUncleByBlockHashAndIndex");
+        trace!(target: "rpc::sil", ?hash, ?index, "Serving sil_getUncleByBlockHashAndIndex");
         Ok(SilBlocks::ommer_by_block_and_index(self, hash.into(), index).await?)
     }
 
-    /// Handler for: `eth_getUncleByBlockNumberAndIndex`
+    /// Handler for: `sil_getUncleByBlockNumberAndIndex`
     async fn uncle_by_block_number_and_index(
         &self,
         number: BlockNumberOrTag,
         index: Index,
     ) -> RpcResult<Option<RpcBlock<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?number, ?index, "Serving eth_getUncleByBlockNumberAndIndex");
+        trace!(target: "rpc::sil", ?number, ?index, "Serving sil_getUncleByBlockNumberAndIndex");
         Ok(SilBlocks::ommer_by_block_and_index(self, number.into(), index).await?)
     }
 
-    /// Handler for: `eth_getRawTransactionByHash`
+    /// Handler for: `sil_getRawTransactionByHash`
     async fn raw_transaction_by_hash(&self, hash: B256) -> RpcResult<Option<Bytes>> {
-        trace!(target: "rpc::sil", ?hash, "Serving eth_getRawTransactionByHash");
+        trace!(target: "rpc::sil", ?hash, "Serving sil_getRawTransactionByHash");
         Ok(SilTransactions::raw_transaction_by_hash(self, hash).await?)
     }
 
-    /// Handler for: `eth_getTransactionByHash`
+    /// Handler for: `sil_getTransactionByHash`
     async fn transaction_by_hash(
         &self,
         hash: B256,
     ) -> RpcResult<Option<RpcTransaction<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?hash, "Serving eth_getTransactionByHash");
+        trace!(target: "rpc::sil", ?hash, "Serving sil_getTransactionByHash");
         Ok(SilTransactions::transaction_by_hash(self, hash)
             .await?
             .map(|tx| tx.into_transaction(self.converter()))
@@ -610,35 +610,35 @@ where
             .map_err(T::Error::from)?)
     }
 
-    /// Handler for: `eth_getRawTransactionByBlockHashAndIndex`
+    /// Handler for: `sil_getRawTransactionByBlockHashAndIndex`
     async fn raw_transaction_by_block_hash_and_index(
         &self,
         hash: B256,
         index: Index,
     ) -> RpcResult<Option<Bytes>> {
-        trace!(target: "rpc::sil", ?hash, ?index, "Serving eth_getRawTransactionByBlockHashAndIndex");
+        trace!(target: "rpc::sil", ?hash, ?index, "Serving sil_getRawTransactionByBlockHashAndIndex");
         Ok(SilTransactions::raw_transaction_by_block_and_tx_index(self, hash.into(), index.into())
             .await?)
     }
 
-    /// Handler for: `eth_getTransactionByBlockHashAndIndex`
+    /// Handler for: `sil_getTransactionByBlockHashAndIndex`
     async fn transaction_by_block_hash_and_index(
         &self,
         hash: B256,
         index: Index,
     ) -> RpcResult<Option<RpcTransaction<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?hash, ?index, "Serving eth_getTransactionByBlockHashAndIndex");
+        trace!(target: "rpc::sil", ?hash, ?index, "Serving sil_getTransactionByBlockHashAndIndex");
         Ok(SilTransactions::transaction_by_block_and_tx_index(self, hash.into(), index.into())
             .await?)
     }
 
-    /// Handler for: `eth_getRawTransactionByBlockNumberAndIndex`
+    /// Handler for: `sil_getRawTransactionByBlockNumberAndIndex`
     async fn raw_transaction_by_block_number_and_index(
         &self,
         number: BlockNumberOrTag,
         index: Index,
     ) -> RpcResult<Option<Bytes>> {
-        trace!(target: "rpc::sil", ?number, ?index, "Serving eth_getRawTransactionByBlockNumberAndIndex");
+        trace!(target: "rpc::sil", ?number, ?index, "Serving sil_getRawTransactionByBlockNumberAndIndex");
         Ok(SilTransactions::raw_transaction_by_block_and_tx_index(
             self,
             number.into(),
@@ -647,113 +647,113 @@ where
         .await?)
     }
 
-    /// Handler for: `eth_getTransactionByBlockNumberAndIndex`
+    /// Handler for: `sil_getTransactionByBlockNumberAndIndex`
     async fn transaction_by_block_number_and_index(
         &self,
         number: BlockNumberOrTag,
         index: Index,
     ) -> RpcResult<Option<RpcTransaction<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?number, ?index, "Serving eth_getTransactionByBlockNumberAndIndex");
+        trace!(target: "rpc::sil", ?number, ?index, "Serving sil_getTransactionByBlockNumberAndIndex");
         Ok(SilTransactions::transaction_by_block_and_tx_index(self, number.into(), index.into())
             .await?)
     }
 
-    /// Handler for: `eth_getTransactionBySenderAndNonce`
+    /// Handler for: `sil_getTransactionBySenderAndNonce`
     async fn transaction_by_sender_and_nonce(
         &self,
         sender: Address,
         nonce: U64,
     ) -> RpcResult<Option<RpcTransaction<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?sender, ?nonce, "Serving eth_getTransactionBySenderAndNonce");
+        trace!(target: "rpc::sil", ?sender, ?nonce, "Serving sil_getTransactionBySenderAndNonce");
         Ok(SilTransactions::get_transaction_by_sender_and_nonce(self, sender, nonce.to(), true)
             .await?)
     }
 
-    /// Handler for: `eth_pendingTransactions`
+    /// Handler for: `sil_pendingTransactions`
     fn pending_transactions(&self) -> RpcResult<Vec<RpcTransaction<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", "Serving eth_pendingTransactions");
+        trace!(target: "rpc::sil", "Serving sil_pendingTransactions");
         Ok(SilTransactions::pending_transactions(self)?)
     }
 
-    /// Handler for: `eth_getTransactionReceipt`
+    /// Handler for: `sil_getTransactionReceipt`
     async fn transaction_receipt(
         &self,
         hash: B256,
     ) -> RpcResult<Option<RpcReceipt<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?hash, "Serving eth_getTransactionReceipt");
+        trace!(target: "rpc::sil", ?hash, "Serving sil_getTransactionReceipt");
         Ok(SilTransactions::transaction_receipt(self, hash).await?)
     }
 
-    /// Handler for: `eth_getBalance`
+    /// Handler for: `sil_getBalance`
     async fn balance(&self, address: Address, block_number: Option<BlockId>) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", ?address, ?block_number, "Serving eth_getBalance");
+        trace!(target: "rpc::sil", ?address, ?block_number, "Serving sil_getBalance");
         Ok(SilState::balance(self, address, block_number).await?)
     }
 
-    /// Handler for: `eth_getStorageAt`
+    /// Handler for: `sil_getStorageAt`
     async fn storage_at(
         &self,
         address: Address,
         index: JsonStorageKey,
         block_number: Option<BlockId>,
     ) -> RpcResult<B256> {
-        trace!(target: "rpc::sil", ?address, ?block_number, "Serving eth_getStorageAt");
+        trace!(target: "rpc::sil", ?address, ?block_number, "Serving sil_getStorageAt");
         Ok(SilState::storage_at(self, address, index, block_number).await?)
     }
 
-    /// Handler for: `eth_getStorageValues`
+    /// Handler for: `sil_getStorageValues`
     async fn storage_values(
         &self,
         requests: HashMap<Address, Vec<JsonStorageKey>>,
         block_number: Option<BlockId>,
     ) -> RpcResult<HashMap<Address, Vec<B256>>> {
-        trace!(target: "rpc::sil", ?block_number, "Serving eth_getStorageValues");
+        trace!(target: "rpc::sil", ?block_number, "Serving sil_getStorageValues");
         Ok(SilState::storage_values(self, requests, block_number).await?)
     }
 
-    /// Handler for: `eth_getTransactionCount`
+    /// Handler for: `sil_getTransactionCount`
     async fn transaction_count(
         &self,
         address: Address,
         block_number: Option<BlockId>,
     ) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", ?address, ?block_number, "Serving eth_getTransactionCount");
+        trace!(target: "rpc::sil", ?address, ?block_number, "Serving sil_getTransactionCount");
         Ok(SilState::transaction_count(self, address, block_number).await?)
     }
 
-    /// Handler for: `eth_getCode`
+    /// Handler for: `sil_getCode`
     async fn get_code(&self, address: Address, block_number: Option<BlockId>) -> RpcResult<Bytes> {
-        trace!(target: "rpc::sil", ?address, ?block_number, "Serving eth_getCode");
+        trace!(target: "rpc::sil", ?address, ?block_number, "Serving sil_getCode");
         Ok(SilState::get_code(self, address, block_number).await?)
     }
 
-    /// Handler for: `eth_getHeaderByNumber`
+    /// Handler for: `sil_getHeaderByNumber`
     async fn header_by_number(
         &self,
         block_number: BlockNumberOrTag,
     ) -> RpcResult<Option<RpcHeader<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?block_number, "Serving eth_getHeaderByNumber");
+        trace!(target: "rpc::sil", ?block_number, "Serving sil_getHeaderByNumber");
         Ok(SilBlocks::rpc_block_header(self, block_number.into()).await?)
     }
 
-    /// Handler for: `eth_getHeaderByHash`
+    /// Handler for: `sil_getHeaderByHash`
     async fn header_by_hash(&self, hash: B256) -> RpcResult<Option<RpcHeader<T::NetworkTypes>>> {
-        trace!(target: "rpc::sil", ?hash, "Serving eth_getHeaderByHash");
+        trace!(target: "rpc::sil", ?hash, "Serving sil_getHeaderByHash");
         Ok(SilBlocks::rpc_block_header(self, hash.into()).await?)
     }
 
-    /// Handler for: `eth_simulateV1`
+    /// Handler for: `sil_simulateV1`
     async fn simulate_v1(
         &self,
         payload: SimulatePayload<RpcTxReq<T::NetworkTypes>>,
         block_number: Option<BlockId>,
     ) -> RpcResult<Vec<SimulatedBlock<RpcBlock<T::NetworkTypes>>>> {
-        trace!(target: "rpc::sil", ?block_number, "Serving eth_simulateV1");
+        trace!(target: "rpc::sil", ?block_number, "Serving sil_simulateV1");
         let _permit = self.tracing_task_guard().clone().acquire_owned().await;
         Ok(SilCall::simulate_v1(self, payload, block_number).await?)
     }
 
-    /// Handler for: `eth_call`
+    /// Handler for: `sil_call`
     async fn call(
         &self,
         request: RpcTxReq<T::NetworkTypes>,
@@ -761,7 +761,7 @@ where
         state_overrides: Option<StateOverride>,
         block_overrides: Option<Box<BlockOverrides>>,
     ) -> RpcResult<Bytes> {
-        trace!(target: "rpc::sil", ?request, ?block_number, ?state_overrides, ?block_overrides, "Serving eth_call");
+        trace!(target: "rpc::sil", ?request, ?block_number, ?state_overrides, ?block_overrides, "Serving sil_call");
         Ok(SilCall::call(
             self,
             request,
@@ -771,38 +771,38 @@ where
         .await?)
     }
 
-    /// Handler for: `eth_fillTransaction`
+    /// Handler for: `sil_fillTransaction`
     async fn fill_transaction(
         &self,
         request: RpcTxReq<T::NetworkTypes>,
     ) -> RpcResult<FillTransaction<TxTy<T::Primitives>>> {
-        trace!(target: "rpc::sil", ?request, "Serving eth_fillTransaction");
+        trace!(target: "rpc::sil", ?request, "Serving sil_fillTransaction");
         Ok(SilTransactions::fill_transaction(self, request).await?)
     }
 
-    /// Handler for: `eth_callMany`
+    /// Handler for: `sil_callMany`
     async fn call_many(
         &self,
         bundles: Vec<Bundle<RpcTxReq<T::NetworkTypes>>>,
         state_context: Option<StateContext>,
         state_override: Option<StateOverride>,
     ) -> RpcResult<Vec<Vec<SilCallResponse>>> {
-        trace!(target: "rpc::sil", ?bundles, ?state_context, ?state_override, "Serving eth_callMany");
+        trace!(target: "rpc::sil", ?bundles, ?state_context, ?state_override, "Serving sil_callMany");
         Ok(SilCall::call_many(self, bundles, state_context, state_override).await?)
     }
 
-    /// Handler for: `eth_createAccessList`
+    /// Handler for: `sil_createAccessList`
     async fn create_access_list(
         &self,
         request: RpcTxReq<T::NetworkTypes>,
         block_number: Option<BlockId>,
         state_override: Option<StateOverride>,
     ) -> RpcResult<AccessListResult> {
-        trace!(target: "rpc::sil", ?request, ?block_number, ?state_override, "Serving eth_createAccessList");
+        trace!(target: "rpc::sil", ?request, ?block_number, ?state_override, "Serving sil_createAccessList");
         Ok(SilCall::create_access_list_at(self, request, block_number, state_override).await?)
     }
 
-    /// Handler for: `eth_estimateGas`
+    /// Handler for: `sil_estimateGas`
     async fn estimate_gas(
         &self,
         request: RpcTxReq<T::NetworkTypes>,
@@ -810,7 +810,7 @@ where
         state_override: Option<StateOverride>,
         block_overrides: Option<Box<BlockOverrides>>,
     ) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", ?request, ?block_number, "Serving eth_estimateGas");
+        trace!(target: "rpc::sil", ?request, ?block_number, "Serving sil_estimateGas");
         Ok(SilCall::estimate_gas_at(
             self,
             request,
@@ -820,37 +820,37 @@ where
         .await?)
     }
 
-    /// Handler for: `eth_gasPrice`
+    /// Handler for: `sil_gasPrice`
     async fn gas_price(&self) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", "Serving eth_gasPrice");
+        trace!(target: "rpc::sil", "Serving sil_gasPrice");
         Ok(SilFees::gas_price(self).await?)
     }
 
-    /// Handler for: `eth_getAccount`
+    /// Handler for: `sil_getAccount`
     async fn get_account(
         &self,
         address: Address,
         block: BlockId,
     ) -> RpcResult<Option<alloy_rpc_types_eth::Account>> {
-        trace!(target: "rpc::sil", "Serving eth_getAccount");
+        trace!(target: "rpc::sil", "Serving sil_getAccount");
         Ok(SilState::get_account(self, address, block).await?)
     }
 
-    /// Handler for: `eth_maxPriorityFeePerGas`
+    /// Handler for: `sil_maxPriorityFeePerGas`
     async fn max_priority_fee_per_gas(&self) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", "Serving eth_maxPriorityFeePerGas");
+        trace!(target: "rpc::sil", "Serving sil_maxPriorityFeePerGas");
         Ok(SilFees::suggested_priority_fee(self).await?)
     }
 
-    /// Handler for: `eth_blobBaseFee`
+    /// Handler for: `sil_blobBaseFee`
     async fn blob_base_fee(&self) -> RpcResult<U256> {
-        trace!(target: "rpc::sil", "Serving eth_blobBaseFee");
+        trace!(target: "rpc::sil", "Serving sil_blobBaseFee");
         Ok(SilFees::blob_base_fee(self).await?)
     }
 
-    /// Handler for: `eth_baseFee`
+    /// Handler for: `sil_baseFee`
     async fn base_fee(&self) -> RpcResult<Option<U256>> {
-        trace!(target: "rpc::sil", "Serving eth_baseFee");
+        trace!(target: "rpc::sil", "Serving sil_baseFee");
         Ok(SilFees::base_fee(self).await?)
     }
 
@@ -862,38 +862,38 @@ where
     // To minimize the number of database seeks required to query the missing data, we calculate the
     // first non-cached block number and last non-cached block number. After that, we query this
     // range of consecutive blocks from the database.
-    /// Handler for: `eth_feeHistory`
+    /// Handler for: `sil_feeHistory`
     async fn fee_history(
         &self,
         block_count: U64,
         newest_block: BlockNumberOrTag,
         reward_percentiles: Option<Vec<f64>>,
     ) -> RpcResult<FeeHistory> {
-        trace!(target: "rpc::sil", ?block_count, ?newest_block, ?reward_percentiles, "Serving eth_feeHistory");
+        trace!(target: "rpc::sil", ?block_count, ?newest_block, ?reward_percentiles, "Serving sil_feeHistory");
         Ok(SilFees::fee_history(self, block_count.to(), newest_block, reward_percentiles).await?)
     }
 
-    /// Handler for: `eth_mining`
+    /// Handler for: `sil_mining`
     async fn is_mining(&self) -> RpcResult<bool> {
         Err(internal_rpc_err("unimplemented"))
     }
 
-    /// Handler for: `eth_hashrate`
+    /// Handler for: `sil_hashrate`
     async fn hashrate(&self) -> RpcResult<U256> {
         Ok(U256::ZERO)
     }
 
-    /// Handler for: `eth_getWork`
+    /// Handler for: `sil_getWork`
     async fn get_work(&self) -> RpcResult<Work> {
         Err(internal_rpc_err("unimplemented"))
     }
 
-    /// Handler for: `eth_submitHashrate`
+    /// Handler for: `sil_submitHashrate`
     async fn submit_hashrate(&self, _hashrate: U256, _id: B256) -> RpcResult<bool> {
         Ok(false)
     }
 
-    /// Handler for: `eth_submitWork`
+    /// Handler for: `sil_submitWork`
     async fn submit_work(
         &self,
         _nonce: B64,
@@ -903,70 +903,70 @@ where
         Err(internal_rpc_err("unimplemented"))
     }
 
-    /// Handler for: `eth_sendTransaction`
+    /// Handler for: `sil_sendTransaction`
     async fn send_transaction(&self, request: RpcTxReq<T::NetworkTypes>) -> RpcResult<B256> {
-        trace!(target: "rpc::sil", ?request, "Serving eth_sendTransaction");
+        trace!(target: "rpc::sil", ?request, "Serving sil_sendTransaction");
         Ok(SilTransactions::send_transaction_request(self, request).await?)
     }
 
-    /// Handler for: `eth_sendRawTransaction`
+    /// Handler for: `sil_sendRawTransaction`
     async fn send_raw_transaction(&self, tx: Bytes) -> RpcResult<B256> {
-        trace!(target: "rpc::sil", ?tx, "Serving eth_sendRawTransaction");
+        trace!(target: "rpc::sil", ?tx, "Serving sil_sendRawTransaction");
         Ok(SilTransactions::send_raw_transaction(self, tx).await?)
     }
 
-    /// Handler for: `eth_sendRawTransactionSync`
+    /// Handler for: `sil_sendRawTransactionSync`
     async fn send_raw_transaction_sync(
         &self,
         tx: Bytes,
         timeout_ms: Option<u64>,
     ) -> RpcResult<RpcReceipt<T::NetworkTypes>> {
-        trace!(target: "rpc::sil", ?tx, ?timeout_ms, "Serving eth_sendRawTransactionSync");
+        trace!(target: "rpc::sil", ?tx, ?timeout_ms, "Serving sil_sendRawTransactionSync");
         Ok(SilTransactions::send_raw_transaction_sync(self, tx, timeout_ms).await?)
     }
 
-    /// Handler for: `eth_sign`
+    /// Handler for: `sil_sign`
     async fn sign(&self, address: Address, message: Bytes) -> RpcResult<Bytes> {
-        trace!(target: "rpc::sil", ?address, ?message, "Serving eth_sign");
+        trace!(target: "rpc::sil", ?address, ?message, "Serving sil_sign");
         Ok(SilTransactions::sign(self, address, message).await?)
     }
 
-    /// Handler for: `eth_signTransaction`
+    /// Handler for: `sil_signTransaction`
     async fn sign_transaction(&self, request: RpcTxReq<T::NetworkTypes>) -> RpcResult<Bytes> {
-        trace!(target: "rpc::sil", ?request, "Serving eth_signTransaction");
+        trace!(target: "rpc::sil", ?request, "Serving sil_signTransaction");
         Ok(SilTransactions::sign_transaction(self, request).await?)
     }
 
-    /// Handler for: `eth_signTypedData`
+    /// Handler for: `sil_signTypedData`
     async fn sign_typed_data(&self, address: Address, data: TypedData) -> RpcResult<Bytes> {
-        trace!(target: "rpc::sil", ?address, ?data, "Serving eth_signTypedData");
+        trace!(target: "rpc::sil", ?address, ?data, "Serving sil_signTypedData");
         Ok(SilTransactions::sign_typed_data(self, &data, address)?)
     }
 
-    /// Handler for: `eth_getProof`
+    /// Handler for: `sil_getProof`
     async fn get_proof(
         &self,
         address: Address,
         keys: Vec<JsonStorageKey>,
         block_number: Option<BlockId>,
     ) -> RpcResult<SIP1186AccountProofResponse> {
-        trace!(target: "rpc::sil", ?address, ?keys, ?block_number, "Serving eth_getProof");
+        trace!(target: "rpc::sil", ?address, ?keys, ?block_number, "Serving sil_getProof");
         Ok(SilState::get_proof(self, address, keys, block_number)?.await?)
     }
 
-    /// Handler for: `eth_getAccountInfo`
+    /// Handler for: `sil_getAccountInfo`
     async fn get_account_info(
         &self,
         address: Address,
         block: BlockId,
     ) -> RpcResult<alloy_rpc_types_eth::AccountInfo> {
-        trace!(target: "rpc::sil", "Serving eth_getAccountInfo");
+        trace!(target: "rpc::sil", "Serving sil_getAccountInfo");
         Ok(SilState::get_account_info(self, address, block).await?)
     }
 
-    /// Handler for: `eth_getBlockAccessListByBlockHash`
+    /// Handler for: `sil_getBlockAccessListByBlockHash`
     async fn block_access_list_by_block_hash(&self, block_hash: B256) -> RpcResult<Option<Value>> {
-        trace!(target: "rpc::sil", ?block_hash, "Serving eth_getBlockAccessListByBlockHash");
+        trace!(target: "rpc::sil", ?block_hash, "Serving sil_getBlockAccessListByBlockHash");
 
         let bal = self.get_block_access_list(block_hash.into()).await?;
         let json = serde_json::to_value(&bal)
@@ -975,12 +975,12 @@ where
         Ok(Some(json))
     }
 
-    /// Handler for: `eth_getBlockAccessListByBlockNumber`
+    /// Handler for: `sil_getBlockAccessListByBlockNumber`
     async fn block_access_list_by_block_number(
         &self,
         number: BlockNumberOrTag,
     ) -> RpcResult<Option<Value>> {
-        trace!(target: "rpc::sil", ?number, "Serving eth_getBlockAccessListByBlockNumber");
+        trace!(target: "rpc::sil", ?number, "Serving sil_getBlockAccessListByBlockNumber");
 
         let bal = self.get_block_access_list(number.into()).await?;
         let json = serde_json::to_value(&bal)
@@ -989,9 +989,9 @@ where
         Ok(Some(json))
     }
 
-    /// Handler for: `eth_getBlockAccessList`
+    /// Handler for: `sil_getBlockAccessList`
     async fn block_access_list(&self, block_id: BlockId) -> RpcResult<Option<Value>> {
-        trace!(target: "rpc::sil", ?block_id, "Serving eth_getBlockAccessList");
+        trace!(target: "rpc::sil", ?block_id, "Serving sil_getBlockAccessList");
 
         let bal = self.get_block_access_list(block_id).await?;
         let json = serde_json::to_value(&bal)
@@ -1000,9 +1000,9 @@ where
         Ok(Some(json))
     }
 
-    /// Handler for: `eth_getBlockAccessListRaw`
+    /// Handler for: `sil_getBlockAccessListRaw`
     async fn block_access_list_raw(&self, block: BlockId) -> RpcResult<Option<Bytes>> {
-        trace!(target: "rpc::sil", ?block, "Serving eth_getBlockAccessListRaw");
+        trace!(target: "rpc::sil", ?block, "Serving sil_getBlockAccessListRaw");
 
         Ok(self.get_raw_block_access_list(block).await?)
     }

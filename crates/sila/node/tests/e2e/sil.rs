@@ -1,4 +1,4 @@
-use crate::utils::{advance_with_random_transactions, eth_payload_attributes};
+use crate::utils::{advance_with_random_transactions, sil_payload_attributes};
 use alloy_eips::{sip4844::BlobAndProofV1, sip7685::RequestsOrHash};
 use alloy_genesis::Genesis;
 use alloy_primitives::{Address, B256};
@@ -40,7 +40,7 @@ const ENGINE_CAPABILITIES_ROUTE: &str = "/engine/v1/capabilities";
 const ENGINE_IDENTITY_ROUTE: &str = "/engine/v1/identity";
 
 #[tokio::test]
-async fn can_run_eth_node() -> eyre::Result<()> {
+async fn can_run_sila_node() -> eyre::Result<()> {
     rsil_tracing::init_test_tracing();
 
     let (mut nodes, wallet) = setup::<SilaNode>(
@@ -53,7 +53,7 @@ async fn can_run_eth_node() -> eyre::Result<()> {
                 .build(),
         ),
         false,
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -77,7 +77,7 @@ async fn can_run_eth_node() -> eyre::Result<()> {
 
 #[tokio::test]
 #[cfg(unix)]
-async fn can_run_eth_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
+async fn can_run_sila_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
     rsil_tracing::init_test_tracing();
     let runtime = Runtime::test();
 
@@ -101,7 +101,7 @@ async fn can_run_eth_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
         .node(SilaNode::default())
         .launch()
         .await?;
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     // Configure wallet from test mnemonic and create dummy transfer tx
     let wallet = Wallet::default();
@@ -124,7 +124,7 @@ async fn can_run_eth_node_with_auth_engine_api_over_ipc() -> eyre::Result<()> {
 
 #[tokio::test]
 #[cfg(unix)]
-async fn test_failed_run_eth_node_with_no_auth_engine_api_over_ipc_opts() -> eyre::Result<()> {
+async fn test_failed_run_sila_node_with_no_auth_engine_api_over_ipc_opts() -> eyre::Result<()> {
     rsil_tracing::init_test_tracing();
     let runtime = Runtime::test();
 
@@ -146,7 +146,7 @@ async fn test_failed_run_eth_node_with_no_auth_engine_api_over_ipc_opts() -> eyr
         .launch()
         .await?;
 
-    let node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     // Ensure that the engine api client is not available
     let client = node.inner.engine_ipc_client().await;
@@ -169,7 +169,7 @@ async fn test_engine_graceful_shutdown() -> eyre::Result<()> {
                 .build(),
         ),
         false,
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -214,7 +214,11 @@ async fn test_testing_build_block_v1_osaka() -> eyre::Result<()> {
 
     let genesis: Genesis = serde_json::from_str(include_str!("../assets/genesis.json")).unwrap();
     let chain_spec = Arc::new(
-        ChainSpecBuilder::default().chain(SILA_MAINNET.chain).genesis(genesis).osaka_activated().build(),
+        ChainSpecBuilder::default()
+            .chain(SILA_MAINNET.chain)
+            .genesis(genesis)
+            .osaka_activated()
+            .build(),
     );
     let genesis_hash = chain_spec.genesis_hash();
 
@@ -232,7 +236,7 @@ async fn test_testing_build_block_v1_osaka() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallet = Wallet::default();
     let raw_tx = TransactionTestContext::transfer_tx_bytes(1, wallet.inner).await;
@@ -321,7 +325,7 @@ async fn test_engine_ssz_proxy_can_mine_block() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallets = Wallet::new(2).wallet_gen();
     let raw_tx = TransactionTestContext::transfer_tx_bytes(1, wallets[0].clone()).await;
@@ -503,7 +507,7 @@ async fn test_share_sparse_trie_with_payload_builder() -> eyre::Result<()> {
         ),
         false,
         tree_config,
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -549,7 +553,7 @@ async fn test_sparse_trie_reuse_across_blocks() -> eyre::Result<()> {
         ),
         false,
         tree_config,
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 

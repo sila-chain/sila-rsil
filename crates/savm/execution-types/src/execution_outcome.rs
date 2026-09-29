@@ -1,17 +1,17 @@
 use crate::{BlockExecutionOutput, BlockExecutionResult};
 use alloc::{vec, vec::Vec};
-use alloy_eips::sip7685::Requests;
 use alloy_primitives::{
     logs_bloom,
     map::{AddressMap, B256Map, HashMap},
     Address, BlockNumber, Bloom, Log, B256, U256,
 };
-use rsil_primitives_traits::{Account, Bytecode, Receipt, StorageEntry};
-use rsil_trie_common::{HashedPostState, KeyHasher};
+use alloy_sips::eip7685::Requests;
 use revm::{
     database::{states::BundleState, BundleAccount},
     state::AccountInfo,
 };
+use rsil_primitives_traits::{Account, Bytecode, Receipt, StorageEntry};
+use rsil_trie_common::{HashedPostState, KeyHasher};
 
 /// Type used to initialize revms bundle state.
 pub type BundleStateInit = AddressMap<(Option<Account>, Option<Account>, B256Map<(U256, U256)>)>;
@@ -216,11 +216,11 @@ impl<T> ExecutionOutcome<T> {
     /// Transform block number to the index of block.
     pub const fn block_number_to_index(&self, block_number: BlockNumber) -> Option<usize> {
         if self.first_block > block_number {
-            return None
+            return None;
         }
         let index = block_number - self.first_block;
         if index >= self.receipts.len() as u64 {
-            return None
+            return None;
         }
         Some(index as usize)
     }
@@ -317,7 +317,7 @@ impl<T> ExecutionOutcome<T> {
         T: Clone,
     {
         if at == self.first_block {
-            return (None, self)
+            return (None, self);
         }
 
         let (mut lower_state, mut higher_state) = (self.clone(), self);
@@ -425,10 +425,10 @@ impl<T> From<(BlockExecutionOutput<T>, BlockNumber)> for ExecutionOutcome<T> {
 #[cfg(feature = "serde-bincode-compat")]
 pub(super) mod serde_bincode_compat {
     use alloc::{borrow::Cow, vec::Vec};
-    use alloy_eips::sip7685::Requests;
     use alloy_primitives::{BlockNumber, Bytes};
-    use rsil_primitives_traits::Receipt;
+    use alloy_sips::eip7685::Requests;
     use revm::database::BundleState;
+    use rsil_primitives_traits::Receipt;
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
     use serde_with::{DeserializeAs, SerializeAs};
 

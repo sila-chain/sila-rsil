@@ -7,7 +7,7 @@
 //!
 //! - `connection`: `WebSocket` connection management and utilities
 //! - `error`: Error types for connection and `SilStats` operations
-//! - `ethstats`: Main service logic for `SilStats` client
+//! - `silstats`: Main service logic for `SilStats` client
 //! - `events`: Data structures for `SilStats` protocol messages
 
 #![doc(
@@ -23,8 +23,8 @@ mod credentials;
 
 mod error;
 
-mod ethstats;
-pub use ethstats::*;
+mod silstats;
+pub use silstats::*;
 
 mod events;
 pub use events::*;

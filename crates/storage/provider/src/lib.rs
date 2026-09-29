@@ -41,13 +41,13 @@ pub use either_writer::*;
 mod bal;
 pub use bal::{BalConfig, InMemoryBalStore};
 
+/// Re-export `OriginalValuesKnown`
+pub use revm::database::states::OriginalValuesKnown;
 pub use rsil_chain_state::{
     CanonStateNotification, CanonStateNotificationSender, CanonStateNotificationStream,
     CanonStateNotifications, CanonStateSubscriptions,
 };
 pub use rsil_execution_types::*;
-/// Re-export `OriginalValuesKnown`
-pub use revm::database::states::OriginalValuesKnown;
 // reexport traits to avoid breaking changes
 pub use rsil_static_file_types as static_file;
 pub use rsil_storage_api::{

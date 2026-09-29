@@ -1,15 +1,15 @@
-use crate::utils::eth_payload_attributes;
+use crate::utils::sil_payload_attributes;
 use alloy_eips::Decodable2718;
 use alloy_genesis::Genesis;
 use rsil_chainspec::{ChainSpecBuilder, SILA_MAINNET};
 use rsil_e2e_test_utils::{
     node::NodeTestContext, transaction::TransactionTestContext, wallet::Wallet,
 };
-use rsil_sila_engine_primitives::BlobSidecars;
-use rsil_sila_primitives::PooledTransactionVariant;
 use rsil_node_builder::{NodeBuilder, NodeHandle};
 use rsil_node_core::{args::RpcServerArgs, node_config::NodeConfig};
 use rsil_node_sila::SilaNode;
+use rsil_sila_engine_primitives::BlobSidecars;
+use rsil_sila_primitives::PooledTransactionVariant;
 use rsil_tasks::Runtime;
 use rsil_transaction_pool::TransactionPool;
 use std::{
@@ -41,7 +41,7 @@ async fn can_handle_blobs() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallets = Wallet::new(2).wallet_gen();
     let blob_wallet = wallets.first().unwrap();
@@ -95,7 +95,11 @@ async fn can_send_legacy_sidecar_post_activation() -> eyre::Result<()> {
 
     let genesis: Genesis = serde_json::from_str(include_str!("../assets/genesis.json")).unwrap();
     let chain_spec = Arc::new(
-        ChainSpecBuilder::default().chain(SILA_MAINNET.chain).genesis(genesis).osaka_activated().build(),
+        ChainSpecBuilder::default()
+            .chain(SILA_MAINNET.chain)
+            .genesis(genesis)
+            .osaka_activated()
+            .build(),
     );
     let genesis_hash = chain_spec.genesis_hash();
     let node_config = NodeConfig::test().with_chain(chain_spec).with_unused_ports().with_rpc(
@@ -110,7 +114,7 @@ async fn can_send_legacy_sidecar_post_activation() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let wallets = Wallet::new(2).wallet_gen();
     let blob_wallet = wallets.first().unwrap();
@@ -172,7 +176,7 @@ async fn blob_conversion_at_osaka() -> eyre::Result<()> {
         .launch()
         .await?;
 
-    let mut node = NodeTestContext::new(node, eth_payload_attributes).await?;
+    let mut node = NodeTestContext::new(node, sil_payload_attributes).await?;
 
     let mut wallets = Wallet::new(3).wallet_gen();
     let first = wallets.pop().unwrap();

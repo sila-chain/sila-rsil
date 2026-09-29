@@ -13,11 +13,12 @@
 #![warn(unused_crate_dependencies)]
 
 use futures::StreamExt;
+use rsil_metrics::common::mpsc::memory_bounded_channel;
 use rsil_sila::{
     chainspec::DEV,
     network::{
         config::rng_secret_key,
-        eth_requests::IncomingEthRequest,
+        sil_requests::IncomingSilRequest,
         p2p::HeadersClient,
         transactions::{
             constants::tx_manager::DEFAULT_TX_MANAGER_CHANNEL_MEMORY_LIMIT_BYTES,
@@ -29,7 +30,6 @@ use rsil_sila::{
     },
     tasks::Runtime,
 };
-use rsil_metrics::common::mpsc::memory_bounded_channel;
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
@@ -52,7 +52,7 @@ async fn main() -> eyre::Result<()> {
     let network = NetworkManager::sil(config)
         .await?
         // install the channel through which the network sends incoming sil requests
-        .with_eth_request_handler(requests_tx)
+        .with_sil_request_handler(requests_tx)
         // install the channel through which the network sends incoming transaction messages
         .with_transactions(transactions_tx);
 
@@ -80,21 +80,21 @@ async fn main() -> eyre::Result<()> {
     loop {
         // receive incoming sil requests and transaction messages from the second peer
         tokio::select! {
-              eth_request = requests_rx.recv() => {
-                    let Some(eth_request) = eth_request else {break};
-                    match eth_request {
-                        IncomingEthRequest::GetBlockHeaders { peer_id, request, response } => {
+              sil_request = requests_rx.recv() => {
+                    let Some(sil_request) = sil_request else {break};
+                    match sil_request {
+                        IncomingSilRequest::GetBlockHeaders { peer_id, request, response } => {
                             println!("Received block headers request: {peer_id:?}, {request:?}");
                             response.send(Ok(vec![DEV.genesis_header().clone()].into())).unwrap();
                         }
-                        IncomingEthRequest::GetBlockBodies { .. } => {}
-                        IncomingEthRequest::GetNodeData { .. } => {}
-                        IncomingEthRequest::GetReceipts { .. } => {}
-                        IncomingEthRequest::GetReceipts69 { .. } => {}
-                        IncomingEthRequest::GetReceipts70 { .. } => {}
-                        IncomingEthRequest::GetBlockAccessLists { .. } => {}
-                        IncomingEthRequest::GetCells { .. } => {}
-                        IncomingEthRequest::GetSnap { .. } => {}
+                        IncomingSilRequest::GetBlockBodies { .. } => {}
+                        IncomingSilRequest::GetNodeData { .. } => {}
+                        IncomingSilRequest::GetReceipts { .. } => {}
+                        IncomingSilRequest::GetReceipts69 { .. } => {}
+                        IncomingSilRequest::GetReceipts70 { .. } => {}
+                        IncomingSilRequest::GetBlockAccessLists { .. } => {}
+                        IncomingSilRequest::GetCells { .. } => {}
+                        IncomingSilRequest::GetSnap { .. } => {}
                     }
              }
              transaction_message = transactions_rx.recv() => {

@@ -7,19 +7,19 @@ use crate::{
     NetworkHandle, NetworkManager,
 };
 use alloy_eips::BlockNumHash;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, Hardforks};
+use rsil_chainspec::{ChainSpecProvider, Hardforks, SilChainSpec};
 use rsil_discv4::{Discv4Config, Discv4ConfigBuilder, NatResolver, DEFAULT_DISCOVERY_ADDRESS};
 use rsil_discv5::NetworkStackId;
 use rsil_dns_discovery::DnsDiscoveryConfig;
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     handshake::{SilHandshake, SilRlpxHandshake},
-    SilNetworkPrimitives, HelloMessage, HelloMessageWithProtocols, NetworkPrimitives,
+    HelloMessage, HelloMessageWithProtocols, NetworkPrimitives, SilNetworkPrimitives,
     UnifiedStatus,
 };
-use rsil_eth_wire_types::message::MAX_MESSAGE_SIZE;
-use rsil_sila_forks::{ForkFilter, Head};
+use rsil_sil_wire_types::message::MAX_MESSAGE_SIZE;
 use rsil_network_peers::{mainnet_nodes, pk2id, sepolia_nodes, PeerId, TrustedPeer};
 use rsil_network_types::{PeersConfig, SessionsConfig};
+use rsil_sila_forks::{ForkFilter, Head};
 use rsil_storage_api::{
     noop::NoopProvider, BalProvider, BlockNumReader, BlockReader, HeaderProvider,
 };
@@ -101,7 +101,7 @@ pub struct NetworkConfig<C, N: NetworkPrimitives = SilNetworkPrimitives> {
     /// [`NetworkConfigBuilder`].
     pub handshake: Arc<dyn SilRlpxHandshake>,
     /// Maximum allowed SIL message size for post-handshake SIL/Snap streams.
-    pub eth_max_message_size: usize,
+    pub sil_max_message_size: usize,
     /// List of block number-hash pairs to check for required blocks.
     /// If non-empty, peers that don't have these blocks will be filtered out.
     pub required_block_hashes: Vec<BlockNumHash>,
@@ -227,7 +227,7 @@ pub struct NetworkConfigBuilder<N: NetworkPrimitives = SilNetworkPrimitives> {
     /// <https://github.com/sila-chain/devp2p/blob/master/rlpx.md#initial-handshake>.
     handshake: Arc<dyn SilRlpxHandshake>,
     /// Maximum allowed SIL message size for post-handshake SIL/Snap streams.
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     /// List of block hashes to check for required blocks.
     required_block_hashes: Vec<BlockNumHash>,
     /// Optional network id
@@ -274,7 +274,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
             transactions_manager_config: Default::default(),
             nat: None,
             handshake: Arc::new(SilHandshake::default()),
-            eth_max_message_size: MAX_MESSAGE_SIZE,
+            sil_max_message_size: MAX_MESSAGE_SIZE,
             required_block_hashes: Vec::new(),
             network_id: None,
             snap_enabled: false,
@@ -329,7 +329,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
     /// Sets the `HelloMessage` to send when connecting to peers.
     ///
     /// ```
-    /// # use rsil_eth_wire::HelloMessage;
+    /// # use rsil_sil_wire::HelloMessage;
     /// # use rsil_network::NetworkConfigBuilder;
     /// # fn builder(builder: NetworkConfigBuilder) {
     /// let peer_id = builder.get_peer_id();
@@ -601,7 +601,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
     }
 
     /// Overrides the default Sil `RLPx` handshake.
-    pub fn eth_rlpx_handshake(mut self, handshake: Arc<dyn SilRlpxHandshake>) -> Self {
+    pub fn sil_rlpx_handshake(mut self, handshake: Arc<dyn SilRlpxHandshake>) -> Self {
         self.handshake = handshake;
         self
     }
@@ -610,15 +610,15 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
     ///
     /// This does not affect the initial status handshake, which continues to use
     /// [`MAX_MESSAGE_SIZE`].
-    pub const fn eth_max_message_size(mut self, max_message_size: usize) -> Self {
-        self.eth_max_message_size = max_message_size;
+    pub const fn sil_max_message_size(mut self, max_message_size: usize) -> Self {
+        self.sil_max_message_size = max_message_size;
         self
     }
 
     /// Sets the maximum allowed SIL message size for post-handshake SIL/Snap streams if present.
-    pub const fn eth_max_message_size_opt(mut self, max_message_size: Option<usize>) -> Self {
+    pub const fn sil_max_message_size_opt(mut self, max_message_size: Option<usize>) -> Self {
         if let Some(max_message_size) = max_message_size {
-            self.eth_max_message_size = max_message_size;
+            self.sil_max_message_size = max_message_size;
         }
         self
     }
@@ -661,7 +661,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
             transactions_manager_config,
             nat,
             handshake,
-            eth_max_message_size,
+            sil_max_message_size,
             required_block_hashes,
             network_id,
             snap_enabled,
@@ -714,9 +714,9 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
 
         // If default DNS config is used then we add the known dns network to bootstrap from
         if let Some(dns_networks) =
-            dns_discovery_config.as_mut().and_then(|c| c.bootstrap_dns_networks.as_mut()) &&
-            dns_networks.is_empty() &&
-            let Some(link) = chain_spec.chain().public_dns_network_protocol()
+            dns_discovery_config.as_mut().and_then(|c| c.bootstrap_dns_networks.as_mut())
+            && dns_networks.is_empty()
+            && let Some(link) = chain_spec.chain().public_dns_network_protocol()
         {
             dns_networks.insert(link.parse().expect("is valid DNS link entry"));
         }
@@ -744,7 +744,7 @@ impl<N: NetworkPrimitives> NetworkConfigBuilder<N> {
             transactions_manager_config,
             nat,
             handshake,
-            eth_max_message_size,
+            sil_max_message_size,
             required_block_hashes,
         }
     }
@@ -777,11 +777,11 @@ impl NetworkMode {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eips::sip2124::ForkHash;
+    use alloy_eips::eip2124::ForkHash;
     use alloy_genesis::Genesis;
     use alloy_primitives::U256;
     use rsil_chainspec::{
-        Chain, ChainSpecBuilder, SilaHardfork, ForkCondition, ForkId, SILA_MAINNET,
+        Chain, ChainSpecBuilder, ForkCondition, ForkId, SilaHardfork, SILA_MAINNET,
     };
     use rsil_discv5::build_local_enr;
     use rsil_dns_discovery::tree::LinkEntry;
@@ -828,7 +828,7 @@ mod tests {
         let dns = config.dns_discovery_config.unwrap();
         let bootstrap_nodes = dns.bootstrap_dns_networks.unwrap();
         let mainnet_dns: LinkEntry =
-            Chain::sila-mainnet().public_dns_network_protocol().unwrap().parse().unwrap();
+            Chain::sila_mainnet().public_dns_network_protocol().unwrap().parse().unwrap();
         assert!(bootstrap_nodes.contains(&mainnet_dns));
         assert_eq!(bootstrap_nodes.len(), 1);
     }
@@ -866,8 +866,8 @@ mod tests {
 
         let genesis = Genesis::default().with_timestamp(GENESIS_TIME);
 
-        let active_fork = (SilaHardfork::SilaShanghai, ForkCondition::Timestamp(GENESIS_TIME));
-        let future_fork = (SilaHardfork::SilaCancun, ForkCondition::Timestamp(GENESIS_TIME + 1));
+        let active_fork = (SilaHardfork::Shanghai, ForkCondition::Timestamp(GENESIS_TIME));
+        let future_fork = (SilaHardfork::Cancun, ForkCondition::Timestamp(GENESIS_TIME + 1));
 
         let chain_spec = ChainSpecBuilder::default()
             .chain(Chain::dev())

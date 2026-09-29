@@ -9,15 +9,15 @@ use alloy_primitives::{hex, B256};
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_primitives_traits::{AlloyBlockHeader, WithEncoded};
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
-    helpers::{spec::SignersForRpc, SilTransactions, LoadTransaction},
+use rsil_rpc_sil_api::{
+    helpers::{spec::SignersForRpc, LoadTransaction, SilTransactions},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{error::RpcPoolError, SilApiError};
+use rsil_rpc_sil_types::{error::RpcPoolError, SilApiError};
 use rsil_storage_api::BlockReaderIdExt;
 use rsil_transaction_pool::{
-    error::Sip4844PoolTransactionError, AddedTransactionOutcome, SilBlobTransactionSidecar,
-    SilPoolTransaction, PoolTransaction, PoolTx,
+    error::Sip4844PoolTransactionError, AddedTransactionOutcome, PoolTransaction, PoolTx,
+    SilBlobTransactionSidecar, SilPoolTransaction,
 };
 
 impl<N, Rpc> SilTransactions for SilApi<N, Rpc>
@@ -138,36 +138,36 @@ mod tests {
     use alloy_primitives::{map::AddressMap, Address, Bytes, U256};
     use alloy_rpc_types_eth::request::TransactionRequest;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder};
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
-        test_utils::{ExtendedAccount, MockEthProvider},
+        test_utils::{ExtendedAccount, MockSilProvider},
         ChainSpecProvider,
     };
-    use rsil_rpc_eth_api::node::RpcNodeCoreAdapter;
+    use rsil_rpc_sil_api::node::RpcNodeCoreAdapter;
     use rsil_transaction_pool::{
         test_utils::{testing_pool, TestPool},
         TransactionOrigin, TransactionPool,
     };
 
-    fn mock_eth_api(
+    fn mock_sil_api(
         accounts: AddressMap<ExtendedAccount>,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
-        mock_eth_api_with_sync_timeout(accounts, Duration::from_secs(30))
+        mock_sil_api_with_sync_timeout(accounts, Duration::from_secs(30))
     }
 
-    fn mock_eth_api_with_sync_timeout(
+    fn mock_sil_api_with_sync_timeout(
         accounts: AddressMap<ExtendedAccount>,
         send_raw_transaction_sync_timeout: Duration,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
-        let mock_provider = MockEthProvider::default()
-            .with_chain_spec(ChainSpecBuilder::sila-mainnet().cancun_activated().build());
+        let mock_provider = MockSilProvider::default()
+            .with_chain_spec(ChainSpecBuilder::sila_mainnet().cancun_activated().build());
         mock_provider.extend_accounts(accounts);
 
         let evm_config = SilEvmConfig::new(mock_provider.chain_spec());
@@ -200,12 +200,12 @@ mod tests {
 
     #[tokio::test]
     async fn send_raw_transaction() {
-        let eth_api = mock_eth_api(Default::default());
-        let pool = eth_api.pool();
+        let sil_api = mock_sil_api(Default::default());
+        let pool = sil_api.pool();
 
         let tx_1 = raw_transfer_tx();
 
-        let tx_1_result = eth_api.send_raw_transaction(tx_1).await.unwrap();
+        let tx_1_result = sil_api.send_raw_transaction(tx_1).await.unwrap();
         assert_eq!(
             pool.len(),
             1,
@@ -218,7 +218,7 @@ mod tests {
             "02f9043c018202b7843b9aca00850c807d37a08304d21d94ef1c6e67703c7bd7107eed8303fbe6ec2554bf6b881bc16d674ec80000b903c43593564c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000063e2d99f00000000000000000000000000000000000000000000000000000000000000030b000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000001bc16d674ec80000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000065717fe021ea67801d1088cc80099004b05b64600000000000000000000000000000000000000000000000001bc16d674ec80000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002bc02aaa39b223fe8d0a0e5c4f27ead9083c756cc20001f4a0b86991c6218b36c1d19d4a2e9eb0ce3606eb480000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009e95fd5965fd1f1a6f0d4600000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000a0b86991c6218b36c1d19d4a2e9eb0ce3606eb48000000000000000000000000428dca9537116148616a5a3e44035af17238fe9dc080a0c6ec1e41f5c0b9511c49b171ad4e04c6bb419c74d99fe9891d74126ec6e4e879a032069a753d7a2cfa158df95421724d24c0e9501593c09905abf3699b4a4405ce"
         ));
 
-        let tx_2_result = eth_api.send_raw_transaction(tx_2).await.unwrap();
+        let tx_2_result = sil_api.send_raw_transaction(tx_2).await.unwrap();
         assert_eq!(
             pool.len(),
             2,
@@ -234,58 +234,58 @@ mod tests {
 
     #[tokio::test]
     async fn send_raw_transaction_sync_uses_request_timeout() {
-        let eth_api = mock_eth_api(Default::default());
+        let sil_api = mock_sil_api(Default::default());
 
-        let err = eth_api.send_raw_transaction_sync(raw_transfer_tx(), Some(1)).await.unwrap_err();
+        let err = sil_api.send_raw_transaction_sync(raw_transfer_tx(), Some(1)).await.unwrap_err();
 
         assert!(matches!(
             err,
             SilApiError::TransactionConfirmationTimeout { duration, .. }
                 if duration == Duration::from_millis(1)
         ));
-        assert_eq!(eth_api.pool().len(), 1);
+        assert_eq!(sil_api.pool().len(), 1);
     }
 
     #[tokio::test]
     async fn send_raw_transaction_sync_uses_configured_timeout_when_omitted() {
-        let eth_api = mock_eth_api_with_sync_timeout(Default::default(), Duration::from_millis(1));
+        let sil_api = mock_sil_api_with_sync_timeout(Default::default(), Duration::from_millis(1));
 
-        let err = eth_api.send_raw_transaction_sync(raw_transfer_tx(), None).await.unwrap_err();
+        let err = sil_api.send_raw_transaction_sync(raw_transfer_tx(), None).await.unwrap_err();
 
         assert!(matches!(
             err,
             SilApiError::TransactionConfirmationTimeout { duration, .. }
                 if duration == Duration::from_millis(1)
         ));
-        assert_eq!(eth_api.pool().len(), 1);
+        assert_eq!(sil_api.pool().len(), 1);
     }
 
     #[tokio::test]
     async fn send_raw_transaction_sync_uses_configured_timeout_when_zero() {
-        let eth_api = mock_eth_api_with_sync_timeout(Default::default(), Duration::from_millis(1));
+        let sil_api = mock_sil_api_with_sync_timeout(Default::default(), Duration::from_millis(1));
 
-        let err = eth_api.send_raw_transaction_sync(raw_transfer_tx(), Some(0)).await.unwrap_err();
+        let err = sil_api.send_raw_transaction_sync(raw_transfer_tx(), Some(0)).await.unwrap_err();
 
         assert!(matches!(
             err,
             SilApiError::TransactionConfirmationTimeout { duration, .. }
                 if duration == Duration::from_millis(1)
         ));
-        assert_eq!(eth_api.pool().len(), 1);
+        assert_eq!(sil_api.pool().len(), 1);
     }
 
     #[tokio::test]
     async fn send_raw_transaction_sync_caps_request_timeout() {
-        let eth_api = mock_eth_api_with_sync_timeout(Default::default(), Duration::from_millis(1));
+        let sil_api = mock_sil_api_with_sync_timeout(Default::default(), Duration::from_millis(1));
 
-        let err = eth_api.send_raw_transaction_sync(raw_transfer_tx(), Some(50)).await.unwrap_err();
+        let err = sil_api.send_raw_transaction_sync(raw_transfer_tx(), Some(50)).await.unwrap_err();
 
         assert!(matches!(
             err,
             SilApiError::TransactionConfirmationTimeout { duration, .. }
                 if duration == Duration::from_millis(1)
         ));
-        assert_eq!(eth_api.pool().len(), 1);
+        assert_eq!(sil_api.pool().len(), 1);
     }
 
     #[tokio::test]
@@ -296,7 +296,7 @@ mod tests {
             ExtendedAccount::new(0, U256::from(10_000_000_000_000_000_000u64)), // 10 SIL
         )]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let tx_req = TransactionRequest {
             from: Some(address),
@@ -306,7 +306,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         // Should fill with the chain id from provider
         assert!(filled.tx.chain_id().is_some());
@@ -322,7 +322,7 @@ mod tests {
             ExtendedAccount::new(nonce, U256::from(1_000_000_000_000_000_000u64)), // 1 SIL
         )]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let tx_req = TransactionRequest {
             from: Some(address),
@@ -333,7 +333,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         assert_eq!(filled.tx.nonce(), nonce);
     }
@@ -349,7 +349,7 @@ mod tests {
             ExtendedAccount::new(42, U256::from(10_000_000_000_000_000_000u64)),
         )]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let tx_req = TransactionRequest {
             from: Some(address),
@@ -361,7 +361,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         // Should preserve the provided nonce and gas limit
         assert_eq!(filled.tx.nonce(), provided_nonce);
@@ -375,7 +375,7 @@ mod tests {
         let balance = U256::from(100u128) * U256::from(1_000_000_000_000_000_000u128);
         let accounts = AddressMap::from_iter([(address, ExtendedAccount::new(5, balance))]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         // Create a simple transfer transaction
         let tx_req = TransactionRequest {
@@ -385,7 +385,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         assert!(filled.tx.is_eip1559());
     }
@@ -398,7 +398,7 @@ mod tests {
             ExtendedAccount::new(0, U256::from(10_000_000_000_000_000_000u64)),
         )]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let mut builder = SidecarBuilder::<SimpleCoder>::new();
         builder.ingest(b"dummy blob");
@@ -414,7 +414,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         // Blob transaction should have max_fee_per_blob_gas filled
         assert!(
@@ -435,7 +435,7 @@ mod tests {
             ExtendedAccount::new(0, U256::from(10_000_000_000_000_000_000u64)),
         )]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let provided_blob_fee = 5000000u128;
 
@@ -455,7 +455,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         // Should preserve the provided blob fee
         assert_eq!(
@@ -473,7 +473,7 @@ mod tests {
             ExtendedAccount::new(0, U256::from(10_000_000_000_000_000_000u64)),
         )]);
 
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         // SIP-1559 transaction without blob fields
         let tx_req = TransactionRequest {
@@ -484,7 +484,7 @@ mod tests {
         };
 
         let filled =
-            eth_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
+            sil_api.fill_transaction(tx_req).await.expect("fill_transaction should succeed");
 
         // Non-blob transaction should NOT have blob fee filled
         assert!(

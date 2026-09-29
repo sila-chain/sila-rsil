@@ -1,10 +1,10 @@
 use metrics::Histogram;
-use rsil_eth_wire::DisconnectReason;
-use rsil_sila_primitives::TxType;
+use rsil_sil_wire::DisconnectReason;
 use rsil_metrics::{
     metrics::{Counter, Gauge},
     Metrics,
 };
+use rsil_sila_primitives::TxType;
 
 /// Scope for monitoring transactions sent from the manager to the tx manager
 pub(crate) const NETWORK_POOL_TRANSACTIONS_SCOPE: &str = "network.pool.transactions";
@@ -44,7 +44,7 @@ pub struct NetworkMetrics {
     pub(crate) invalid_messages_received: Counter,
 
     /// Number of Sil Requests dropped due to channel being at full capacity
-    pub(crate) total_dropped_eth_requests_at_full_capacity: Counter,
+    pub(crate) total_dropped_sil_requests_at_full_capacity: Counter,
 
     /// Number of transaction events dropped due to the tx manager channel being at full capacity
     pub(crate) total_dropped_tx_events_at_full_capacity: Counter,
@@ -256,7 +256,7 @@ pub struct TransactionsManagerMetrics {
 #[derive(Metrics)]
 #[metrics(scope = "network")]
 pub struct TransactionFetcherMetrics {
-    /// Currently active outgoing [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions)
+    /// Currently active outgoing [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions)
     /// requests.
     pub(crate) inflight_transaction_requests: Gauge,
     /// Number of inflight requests at which the
@@ -265,7 +265,7 @@ pub struct TransactionFetcherMetrics {
     /// measure.
     pub(crate) capacity_inflight_requests: Counter,
     /// Hashes in currently active outgoing
-    /// [`GetPooledTransactions`](rsil_eth_wire::GetPooledTransactions) requests.
+    /// [`GetPooledTransactions`](rsil_sil_wire::GetPooledTransactions) requests.
     pub(crate) hashes_inflight_transaction_requests: Gauge,
     /// How often we failed to send a request to the peer because the channel was full.
     pub(crate) egress_peer_channel_full: Counter,
@@ -274,7 +274,7 @@ pub struct TransactionFetcherMetrics {
     /// Total number of fetched transactions.
     pub(crate) fetched_transactions: Counter,
     /// Total number of transactions that were received in
-    /// [`PooledTransactions`](rsil_eth_wire::PooledTransactions) responses, that weren't
+    /// [`PooledTransactions`](rsil_sil_wire::PooledTransactions) responses, that weren't
     /// requested.
     pub(crate) unsolicited_transactions: Counter,
     /* ================ SEARCH DURATION ================ */
@@ -546,26 +546,26 @@ impl OutboundDisconnectMetrics {
 #[metrics(scope = "network")]
 pub struct SilRequestHandlerMetrics {
     /// Number of `GetBlockHeaders` requests received
-    pub(crate) eth_headers_requests_received_total: Counter,
+    pub(crate) sil_headers_requests_received_total: Counter,
 
     /// Number of `GetReceipts` requests received
-    pub(crate) eth_receipts_requests_received_total: Counter,
+    pub(crate) sil_receipts_requests_received_total: Counter,
 
     /// Number of `GetBlockBodies` requests received
-    pub(crate) eth_bodies_requests_received_total: Counter,
+    pub(crate) sil_bodies_requests_received_total: Counter,
 
     /// Number of `GetNodeData` requests received
-    pub(crate) eth_node_data_requests_received_total: Counter,
+    pub(crate) sil_node_data_requests_received_total: Counter,
 
     /// Number of `GetBlockAccessLists` requests received
-    pub(crate) eth_block_access_lists_requests_received_total: Counter,
+    pub(crate) sil_block_access_lists_requests_received_total: Counter,
 
     /// Number of `snap/2` (SIP-8189) requests received
     pub(crate) snap_requests_received_total: Counter,
 
     /// Duration in seconds of call to poll
-    /// [`SilRequestHandler`](crate::eth_requests::SilRequestHandler).
-    pub(crate) acc_duration_poll_eth_req_handler: Gauge,
+    /// [`SilRequestHandler`](crate::sil_requests::SilRequestHandler).
+    pub(crate) acc_duration_poll_sil_req_handler: Gauge,
 }
 
 /// Sil67 announcement metrics, track entries by `TxType`
@@ -622,16 +622,16 @@ impl TxTypesCounter {
             TxType::Legacy => {
                 self.legacy += 1;
             }
-            TxType::Sip2930 => {
+            TxType::Eip2930 => {
                 self.sip2930 += 1;
             }
-            TxType::Sip1559 => {
+            TxType::Eip1559 => {
                 self.sip1559 += 1;
             }
-            TxType::Sip4844 => {
+            TxType::Eip4844 => {
                 self.sip4844 += 1;
             }
-            TxType::Sip7702 => {
+            TxType::Eip7702 => {
                 self.sip7702 += 1;
             }
         }

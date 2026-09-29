@@ -12,8 +12,8 @@ use clap::{
 };
 use rand::Rng;
 use rsil_cli_util::{parse_duration_from_secs_or_ms, parse_ether_value};
-use rsil_rpc_eth_types::builder::config::PendingBlockKind;
-use rsil_rpc_server_types::{constants, RsilRpcModule, RpcModuleSelection};
+use rsil_rpc_sil_types::builder::config::PendingBlockKind;
+use rsil_rpc_server_types::{constants, RpcModuleSelection, RsilRpcModule};
 use std::{
     ffi::OsStr,
     net::{IpAddr, Ipv4Addr},
@@ -86,7 +86,7 @@ pub struct DefaultRpcServerArgs {
     rpc_tx_fee_cap: u128,
     rpc_max_simulate_blocks: u64,
     rpc_compute_state_root_for_eth_simulate: bool,
-    rpc_eth_proof_window: u64,
+    rpc_sil_proof_window: u64,
     rpc_proof_permits: usize,
     rpc_pending_block: PendingBlockKind,
     rpc_forwarder: Option<Url>,
@@ -324,8 +324,8 @@ impl DefaultRpcServerArgs {
     }
 
     /// Set the default sil proof window
-    pub const fn with_rpc_eth_proof_window(mut self, v: u64) -> Self {
-        self.rpc_eth_proof_window = v;
+    pub const fn with_rpc_sil_proof_window(mut self, v: u64) -> Self {
+        self.rpc_sil_proof_window = v;
         self
     }
 
@@ -411,7 +411,7 @@ impl Default for DefaultRpcServerArgs {
             rpc_tx_fee_cap: constants::DEFAULT_TX_FEE_CAP_WEI,
             rpc_max_simulate_blocks: constants::DEFAULT_MAX_SIMULATE_BLOCKS,
             rpc_compute_state_root_for_eth_simulate: false,
-            rpc_eth_proof_window: constants::DEFAULT_ETH_PROOF_WINDOW,
+            rpc_sil_proof_window: constants::DEFAULT_ETH_PROOF_WINDOW,
             rpc_proof_permits: constants::DEFAULT_PROOF_PERMITS,
             rpc_pending_block: PendingBlockKind::Full,
             rpc_forwarder: None,
@@ -627,10 +627,10 @@ pub struct RpcServerArgs {
     /// configured number of blocks from current tip (up to `tip - window`).
     #[arg(
         long = "rpc.sil-proof-window",
-        default_value_t = DefaultRpcServerArgs::get_global().rpc_eth_proof_window,
+        default_value_t = DefaultRpcServerArgs::get_global().rpc_sil_proof_window,
         value_parser = RangedU64ValueParser::<u64>::new().range(..=constants::MAX_ETH_PROOF_WINDOW)
     )]
-    pub rpc_eth_proof_window: u64,
+    pub rpc_sil_proof_window: u64,
 
     /// Maximum number of concurrent getproof requests.
     #[arg(long = "rpc.proof-permits", alias = "rpc-proof-permits", value_name = "COUNT", default_value_t = DefaultRpcServerArgs::get_global().rpc_proof_permits)]
@@ -871,7 +871,7 @@ impl Default for RpcServerArgs {
             rpc_tx_fee_cap,
             rpc_max_simulate_blocks,
             rpc_compute_state_root_for_eth_simulate,
-            rpc_eth_proof_window,
+            rpc_sil_proof_window,
             rpc_proof_permits,
             rpc_pending_block,
             rpc_forwarder,
@@ -917,7 +917,7 @@ impl Default for RpcServerArgs {
             rpc_tx_fee_cap,
             rpc_max_simulate_blocks,
             rpc_compute_state_root_for_eth_simulate,
-            rpc_eth_proof_window,
+            rpc_sil_proof_window,
             rpc_proof_permits,
             rpc_pending_block,
             rpc_forwarder,
@@ -1095,7 +1095,7 @@ mod tests {
             rpc_tx_fee_cap: 2_000_000_000_000_000_000u128,
             rpc_max_simulate_blocks: 256,
             rpc_compute_state_root_for_eth_simulate: false,
-            rpc_eth_proof_window: 100_000,
+            rpc_sil_proof_window: 100_000,
             rpc_proof_permits: 16,
             rpc_pending_block: PendingBlockKind::Full,
             rpc_forwarder: Some("http://localhost:8545".parse().unwrap()),

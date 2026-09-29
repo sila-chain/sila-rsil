@@ -12,7 +12,7 @@ workspace = true
 
 [dependencies]
 # rsil
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-primitives-traits.workspace = true
 rsil-provider.workspace = true
 rsil-static-file.workspace = true
@@ -26,7 +26,7 @@ rsil-static-file-types.workspace = true
 
 # alloy
 alloy-primitives.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 
 # metrics
 rsil-metrics.workspace = true
@@ -64,5 +64,5 @@ test-utils = [
     "rsil-provider/test-utils",
     "rsil-stages-types/test-utils",
     "rsil-tasks/test-utils",
-    "rsil-codecs/test-utils",
+    "reth-codecs/test-utils",
 ]

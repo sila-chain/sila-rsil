@@ -8,7 +8,7 @@ use rsil_node_core::args::DevArgs;
 use rsil_node_sila::{node::SilaAddOns, SilaNode};
 use rsil_primitives_traits::transaction::TxHashRef;
 use rsil_provider::{providers::BlockchainProvider, CanonStateSubscriptions};
-use rsil_rpc_eth_api::{helpers::SilTransactions, SilApiServer};
+use rsil_rpc_sil_api::{helpers::SilTransactions, SilApiServer};
 use rsil_tasks::Runtime;
 use std::sync::Arc;
 
@@ -57,19 +57,19 @@ async fn can_run_dev_node_custom_attributes() -> eyre::Result<()> {
     assert_chain_advances(&node).await;
 
     assert!(
-        node.rpc_registry.eth_api().balance(fee_recipient, Default::default()).await.unwrap() > 0
+        node.rpc_registry.sil_api().balance(fee_recipient, Default::default()).await.unwrap() > 0
     );
 
     assert!(
         node.rpc_registry
-            .eth_api()
+            .sil_api()
             .block_by_number(Default::default(), false)
             .await
             .unwrap()
             .unwrap()
             .header
-            .beneficiary ==
-            fee_recipient
+            .beneficiary
+            == fee_recipient
     );
 
     Ok(())
@@ -87,9 +87,9 @@ where
         "02f876820a28808477359400847735940082520894ab0840c0e43688012c1adb0f5e3fc665188f83d28a029d394a5d630544000080c080a0a044076b7e67b5deecc63f61a8d7913fab86ca365b344b5759d1fe3563b4c39ea019eab979dd000da04dfc72bb0377c092d30fd9e1cab5ae487de49586cc8b0090"
     );
 
-    let eth_api = node.rpc_registry.eth_api();
+    let sil_api = node.rpc_registry.sil_api();
 
-    let hash = eth_api.send_raw_transaction(raw_tx.into()).await.unwrap();
+    let hash = sil_api.send_raw_transaction(raw_tx.into()).await.unwrap();
 
     let expected = b256!("0xb1c6512f4fc202c04355fbda66755e0e344b152e633010e8fd75ecec09b63398");
 

@@ -5,7 +5,7 @@ use alloc::string::String;
 /// Client version that accessed the database.
 #[derive(Clone, Eq, PartialEq, Debug, Default)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
-#[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ClientVersion {
     /// Client version
@@ -24,7 +24,7 @@ impl ClientVersion {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for ClientVersion {
+impl reth_codecs::Compact for ClientVersion {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -45,4 +45,4 @@ impl rsil_codecs::Compact for ClientVersion {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(ClientVersion);
+reth_codecs::impl_compression_for_compact!(ClientVersion);

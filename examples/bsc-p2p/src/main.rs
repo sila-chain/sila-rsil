@@ -14,8 +14,8 @@ use chainspec::{boot_nodes, bsc_chain_spec, head};
 use handshake::BscHandshake;
 use rsil_discv4::Discv4ConfigBuilder;
 use rsil_network::{
-    SilNetworkPrimitives, NetworkConfig, NetworkEvent, NetworkEventListenerProvider,
-    NetworkManager, PeersInfo,
+    NetworkConfig, NetworkEvent, NetworkEventListenerProvider, NetworkManager, PeersInfo,
+    SilNetworkPrimitives,
 };
 use rsil_network_api::events::{PeerEvent, SessionInfo};
 use rsil_provider::noop::NoopProvider;
@@ -59,7 +59,7 @@ async fn main() {
         .set_head(head())
         .with_pow()
         .listener_addr(local_addr)
-        .eth_rlpx_handshake(Arc::new(BscHandshake::default()))
+        .sil_rlpx_handshake(Arc::new(BscHandshake::default()))
         .build(NoopProvider::sil(bsc_chain_spec()));
 
     let net_cfg = net_cfg.set_discovery_v4(

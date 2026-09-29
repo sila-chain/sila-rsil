@@ -13,8 +13,8 @@ static MALLOC_CONF: &[u8] = b"prof:true,prof_active:true,lg_prof_sample:19\0";
 
 use clap::Parser;
 use rsil::cli::Cli;
-use rsil_sila_cli::chainspec::SilaChainSpecParser;
 use rsil_node_sila::SilaNode;
+use rsil_sila_cli::chainspec::SilaChainSpecParser;
 use tracing::info;
 
 fn main() {

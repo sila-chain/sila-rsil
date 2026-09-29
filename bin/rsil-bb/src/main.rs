@@ -4,8 +4,8 @@
 #[global_allocator]
 static ALLOC: rsil_cli_util::allocator::Allocator = rsil_cli_util::allocator::new_allocator();
 
-mod savm;
 mod evm_config;
+mod savm;
 
 use alloy_primitives::Bytes;
 use alloy_rpc_types::engine::ExecutionData;
@@ -13,9 +13,7 @@ use clap::Parser;
 use evm_config::{BbEvmConfig, BigBlockData};
 use rsil_chainspec::{ChainSpec, SilaHardforks};
 use rsil_consensus::noop::NoopConsensus;
-use rsil_sila_cli::{chainspec::SilaChainSpecParser, interface::Cli};
-use rsil_sila_primitives::{Block, SilPrimitives};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_node_api::{
     AddOnsContext, FullNodeComponents, NewPayloadError, NodeTypes, PayloadTypes, PayloadValidator,
 };
@@ -29,11 +27,13 @@ use rsil_node_builder::{
 };
 use rsil_node_core::args::DefaultEngineValues;
 use rsil_node_sila::{
-    SilPayloadTypes, SilaEngineValidator, SilaEthApiBuilder, SilaNetworkBuilder,
-    SilaNode, SilaPayloadBuilder, SilaPoolBuilder,
+    SilPayloadTypes, SilaEngineValidator, SilaSilApiBuilder, SilaNetworkBuilder, SilaNode,
+    SilaPayloadBuilder, SilaPoolBuilder,
 };
 use rsil_primitives_traits::SealedBlock;
 use rsil_provider::SilStorage;
+use rsil_sila_cli::{chainspec::SilaChainSpecParser, interface::Cli};
+use rsil_sila_primitives::{Block, SilPrimitives};
 use tracing::info;
 
 #[derive(Debug, Clone, Default)]
@@ -130,7 +130,7 @@ where
     Node: FullNodeTypes<
         Types: NodeTypes<
             ChainSpec: rsil_sila_forks::Hardforks
-                           + alloy_evm::sil::spec::SilExecutorSpec
+                           + alloy_savm::eth::spec::EthExecutorSpec
                            + SilaHardforks,
             Primitives = SilPrimitives,
         >,
@@ -174,15 +174,13 @@ where
 
     type AddOns = RpcAddOns<
         NodeAdapter<N>,
-        SilaEthApiBuilder,
+        SilaSilApiBuilder,
         BbEngineValidatorBuilder,
         NoopEngineApiBuilder,
     >;
 
     fn components_builder(&self) -> Self::ComponentsBuilder {
-        SilaNode::components()
-            .executor(BbExecutorBuilder::default())
-            .consensus(BbConsensusBuilder)
+        SilaNode::components().executor(BbExecutorBuilder::default()).consensus(BbConsensusBuilder)
     }
 
     fn add_ons(&self) -> Self::AddOns {

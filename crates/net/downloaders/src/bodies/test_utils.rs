@@ -4,13 +4,13 @@
 
 use alloy_consensus::BlockHeader;
 use alloy_primitives::map::B256Map;
-use rsil_sila_primitives::BlockBody;
 use rsil_network_p2p::bodies::response::BlockResponse;
 use rsil_primitives_traits::{Block, SealedBlock, SealedHeader};
 use rsil_provider::{
     test_utils::MockNodeTypesWithDB, ProviderFactory, StaticFileProviderFactory, StaticFileSegment,
     StaticFileWriter,
 };
+use rsil_sila_primitives::BlockBody;
 
 pub(crate) fn zip_blocks<'a, B: Block>(
     headers: impl Iterator<Item = &'a SealedHeader<B::Header>>,

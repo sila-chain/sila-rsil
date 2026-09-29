@@ -4,31 +4,32 @@ use super::constants::DEFAULT_MAX_TX_INPUT_BYTES;
 use crate::{
     blobstore::BlobStore,
     error::{
-        Sip4844PoolTransactionError, Sip7702PoolTransactionError, InvalidPoolTransactionError,
+        InvalidPoolTransactionError, Sip4844PoolTransactionError, Sip7702PoolTransactionError,
     },
     metrics::TxPoolValidationMetrics,
     traits::TransactionOrigin,
     validate::ValidTransaction,
-    Address, BlobTransactionSidecarVariant, SilBlobTransactionSidecar, SilPoolTransaction,
-    LocalTransactionConfig, TransactionValidationOutcome, TransactionValidationTaskExecutor,
+    Address, BlobTransactionSidecarVariant, LocalTransactionConfig, SilBlobTransactionSidecar,
+    SilPoolTransaction, TransactionValidationOutcome, TransactionValidationTaskExecutor,
     TransactionValidator,
 };
 
 use alloy_consensus::{
     constants::{
-        SIP1559_TX_TYPE_ID, SIP2930_TX_TYPE_ID, SIP4844_TX_TYPE_ID, SIP7702_TX_TYPE_ID,
-        LEGACY_TX_TYPE_ID,
+        LEGACY_TX_TYPE_ID, EIP1559_TX_TYPE_ID, EIP2930_TX_TYPE_ID, EIP4844_TX_TYPE_ID,
+        EIP7702_TX_TYPE_ID,
     },
     BlockHeader,
 };
-use alloy_eips::{
-    sip1559::SILA_BLOCK_GAS_LIMIT_30M, sip4844::env_settings::EnvKzgSettings,
-    sip7840::BlobParams, BlockId,
+use alloy_sips::{
+    eip1559::ETHEREUM_BLOCK_GAS_LIMIT_30M as SILA_BLOCK_GAS_LIMIT_30M, eip4844::env_settings::EnvKzgSettings, eip7840::BlobParams,
+    BlockId,
 };
 use alloy_primitives::U256;
 use alloy_rlp::Encodable;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
-use rsil_evm::ConfigureEvm;
+use revm::context_interface::Cfg;
+use rsil_chainspec::{ChainSpecProvider, EthereumHardforks as _, SilChainSpec, SilaHardforks};
+use rsil_savm::ConfigureEvm;
 use rsil_primitives_traits::{
     transaction::error::InvalidTransactionError, Account, BlockTy, GotExpected, HeaderTy,
     SealedBlock,
@@ -38,7 +39,6 @@ use rsil_storage_api::{
     StateProviderFactory,
 };
 use rsil_tasks::Runtime;
-use revm::context_interface::Cfg;
 use std::{
     fmt,
     marker::PhantomData,
@@ -123,7 +123,7 @@ pub struct SilTransactionValidator<Client, T, Savm> {
     other_tx_types: U256,
     /// Whether SIP-7594 blob sidecars are accepted.
     /// When false, SIP-7594 (v1) sidecars are always rejected and SIP-4844 (v0) sidecars
-    /// are always accepted, regardless of SilaOsaka fork activation.
+    /// are always accepted, regardless of `SilaOsaka` fork activation.
     sip7594: bool,
     /// Optional additional stateless validation check applied at the end of
     /// [`validate_stateless`](Self::validate_stateless).
@@ -461,24 +461,24 @@ where
         // Checks for tx_type
         match transaction.ty() {
             // Accept only legacy transactions until SIP-2718/2930 activates
-            SIP2930_TX_TYPE_ID if !self.sip2718 => {
-                return Err(InvalidTransactionError::Sip2930Disabled.into())
+            EIP2930_TX_TYPE_ID if !self.sip2718 => {
+                return Err(InvalidTransactionError::Eip2930Disabled.into())
             }
             // Reject dynamic fee transactions until SIP-1559 activates.
-            SIP1559_TX_TYPE_ID if !self.sip1559 => {
-                return Err(InvalidTransactionError::Sip1559Disabled.into())
+            EIP1559_TX_TYPE_ID if !self.sip1559 => {
+                return Err(InvalidTransactionError::Eip1559Disabled.into())
             }
             // Reject blob transactions.
-            SIP4844_TX_TYPE_ID if !self.sip4844 => {
-                return Err(InvalidTransactionError::Sip4844Disabled.into())
+            EIP4844_TX_TYPE_ID if !self.sip4844 => {
+                return Err(InvalidTransactionError::Eip4844Disabled.into())
             }
             // Reject SIP-7702 transactions.
-            SIP7702_TX_TYPE_ID if !self.sip7702 => {
-                return Err(InvalidTransactionError::Sip7702Disabled.into())
+            EIP7702_TX_TYPE_ID if !self.sip7702 => {
+                return Err(InvalidTransactionError::Eip7702Disabled.into())
             }
             // Accept known transaction types when their respective fork is active
-            LEGACY_TX_TYPE_ID | SIP2930_TX_TYPE_ID | SIP1559_TX_TYPE_ID | SIP4844_TX_TYPE_ID |
-            SIP7702_TX_TYPE_ID => {}
+            LEGACY_TX_TYPE_ID | EIP2930_TX_TYPE_ID | EIP1559_TX_TYPE_ID | EIP4844_TX_TYPE_ID
+            | EIP7702_TX_TYPE_ID => {}
 
             ty if !self.other_tx_types.bit(ty as usize) => {
                 return Err(InvalidTransactionError::TxTypeNotSupported.into())
@@ -490,7 +490,7 @@ where
         // Reject transactions with a nonce equal to U64::max according to SIP-2681
         let tx_nonce = transaction.nonce();
         if tx_nonce == u64::MAX {
-            return Err(InvalidPoolTransactionError::Sip2681)
+            return Err(InvalidPoolTransactionError::Sip2681);
         }
 
         // Reject transactions over defined size to prevent DOS attacks
@@ -509,7 +509,7 @@ where
                 return Err(InvalidPoolTransactionError::OversizedData {
                     size: tx_size,
                     limit: self.max_tx_input_bytes,
-                })
+                });
             }
         } else {
             // ensure the size of the non-blob transaction
@@ -518,7 +518,7 @@ where
                 return Err(InvalidPoolTransactionError::OversizedData {
                     size: tx_size,
                     limit: self.max_tx_input_bytes,
-                })
+                });
             }
         }
 
@@ -536,22 +536,22 @@ where
             return Err(InvalidPoolTransactionError::ExceedsGasLimit(
                 transaction_gas_limit,
                 block_gas_limit,
-            ))
+            ));
         }
 
         // Check individual transaction gas limit if configured
-        if let Some(max_tx_gas_limit) = self.max_tx_gas_limit &&
-            transaction_gas_limit > max_tx_gas_limit
+        if let Some(max_tx_gas_limit) = self.max_tx_gas_limit
+            && transaction_gas_limit > max_tx_gas_limit
         {
             return Err(InvalidPoolTransactionError::MaxTxGasLimitExceeded(
                 transaction_gas_limit,
                 max_tx_gas_limit,
-            ))
+            ));
         }
 
         // Ensure max_priority_fee_per_gas (if SIP1559) is less than max_fee_per_gas if any.
         if transaction.max_priority_fee_per_gas() > Some(transaction.max_fee_per_gas()) {
-            return Err(InvalidTransactionError::TipAboveFeeCap.into())
+            return Err(InvalidTransactionError::TipAboveFeeCap.into());
         }
 
         // determine whether the transaction should be treated as local
@@ -568,7 +568,7 @@ where
                         return Err(InvalidPoolTransactionError::ExceedsFeeCap {
                             max_tx_fee_wei: max_tx_fee_wei.saturating_to(),
                             tx_fee_cap_wei,
-                        })
+                        });
                     }
                 }
             }
@@ -576,32 +576,32 @@ where
 
         // Drop non-local transactions with a fee lower than the configured fee for acceptance into
         // the pool.
-        if !is_local &&
-            transaction.is_dynamic_fee() &&
-            transaction.max_priority_fee_per_gas() < self.minimum_priority_fee
+        if !is_local
+            && transaction.is_dynamic_fee()
+            && transaction.max_priority_fee_per_gas() < self.minimum_priority_fee
         {
             return Err(InvalidPoolTransactionError::PriorityFeeBelowMinimum {
                 minimum_priority_fee: self
                     .minimum_priority_fee
                     .expect("minimum priority fee is expected inside if statement"),
-            })
+            });
         }
 
         // Checks for chainid
-        if let Some(chain_id) = transaction.chain_id() &&
-            chain_id != self.chain_id()
+        if let Some(chain_id) = transaction.chain_id()
+            && chain_id != self.chain_id()
         {
-            return Err(InvalidTransactionError::ChainIdMismatch.into())
+            return Err(InvalidTransactionError::ChainIdMismatch.into());
         }
 
         if transaction.is_eip7702() {
             // SilaPrague fork is required for 7702 txs
             if !self.fork_tracker.is_prague_activated() {
-                return Err(InvalidTransactionError::TxTypeNotSupported.into())
+                return Err(InvalidTransactionError::TxTypeNotSupported.into());
             }
 
             if transaction.authorization_list().is_none_or(|l| l.is_empty()) {
-                return Err(Sip7702PoolTransactionError::MissingEip7702AuthorizationList.into())
+                return Err(Sip7702PoolTransactionError::MissingEip7702AuthorizationList.into());
             }
         }
 
@@ -611,7 +611,7 @@ where
         if transaction.is_eip4844() {
             // SilaCancun fork is required for blob txs
             if !self.fork_tracker.is_cancun_activated() {
-                return Err(InvalidTransactionError::TxTypeNotSupported.into())
+                return Err(InvalidTransactionError::TxTypeNotSupported.into());
             }
 
             let blob_count = transaction.blob_count().unwrap_or(0);
@@ -619,7 +619,7 @@ where
                 // no blobs
                 return Err(InvalidPoolTransactionError::Sip4844(
                     Sip4844PoolTransactionError::NoEip4844Blobs,
-                ))
+                ));
             }
 
             let max_blob_count = self.fork_tracker.max_blob_count();
@@ -629,7 +629,7 @@ where
                         have: blob_count,
                         permitted: max_blob_count,
                     },
-                ))
+                ));
             }
         }
 
@@ -637,7 +637,7 @@ where
         let tx_gas_limit_cap =
             self.fork_tracker.tx_gas_limit_cap.load(std::sync::atomic::Ordering::Relaxed);
         if tx_gas_limit_cap > 0 && transaction.gas_limit() > tx_gas_limit_cap {
-            return Err(InvalidTransactionError::GasLimitTooHigh.into())
+            return Err(InvalidTransactionError::GasLimitTooHigh.into());
         }
 
         // Run additional stateless validation if configured
@@ -677,15 +677,15 @@ where
         };
 
         // Checks for nonce
-        if transaction.requires_nonce_check() &&
-            let Err(err) = self.validate_sender_nonce(&transaction, &account)
+        if transaction.requires_nonce_check()
+            && let Err(err) = self.validate_sender_nonce(&transaction, &account)
         {
-            return TransactionValidationOutcome::Invalid(transaction, err)
+            return TransactionValidationOutcome::Invalid(transaction, err);
         }
 
         // checks for max cost not exceedng account_balance
         if let Err(err) = self.validate_sender_balance(&transaction, &account) {
-            return TransactionValidationOutcome::Invalid(transaction, err)
+            return TransactionValidationOutcome::Invalid(transaction, err);
         }
 
         // heavy blob tx validation
@@ -695,10 +695,10 @@ where
         };
 
         // Run additional stateful validation if configured
-        if let Some(check) = &self.additional_stateful_validation &&
-            let Err(err) = check(origin, &transaction, &state)
+        if let Some(check) = &self.additional_stateful_validation
+            && let Err(err) = check(origin, &transaction, &state)
         {
-            return TransactionValidationOutcome::Invalid(transaction, err)
+            return TransactionValidationOutcome::Invalid(transaction, err);
         }
 
         let authorities = self.recover_authorities(&transaction);
@@ -749,7 +749,7 @@ where
             };
 
             if !is_eip7702 {
-                return Ok(Err(InvalidTransactionError::SignerAccountHasBytecode.into()))
+                return Ok(Err(InvalidTransactionError::SignerAccountHasBytecode.into()));
             }
         }
         Ok(Ok(()))
@@ -768,7 +768,7 @@ where
                 tx: tx_nonce,
                 state: sender.nonce,
             }
-            .into())
+            .into());
         }
         Ok(())
     }
@@ -786,7 +786,7 @@ where
             return Err(InvalidTransactionError::InsufficientFunds(
                 GotExpected { got: sender.balance, expected }.into(),
             )
-            .into())
+            .into());
         }
         Ok(())
     }
@@ -804,7 +804,7 @@ where
             match transaction.take_blob() {
                 SilBlobTransactionSidecar::None => {
                     // this should not happen
-                    return Err(InvalidTransactionError::TxTypeNotSupported.into())
+                    return Err(InvalidTransactionError::TxTypeNotSupported.into());
                 }
                 SilBlobTransactionSidecar::Missing => {
                     // This can happen for re-injected blob transactions (on re-org), since the blob
@@ -816,7 +816,7 @@ where
                     } else {
                         return Err(InvalidPoolTransactionError::Sip4844(
                             Sip4844PoolTransactionError::MissingEip4844BlobSidecar,
-                        ))
+                        ));
                     }
                 }
                 SilBlobTransactionSidecar::Present(sidecar) => {
@@ -829,19 +829,19 @@ where
                             if sidecar.is_eip4844() {
                                 return Err(InvalidPoolTransactionError::Sip4844(
                                     Sip4844PoolTransactionError::UnexpectedEip4844SidecarAfterOsaka,
-                                ))
+                                ));
                             }
                         } else if sidecar.is_eip7594() && !self.allow_7594_sidecars() {
                             return Err(InvalidPoolTransactionError::Sip4844(
                                 Sip4844PoolTransactionError::UnexpectedEip7594SidecarBeforeOsaka,
-                            ))
+                            ));
                         }
                     } else {
                         // SIP-7594 disabled: always reject v1 sidecars, accept v0
                         if sidecar.is_eip7594() {
                             return Err(InvalidPoolTransactionError::Sip4844(
                                 Sip4844PoolTransactionError::Sip7594SidecarDisallowed,
-                            ))
+                            ));
                         }
                     }
 
@@ -849,7 +849,7 @@ where
                     if let Err(err) = transaction.validate_blob(&sidecar, self.kzg_settings.get()) {
                         return Err(InvalidPoolTransactionError::Sip4844(
                             Sip4844PoolTransactionError::InvalidEip4844Blob(err),
-                        ))
+                        ));
                     }
                     // Record the duration of successful blob validation as histogram
                     self.validation_metrics.blob_validation_duration.record(now.elapsed());
@@ -1020,13 +1020,13 @@ pub struct SilTransactionValidatorBuilder<Client, Savm> {
     chain_id: u64,
     /// The SAVM configuration to use for validation.
     evm_config: Savm,
-    /// Fork indicator whether we are in the SilaShanghai stage.
+    /// Fork indicator whether we are in the `SilaShanghai` stage.
     shanghai: bool,
-    /// Fork indicator whether we are in the SilaCancun hardfork.
+    /// Fork indicator whether we are in the `SilaCancun` hardfork.
     cancun: bool,
-    /// Fork indicator whether we are in the SilaPrague hardfork.
+    /// Fork indicator whether we are in the `SilaPrague` hardfork.
     prague: bool,
-    /// Fork indicator whether we are in the SilaOsaka hardfork.
+    /// Fork indicator whether we are in the `SilaOsaka` hardfork.
     osaka: bool,
     /// Timestamp of the tip block.
     tip_timestamp: u64,
@@ -1069,7 +1069,7 @@ pub struct SilTransactionValidatorBuilder<Client, Savm> {
     tx_gas_limit_cap: u64,
     /// Whether SIP-7594 blob sidecars are accepted.
     /// When false, SIP-7594 (v1) sidecars are always rejected and SIP-4844 (v0) sidecars
-    /// are always accepted, regardless of SilaOsaka fork activation.
+    /// are always accepted, regardless of `SilaOsaka` fork activation.
     sip7594: bool,
 }
 
@@ -1146,7 +1146,7 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
         }
     }
 
-    /// Disables the SilaCancun fork.
+    /// Disables the `SilaCancun` fork.
     pub const fn no_cancun(self) -> Self {
         self.set_cancun(false)
     }
@@ -1160,40 +1160,40 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
         self
     }
 
-    /// Set the SilaCancun fork.
+    /// Set the `SilaCancun` fork.
     pub const fn set_cancun(mut self, cancun: bool) -> Self {
         self.cancun = cancun;
         self
     }
 
-    /// Disables the SilaShanghai fork.
+    /// Disables the `SilaShanghai` fork.
     pub const fn no_shanghai(self) -> Self {
         self.set_shanghai(false)
     }
 
-    /// Set the SilaShanghai fork.
+    /// Set the `SilaShanghai` fork.
     pub const fn set_shanghai(mut self, shanghai: bool) -> Self {
         self.shanghai = shanghai;
         self
     }
 
-    /// Disables the SilaPrague fork.
+    /// Disables the `SilaPrague` fork.
     pub const fn no_prague(self) -> Self {
         self.set_prague(false)
     }
 
-    /// Set the SilaPrague fork.
+    /// Set the `SilaPrague` fork.
     pub const fn set_prague(mut self, prague: bool) -> Self {
         self.prague = prague;
         self
     }
 
-    /// Disables the SilaOsaka fork.
+    /// Disables the `SilaOsaka` fork.
     pub const fn no_osaka(self) -> Self {
         self.set_osaka(false)
     }
 
-    /// Set the SilaOsaka fork.
+    /// Set the `SilaOsaka` fork.
     pub const fn set_osaka(mut self, osaka: bool) -> Self {
         self.osaka = osaka;
         self
@@ -1246,7 +1246,7 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
     /// Disables SIP-7594 blob sidecar support.
     ///
     /// When disabled, SIP-7594 (v1) blob sidecars are always rejected and SIP-4844 (v0)
-    /// sidecars are always accepted, regardless of SilaOsaka fork activation.
+    /// sidecars are always accepted, regardless of `SilaOsaka` fork activation.
     ///
     /// Use this for chains that do not adopt SIP-7594 (`SilaPeerDAS`).
     pub const fn no_eip7594(self) -> Self {
@@ -1255,8 +1255,8 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
 
     /// Set SIP-7594 blob sidecar support.
     ///
-    /// When true (default), standard Sila behavior applies: v0 sidecars before SilaOsaka,
-    /// v1 sidecars after SilaOsaka. When false, v1 sidecars are always rejected.
+    /// When true (default), standard Sila behavior applies: v0 sidecars before `SilaOsaka`,
+    /// v1 sidecars after `SilaOsaka`. When false, v1 sidecars are always rejected.
     pub const fn set_eip7594(mut self, sip7594: bool) -> Self {
         self.sip7594 = sip7594;
         self
@@ -1434,22 +1434,22 @@ pub struct ForkTracker {
 }
 
 impl ForkTracker {
-    /// Returns `true` if SilaShanghai fork is activated.
+    /// Returns `true` if `SilaShanghai` fork is activated.
     pub fn is_shanghai_activated(&self) -> bool {
         self.shanghai.load(std::sync::atomic::Ordering::Relaxed)
     }
 
-    /// Returns `true` if SilaCancun fork is activated.
+    /// Returns `true` if `SilaCancun` fork is activated.
     pub fn is_cancun_activated(&self) -> bool {
         self.cancun.load(std::sync::atomic::Ordering::Relaxed)
     }
 
-    /// Returns `true` if SilaPrague fork is activated.
+    /// Returns `true` if `SilaPrague` fork is activated.
     pub fn is_prague_activated(&self) -> bool {
         self.prague.load(std::sync::atomic::Ordering::Relaxed)
     }
 
-    /// Returns `true` if SilaOsaka fork is activated.
+    /// Returns `true` if `SilaOsaka` fork is activated.
     pub fn is_osaka_activated(&self) -> bool {
         self.osaka.load(std::sync::atomic::Ordering::Relaxed)
     }
@@ -1506,22 +1506,22 @@ mod tests {
     use super::*;
     use crate::{
         blobstore::InMemoryBlobStore, error::PoolErrorKind, test_utils::TransactionBuilder,
-        traits::PoolTransaction, CoinbaseTipOrdering, SilPooledTransaction, Pool, TransactionPool,
+        traits::PoolTransaction, CoinbaseTipOrdering, Pool, SilPooledTransaction, TransactionPool,
     };
     use alloy_consensus::Transaction;
-    use alloy_eips::{
-        sip2718::{Decodable2718, Encodable2718},
-        sip2930::{AccessList, AccessListItem},
+    use alloy_sips::{
+        eip2718::{Decodable2718, Encodable2718},
+        eip2930::{AccessList, AccessListItem},
     };
     use alloy_primitives::{hex, Address, B256, U256};
-    use rsil_sila_primitives::PooledTransactionVariant;
-    use rsil_evm_sila::SilEvmConfig;
-    use rsil_primitives_traits::SignedTransaction;
-    use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
     use revm::primitives::sip3860::MAX_INITCODE_SIZE;
+    use rsil_savm_sila::SilEvmConfig;
+    use rsil_primitives_traits::SignedTransaction;
+    use rsil_provider::test_utils::{ExtendedAccount, MockSilProvider};
+    use rsil_sila_primitives::PooledTransactionVariant;
 
     fn test_evm_config() -> SilEvmConfig {
-        SilEvmConfig::sila-mainnet()
+        SilEvmConfig::sila_mainnet()
     }
 
     fn get_transaction() -> SilPooledTransaction {
@@ -1555,7 +1555,7 @@ mod tests {
         let res = ensure_intrinsic_gas(&transaction, &fork_tracker);
         assert!(res.is_ok());
 
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1579,7 +1579,7 @@ mod tests {
 
     #[test]
     fn validates_configured_chain_id() {
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         let validator = SilTransactionValidatorBuilder::new(provider, test_evm_config())
             .build(InMemoryBlobStore::default());
         let transaction = |chain_id| {
@@ -1612,7 +1612,7 @@ mod tests {
     async fn invalid_on_gas_limit_too_high() {
         let transaction = get_transaction();
 
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1645,7 +1645,7 @@ mod tests {
     #[tokio::test]
     async fn invalid_on_fee_cap_exceeded() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1682,14 +1682,14 @@ mod tests {
     #[tokio::test]
     async fn valid_on_zero_fee_cap() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .set_tx_fee_cap(0) // no cap
             .build(blob_store);
 
@@ -1700,14 +1700,14 @@ mod tests {
     #[tokio::test]
     async fn valid_on_normal_fee_cap() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .set_tx_fee_cap(2e18 as u128) // 2 SIL cap
             .build(blob_store);
 
@@ -1718,14 +1718,14 @@ mod tests {
     #[tokio::test]
     async fn invalid_on_max_tx_gas_limit_exceeded() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .with_max_tx_gas_limit(Some(500_000)) // Set limit lower than transaction gas limit (1_015_288)
             .build(blob_store.clone());
 
@@ -1750,14 +1750,14 @@ mod tests {
     #[tokio::test]
     async fn valid_on_max_tx_gas_limit_disabled() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .with_max_tx_gas_limit(None) // disabled
             .build(blob_store);
 
@@ -1768,14 +1768,14 @@ mod tests {
     #[tokio::test]
     async fn valid_on_max_tx_gas_limit_within_limit() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
         );
 
         let blob_store = InMemoryBlobStore::default();
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .with_max_tx_gas_limit(Some(2_000_000)) // Set limit higher than transaction gas limit (1_015_288)
             .build(blob_store);
 
@@ -1784,9 +1784,9 @@ mod tests {
     }
 
     // Helper function to set up common test infrastructure for priority fee tests
-    fn setup_priority_fee_test() -> (SilPooledTransaction, MockEthProvider) {
+    fn setup_priority_fee_test() -> (SilPooledTransaction, MockSilProvider) {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         provider.add_account(
             transaction.sender(),
             ExtendedAccount::new(transaction.nonce(), U256::MAX),
@@ -1796,10 +1796,10 @@ mod tests {
 
     // Helper function to create a validator with minimum priority fee
     fn create_validator_with_minimum_fee(
-        provider: MockEthProvider,
+        provider: MockSilProvider,
         minimum_priority_fee: Option<u128>,
         local_config: Option<LocalTransactionConfig>,
-    ) -> SilTransactionValidator<MockEthProvider, SilPooledTransaction, SilEvmConfig> {
+    ) -> SilTransactionValidator<MockSilProvider, SilPooledTransaction, SilEvmConfig> {
         let blob_store = InMemoryBlobStore::default();
         let mut builder = SilTransactionValidatorBuilder::new(provider, test_evm_config())
             .with_minimum_priority_fee(minimum_priority_fee);
@@ -1956,7 +1956,7 @@ mod tests {
     fn reject_oversized_tx() {
         let mut transaction = get_transaction();
         transaction.encoded_length = DEFAULT_MAX_TX_INPUT_BYTES + 1;
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
 
         // No minimum priority fee set (default is None)
         let validator = create_validator_with_minimum_fee(provider, None, None);
@@ -1969,7 +1969,7 @@ mod tests {
     #[test]
     fn reject_blob_tx_with_oversized_access_list() {
         let max_tx_input_bytes = 512;
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
         let validator = SilTransactionValidatorBuilder::new(provider, test_evm_config())
             .with_max_tx_input_bytes(max_tx_input_bytes)
             .build(InMemoryBlobStore::default());
@@ -2006,7 +2006,7 @@ mod tests {
     #[tokio::test]
     async fn valid_with_disabled_balance_check() {
         let transaction = get_transaction();
-        let provider = MockEthProvider::default().with_genesis_block();
+        let provider = MockSilProvider::default().with_genesis_block();
 
         // Set account with 0 balance
         provider.add_account(
@@ -2016,7 +2016,7 @@ mod tests {
 
         // Validate with balance check enabled
         let validator =
-            SilTransactionValidatorBuilder::new(provider.clone(), SilEvmConfig::sila-mainnet())
+            SilTransactionValidatorBuilder::new(provider.clone(), SilEvmConfig::sila_mainnet())
                 .build(InMemoryBlobStore::default());
 
         let outcome = validator.validate_one(TransactionOrigin::External, transaction.clone());
@@ -2032,7 +2032,7 @@ mod tests {
         }
 
         // Validate with balance check disabled
-        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila-mainnet())
+        let validator = SilTransactionValidatorBuilder::new(provider, SilEvmConfig::sila_mainnet())
             .disable_balance_check()
             .build(InMemoryBlobStore::default());
 

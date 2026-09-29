@@ -1,6 +1,6 @@
 use crate::{download::DownloadClient, error::PeerRequestResult, priority::Priority};
 use futures::Future;
-use rsil_eth_wire_types::snap::{
+use rsil_sil_wire_types::snap::{
     AccountRangeMessage, BlockAccessListsMessage, ByteCodesMessage, GetAccountRangeMessage,
     GetBlockAccessListsMessage, GetByteCodesMessage, GetStorageRangesMessage, SnapProtocolMessage,
     StorageRangesMessage,
@@ -113,7 +113,7 @@ pub trait SnapClient: DownloadClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rsil_eth_wire_types::BlockAccessLists;
+    use rsil_sil_wire_types::BlockAccessLists;
     use test_case::test_case;
 
     #[test_case(

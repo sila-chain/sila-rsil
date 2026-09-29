@@ -4,9 +4,9 @@
 use alloy_consensus::BlockHeader;
 use alloy_primitives::{Address, B256};
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
-use rsil_sila_engine_primitives::SilPayloadAttributes;
 use rsil_payload_primitives::PayloadAttributesBuilder;
 use rsil_primitives_traits::SealedHeader;
+use rsil_sila_engine_primitives::SilPayloadAttributes;
 use std::sync::Arc;
 
 /// The attributes builder for local Sila payload.

@@ -1,6 +1,6 @@
 use crate::PipelineEvent;
-use alloy_eips::sip1898::BlockWithParent;
-use rsil_codecs::DecompressError;
+use alloy_eips::eip1898::BlockWithParent;
+use reth_codecs::DecompressError;
 use rsil_consensus::ConsensusError;
 use rsil_errors::{BlockExecutionError, DatabaseError, RsilError};
 use rsil_network_p2p::error::DownloadError;
@@ -124,15 +124,15 @@ impl StageError {
     pub const fn is_fatal(&self) -> bool {
         matches!(
             self,
-            Self::Database(_) |
-                Self::Download(_) |
-                Self::DatabaseIntegrity(_) |
-                Self::StageCheckpoint(_) |
-                Self::MissingDownloadBuffer |
-                Self::MissingSyncGap |
-                Self::ChannelClosed |
-                Self::Internal(_) |
-                Self::Fatal(_)
+            Self::Database(_)
+                | Self::Download(_)
+                | Self::DatabaseIntegrity(_)
+                | Self::StageCheckpoint(_)
+                | Self::MissingDownloadBuffer
+                | Self::MissingSyncGap
+                | Self::ChannelClosed
+                | Self::Internal(_)
+                | Self::Fatal(_)
         )
     }
 }

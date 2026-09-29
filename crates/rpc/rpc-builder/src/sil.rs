@@ -1,6 +1,6 @@
 use rsil_rpc::{SilFilter, SilPubSub};
-use rsil_rpc_eth_api::SilApiTypes;
-use rsil_rpc_eth_types::SilConfig;
+use rsil_rpc_sil_api::SilApiTypes;
+use rsil_rpc_sil_types::SilConfig;
 use rsil_tasks::Runtime;
 
 /// Handlers for core, filter and pubsub `sil` namespace APIs.
@@ -21,11 +21,11 @@ where
     /// Returns a new instance with the additional handlers for the `sil` namespace.
     ///
     /// This will spawn all necessary tasks for the additional handlers.
-    pub fn bootstrap(config: SilConfig, executor: Runtime, eth_api: SilApi) -> Self {
-        let filter = SilFilter::new(eth_api.clone(), config.filter_config(), executor.clone());
+    pub fn bootstrap(config: SilConfig, executor: Runtime, sil_api: SilApi) -> Self {
+        let filter = SilFilter::new(sil_api.clone(), config.filter_config(), executor.clone());
 
-        let pubsub = SilPubSub::new(eth_api.clone(), executor);
+        let pubsub = SilPubSub::new(sil_api.clone(), executor);
 
-        Self { api: eth_api, filter, pubsub }
+        Self { api: sil_api, filter, pubsub }
     }
 }

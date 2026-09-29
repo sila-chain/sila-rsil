@@ -3,31 +3,22 @@
 
 #![warn(unused_crate_dependencies)]
 
-use alloy_eips::sip4895::Withdrawal;
-use alloy_evm::{
+use alloy_sips::eip4895::Withdrawal;
+use alloy_savm::{
     block::{BlockExecutorFactory, ExecutableTx, GasOutput},
-    sil::{SilBlockExecutionCtx, SilBlockExecutor, SilTxResult},
     precompiles::PrecompilesMap,
     revm::context::Block as _,
-    SilEvm, SilEvmFactory, SavmFactory,
+    eth::{
+        EthBlockExecutionCtx as SilBlockExecutionCtx,
+        EthBlockExecutor as SilBlockExecutor,
+        EthTxResult as SilTxResult,
+    },
+    EthEvm as SilEvm, EthEvmFactory as SilEvmFactory, EvmFactory as SavmFactory,
 };
 use alloy_sol_types::{sol, SolCall};
 use rsil_sila::{
     chainspec::ChainSpec,
     cli::interface::Cli,
-    savm::{
-        primitives::{
-            block::StateDB,
-            execute::{BlockExecutionError, BlockExecutor, InternalBlockExecutionError},
-            Savm, SavmEnv, SavmEnvFor, ExecutionCtxFor, InspectorFor, NextBlockEnvAttributes,
-        },
-        revm::{
-            context::TxEnv,
-            primitives::{address, hardfork::SpecId, Address},
-            DatabaseCommit,
-        },
-        SilBlockAssembler, SilEvmConfig, RsilReceiptBuilder,
-    },
     node::{
         api::{ConfigureEngineEvm, ConfigureEvm, ExecutableTxIterator, FullNodeTypes, NodeTypes},
         builder::{components::ExecutorBuilder, BuilderContext},
@@ -37,7 +28,20 @@ use rsil_sila::{
     primitives::{Header, SealedBlock, SealedHeader},
     provider::BlockExecutionResult,
     rpc::types::engine::ExecutionData,
-    Block, SilPrimitives, Receipt, TransactionSigned, TxType,
+    savm::{
+        primitives::{
+            block::StateDB,
+            execute::{BlockExecutionError, BlockExecutor, InternalBlockExecutionError},
+            ExecutionCtxFor, InspectorFor, NextBlockEnvAttributes, Savm, SavmEnv, SavmEnvFor,
+        },
+        revm::{
+            context::TxEnv,
+            primitives::{address, hardfork::SpecId, Address},
+            DatabaseCommit,
+        },
+        RsilReceiptBuilder, SilBlockAssembler, SilEvmConfig,
+    },
+    Block, Receipt, SilPrimitives, TransactionSigned, TxType,
 };
 use std::{fmt::Display, sync::Arc};
 
@@ -52,9 +56,7 @@ fn main() {
                 .with_types::<SilaNode>()
                 // Configure the components of the node
                 // use default sila components but use our custom pool
-                .with_components(
-                    SilaNode::components().executor(CustomExecutorBuilder::default()),
-                )
+                .with_components(SilaNode::components().executor(CustomExecutorBuilder::default()))
                 .with_add_ons(SilaAddOns::default())
                 .launch()
                 .await?;
@@ -89,7 +91,7 @@ pub struct CustomEvmConfig {
 }
 
 impl BlockExecutorFactory for CustomEvmConfig {
-    type SavmFactory = SilEvmFactory;
+    type EvmFactory = SilEvmFactory;
     type ExecutionCtx<'a> = SilBlockExecutionCtx<'a>;
     type Transaction = TransactionSigned;
     type Receipt = Receipt;
@@ -97,7 +99,7 @@ impl BlockExecutorFactory for CustomEvmConfig {
     type Executor<'a, DB: StateDB, I: InspectorFor<Self, DB>> =
         CustomBlockExecutor<'a, SilEvm<DB, I, PrecompilesMap>>;
 
-    fn evm_factory(&self) -> &Self::SavmFactory {
+    fn evm_factory(&self) -> &Self::EvmFactory {
         self.inner.evm_factory()
     }
 
@@ -165,7 +167,10 @@ impl ConfigureEvm for CustomEvmConfig {
 }
 
 impl ConfigureEngineEvm<ExecutionData> for CustomEvmConfig {
-    fn evm_env_for_payload(&self, payload: &ExecutionData) -> Result<SavmEnvFor<Self>, Self::Error> {
+    fn evm_env_for_payload(
+        &self,
+        payload: &ExecutionData,
+    ) -> Result<SavmEnvFor<Self>, Self::Error> {
         self.inner.evm_env_for_payload(payload)
     }
 
@@ -195,7 +200,7 @@ where
 {
     type Transaction = TransactionSigned;
     type Receipt = Receipt;
-    type Savm = E;
+    type Evm = E;
     type Result = SilTxResult<E::HaltReason, TxType>;
 
     fn apply_pre_execution_changes(&mut self) -> Result<(), BlockExecutionError> {
@@ -217,7 +222,9 @@ where
         self.inner.commit_transaction(output)
     }
 
-    fn finish(mut self) -> Result<(Self::Savm, BlockExecutionResult<Receipt>), BlockExecutionError> {
+    fn finish(
+        mut self,
+    ) -> Result<(Self::Evm, BlockExecutionResult<Receipt>), BlockExecutionError> {
         if let Some(withdrawals) = self.inner.ctx.withdrawals.clone() {
             apply_withdrawals_contract_call(withdrawals.as_ref(), self.inner.evm_mut())?;
         }
@@ -226,12 +233,12 @@ where
         self.inner.finish()
     }
 
-    fn evm_mut(&mut self) -> &mut Self::Savm {
+    fn evm_mut(&mut self) -> &mut Self::Evm {
         self.inner.evm_mut()
     }
 
-    fn savm(&self) -> &Self::Savm {
-        self.inner.savm()
+    fn evm(&self) -> &Self::Evm {
+        self.inner.evm()
     }
 }
 

@@ -110,7 +110,7 @@ impl InMemoryBalStoreInner {
         let mut pruned = 0;
         while let Some((&block_number, _)) = self.hashes_by_number.first_key_value() {
             if !prune_mode.should_prune(block_number, tip) {
-                break
+                break;
             }
 
             let Some((_, hashes)) = self.hashes_by_number.pop_first() else { break };
@@ -142,7 +142,7 @@ impl BalStore for InMemoryBalStore {
 
     fn insert_many(&self, entries: Vec<(NumHash, RawBal)>) -> ProviderResult<()> {
         if entries.is_empty() {
-            return Ok(())
+            return Ok(());
         }
 
         let mut inner = self.inner.write();
@@ -195,7 +195,7 @@ impl BalStore for InMemoryBalStore {
             out.push(bal);
 
             if limit.exceeds(size) {
-                break
+                break;
             }
         }
 

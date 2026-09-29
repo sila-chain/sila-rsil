@@ -26,7 +26,7 @@ test_data_path/
 ├── chain.rlp           # Pre-built blockchain data
 ├── headfcu.json        # Initial forkchoice state
 ├── genesis.json        # Genesis configuration (optional)
-└── eth_getLogs/        # Test cases for eth_getLogs
+└── sil_getLogs/        # Test cases for sil_getLogs
     ├── contract-addr.io
     ├── no-topics.io
     ├── topic-exact-match.io
@@ -39,7 +39,7 @@ Test files use a simple request-response format:
 ```
 // Optional comment describing the test
 // speconly: marks test as specification-only
->> {"jsonrpc":"2.0","id":1,"method":"eth_getLogs","params":[...]}
+>> {"jsonrpc":"2.0","id":1,"method":"sil_getLogs","params":[...]}
 << {"jsonrpc":"2.0","id":1,"result":[...]}
 ```
 
@@ -83,7 +83,7 @@ async fn test_eth_get_logs_compat() -> Result<()> {
         )
         .with_action(MakeCanonical::new())
         .with_action(RunRpcCompatTests::new(
-            vec!["eth_getLogs".to_string()],
+            vec!["sil_getLogs".to_string()],
             test_data_path.to_string_lossy(),
         ));
 
@@ -127,7 +127,7 @@ You can create custom test cases following the same format:
 let methods_to_test = vec![
     "eth_blockNumber".to_string(),
     "eth_call".to_string(),
-    "eth_getLogs".to_string(),
+    "sil_getLogs".to_string(),
     "eth_getTransactionReceipt".to_string(),
 ];
 

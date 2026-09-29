@@ -24,7 +24,7 @@ fn main() -> eyre::Result<()> {
     let datadir = std::env::var("RSIL_DATADIR")?;
 
     // Instantiate a provider factory for Sila sila-mainnet using the provided datadir path.
-    let spec = ChainSpecBuilder::sila-mainnet().build();
+    let spec = ChainSpecBuilder::sila_mainnet().build();
     let runtime = rsil_sila::tasks::Runtime::test();
     let factory = SilaNode::provider_factory_builder().open_read_only(
         spec.into(),

@@ -18,8 +18,8 @@ pub mod version;
 
 /// Re-exported primitive types
 pub mod primitives {
-    pub use rsil_sila_forks::*;
     pub use rsil_primitives_traits::*;
+    pub use rsil_sila_forks::*;
 }
 
 /// Re-export of `rsil_rpc_*` crates.

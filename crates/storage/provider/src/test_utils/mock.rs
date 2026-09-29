@@ -24,13 +24,13 @@ use rsil_db_api::{
     mock::{DatabaseMock, TxMock},
     models::{AccountBeforeTx, StorageSettings, StoredBlockBodyIndices},
 };
-use rsil_sila_primitives::SilPrimitives;
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::{
     Account, Block, BlockBody, Bytecode, GotExpected, NodePrimitives, RecoveredBlock, SealedHeader,
     SignerRecoverable, StorageEntry,
 };
 use rsil_prune_types::{PruneCheckpoint, PruneModes, PruneSegment};
+use rsil_sila_primitives::SilPrimitives;
 use rsil_stages_types::{StageCheckpoint, StageId};
 use rsil_storage_api::{
     BlockBodyIndicesProvider, BytecodeReader, DBProvider, DatabaseProviderFactory,
@@ -52,7 +52,7 @@ use tokio::sync::broadcast;
 
 /// A mock implementation for Provider interfaces.
 #[derive(Debug)]
-pub struct MockEthProvider<T: NodePrimitives = SilPrimitives, ChainSpec = rsil_chainspec::ChainSpec>
+pub struct MockSilProvider<T: NodePrimitives = SilPrimitives, ChainSpec = rsil_chainspec::ChainSpec>
 {
     ///local block store
     pub blocks: Arc<Mutex<B256Map<T::Block>>>,
@@ -74,7 +74,7 @@ pub struct MockEthProvider<T: NodePrimitives = SilPrimitives, ChainSpec = rsil_c
     prune_modes: Arc<PruneModes>,
 }
 
-impl<T: NodePrimitives, ChainSpec> Clone for MockEthProvider<T, ChainSpec>
+impl<T: NodePrimitives, ChainSpec> Clone for MockSilProvider<T, ChainSpec>
 where
     T::Block: Clone,
 {
@@ -94,7 +94,7 @@ where
     }
 }
 
-impl<T: NodePrimitives> MockEthProvider<T, rsil_chainspec::ChainSpec> {
+impl<T: NodePrimitives> MockSilProvider<T, rsil_chainspec::ChainSpec> {
     /// Create a new, empty instance
     pub fn new() -> Self {
         Self {
@@ -102,7 +102,7 @@ impl<T: NodePrimitives> MockEthProvider<T, rsil_chainspec::ChainSpec> {
             headers: Default::default(),
             receipts: Default::default(),
             accounts: Default::default(),
-            chain_spec: Arc::new(rsil_chainspec::ChainSpecBuilder::sila-mainnet().build()),
+            chain_spec: Arc::new(rsil_chainspec::ChainSpecBuilder::sila_mainnet().build()),
             state_roots: Default::default(),
             block_body_indices: Default::default(),
             bal_store: Default::default(),
@@ -112,7 +112,7 @@ impl<T: NodePrimitives> MockEthProvider<T, rsil_chainspec::ChainSpec> {
     }
 }
 
-impl<T: NodePrimitives, ChainSpec> MockEthProvider<T, ChainSpec> {
+impl<T: NodePrimitives, ChainSpec> MockSilProvider<T, ChainSpec> {
     /// Add block to local block store
     pub fn add_block(&self, hash: B256, block: T::Block) {
         self.add_header(hash, block.header().clone());
@@ -180,8 +180,8 @@ impl<T: NodePrimitives, ChainSpec> MockEthProvider<T, ChainSpec> {
     }
 
     /// Set chain spec.
-    pub fn with_chain_spec<C>(self, chain_spec: C) -> MockEthProvider<T, C> {
-        MockEthProvider {
+    pub fn with_chain_spec<C>(self, chain_spec: C) -> MockSilProvider<T, C> {
+        MockSilProvider {
             blocks: self.blocks,
             headers: self.headers,
             receipts: self.receipts,
@@ -211,13 +211,13 @@ impl<T: NodePrimitives, ChainSpec> MockEthProvider<T, ChainSpec> {
     }
 }
 
-impl Default for MockEthProvider {
+impl Default for MockSilProvider {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T: NodePrimitives, ChainSpec> BalProvider for MockEthProvider<T, ChainSpec> {
+impl<T: NodePrimitives, ChainSpec> BalProvider for MockSilProvider<T, ChainSpec> {
     fn bal_store(&self) -> &BalStoreHandle {
         &self.bal_store
     }
@@ -261,7 +261,7 @@ impl ExtendedAccount {
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Clone + 'static> DatabaseProviderFactory
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     type DB = DatabaseMock;
     type Provider = Self;
@@ -277,7 +277,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + Clone + 'static> DatabaseProvi
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> DBProvider
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     type Tx = TxMock;
 
@@ -303,7 +303,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> DBProvider
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> HeaderProvider
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     type Header = <T::Block as Block>::Header;
 
@@ -351,7 +351,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> HeaderP
     }
 }
 
-impl<T, ChainSpec> ChainSpecProvider for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> ChainSpecProvider for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: SilChainSpec + 'static + Debug + Send + Sync,
@@ -364,7 +364,7 @@ where
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> TransactionsProvider
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     type Transaction = T::SignedTx;
 
@@ -421,7 +421,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> TransactionsProvider
                         excess_blob_gas: block.header().excess_blob_gas(),
                         timestamp: block.header().timestamp(),
                     };
-                    return Ok(Some((tx.clone(), meta)))
+                    return Ok(Some((tx.clone(), meta)));
                 }
             }
         }
@@ -492,7 +492,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> TransactionsProvider
     }
 }
 
-impl<T, ChainSpec> ReceiptProvider for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> ReceiptProvider for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: Send + Sync + 'static,
@@ -558,7 +558,7 @@ where
     }
 }
 
-impl<T, ChainSpec> ReceiptProviderIdExt for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> ReceiptProviderIdExt for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     Self: ReceiptProvider + BlockIdReader,
@@ -566,7 +566,7 @@ where
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync + 'static> BlockHashReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn block_hash(&self, number: u64) -> ProviderResult<Option<B256>> {
         let lock = self.headers.lock();
@@ -591,7 +591,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync + 'static> BlockHashReader
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync + 'static> BlockNumReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn chain_info(&self) -> ProviderResult<ChainInfo> {
         let best_block_number = self.best_block_number()?;
@@ -623,7 +623,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync + 'static> BlockNumReader
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> BlockIdReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn pending_block_num_hash(&self) -> ProviderResult<Option<alloy_eips::BlockNumHash>> {
         Ok(None)
@@ -640,7 +640,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> BlockId
 
 //look
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> BlockReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     type Block = T::Block;
 
@@ -720,7 +720,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> BlockRe
     }
 }
 
-impl<T, ChainSpec> BlockReaderIdExt for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> BlockReaderIdExt for MockSilProvider<T, ChainSpec>
 where
     ChainSpec: SilChainSpec + Send + Sync + 'static,
     T: NodePrimitives,
@@ -747,14 +747,14 @@ where
     }
 }
 
-impl<T: NodePrimitives, ChainSpec: Send + Sync> AccountReader for MockEthProvider<T, ChainSpec> {
+impl<T: NodePrimitives, ChainSpec: Send + Sync> AccountReader for MockSilProvider<T, ChainSpec> {
     fn basic_account(&self, address: &Address) -> ProviderResult<Option<Account>> {
         Ok(self.accounts.lock().get(address).cloned().map(|a| a.account))
     }
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> StageCheckpointReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn get_stage_checkpoint(&self, _id: StageId) -> ProviderResult<Option<StageCheckpoint>> {
         Ok(None)
@@ -770,7 +770,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> StageCheckpointReader
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> PruneCheckpointReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn get_prune_checkpoint(
         &self,
@@ -784,7 +784,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> PruneCheckpointReader
     }
 }
 
-impl<T, ChainSpec> StateRootProvider for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> StateRootProvider for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: Send + Sync,
@@ -814,7 +814,7 @@ where
     }
 }
 
-impl<T, ChainSpec> StorageRootProvider for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> StorageRootProvider for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: Send + Sync,
@@ -846,7 +846,7 @@ where
     }
 }
 
-impl<T, ChainSpec> StateProofProvider for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> StateProofProvider for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: Send + Sync,
@@ -879,14 +879,14 @@ where
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + 'static> HashedPostStateProvider
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn hashed_post_state(&self, _state: &revm::database::BundleState) -> HashedPostState {
         HashedPostState::default()
     }
 }
 
-impl<T, ChainSpec> StateProvider for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> StateProvider for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: SilChainSpec + Send + Sync + 'static,
@@ -901,7 +901,7 @@ where
     }
 }
 
-impl<T, ChainSpec> BytecodeReader for MockEthProvider<T, ChainSpec>
+impl<T, ChainSpec> BytecodeReader for MockSilProvider<T, ChainSpec>
 where
     T: NodePrimitives,
     ChainSpec: Send + Sync,
@@ -920,7 +920,7 @@ where
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> StorageSettingsCache
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn cached_storage_settings(&self) -> StorageSettings {
         StorageSettings::default()
@@ -930,7 +930,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> StorageSettingsCache
 }
 
 impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> StateProviderFactory
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn latest(&self) -> ProviderResult<StateProviderBox> {
         Ok(Box::new(self.clone()))
@@ -990,7 +990,7 @@ impl<T: NodePrimitives, ChainSpec: SilChainSpec + Send + Sync + 'static> StatePr
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> BlockBodyIndicesProvider
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn block_body_indices(&self, num: u64) -> ProviderResult<Option<StoredBlockBodyIndices>> {
         Ok(self.block_body_indices.lock().get(&num).copied())
@@ -1003,7 +1003,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> BlockBodyIndicesProvider
     }
 }
 
-impl<T: NodePrimitives, ChainSpec: Send + Sync> ChangeSetReader for MockEthProvider<T, ChainSpec> {
+impl<T: NodePrimitives, ChainSpec: Send + Sync> ChangeSetReader for MockSilProvider<T, ChainSpec> {
     fn account_block_changeset(
         &self,
         _block_number: BlockNumber,
@@ -1028,7 +1028,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> ChangeSetReader for MockEthProvi
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> StorageChangeSetReader
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn storage_changeset(
         &self,
@@ -1054,7 +1054,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> StorageChangeSetReader
     }
 }
 
-impl<T: NodePrimitives, ChainSpec: Send + Sync> StateReader for MockEthProvider<T, ChainSpec> {
+impl<T: NodePrimitives, ChainSpec: Send + Sync> StateReader for MockSilProvider<T, ChainSpec> {
     type Receipt = T::Receipt;
 
     fn get_state(
@@ -1066,7 +1066,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> StateReader for MockEthProvider<
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> CanonStateSubscriptions
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     fn subscribe_to_canonical_state(&self) -> CanonStateNotifications<T> {
         broadcast::channel(1).1
@@ -1074,7 +1074,7 @@ impl<T: NodePrimitives, ChainSpec: Send + Sync> CanonStateSubscriptions
 }
 
 impl<T: NodePrimitives, ChainSpec: Send + Sync> NodePrimitivesProvider
-    for MockEthProvider<T, ChainSpec>
+    for MockSilProvider<T, ChainSpec>
 {
     type Primitives = T;
 }
@@ -1088,7 +1088,7 @@ mod tests {
 
     #[test]
     fn test_mock_provider_receipts() {
-        let provider = MockEthProvider::<SilPrimitives>::new();
+        let provider = MockSilProvider::<SilPrimitives>::new();
 
         let block_hash = BlockHash::random();
         let block_number = 1u64;
@@ -1119,7 +1119,7 @@ mod tests {
 
     #[test]
     fn test_mock_provider_receipts_multiple_blocks() {
-        let provider = MockEthProvider::<SilPrimitives>::new();
+        let provider = MockSilProvider::<SilPrimitives>::new();
 
         let block1_hash = BlockHash::random();
         let block2_hash = BlockHash::random();

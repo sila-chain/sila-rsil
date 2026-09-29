@@ -8,13 +8,12 @@
 //! task runs lives in `rsil-engine-tree` under `tree::state_root_strategy`.
 
 use crate::error::StateRootTaskError;
-use alloy_evm::block::OnStateHook;
 use alloy_primitives::{keccak256, map::B256Map, B256};
+use rsil_savm::{OnStateHook, SavmState};
 use rsil_trie::{
     prefix_set::TriePrefixSetsMut, updates::TrieUpdates, HashedPostState, HashedStorage,
     MultiProofTargetsV2, ProofV2Target,
 };
-use revm::state::SavmState;
 use std::{fmt, sync::Arc};
 use tracing::trace;
 

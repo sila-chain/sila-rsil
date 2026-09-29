@@ -3,7 +3,7 @@ use rsil_network::{
     test_utils::Testnet,
     transactions::{TransactionPropagationMode::Max, TransactionsManagerConfig},
 };
-use rsil_provider::test_utils::{ExtendedAccount, MockEthProvider};
+use rsil_provider::test_utils::{ExtendedAccount, MockSilProvider};
 use rsil_tracing::init_test_tracing;
 use rsil_transaction_pool::{test_utils::TransactionGenerator, PoolTransaction, TransactionPool};
 use tokio::time::Duration;
@@ -16,7 +16,7 @@ async fn transaction_hash_fetching() {
     let mut config = TransactionsManagerConfig { propagation_mode: Max(0), ..Default::default() };
     config.transaction_fetcher_config.max_inflight_requests = 1;
 
-    let provider = MockEthProvider::default();
+    let provider = MockSilProvider::default();
     let num_peers = 10;
     let net = Testnet::create_with(num_peers, provider.clone()).await;
 

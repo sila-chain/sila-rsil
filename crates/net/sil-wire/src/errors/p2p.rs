@@ -2,7 +2,7 @@
 
 use std::io;
 
-use rsil_eth_wire_types::{DisconnectReason, UnknownDisconnectReason};
+use rsil_sil_wire_types::{DisconnectReason, UnknownDisconnectReason};
 use rsil_primitives_traits::GotExpected;
 
 use crate::{capability::SharedCapabilityError, ProtocolVersion};
@@ -82,8 +82,8 @@ impl P2PStreamError {
     /// Returns the [`DisconnectReason`] if it is the `Disconnected` variant.
     pub const fn as_disconnected(&self) -> Option<DisconnectReason> {
         let reason = match self {
-            Self::HandshakeError(P2PHandshakeError::Disconnected(reason)) |
-            Self::Disconnected(reason) => reason,
+            Self::HandshakeError(P2PHandshakeError::Disconnected(reason))
+            | Self::Disconnected(reason) => reason,
             _ => return None,
         };
 

@@ -25,7 +25,7 @@ pub mod noop;
 pub mod test_utils;
 use test_utils::PeersHandleProvider;
 
-pub use alloy_rpc_types_admin::SilProtocolInfo;
+pub use alloy_rpc_types_admin::EthProtocolInfo as SilProtocolInfo;
 pub use rsil_network_p2p::{BlockClient, HeadersClient};
 pub use rsil_network_types::{PeerKind, Reputation, ReputationChangeKind};
 
@@ -37,8 +37,8 @@ pub use events::{
     PeerRequestSender, RequestMessage,
 };
 
-use rsil_eth_wire_types::{
-    capability::Capabilities, Capability, DisconnectReason, SilVersion, NetworkPrimitives,
+use rsil_sil_wire_types::{
+    capability::Capabilities, Capability, DisconnectReason, NetworkPrimitives, SilVersion,
     UnifiedStatus,
 };
 use rsil_network_p2p::sync::NetworkSyncUpdater;
@@ -267,7 +267,7 @@ pub struct PeerInfo {
     /// The direction of the session
     pub direction: Direction,
     /// The negotiated sil version.
-    pub eth_version: SilVersion,
+    pub sil_version: SilVersion,
     /// The Status message the peer sent for the `sil` handshake
     pub status: Arc<UnifiedStatus>,
     /// The timestamp when the session to that peer has been established.
@@ -315,7 +315,7 @@ pub struct NetworkStatus {
     /// The current sila protocol version
     pub protocol_version: u64,
     /// Information about the Sila Wire Protocol.
-    pub eth_protocol_info: SilProtocolInfo,
+    pub sil_protocol_info: SilProtocolInfo,
     /// The list of supported capabilities and their versions.
     pub capabilities: Vec<Capability>,
 }

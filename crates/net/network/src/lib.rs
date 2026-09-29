@@ -21,7 +21,7 @@
 //!          [`TransactionPool`](rsil_transaction_pool::TransactionPool) over the `Network`
 //!
 //!    - `SIL request Task`: is a spawned
-//!      [`SilRequestHandler`](crate::eth_requests::SilRequestHandler) future that:
+//!      [`SilRequestHandler`](crate::sil_requests::SilRequestHandler) future that:
 //!
 //!        * Responds to incoming SIL related requests: `Headers`, `Bodies`
 //!
@@ -126,7 +126,7 @@ pub mod test_utils;
 pub mod cache;
 pub mod config;
 pub mod error;
-pub mod eth_requests;
+pub mod sil_requests;
 pub mod import;
 pub mod message;
 pub mod peers;
@@ -148,8 +148,8 @@ mod state;
 mod swarm;
 mod trusted_peers_resolver;
 
-pub use rsil_eth_wire::{DisconnectReason, HelloMessageWithProtocols};
-pub use rsil_eth_wire_types::{primitives, SilNetworkPrimitives, NetworkPrimitives};
+pub use rsil_sil_wire::{DisconnectReason, HelloMessageWithProtocols};
+pub use rsil_sil_wire_types::{primitives, NetworkPrimitives, SilNetworkPrimitives};
 pub use rsil_network_api::{
     events, BlockDownloaderProvider, DiscoveredEvent, DiscoveryEvent, NetworkEvent,
     NetworkEventListenerProvider, NetworkInfo, PeerRequest, PeerRequestSender, Peers, PeersInfo,
@@ -157,9 +157,9 @@ pub use rsil_network_api::{
 pub use rsil_network_p2p::sync::{NetworkSyncUpdater, SyncState};
 pub use rsil_network_types::{PeersConfig, SessionsConfig};
 pub use session::{
-    ActiveSessionHandle, ActiveSessionMessage, Direction, SilRlpxConnection, PeerInfo,
-    PendingSessionEvent, PendingSessionHandle, PendingSessionHandshakeError, SessionCommand,
-    SessionEvent, SessionId, SessionManager,
+    ActiveSessionHandle, ActiveSessionMessage, Direction, PeerInfo, PendingSessionEvent,
+    PendingSessionHandle, PendingSessionHandshakeError, SessionCommand, SessionEvent, SessionId,
+    SessionManager, SilRlpxConnection,
 };
 
 pub use builder::NetworkBuilder;
@@ -178,7 +178,7 @@ pub use rsil_network_p2p as p2p;
 /// re-export types crates
 pub mod types {
     pub use rsil_discv4::NatResolver;
-    pub use rsil_eth_wire_types::*;
+    pub use rsil_sil_wire_types::*;
     pub use rsil_network_types::*;
 }
 

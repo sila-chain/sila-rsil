@@ -59,13 +59,13 @@ pub trait PayloadTypes: Send + Sync + Unpin + core::fmt::Debug + Clone + 'static
 
 /// Validates the timestamp depending on the version called:
 ///
-/// * If V2, this ensures that the payload timestamp is pre-SilaCancun.
-/// * If V3, this ensures that the payload timestamp is within the SilaCancun timestamp.
-/// * If V4, this ensures that the payload timestamp is within the SilaPrague timestamp.
-/// * If V5, this ensures that the payload timestamp is within the SilaOsaka timestamp.
-/// * If V6, this ensures that the payload timestamp is within the SilaAmsterdam timestamp.
+/// * If V2, this ensures that the payload timestamp is pre-`SilaCancun`.
+/// * If V3, this ensures that the payload timestamp is within the `SilaCancun` timestamp.
+/// * If V4, this ensures that the payload timestamp is within the `SilaPrague` timestamp.
+/// * If V5, this ensures that the payload timestamp is within the `SilaOsaka` timestamp.
+/// * If V6, this ensures that the payload timestamp is within the `SilaAmsterdam` timestamp.
 ///
-/// Additionally, it ensures that `engine_getPayloadV4` is not used for an SilaOsaka payload and that
+/// Additionally, it ensures that `engine_getPayloadV4` is not used for an `SilaOsaka` payload and that
 /// staggered endpoint upgrades reject the next fork once a newer method version is required.
 ///
 /// Otherwise, this will return [`EngineObjectValidationError::UnsupportedFork`].
@@ -94,7 +94,7 @@ pub fn validate_payload_timestamp(
         //
         // 1. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of
         //    payload or payloadAttributes is greater or equal to the SilaCancun activation timestamp.
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     if version.is_v3() && !is_cancun {
@@ -116,7 +116,7 @@ pub fn validate_payload_timestamp(
         //
         // 2. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of
         //    the payload does not fall within the time frame of the SilaCancun fork.
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     let is_prague = chain_spec.is_prague_active_at_timestamp(timestamp);
@@ -139,7 +139,7 @@ pub fn validate_payload_timestamp(
         //
         // 2. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of
         //    the payload does not fall within the time frame of the SilaPrague fork.
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     let is_osaka = chain_spec.is_osaka_active_at_timestamp(timestamp);
@@ -151,27 +151,27 @@ pub fn validate_payload_timestamp(
         //
         // 1. Client software MUST return -38005: Unsupported fork error if the timestamp of the
         //    built payload does not fall within the time frame of the SilaOsaka fork.
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     let is_amsterdam = chain_spec.is_amsterdam_active_at_timestamp(timestamp);
 
     // Staggered endpoint upgrades must reject SilaAmsterdam payloads until the SilaAmsterdam-specific
     // method version is used.
-    if is_amsterdam &&
-        matches!(
+    if is_amsterdam
+        && matches!(
             (version, kind),
-            (EngineApiMessageVersion::V3, MessageValidationKind::PayloadAttributes) |
-                (EngineApiMessageVersion::V4, MessageValidationKind::Payload) |
-                (EngineApiMessageVersion::V5, MessageValidationKind::GetPayload)
+            (EngineApiMessageVersion::V3, MessageValidationKind::PayloadAttributes)
+                | (EngineApiMessageVersion::V4, MessageValidationKind::Payload)
+                | (EngineApiMessageVersion::V5, MessageValidationKind::GetPayload)
         )
     {
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     // `engine_getPayloadV4` MUST reject payloads with a timestamp >= SilaOsaka.
     if version.is_v4() && kind == MessageValidationKind::GetPayload && is_osaka {
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     if version.is_v6() && !is_amsterdam {
@@ -183,15 +183,15 @@ pub fn validate_payload_timestamp(
         // 1. Client software MUST return -38005: Unsupported fork error if the timestamp of the
         //    built payload does not fall within the time frame of the SilaAmsterdam fork.
 
-        return Err(EngineObjectValidationError::UnsupportedFork)
+        return Err(EngineObjectValidationError::UnsupportedFork);
     }
 
     Ok(())
 }
 
 /// Validates the presence of the `block access lists` field according to the payload timestamp.
-/// After SilaAmsterdam, block access list field must be [Some].
-/// Before SilaAmsterdam, block access list field must be [None];
+/// After `SilaAmsterdam`, block access list field must be [Some].
+/// Before `SilaAmsterdam`, block access list field must be [None];
 pub fn validate_block_access_list_presence<T: SilaHardforks>(
     chain_spec: &T,
     version: EngineApiMessageVersion,
@@ -201,13 +201,13 @@ pub fn validate_block_access_list_presence<T: SilaHardforks>(
 ) -> Result<(), EngineObjectValidationError> {
     let is_amsterdam_active = chain_spec.is_amsterdam_active_at_timestamp(timestamp);
     match version {
-        EngineApiMessageVersion::V1 |
-        EngineApiMessageVersion::V2 |
-        EngineApiMessageVersion::V3 |
-        EngineApiMessageVersion::V4 => {
+        EngineApiMessageVersion::V1
+        | EngineApiMessageVersion::V2
+        | EngineApiMessageVersion::V3
+        | EngineApiMessageVersion::V4 => {
             if has_block_access_list {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::BlockAccessListNotSupported))
+                    .to_error(VersionSpecificValidationError::BlockAccessListNotSupported));
             }
         }
 
@@ -215,26 +215,26 @@ pub fn validate_block_access_list_presence<T: SilaHardforks>(
             if message_validation_kind == MessageValidationKind::Payload {
                 if is_amsterdam_active && !has_block_access_list {
                     return Err(message_validation_kind
-                        .to_error(VersionSpecificValidationError::NoBlockAccessListPostAmsterdam))
+                        .to_error(VersionSpecificValidationError::NoBlockAccessListPostAmsterdam));
                 }
                 if !is_amsterdam_active && has_block_access_list {
                     return Err(message_validation_kind
-                        .to_error(VersionSpecificValidationError::HasBlockAccessListPreAmsterdam))
+                        .to_error(VersionSpecificValidationError::HasBlockAccessListPreAmsterdam));
                 }
             } else if has_block_access_list {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::BlockAccessListNotSupported))
+                    .to_error(VersionSpecificValidationError::BlockAccessListNotSupported));
             }
         }
 
         EngineApiMessageVersion::V6 => {
             if is_amsterdam_active && !has_block_access_list {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::NoBlockAccessListPostAmsterdam))
+                    .to_error(VersionSpecificValidationError::NoBlockAccessListPostAmsterdam));
             }
             if !is_amsterdam_active && has_block_access_list {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::HasBlockAccessListPreAmsterdam))
+                    .to_error(VersionSpecificValidationError::HasBlockAccessListPreAmsterdam));
             }
         }
     };
@@ -243,8 +243,8 @@ pub fn validate_block_access_list_presence<T: SilaHardforks>(
 }
 
 /// Validates the presence of the `slot number` field according to the payload timestamp.
-/// After SilaAmsterdam, slot number field must be [Some].
-/// Before SilaAmsterdam, slot number field must be [None];
+/// After `SilaAmsterdam`, slot number field must be [Some].
+/// Before `SilaAmsterdam`, slot number field must be [None];
 pub fn validate_slot_number_presence<T: SilaHardforks>(
     chain_spec: &T,
     version: EngineApiMessageVersion,
@@ -258,7 +258,7 @@ pub fn validate_slot_number_presence<T: SilaHardforks>(
         EngineApiMessageVersion::V1 | EngineApiMessageVersion::V2 | EngineApiMessageVersion::V3 => {
             if has_slot_number {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::SlotNumberNotSupported))
+                    .to_error(VersionSpecificValidationError::SlotNumberNotSupported));
             }
         }
 
@@ -266,15 +266,15 @@ pub fn validate_slot_number_presence<T: SilaHardforks>(
             if message_validation_kind == MessageValidationKind::PayloadAttributes {
                 if is_amsterdam_active && !has_slot_number {
                     return Err(message_validation_kind
-                        .to_error(VersionSpecificValidationError::NoSlotNumberPostAmsterdam))
+                        .to_error(VersionSpecificValidationError::NoSlotNumberPostAmsterdam));
                 }
                 if !is_amsterdam_active && has_slot_number {
                     return Err(message_validation_kind
-                        .to_error(VersionSpecificValidationError::HasSlotNumberPreAmsterdam))
+                        .to_error(VersionSpecificValidationError::HasSlotNumberPreAmsterdam));
                 }
             } else if has_slot_number {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::SlotNumberNotSupported))
+                    .to_error(VersionSpecificValidationError::SlotNumberNotSupported));
             }
         }
 
@@ -282,26 +282,26 @@ pub fn validate_slot_number_presence<T: SilaHardforks>(
             if message_validation_kind == MessageValidationKind::Payload {
                 if is_amsterdam_active && !has_slot_number {
                     return Err(message_validation_kind
-                        .to_error(VersionSpecificValidationError::NoSlotNumberPostAmsterdam))
+                        .to_error(VersionSpecificValidationError::NoSlotNumberPostAmsterdam));
                 }
                 if !is_amsterdam_active && has_slot_number {
                     return Err(message_validation_kind
-                        .to_error(VersionSpecificValidationError::HasSlotNumberPreAmsterdam))
+                        .to_error(VersionSpecificValidationError::HasSlotNumberPreAmsterdam));
                 }
             } else if has_slot_number {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::SlotNumberNotSupported))
+                    .to_error(VersionSpecificValidationError::SlotNumberNotSupported));
             }
         }
 
         EngineApiMessageVersion::V6 => {
             if is_amsterdam_active && !has_slot_number {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::NoSlotNumberPostAmsterdam))
+                    .to_error(VersionSpecificValidationError::NoSlotNumberPostAmsterdam));
             }
             if !is_amsterdam_active && has_slot_number {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::HasSlotNumberPreAmsterdam))
+                    .to_error(VersionSpecificValidationError::HasSlotNumberPreAmsterdam));
             }
         }
     };
@@ -310,8 +310,8 @@ pub fn validate_slot_number_presence<T: SilaHardforks>(
 }
 
 /// Validates the presence of the `withdrawals` field according to the payload timestamp.
-/// After SilaShanghai, withdrawals field must be [Some].
-/// Before SilaShanghai, withdrawals field must be [None];
+/// After `SilaShanghai`, withdrawals field must be [Some].
+/// Before `SilaShanghai`, withdrawals field must be [None];
 pub fn validate_withdrawals_presence<T: SilaHardforks>(
     chain_spec: &T,
     version: EngineApiMessageVersion,
@@ -325,21 +325,21 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
         EngineApiMessageVersion::V1 => {
             if has_withdrawals {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::WithdrawalsNotSupportedInV1))
+                    .to_error(VersionSpecificValidationError::WithdrawalsNotSupportedInV1));
             }
         }
-        EngineApiMessageVersion::V2 |
-        EngineApiMessageVersion::V3 |
-        EngineApiMessageVersion::V4 |
-        EngineApiMessageVersion::V5 |
-        EngineApiMessageVersion::V6 => {
+        EngineApiMessageVersion::V2
+        | EngineApiMessageVersion::V3
+        | EngineApiMessageVersion::V4
+        | EngineApiMessageVersion::V5
+        | EngineApiMessageVersion::V6 => {
             if is_shanghai_active && !has_withdrawals {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::NoWithdrawalsPostShanghai))
+                    .to_error(VersionSpecificValidationError::NoWithdrawalsPostShanghai));
             }
             if !is_shanghai_active && has_withdrawals {
                 return Err(message_validation_kind
-                    .to_error(VersionSpecificValidationError::HasWithdrawalsPreShanghai))
+                    .to_error(VersionSpecificValidationError::HasWithdrawalsPreShanghai));
             }
         }
     };
@@ -351,13 +351,13 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
 /// This method is meant to be used with either a `payloadAttributes` field or a full payload, with
 /// the `engine_forkchoiceUpdated` and `engine_newPayload` methods respectively.
 ///
-/// After SilaCancun, the `parentBeaconBlockRoot` field must be [Some].
-/// Before SilaCancun, the `parentBeaconBlockRoot` field must be [None].
+/// After `SilaCancun`, the `parentBeaconBlockRoot` field must be [Some].
+/// Before `SilaCancun`, the `parentBeaconBlockRoot` field must be [None].
 ///
-/// If the engine API message version is V1 or V2, and the timestamp is post-SilaCancun, then this will
+/// If the engine API message version is V1 or V2, and the timestamp is post-`SilaCancun`, then this will
 /// return [`EngineObjectValidationError::UnsupportedFork`].
 ///
-/// If the timestamp is before the SilaCancun fork and the engine API message version is V3, then this
+/// If the timestamp is before the `SilaCancun` fork and the engine API message version is V3, then this
 /// will return [`EngineObjectValidationError::UnsupportedFork`].
 ///
 /// If the engine API message version is V3, but the `parentBeaconBlockRoot` is [None], then
@@ -379,7 +379,7 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
 ///    sequence of checks that **MUST** be run over `payloadAttributes`:
 ///     1. `payloadAttributes` matches the `PayloadAttributesV3` structure, return `-38003: Invalid
 ///        payload attributes` on failure.
-///     2. `payloadAttributes.timestamp` falls within the time frame of the SilaCancun fork, return
+///     2. `payloadAttributes.timestamp` falls within the time frame of the `SilaCancun` fork, return
 ///        `-38005: Unsupported fork` on failure.
 ///     3. `payloadAttributes.timestamp` is greater than `timestamp` of a block referenced by
 ///        `forkchoiceState.headBlockHash`, return `-38003: Invalid payload attributes` on failure.
@@ -389,12 +389,12 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
 /// For `engine_newPayloadV3`:
 ///
 /// 2. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of the
-///    payload does not fall within the time frame of the SilaCancun fork.
+///    payload does not fall within the time frame of the `SilaCancun` fork.
 ///
 /// For `engine_newPayloadV4`:
 ///
 /// 2. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of the
-///    payload does not fall within the time frame of the SilaPrague fork.
+///    payload does not fall within the time frame of the `SilaPrague` fork.
 ///
 /// Returning the right error code (ie, if the client should return `-38003: Invalid payload
 /// attributes` is handled by the `message_validation_kind` parameter. If the parameter is
@@ -430,16 +430,16 @@ pub fn validate_parent_beacon_block_root_presence<T: SilaHardforks>(
             if has_parent_beacon_block_root {
                 return Err(validation_kind.to_error(
                     VersionSpecificValidationError::ParentBeaconBlockRootNotSupportedBeforeV3,
-                ))
+                ));
             }
         }
-        EngineApiMessageVersion::V3 |
-        EngineApiMessageVersion::V4 |
-        EngineApiMessageVersion::V5 |
-        EngineApiMessageVersion::V6 => {
+        EngineApiMessageVersion::V3
+        | EngineApiMessageVersion::V4
+        | EngineApiMessageVersion::V5
+        | EngineApiMessageVersion::V6 => {
             if !has_parent_beacon_block_root {
                 return Err(validation_kind
-                    .to_error(VersionSpecificValidationError::NoParentBeaconBlockRootPostCancun))
+                    .to_error(VersionSpecificValidationError::NoParentBeaconBlockRootPostCancun));
             }
         }
     };
@@ -551,24 +551,24 @@ pub enum EngineApiMessageVersion {
     V1 = 1,
     /// Version 2
     ///
-    /// Added in the SilaShanghai hardfork.
+    /// Added in the `SilaShanghai` hardfork.
     V2 = 2,
     /// Version 3
     ///
-    /// Added in the SilaCancun hardfork.
+    /// Added in the `SilaCancun` hardfork.
     V3 = 3,
     /// Version 4
     ///
-    /// Added in the SilaPrague hardfork.
+    /// Added in the `SilaPrague` hardfork.
     #[default]
     V4 = 4,
     /// Version 5
     ///
-    /// Added in the SilaOsaka hardfork.
+    /// Added in the `SilaOsaka` hardfork.
     V5 = 5,
     /// Version 6
     ///
-    /// Added in the SilaAmsterdam hardfork.
+    /// Added in the `SilaAmsterdam` hardfork.
     V6 = 6,
 }
 
@@ -650,20 +650,20 @@ pub fn validate_execution_requests(requests: &[Bytes]) -> Result<(), EngineObjec
     let mut last_request_type = None;
     for request in requests {
         if request.len() <= 1 {
-            return Err(EngineObjectValidationError::InvalidParams("EmptyExecutionRequest".into()))
+            return Err(EngineObjectValidationError::InvalidParams("EmptyExecutionRequest".into()));
         }
 
         let request_type = request[0];
         if Some(request_type) < last_request_type {
             return Err(EngineObjectValidationError::InvalidParams(
                 "OutOfOrderExecutionRequest".into(),
-            ))
+            ));
         }
 
         if Some(request_type) == last_request_type {
             return Err(EngineObjectValidationError::InvalidParams(
                 "DuplicatedExecutionRequestType".into(),
-            ))
+            ));
         }
 
         last_request_type = Some(request_type);
@@ -675,7 +675,7 @@ pub fn validate_execution_requests(requests: &[Bytes]) -> Result<(), EngineObjec
 mod tests {
     use super::*;
     use assert_matches::assert_matches;
-    use rsil_chainspec::{ChainSpecBuilder, SilaHardfork, ForkCondition};
+    use rsil_chainspec::{ChainSpecBuilder, ForkCondition, SilaHardfork};
 
     #[test]
     fn version_ord() {
@@ -686,9 +686,9 @@ mod tests {
     fn validate_osaka_get_payload_restrictions() {
         // SilaOsaka activates at timestamp 1000
         let osaka_activation = 1000;
-        let chain_spec = ChainSpecBuilder::sila-mainnet()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(0))
-            .with_fork(SilaHardfork::SilaOsaka, ForkCondition::Timestamp(osaka_activation))
+        let chain_spec = ChainSpecBuilder::sila_mainnet()
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(0))
+            .with_fork(SilaHardfork::Osaka, ForkCondition::Timestamp(osaka_activation))
             .build();
 
         // SilaOsaka is Active + V4 + GetPayload
@@ -712,7 +712,7 @@ mod tests {
 
     #[test]
     fn validate_amsterdam_staggered_version_restrictions() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().amsterdam_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().amsterdam_activated().build();
 
         let res = validate_payload_timestamp(
             &chain_spec,
@@ -749,7 +749,7 @@ mod tests {
 
     #[test]
     fn validate_amsterdam_slot_and_bal_presence() {
-        let chain_spec = ChainSpecBuilder::sila-mainnet().amsterdam_activated().build();
+        let chain_spec = ChainSpecBuilder::sila_mainnet().amsterdam_activated().build();
 
         let res = validate_slot_number_presence(
             &chain_spec,

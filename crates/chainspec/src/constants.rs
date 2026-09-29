@@ -1,11 +1,11 @@
 use crate::spec::DepositContract;
-use alloy_eips::sip6110::MAINNET_DEPOSIT_CONTRACT_ADDRESS;
 use alloy_primitives::b256;
+use alloy_sips::eip6110::MAINNET_DEPOSIT_CONTRACT_ADDRESS;
 
 /// Gas per transaction not creating a contract.
 pub const MIN_TRANSACTION_GAS: u64 = 21_000u64;
 
-/// SilaMainnet prune delete limit.
+/// `SilaMainnet` prune delete limit.
 pub const MAINNET_PRUNE_DELETE_LIMIT: usize = 20000;
 
 /// Deposit contract address: `0x00000000219ab540356cbb839cbe05303d7705fa`

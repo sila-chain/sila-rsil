@@ -33,7 +33,7 @@ alloy-primitives.workspace = true
 alloy-consensus.workspace = true
 alloy-rpc-types.workspace = true
 alloy-rpc-types-engine.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 
 # async
 tokio = { workspace = true, features = ["sync", "macros", "rt-multi-thread"] }

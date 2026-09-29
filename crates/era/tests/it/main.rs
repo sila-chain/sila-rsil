@@ -212,7 +212,9 @@ impl EraTestDownloader {
             .ok_or_else(|| eyre!("Unknown file extension for: {}", filename))?;
 
         match (network, file_type) {
-            (SILA_MAINNET, EraFileType::Era1) => Ok((ERA1_MAINNET_URL, &ERA1_MAINNET_FILES_NAMES[..])),
+            (SILA_MAINNET, EraFileType::Era1) => {
+                Ok((ERA1_MAINNET_URL, &ERA1_MAINNET_FILES_NAMES[..]))
+            }
             (SILA_MAINNET, EraFileType::Era) => Ok((ERA_MAINNET_URL, &ERA_MAINNET_FILES_NAMES[..])),
             (SILA_MAINNET, EraFileType::Ere) => Ok((ERE_MAINNET_URL, &ERE_MAINNET_FILES_NAMES[..])),
             (SEPOLIA, EraFileType::Era1) => Ok((ERA1_SEPOLIA_URL, &ERA1_SEPOLIA_FILES_NAMES[..])),

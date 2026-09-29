@@ -4,7 +4,7 @@ use metrics::Counter;
 use rsil_metrics::{metrics::Gauge, Metrics};
 
 #[derive(Metrics)]
-#[metrics(scope = "rpc.eth_cache")]
+#[metrics(scope = "rpc.sil_cache")]
 pub(crate) struct CacheMetrics {
     /// The number of entities in the cache.
     pub(crate) cached_count: Gauge,

@@ -1,14 +1,14 @@
 use crate::utils::{test_address, test_rpc_builder};
-use alloy_rpc_types_eth::{Block, Header, Receipt, Transaction, TransactionRequest};
+use alloy_rpc_types_sil::{Block, Header, Receipt, Transaction, TransactionRequest};
 use jsonrpsee::{
     core::middleware::{Batch, Notification},
     server::middleware::rpc::RpcServiceT,
     types::Request,
 };
-use rsil_sila_primitives::TransactionSigned;
 use rsil_rpc_builder::{RpcServerConfig, TransportRpcModuleConfig};
-use rsil_rpc_eth_api::SilApiClient;
+use rsil_rpc_sil_api::SilApiClient;
 use rsil_rpc_server_types::RpcModuleSelection;
+use rsil_sila_primitives::TransactionSigned;
 use rsil_tokio_util::EventSender;
 use std::{
     future::Future,
@@ -73,10 +73,10 @@ where
 #[tokio::test(flavor = "multi_thread")]
 async fn test_rpc_middleware() {
     let builder = test_rpc_builder();
-    let eth_api = builder.bootstrap_eth_api();
+    let sil_api = builder.bootstrap_sil_api();
     let modules = builder.build(
         TransportRpcModuleConfig::set_http(RpcModuleSelection::All),
-        eth_api,
+        sil_api,
         EventSender::new(1),
     );
 

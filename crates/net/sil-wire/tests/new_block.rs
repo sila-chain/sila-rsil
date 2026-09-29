@@ -2,7 +2,7 @@
 
 use alloy_primitives::hex;
 use alloy_rlp::Decodable;
-use rsil_eth_wire::NewBlock;
+use rsil_sil_wire::NewBlock;
 use std::{fs, path::PathBuf};
 
 #[test]

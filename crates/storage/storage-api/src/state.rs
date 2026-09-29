@@ -4,14 +4,14 @@ use super::{
 };
 use alloc::boxed::Box;
 use alloy_consensus::constants::KECCAK_EMPTY;
-use alloy_eips::{BlockId, BlockNumberOrTag};
 use alloy_primitives::{Address, BlockHash, BlockNumber, StorageKey, StorageValue, B256, U256};
+use alloy_sips::{BlockId, BlockNumberOrTag};
 use auto_impl::auto_impl;
+use revm::database::BundleState;
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::Bytecode;
 use rsil_storage_errors::provider::ProviderResult;
 use rsil_trie_common::HashedPostState;
-use revm::database::BundleState;
 
 /// This just receives state, or [`ExecutionOutcome`], from the provider
 #[auto_impl::auto_impl(&, Arc, Box)]
@@ -60,10 +60,10 @@ pub trait StateProvider:
 
         if let Some(code_hash) = acc.bytecode_hash {
             if code_hash == KECCAK_EMPTY {
-                return Ok(None)
+                return Ok(None);
             }
             // Get the code from the code hash
-            return self.bytecode_by_hash(&code_hash)
+            return self.bytecode_by_hash(&code_hash);
         }
 
         // Return `None` if no code hash is set

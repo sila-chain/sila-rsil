@@ -4,7 +4,7 @@ use crate::subprotocol::protocol::{
 };
 use rsil_sila::network::{
     api::{Direction, PeerId},
-    eth_wire::{capability::SharedCapabilities, multiplex::ProtocolConnection, protocol::Protocol},
+    sil_wire::{capability::SharedCapabilities, multiplex::ProtocolConnection, protocol::Protocol},
     protocol::{ConnectionHandler, OnNotSupported},
 };
 use tokio::sync::mpsc;

@@ -5,7 +5,7 @@ use alloy_provider::network::AnyNetwork;
 use jsonrpsee::core::{DeserializeOwned, Serialize};
 use rsil_chainspec::SilChainSpec;
 use rsil_consensus_debug_client::{
-    DebugConsensusClient, SilaScanBlockProvider, PayloadProvider, RpcBlockProvider,
+    DebugConsensusClient, PayloadProvider, RpcBlockProvider, SilaScanBlockProvider,
 };
 use rsil_engine_local::{LocalMiner, MiningMode};
 use rsil_node_api::{

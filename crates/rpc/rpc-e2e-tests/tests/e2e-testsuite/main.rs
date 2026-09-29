@@ -69,7 +69,7 @@ async fn test_local_rpc_tests_compat() -> Result<()> {
         )
         .with_action(MakeCanonical::new())
         .with_action(RunRpcCompatTests::new(
-            vec!["eth_getLogs".to_string(), "eth_syncing".to_string()],
+            vec!["sil_getLogs".to_string(), "sil_syncing".to_string()],
             test_data_path.to_string_lossy(),
         ));
 

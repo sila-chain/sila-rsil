@@ -15,6 +15,7 @@ use alloy_consensus::transaction::TransactionMeta;
 use alloy_eips::{BlockHashOrNumber, BlockId, BlockNumHash, BlockNumberOrTag};
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
 use alloy_rpc_types_engine::ForkchoiceState;
+use revm::database::BundleState;
 use rsil_chain_state::{
     BlockState, CanonicalInMemoryState, ForkChoiceNotifications, ForkChoiceSubscriptions,
     MemoryOverlayStateProvider, PersistedBlockNotifications, PersistedBlockSubscriptions,
@@ -32,7 +33,6 @@ use rsil_static_file_types::StaticFileSegment;
 use rsil_storage_api::{BlockBodyIndicesProvider, NodePrimitivesProvider, StorageChangeSetReader};
 use rsil_storage_errors::provider::ProviderResult;
 use rsil_trie::{HashedPostState, KeccakKeyHasher};
-use revm::database::BundleState;
 use std::{
     ops::{RangeBounds, RangeInclusive},
     sync::Arc,
@@ -609,8 +609,8 @@ impl<N: ProviderNodeTypes> StateProviderFactory for BlockchainProvider<N> {
     }
 
     fn pending_state_by_hash(&self, block_hash: B256) -> ProviderResult<Option<StateProviderBox>> {
-        if let Some(pending) = self.canonical_in_memory_state.pending_state() &&
-            pending.hash() == block_hash
+        if let Some(pending) = self.canonical_in_memory_state.pending_state()
+            && pending.hash() == block_hash
         {
             return Ok(Some(Box::new(self.block_state_provider(&pending)?)));
         }
@@ -619,7 +619,7 @@ impl<N: ProviderNodeTypes> StateProviderFactory for BlockchainProvider<N> {
 
     fn maybe_pending(&self) -> ProviderResult<Option<StateProviderBox>> {
         if let Some(pending) = self.canonical_in_memory_state.pending_state() {
-            return Ok(Some(Box::new(self.block_state_provider(&pending)?)))
+            return Ok(Some(Box::new(self.block_state_provider(&pending)?)));
         }
 
         Ok(None)
@@ -808,6 +808,7 @@ mod tests {
     use alloy_primitives::{BlockNumber, TxNumber, B256};
     use itertools::Itertools;
     use rand::Rng;
+    use revm::database::{BundleState, OriginalValuesKnown};
     use rsil_chain_state::{
         test_utils::TestBlockBuilder, CanonStateNotification, CanonStateSubscriptions,
         CanonicalInMemoryState, ExecutedBlock, NewCanonicalChain,
@@ -815,11 +816,11 @@ mod tests {
     use rsil_chainspec::{ChainSpec, SILA_MAINNET};
     use rsil_db_api::models::{AccountBeforeTx, StoredBlockBodyIndices};
     use rsil_errors::ProviderError;
-    use rsil_sila_primitives::{Block, Receipt};
     use rsil_execution_types::{
         BlockExecutionOutput, BlockExecutionResult, Chain, ExecutionOutcome,
     };
     use rsil_primitives_traits::{RecoveredBlock, SealedBlock, SignerRecoverable};
+    use rsil_sila_primitives::{Block, Receipt};
     use rsil_storage_api::{
         BlockBodyIndicesProvider, BlockHashReader, BlockIdReader, BlockNumReader, BlockReader,
         BlockReaderIdExt, BlockSource, ChangeSetReader, DBProvider, DatabaseProviderFactory,
@@ -830,7 +831,6 @@ mod tests {
         self, random_block, random_block_range, random_changeset_range, random_eoa_accounts,
         random_receipt, BlockParams, BlockRangeParams,
     };
-    use revm::database::{BundleState, OriginalValuesKnown};
     use std::{
         collections::BTreeMap,
         ops::{Bound, Range, RangeBounds},
@@ -1007,8 +1007,8 @@ mod tests {
     ) {
         let hook_provider = provider.clone();
         provider.database.db_ref().set_post_transaction_hook(Box::new(move || {
-            if let Some(state) = hook_provider.canonical_in_memory_state.head_state() &&
-                state.anchor().number + 1 == block_number
+            if let Some(state) = hook_provider.canonical_in_memory_state.head_state()
+                && state.anchor().number + 1 == block_number
             {
                 let mut lowest_memory_block =
                     state.parent_state_chain().last().expect("qed").block();

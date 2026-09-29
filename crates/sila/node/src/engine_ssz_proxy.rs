@@ -24,10 +24,10 @@ use http_body_util::BodyExt;
 use jsonrpsee::server::{HttpBody, HttpRequest, HttpResponse};
 use rsil_chainspec::SilaHardforks;
 use rsil_engine_primitives::EngineApiValidator;
-use rsil_sila_engine_primitives::SilEngineTypes;
 use rsil_provider::{BalProvider, BlockReader, HeaderProvider, StateProviderFactory};
 use rsil_rpc::EngineApi;
 use rsil_rpc_engine_api::EngineApiError;
+use rsil_sila_engine_primitives::SilEngineTypes;
 use rsil_transaction_pool::TransactionPool;
 use ssz::Decode;
 use std::{
@@ -182,7 +182,7 @@ where
     fn call(&mut self, request: HttpRequest) -> Self::Future {
         if !request.uri().path().starts_with("/engine/") {
             let fut = self.inner.call(request);
-            return Box::pin(fut)
+            return Box::pin(fut);
         }
 
         let handle = self.handle.clone();
@@ -203,79 +203,79 @@ where
     let method = request.method().as_str().to_owned();
     let path = request.uri().path().to_owned();
     let Some(endpoint) = parse_engine_path(&path) else {
-        return text_response(STATUS_NOT_FOUND, "unknown engine ssz endpoint")
+        return text_response(STATUS_NOT_FOUND, "unknown engine ssz endpoint");
     };
 
     match endpoint {
         EngineSszEndpoint::Capabilities => {
             if method != "GET" {
-                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed")
+                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed");
             }
             handle_capabilities()
         }
         EngineSszEndpoint::Identity => {
             if method != "GET" {
-                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed")
+                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed");
             }
             let Some(engine_api) = handle.engine_api().await else {
-                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable")
+                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable");
             };
             handle_identity(engine_api)
         }
         EngineSszEndpoint::NewPayload => {
             if method != "POST" {
-                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed")
+                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed");
             }
             let Some(fork) = request_fork(&request) else {
-                return text_response(STATUS_BAD_REQUEST, "unsupported fork")
+                return text_response(STATUS_BAD_REQUEST, "unsupported fork");
             };
             let Ok(body) = request.into_body().collect().await.map(|body| body.to_bytes()) else {
-                return text_response(STATUS_BAD_REQUEST, "failed to read request body")
+                return text_response(STATUS_BAD_REQUEST, "failed to read request body");
             };
             let Some(engine_api) = handle.engine_api().await else {
-                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable")
+                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable");
             };
             handle_new_payload(engine_api, fork, &body).await
         }
         EngineSszEndpoint::GetPayload(payload_id) => {
             if method != "GET" {
-                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed")
+                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed");
             }
             let Ok(payload_id) = payload_id else {
-                return text_response(STATUS_BAD_REQUEST, "invalid payload id")
+                return text_response(STATUS_BAD_REQUEST, "invalid payload id");
             };
             let Some(fork) = request_fork(&request) else {
-                return text_response(STATUS_BAD_REQUEST, "unsupported fork")
+                return text_response(STATUS_BAD_REQUEST, "unsupported fork");
             };
             let Some(engine_api) = handle.engine_api().await else {
-                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable")
+                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable");
             };
             handle_get_payload(engine_api, fork, payload_id).await
         }
         EngineSszEndpoint::Forkchoice => {
             if method != "POST" {
-                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed")
+                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed");
             }
             let Some(fork) = request_fork(&request) else {
-                return text_response(STATUS_BAD_REQUEST, "unsupported fork")
+                return text_response(STATUS_BAD_REQUEST, "unsupported fork");
             };
             let Ok(body) = request.into_body().collect().await.map(|body| body.to_bytes()) else {
-                return text_response(STATUS_BAD_REQUEST, "failed to read request body")
+                return text_response(STATUS_BAD_REQUEST, "failed to read request body");
             };
             let Some(engine_api) = handle.engine_api().await else {
-                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable")
+                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable");
             };
             handle_forkchoice_updated(engine_api, fork, &body).await
         }
         EngineSszEndpoint::Blobs(version) => {
             if method != "POST" {
-                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed")
+                return text_response(STATUS_METHOD_NOT_ALLOWED, "method not allowed");
             }
             let Ok(body) = request.into_body().collect().await.map(|body| body.to_bytes()) else {
-                return text_response(STATUS_BAD_REQUEST, "failed to read request body")
+                return text_response(STATUS_BAD_REQUEST, "failed to read request body");
             };
             let Some(engine_api) = handle.engine_api().await else {
-                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable")
+                return text_response(STATUS_SERVICE_UNAVAILABLE, "engine api unavailable");
             };
             handle_get_blobs(engine_api, version, &body).await
         }
@@ -761,7 +761,7 @@ fn get_payload_response<T: ssz::Encode>(value: T) -> HttpResponse {
 
 fn json_response<T: serde::Serialize>(value: T) -> HttpResponse {
     let Ok(body) = serde_json::to_string(&value) else {
-        return text_response(STATUS_INTERNAL_SERVER_ERROR, "failed to encode json")
+        return text_response(STATUS_INTERNAL_SERVER_ERROR, "failed to encode json");
     };
 
     HttpResponse::builder()

@@ -1,5 +1,5 @@
 use crate::transactions::config::{AnnouncementFilteringPolicy, TransactionPropagationPolicy};
-use rsil_eth_wire::NetworkPrimitives;
+use rsil_sil_wire::NetworkPrimitives;
 use std::fmt::Debug;
 
 /// A container that bundles specific implementations of transaction-related policies,

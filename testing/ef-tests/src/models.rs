@@ -2,10 +2,10 @@
 
 use crate::{assert::assert_equal, Error};
 use alloy_consensus::Header as RsilHeader;
-use alloy_eips::sip4895::Withdrawals;
+use alloy_sips::eip4895::Withdrawals;
 use alloy_genesis::GenesisAccount;
 use alloy_primitives::{keccak256, map::HashMap, Address, Bloom, Bytes, B256, B64, U256};
-use rsil_chainspec::{ChainSpec, ChainSpecBuilder, SilaHardfork, ForkCondition};
+use rsil_chainspec::{ChainSpec, ChainSpecBuilder, ForkCondition, SilaHardfork};
 use rsil_db_api::{cursor::DbDupCursorRO, tables, transaction::DbTx};
 use rsil_primitives_traits::SealedHeader;
 use serde::Deserialize;
@@ -249,12 +249,12 @@ impl Account {
                 } else {
                     return Err(Error::Assertion(format!(
                         "Slot {slot:?} is missing from the database. Expected {value:?}"
-                    )))
+                    )));
                 }
             } else {
                 return Err(Error::Assertion(format!(
                     "Slot {slot:?} is missing from the database. Expected {value:?}"
-                )))
+                )));
             }
         }
 
@@ -343,7 +343,7 @@ impl ForkSpec {
     }
 
     fn to_chain_spec_inner(self) -> ChainSpec {
-        let spec_builder = ChainSpecBuilder::sila-mainnet().reset();
+        let spec_builder = ChainSpecBuilder::sila_mainnet().reset();
 
         match self {
             Self::Frontier => spec_builder.frontier_activated(),
@@ -382,15 +382,15 @@ impl ForkSpec {
             }
             Self::ParisToShanghaiAtTime15k => spec_builder
                 .paris_activated()
-                .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(15_000)),
+                .with_fork(SilaHardfork::Shanghai, ForkCondition::Timestamp(15_000)),
             Self::SilaShanghai => spec_builder.shanghai_activated(),
             Self::ShanghaiToCancunAtTime15k => spec_builder
                 .shanghai_activated()
-                .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(15_000)),
+                .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(15_000)),
             Self::SilaCancun => spec_builder.cancun_activated(),
             Self::CancunToPragueAtTime15k => spec_builder
                 .cancun_activated()
-                .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(15_000)),
+                .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(15_000)),
             Self::SilaPrague => spec_builder.prague_activated(),
             Self::SilaOsaka => spec_builder.osaka_activated(),
         }

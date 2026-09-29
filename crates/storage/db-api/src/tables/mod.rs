@@ -28,9 +28,9 @@ use crate::{
 };
 use alloy_consensus::Header;
 use alloy_primitives::{Address, BlockHash, BlockNumber, TxHash, TxNumber, B256};
-use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_primitives_traits::{Account, Bytecode, StorageEntry};
 use rsil_prune_types::{PruneCheckpoint, PruneSegment};
+use rsil_sila_primitives::{Receipt, TransactionSigned};
 use rsil_stages_types::StageCheckpoint;
 use rsil_trie_common::{
     BranchNodeCompact, PackedStorageTrieEntry, PackedStoredNibbles, PackedStoredNibblesSubKey,

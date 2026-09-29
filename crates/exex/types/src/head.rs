@@ -1,4 +1,4 @@
-use alloy_eips::BlockNumHash;
+use alloy_sips::BlockNumHash;
 
 /// A head of the ExEx. It contains the highest host block committed to the
 /// internal ExEx state. I.e. the latest block that the ExEx has fully

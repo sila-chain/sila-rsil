@@ -1,12 +1,12 @@
 //! A network implementation for testing purposes.
 
 use crate::{
-    builder::ETH_REQUEST_CHANNEL_CAPACITY,
+    builder::SIL_REQUEST_CHANNEL_CAPACITY,
     error::NetworkError,
-    eth_requests::SilRequestHandler,
+    sil_requests::SilRequestHandler,
     protocol::IntoRlpxSubProtocol,
     transactions::{
-        config::{StrictEthAnnouncementFilter, TransactionPropagationKind},
+        config::{StrictSilAnnouncementFilter, TransactionPropagationKind},
         policy::NetworkPolicies,
         TransactionsHandle, TransactionsManager, TransactionsManagerConfig,
     },
@@ -14,12 +14,11 @@ use crate::{
 };
 use futures::{FutureExt, StreamExt};
 use pin_project::pin_project;
-use rsil_chainspec::{ChainSpecProvider, SilaHardforks, Hardforks};
-use rsil_eth_wire::{
-    protocol::Protocol, DisconnectReason, SilNetworkPrimitives, HelloMessageWithProtocols,
+use rsil_chainspec::{ChainSpecProvider, Hardforks, SilaHardforks};
+use rsil_sil_wire::{
+    protocol::Protocol, DisconnectReason, HelloMessageWithProtocols, SilNetworkPrimitives,
 };
-use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_metrics::common::mpsc::memory_bounded_channel;
 use rsil_network_api::{
     events::{PeerEvent, SessionInfo},
@@ -27,6 +26,7 @@ use rsil_network_api::{
     NetworkEvent, NetworkEventListenerProvider, NetworkInfo, Peers,
 };
 use rsil_network_peers::PeerId;
+use rsil_sila_primitives::{PooledTransactionVariant, TransactionSigned};
 use rsil_storage_api::{
     noop::NoopProvider, BalProvider, BlockReader, BlockReaderIdExt, HeaderProvider,
     StateProviderFactory,
@@ -36,7 +36,7 @@ use rsil_tokio_util::EventStream;
 use rsil_transaction_pool::{
     blobstore::InMemoryBlobStore,
     test_utils::{TestPool, TestPoolBuilder},
-    SilTransactionPool, PoolTransaction, TransactionPool, TransactionValidationTaskExecutor,
+    PoolTransaction, SilTransactionPool, TransactionPool, TransactionValidationTaskExecutor,
 };
 use secp256k1::SecretKey;
 use std::{
@@ -197,7 +197,7 @@ where
             let blob_store = InMemoryBlobStore::default();
             let pool = TransactionValidationTaskExecutor::sil(
                 peer.client.clone(),
-                SilEvmConfig::sila-mainnet(),
+                SilEvmConfig::sila_mainnet(),
                 blob_store.clone(),
                 Runtime::test(),
             );
@@ -227,7 +227,7 @@ where
             let blob_store = InMemoryBlobStore::default();
             let pool = TransactionValidationTaskExecutor::sil(
                 peer.client.clone(),
-                SilEvmConfig::sila-mainnet(),
+                SilEvmConfig::sila_mainnet(),
                 blob_store.clone(),
                 Runtime::test(),
             );
@@ -373,7 +373,7 @@ impl<C, Pool> TestnetHandle<C, Pool> {
     /// Returns once all sessions are established.
     pub async fn connect_peers(&self) {
         if self.peers.len() < 2 {
-            return
+            return;
         }
 
         // add an event stream for _each_ peer
@@ -469,8 +469,8 @@ where
     where
         C: BalProvider,
     {
-        let (tx, rx) = channel(ETH_REQUEST_CHANNEL_CAPACITY);
-        self.network.set_eth_request_handler(tx);
+        let (tx, rx) = channel(SIL_REQUEST_CHANNEL_CAPACITY);
+        self.network.set_sil_request_handler(tx);
         let peers = self.network.peers_handle();
         let request_handler = SilRequestHandler::new(self.client.clone(), peers, rx);
         self.request_handler = Some(request_handler);
@@ -549,7 +549,7 @@ where
         );
         network.set_transactions(tx);
 
-        let announcement_policy = StrictEthAnnouncementFilter::default();
+        let announcement_policy = StrictSilAnnouncementFilter::default();
         let policies = NetworkPolicies::new(policy, announcement_policy);
 
         let transactions_manager = TransactionsManager::with_policy(
@@ -764,7 +764,7 @@ impl NetworkEventStream {
     pub async fn next_session_closed(&mut self) -> Option<(PeerId, Option<DisconnectReason>)> {
         while let Some(ev) = self.inner.next().await {
             if let NetworkEvent::Peer(PeerEvent::SessionClosed { peer_id, reason }) = ev {
-                return Some((peer_id, reason))
+                return Some((peer_id, reason));
             }
         }
         None
@@ -774,8 +774,8 @@ impl NetworkEventStream {
     pub async fn next_session_established(&mut self) -> Option<PeerId> {
         while let Some(ev) = self.inner.next().await {
             match ev {
-                NetworkEvent::ActivePeerSession { info, .. } |
-                NetworkEvent::Peer(PeerEvent::SessionEstablished(info)) => {
+                NetworkEvent::ActivePeerSession { info, .. }
+                | NetworkEvent::Peer(PeerEvent::SessionEstablished(info)) => {
                     return Some(info.peer_id)
                 }
                 _ => {}

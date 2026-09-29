@@ -6,8 +6,8 @@ use crate::{
     PendingSessionHandshakeError,
 };
 use rsil_ecies::ECIESError;
-use rsil_eth_wire::{
-    errors::SilStreamError, Capabilities, DisconnectReason, SilVersion, NetworkPrimitives,
+use rsil_sil_wire::{
+    errors::SilStreamError, Capabilities, DisconnectReason, NetworkPrimitives, SilVersion,
     UnifiedStatus,
 };
 use rsil_network_api::PeerInfo;
@@ -169,7 +169,7 @@ impl<N: NetworkPrimitives> ActiveSessionHandle<N> {
             local_addr: self.local_addr,
             capabilities: self.capabilities.clone(),
             client_version: self.client_version.clone(),
-            eth_version: self.version,
+            sil_version: self.version,
             status: self.status.clone(),
             session_established: self.established,
             kind,

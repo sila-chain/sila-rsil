@@ -6,13 +6,13 @@ use proptest::{
     prelude::{ProptestConfig, RngCore},
     test_runner::{TestRng, TestRunner},
 };
-use rsil_codecs::alloy::{
+use reth_codecs::alloy::{
     authorization_list::Authorization,
     genesis_account::GenesisAccount,
     header::{Header, HeaderExt},
     transaction::{
-        sip1559::TxEip1559, sip2930::TxEip2930, sip4844::TxEip4844, sip7702::TxEip7702,
-        legacy::TxLegacy,
+        legacy::TxLegacy, sip1559::TxEip1559, sip2930::TxEip2930, sip4844::TxEip4844,
+        sip7702::TxEip7702,
     },
     withdrawal::Withdrawal,
 };
@@ -23,10 +23,10 @@ use rsil_db::{
     },
     ClientVersion,
 };
-use rsil_sila_primitives::{Receipt, Transaction, TransactionSigned, TxType};
 use rsil_fs_util as fs;
 use rsil_primitives_traits::{Account, Log, LogData, StorageEntry};
 use rsil_prune_types::{PruneCheckpoint, PruneMode};
+use rsil_sila_primitives::{Receipt, Transaction, TransactionSigned, TxType};
 use rsil_stages_types::{
     AccountHashingCheckpoint, CheckpointBlockRange, EntitiesCheckpoint, ExecutionCheckpoint,
     HeadersCheckpoint, IndexHistoryCheckpoint, StageCheckpoint, StageUnitCheckpoint,
@@ -71,13 +71,13 @@ macro_rules! compact_types {
 }
 
 // The type that **actually** implements `Compact` should go here. If it's an alloy type, import the
-// auxiliary type from rsil_codecs::alloy instead.
+// auxiliary type from reth_codecs::alloy instead.
 compact_types!(
     regular: [
         // rsil-primitives
         Account,
         Receipt,
-        // rsil_codecs::alloy
+        // reth_codecs::alloy
         Authorization,
         GenesisAccount,
         Header,
@@ -191,7 +191,7 @@ pub fn read_vectors_with(read: &[fn() -> eyre::Result<()>]) -> Result<()> {
 /// Generates test vectors for a specific type `T`.
 pub fn generate_vector<T>(runner: &mut TestRunner) -> Result<()>
 where
-    T: for<'a> Arbitrary<'a> + rsil_codecs::Compact,
+    T: for<'a> Arbitrary<'a> + reth_codecs::Compact,
 {
     let type_name = type_name::<T>();
     print!("{}", type_name);
@@ -214,7 +214,7 @@ where
                         tries += 1;
                         bytes.extend(std::iter::repeat_n(0u8, 256));
                     } else {
-                        return Err(err)?
+                        return Err(err)?;
                     }
                 }
             }
@@ -244,7 +244,7 @@ where
 /// using `T::from_compact`.
 pub fn read_vector<T>() -> Result<()>
 where
-    T: rsil_codecs::Compact,
+    T: reth_codecs::Compact,
 {
     let type_name = type_name::<T>();
     print!("{}", type_name);

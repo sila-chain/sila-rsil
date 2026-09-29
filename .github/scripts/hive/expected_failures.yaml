@@ -5,11 +5,11 @@ rpc-compat:
   - debug_getRawReceipts/get-invalid-number (rsil)
   - debug_getRawHeader/get-invalid-number (rsil)
   - debug_getRawReceipts/get-block-n (rsil)
-  - eth_getStorageAt/get-storage-invalid-key-too-large (rsil)
-  - eth_getStorageAt/get-storage-invalid-key (rsil)
-  - eth_getTransactionReceipt/get-legacy-contract (rsil)
-  - eth_getTransactionReceipt/get-legacy-input (rsil)
-  - eth_getTransactionReceipt/get-legacy-receipt (rsil)
+  - sil_getStorageAt/get-storage-invalid-key-too-large (rsil)
+  - sil_getStorageAt/get-storage-invalid-key (rsil)
+  - sil_getTransactionReceipt/get-legacy-contract (rsil)
+  - sil_getTransactionReceipt/get-legacy-input (rsil)
+  - sil_getTransactionReceipt/get-legacy-receipt (rsil)
 
 engine-withdrawals: []
 

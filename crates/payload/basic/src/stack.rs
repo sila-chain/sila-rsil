@@ -8,7 +8,7 @@ use rsil_payload_builder::PayloadId;
 use rsil_payload_primitives::{BuiltPayload, PayloadAttributes};
 use rsil_primitives_traits::{NodePrimitives, SealedBlock};
 
-use alloy_eips::sip7685::Requests;
+use alloy_eips::eip7685::Requests;
 use std::{error::Error, fmt};
 
 /// hand rolled Either enum to handle two builder types
@@ -73,7 +73,7 @@ where
         }
     }
 
-    fn withdrawals(&self) -> Option<&Vec<alloy_eips::sip4895::Withdrawal>> {
+    fn withdrawals(&self) -> Option<&Vec<alloy_eips::eip4895::Withdrawal>> {
         match self {
             Self::Left(l) => l.withdrawals(),
             Self::Right(r) => r.withdrawals(),

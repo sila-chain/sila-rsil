@@ -18,17 +18,16 @@ use alloy_primitives::map::{FbBuildHasher, HashMap};
 use counter::SessionCounter;
 use futures::{future::Either, io, FutureExt, StreamExt};
 use rsil_ecies::{stream::ECIESStream, ECIESError};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::SilStreamError, handshake::SilRlpxHandshake, multiplex::RlpxProtocolMultiplexer,
-    BlockRangeUpdate, Capabilities, DisconnectReason, SilSnapStream, SilStream, SilVersion,
-    HelloMessageWithProtocols, NetworkPrimitives, UnauthedP2PStream, UnifiedStatus,
-    HANDSHAKE_TIMEOUT,
+    BlockRangeUpdate, Capabilities, DisconnectReason, HelloMessageWithProtocols, NetworkPrimitives,
+    SilSnapStream, SilStream, SilVersion, UnauthedP2PStream, UnifiedStatus, HANDSHAKE_TIMEOUT,
 };
-use rsil_sila_forks::{ForkFilter, ForkId, ForkTransition, Head};
 use rsil_metrics::common::mpsc::MeteredPollSender;
 use rsil_network_api::{PeerRequest, PeerRequestSender};
 use rsil_network_peers::PeerId;
 use rsil_network_types::SessionsConfig;
+use rsil_sila_forks::{ForkFilter, ForkId, ForkTransition, Head};
 use rsil_tasks::Runtime;
 use rustc_hash::FxHashMap;
 use secp256k1::SecretKey;
@@ -121,7 +120,7 @@ pub struct SessionManager<N: NetworkPrimitives> {
     /// The [`SilRlpxHandshake`] is used to perform the initial handshake with the peer.
     handshake: Arc<dyn SilRlpxHandshake>,
     /// Maximum allowed SIL message size for post-handshake SIL/Snap streams.
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     /// Shared local range information that gets propagated to active sessions.
     /// This represents the range of blocks that this node can serve to other peers.
     local_range_info: BlockRangeInfo,
@@ -144,7 +143,7 @@ impl<N: NetworkPrimitives> SessionManager<N> {
         fork_filter: ForkFilter,
         extra_protocols: RlpxSubProtocols,
         handshake: Arc<dyn SilRlpxHandshake>,
-        eth_max_message_size: usize,
+        sil_max_message_size: usize,
         reject_block_announcements: bool,
     ) -> Self {
         let (pending_sessions_tx, pending_sessions_rx) = mpsc::channel(config.session_event_buffer);
@@ -180,7 +179,7 @@ impl<N: NetworkPrimitives> SessionManager<N> {
             disconnections_counter: Default::default(),
             metrics: Default::default(),
             handshake,
-            eth_max_message_size,
+            sil_max_message_size,
             local_range_info,
             reject_block_announcements,
         }
@@ -295,7 +294,7 @@ impl<N: NetworkPrimitives> SessionManager<N> {
             pending_events.clone(),
             start_pending_incoming_session(
                 self.handshake.clone(),
-                self.eth_max_message_size,
+                self.sil_max_message_size,
                 disconnect_rx,
                 session_id,
                 stream,
@@ -338,7 +337,7 @@ impl<N: NetworkPrimitives> SessionManager<N> {
                 pending_events.clone(),
                 start_pending_outbound_session(
                     self.handshake.clone(),
-                    self.eth_max_message_size,
+                    self.sil_max_message_size,
                     disconnect_rx,
                     pending_events,
                     session_id,
@@ -395,8 +394,8 @@ impl<N: NetworkPrimitives> SessionManager<N> {
     /// by a shared atomic counter. If the bounded command channel is full but the broadcast limit
     /// hasn't been reached, the message overflows to a dedicated unbounded channel.
     pub fn send_message(&self, peer_id: &PeerId, msg: PeerMessage<N>) {
-        if let Some(session) = self.active_sessions.get(peer_id) &&
-            !session.commands.send_message(msg)
+        if let Some(session) = self.active_sessions.get(peer_id)
+            && !session.commands.send_message(msg)
         {
             self.metrics.total_outgoing_peer_messages_dropped.increment(1);
         }
@@ -426,7 +425,7 @@ impl<N: NetworkPrimitives> SessionManager<N> {
     ) {
         if !self.disconnections_counter.has_capacity() {
             // drop the connection if we don't have capacity for gracefully disconnecting
-            return
+            return;
         }
 
         let guard = self.disconnections_counter.clone();
@@ -535,7 +534,7 @@ impl<N: NetworkPrimitives> SessionManager<N> {
                         peer_id,
                         remote_addr,
                         direction,
-                    })
+                    });
                 }
 
                 let (commands_tx, commands_rx) = mpsc::channel(self.session_command_buffer);
@@ -874,7 +873,7 @@ impl PendingSessionHandshakeError {
     /// Returns the [`DisconnectReason`] if the error is a disconnect message
     pub const fn as_disconnected(&self) -> Option<DisconnectReason> {
         match self {
-            Self::Sil(eth_err) => eth_err.as_disconnected(),
+            Self::Sil(sil_err) => sil_err.as_disconnected(),
             _ => None,
         }
     }
@@ -915,7 +914,7 @@ pub(crate) async fn pending_session_with_timeout<F, N: NetworkPrimitives>(
 #[expect(clippy::too_many_arguments)]
 pub(crate) async fn start_pending_incoming_session<N: NetworkPrimitives>(
     handshake: Arc<dyn SilRlpxHandshake>,
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     disconnect_rx: oneshot::Receiver<()>,
     session_id: SessionId,
     stream: TcpStream,
@@ -929,7 +928,7 @@ pub(crate) async fn start_pending_incoming_session<N: NetworkPrimitives>(
 ) {
     authenticate(
         handshake,
-        eth_max_message_size,
+        sil_max_message_size,
         disconnect_rx,
         events,
         stream,
@@ -950,7 +949,7 @@ pub(crate) async fn start_pending_incoming_session<N: NetworkPrimitives>(
 #[expect(clippy::too_many_arguments)]
 async fn start_pending_outbound_session<N: NetworkPrimitives>(
     handshake: Arc<dyn SilRlpxHandshake>,
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     disconnect_rx: oneshot::Receiver<()>,
     events: mpsc::Sender<PendingSessionEvent<N>>,
     session_id: SessionId,
@@ -978,12 +977,12 @@ async fn start_pending_outbound_session<N: NetworkPrimitives>(
                     error,
                 })
                 .await;
-            return
+            return;
         }
     };
     authenticate(
         handshake,
-        eth_max_message_size,
+        sil_max_message_size,
         disconnect_rx,
         events,
         stream,
@@ -1003,7 +1002,7 @@ async fn start_pending_outbound_session<N: NetworkPrimitives>(
 #[expect(clippy::too_many_arguments)]
 async fn authenticate<N: NetworkPrimitives>(
     handshake: Arc<dyn SilRlpxHandshake>,
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     disconnect_rx: oneshot::Receiver<()>,
     events: mpsc::Sender<PendingSessionEvent<N>>,
     stream: TcpStream,
@@ -1028,7 +1027,7 @@ async fn authenticate<N: NetworkPrimitives>(
                     direction,
                 })
                 .await;
-            return
+            return;
         }
     };
 
@@ -1036,7 +1035,7 @@ async fn authenticate<N: NetworkPrimitives>(
 
     let auth = authenticate_stream(
         handshake,
-        eth_max_message_size,
+        sil_max_message_size,
         unauthed,
         session_id,
         remote_addr,
@@ -1090,7 +1089,7 @@ async fn get_ecies_stream<Io: AsyncRead + AsyncWrite + Unpin>(
 #[expect(clippy::too_many_arguments)]
 async fn authenticate_stream<N: NetworkPrimitives>(
     handshake: Arc<dyn SilRlpxHandshake>,
-    eth_max_message_size: usize,
+    sil_max_message_size: usize,
     stream: UnauthedP2PStream<ECIESStream<TcpStream>>,
     session_id: SessionId,
     remote_addr: SocketAddr,
@@ -1144,7 +1143,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
     }
 
     // Ensure we negotiated mandatory sil protocol
-    let eth_version = match p2p_stream.shared_capabilities().eth_version() {
+    let sil_version = match p2p_stream.shared_capabilities().sil_version() {
         Ok(version) => version,
         Err(err) => {
             return PendingSessionEvent::Disconnected {
@@ -1157,7 +1156,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
     };
 
     // Before trying status handshake, set up the version to negotiated shared version
-    status.set_eth_version(eth_version);
+    status.set_sil_version(sil_version);
 
     let (conn, their_status) = if p2p_stream.shared_capabilities().len() == 1 {
         // if the shared caps are 1, we know both support the sil version
@@ -1169,9 +1168,9 @@ async fn authenticate_stream<N: NetworkPrimitives>(
             .await
         {
             Ok(their_status) => {
-                let eth_stream =
-                    SilStream::with_max_message_size(eth_version, p2p_stream, eth_max_message_size);
-                (eth_stream.into(), their_status)
+                let sil_stream =
+                    SilStream::with_max_message_size(sil_version, p2p_stream, sil_max_message_size);
+                (sil_stream.into(), their_status)
             }
             Err(err) => {
                 return PendingSessionEvent::Disconnected {
@@ -1182,7 +1181,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
                 }
             }
         }
-    } else if p2p_stream.shared_capabilities().is_exact_eth_snap_v2() {
+    } else if p2p_stream.shared_capabilities().is_exact_sil_snap_v2() {
         // Exactly `sil` + `snap/2` (no other extras): use the dedicated stream instead of the
         // general-purpose satellite multiplexer. If `snap/2` is negotiated alongside other extra
         // capabilities, fall through to the satellite path — the dedicated stream only composes
@@ -1192,7 +1191,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
             status,
             fork_filter,
             handshake,
-            eth_max_message_size,
+            sil_max_message_size,
         )
         .await
         {
@@ -1223,7 +1222,7 @@ async fn authenticate_stream<N: NetworkPrimitives>(
         }
 
         let (multiplex_stream, their_status) = match multiplex_stream
-            .into_eth_satellite_stream(status, fork_filter, handshake, eth_max_message_size)
+            .into_sil_satellite_stream(status, fork_filter, handshake, sil_max_message_size)
             .await
         {
             Ok((multiplex_stream, their_status)) => (multiplex_stream, their_status),

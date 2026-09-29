@@ -1,9 +1,9 @@
 //! Pruning and full node arguments
 
-use crate::{args::error::ReceiptsLogError, primitives::SilaHardfork};
+use crate::args::error::ReceiptsLogError;
+use alloy_hardforks::{EthereumHardfork, EthereumHardforks};
 use alloy_primitives::{Address, BlockNumber};
 use clap::{builder::RangedU64ValueParser, Args};
-use rsil_chainspec::SilaHardforks;
 use rsil_config::config::PruneConfig;
 use rsil_prune_types::{
     PruneMode, PruneModes, ReceiptsLogPruneConfig, MINIMUM_DISTANCE, MINIMUM_UNWIND_SAFE_DISTANCE,
@@ -118,21 +118,21 @@ impl PruneConfigKind {
     /// Classifies an effective pruning configuration.
     pub fn from_config<ChainSpec>(config: &PruneConfig, chain_spec: &ChainSpec) -> Self
     where
-        ChainSpec: SilaHardforks,
+        ChainSpec: EthereumHardforks,
     {
         if config.is_default() {
-            return Self::Archive
+            return Self::Archive;
         }
 
         let full_config = PruningArgs { full: true, ..Default::default() }.prune_config(chain_spec);
         if full_config.as_ref() == Some(config) {
-            return Self::Full
+            return Self::Full;
         }
 
         let minimal_config =
             PruningArgs { minimal: true, ..Default::default() }.prune_config(chain_spec);
         if minimal_config.as_ref() == Some(config) {
-            return Self::Minimal
+            return Self::Minimal;
         }
 
         Self::Custom
@@ -258,7 +258,7 @@ impl PruningArgs {
     /// used.
     pub fn prune_config<ChainSpec>(&self, chain_spec: &ChainSpec) -> Option<PruneConfig>
     where
-        ChainSpec: SilaHardforks,
+        ChainSpec: EthereumHardforks,
     {
         // Initialize with a default prune configuration.
         let mut config = PruneConfig::default();
@@ -269,7 +269,7 @@ impl PruningArgs {
             let mut segments = defaults.full_prune_modes.clone();
             if defaults.full_bodies_history_use_pre_merge {
                 segments.bodies_history = chain_spec
-                    .sila_fork_activation(SilaHardfork::SilaParis)
+                    .ethereum_fork_activation(EthereumHardfork::Paris)
                     .block_number()
                     .map(PruneMode::Before);
             }
@@ -328,11 +328,11 @@ impl PruningArgs {
 
     fn bodies_prune_mode<ChainSpec>(&self, chain_spec: &ChainSpec) -> Option<PruneMode>
     where
-        ChainSpec: SilaHardforks,
+        ChainSpec: EthereumHardforks,
     {
         if self.bodies_pre_merge {
             chain_spec
-                .sila_fork_activation(SilaHardfork::SilaParis)
+                .ethereum_fork_activation(EthereumHardfork::Paris)
                 .block_number()
                 .map(PruneMode::Before)
         } else if let Some(distance) = self.bodies_distance {
@@ -368,11 +368,11 @@ impl PruningArgs {
 
     fn receipts_prune_mode<ChainSpec>(&self, chain_spec: &ChainSpec) -> Option<PruneMode>
     where
-        ChainSpec: SilaHardforks,
+        ChainSpec: EthereumHardforks,
     {
         if self.receipts_pre_merge {
             chain_spec
-                .sila_fork_activation(SilaHardfork::SilaParis)
+                .ethereum_fork_activation(EthereumHardfork::Paris)
                 .block_number()
                 .map(PruneMode::Before)
         } else if self.receipts_full {

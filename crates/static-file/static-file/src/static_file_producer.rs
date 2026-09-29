@@ -4,7 +4,7 @@ use crate::{segments, segments::Segment, StaticFileProducerEvent};
 use alloy_primitives::BlockNumber;
 use parking_lot::Mutex;
 use rayon::prelude::*;
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_db_api::table::Value;
 use rsil_primitives_traits::{FastInstant as Instant, NodePrimitives};
 use rsil_provider::{
@@ -116,7 +116,7 @@ where
     pub fn run(&self, targets: StaticFileTargets) -> StaticFileProducerResult {
         // If there are no targets, do not produce any static files and return early
         if !targets.any() {
-            return Ok(targets)
+            return Ok(targets);
         }
 
         debug_assert!(targets.is_contiguous_to_highest_static_files(
@@ -193,8 +193,8 @@ where
 
         let targets = StaticFileTargets {
             // StaticFile receipts only if they're not pruned according to the user configuration
-            receipts: if self.prune_modes.receipts.is_none() &&
-                self.prune_modes.receipts_log_filter.is_empty()
+            receipts: if self.prune_modes.receipts.is_none()
+                && self.prune_modes.receipts_log_filter.is_empty()
             {
                 finalized_block_numbers.receipts.and_then(|finalized_block_number| {
                     self.get_static_file_target(

@@ -1,7 +1,7 @@
 //! Session tests
 
 use futures::StreamExt;
-use rsil_eth_wire::SilVersion;
+use rsil_sil_wire::SilVersion;
 use rsil_network::{
     test_utils::{NetworkEventStream, PeerConfig, Testnet},
     NetworkEvent, NetworkEventListenerProvider,
@@ -314,7 +314,7 @@ async fn test_eth69_mixed_version_negotiation() {
 }
 
 #[tokio::test(flavor = "multi_thread")]
-async fn test_multiple_peers_different_eth_versions() {
+async fn test_multiple_peers_different_sil_versions() {
     rsil_tracing::init_test_tracing();
 
     let mut net = Testnet::create(0).await;

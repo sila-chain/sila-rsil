@@ -14,13 +14,13 @@ workspace = true
 [dependencies]
 # rsil
 rsil-chainspec.workspace = true
-rsil-codecs-derive.workspace = true
+reth-codecs-derive = "0.5.0"
 rsil-sila-primitives.workspace = true
 rsil-primitives-traits.workspace = true
 
 # sila
 alloy-chains = { workspace = true, features = ["rlp"] }
-alloy-sip7928 = { workspace = true, features = ["rlp"], optional = true }
+alloy-eip7928 = { workspace = true, features = ["rlp"], optional = true }
 alloy-sips.workspace = true
 alloy-primitives = { workspace = true, features = ["map"] }
 alloy-rlp = { workspace = true, features = ["derive"] }
@@ -41,7 +41,7 @@ alloy-hardforks.workspace = true
 rsil-sila-primitives = { workspace = true, features = ["arbitrary"] }
 alloy-primitives = { workspace = true, features = ["arbitrary", "rand"] }
 alloy-consensus = { workspace = true, features = ["arbitrary"] }
-alloy-sip7928 = { workspace = true, features = ["arbitrary", "rlp"] }
+alloy-eip7928 = { workspace = true, features = ["arbitrary", "rlp"] }
 alloy-sips = { workspace = true, features = ["arbitrary"] }
 alloy-genesis.workspace = true
 alloy-chains = { workspace = true, features = ["arbitrary"] }
@@ -56,7 +56,7 @@ default = ["std"]
 std = [
     "alloy-chains/std",
     "alloy-consensus/std",
-    "alloy-sip7928?/std",
+    "alloy-eip7928?/std",
     "alloy-sips/std",
     "alloy-genesis/std",
     "alloy-primitives/std",
@@ -72,8 +72,8 @@ std = [
 arbitrary = [
     "rsil-sila-primitives/arbitrary",
     "alloy-chains/arbitrary",
-    "dep:alloy-sip7928",
-    "alloy-sip7928/arbitrary",
+    "dep:alloy-eip7928",
+    "alloy-eip7928/arbitrary",
     "dep:arbitrary",
     "dep:proptest",
     "dep:proptest-arbitrary-interop",
@@ -94,5 +94,5 @@ serde = [
     "rsil-primitives-traits/serde",
     "rsil-sila-primitives/serde",
     "alloy-hardforks/serde",
-    "alloy-sip7928?/serde",
+    "alloy-eip7928?/serde",
 ]

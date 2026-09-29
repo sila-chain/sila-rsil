@@ -1,4 +1,4 @@
-//! Helper types for `rsil_rpc_eth_api::SilApiServer` implementation.
+//! Helper types for `rsil_rpc_sil_api::SilApiServer` implementation.
 //!
 //! Types used in block building.
 
@@ -10,17 +10,17 @@ use alloy_eips::{BlockId, BlockNumberOrTag};
 use alloy_primitives::{BlockHash, TxHash, B256};
 use derive_more::Constructor;
 use rsil_chain_state::{BlockState, ExecutedBlock};
-use rsil_sila_primitives::Receipt;
-use rsil_evm::{ConfigureEvm, SavmEnvFor};
+use rsil_savm::{ConfigureEvm, SavmEnvFor};
 use rsil_primitives_traits::{
     Block, BlockTy, IndexedTx, NodePrimitives, ReceiptTy, RecoveredBlock, SealedHeader,
 };
 use rsil_rpc_convert::{RpcConvert, RpcTypes};
+use rsil_sila_primitives::Receipt;
 
-/// Configured [`rsil_evm::SavmEnv`] for a pending block.
+/// Configured [`rsil_savm::SavmEnv`] for a pending block.
 #[derive(Debug, Clone, Constructor)]
 pub struct PendingBlockEnv<Savm: ConfigureEvm> {
-    /// Configured [`rsil_evm::SavmEnv`] for the pending block.
+    /// Configured [`rsil_savm::SavmEnv`] for the pending block.
     pub evm_env: SavmEnvFor<Savm>,
     /// Origin block for the config
     pub origin: PendingBlockEnvOrigin<BlockTy<Savm::Primitives>, ReceiptTy<Savm::Primitives>>,

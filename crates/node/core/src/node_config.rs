@@ -16,9 +16,9 @@ use rsil_chainspec::{ChainSpec, SilChainSpec, SILA_MAINNET};
 use rsil_config::config::PruneConfig;
 use rsil_engine_local::MiningMode;
 use rsil_engine_primitives::TreeConfig;
-use rsil_sila_forks::{SilaHardforks, Head};
 use rsil_network_p2p::headers::client::HeadersClient;
 use rsil_primitives_traits::SealedHeader;
+use rsil_sila_forks::{Head, SilaHardforks};
 use rsil_stages_types::StageId;
 use rsil_storage_api::{
     BlockHashReader, DatabaseProviderFactory, HeaderProvider, StageCheckpointReader,
@@ -467,7 +467,7 @@ impl<ChainSpec> NodeConfig<ChainSpec> {
         // try to look up the header in the database
         if let Some(header) = header {
             info!(target: "rsil::cli", ?tip, "Successfully looked up tip block in the database");
-            return Ok(header.number())
+            return Ok(header.number());
         }
 
         Ok(self.fetch_tip_from_network(client, tip.into()).await.number())
@@ -490,7 +490,7 @@ impl<ChainSpec> NodeConfig<ChainSpec> {
             match get_single_header(&client, tip).await {
                 Ok(tip_header) => {
                     info!(target: "rsil::cli", ?tip, "Successfully fetched tip");
-                    return tip_header
+                    return tip_header;
                 }
                 Err(error) => {
                     fetch_failures += 1;

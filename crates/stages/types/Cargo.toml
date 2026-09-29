@@ -12,7 +12,7 @@ description = "Commonly used types for stages usage in rsil."
 workspace = true
 
 [dependencies]
-rsil-codecs = { workspace = true, optional = true }
+reth-codecs = { version = "0.5.0", default-features = false, optional = true }
 rsil-trie-common.workspace = true
 alloy-primitives.workspace = true
 
@@ -23,7 +23,7 @@ bytes = { workspace = true, optional = true }
 modular-bitfield = { workspace = true, optional = true }
 
 [dev-dependencies]
-rsil-codecs.workspace = true
+reth-codecs = { version = "0.5.0", default-features = false }
 rsil-trie-common = { workspace = true, features = ["rsil-codec"] }
 alloy-primitives = { workspace = true, features = ["arbitrary", "rand"] }
 arbitrary = { workspace = true, features = ["derive"] }
@@ -40,24 +40,24 @@ std = [
     "bytes?/std",
     "rsil-trie-common/std",
     "serde?/std",
-    "rsil-codecs?/std",
+    "reth-codecs?/std",
 ]
 rsil-codec = [
-    "dep:rsil-codecs",
+    "dep:reth-codecs",
     "dep:bytes",
     "dep:modular-bitfield",
     "rsil-trie-common/rsil-codec",
 ]
 test-utils = [
     "arbitrary",
-    "rsil-codecs?/test-utils",
+    "reth-codecs?/test-utils",
     "rsil-trie-common/test-utils",
 ]
 arbitrary = [
     "std",
     "dep:arbitrary",
     "alloy-primitives/arbitrary",
-    "rsil-codecs?/arbitrary",
+    "reth-codecs?/arbitrary",
     "rsil-trie-common/arbitrary",
 ]
 serde = [
@@ -65,6 +65,6 @@ serde = [
     "alloy-primitives/serde",
     "bytes?/serde",
     "rand/serde",
-    "rsil-codecs?/serde",
+    "reth-codecs?/serde",
     "rsil-trie-common/serde",
 ]

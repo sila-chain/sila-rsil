@@ -10,7 +10,7 @@ use core::{
     fmt::{Debug, Display},
     str::FromStr,
 };
-use rsil_codecs::DecompressError;
+use reth_codecs::DecompressError;
 
 /// Database error type.
 #[derive(Clone, Debug, thiserror::Error)]
@@ -83,7 +83,7 @@ impl From<DatabaseWriteError> for DatabaseError {
     }
 }
 
-impl From<rsil_codecs::DecompressError> for DatabaseError {
+impl From<reth_codecs::DecompressError> for DatabaseError {
     #[inline]
     fn from(_: DecompressError) -> Self {
         Self::Decode

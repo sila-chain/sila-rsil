@@ -148,9 +148,9 @@ fn prewarm_loop(rx: crossbeam_channel::Receiver<PrewarmMsg>) {
                 let Some(provider) = provider.as_ref() else { continue };
                 match target {
                     PrewarmTarget::Account(addr) => {
-                        if let Ok(Some(account)) = provider.basic_account(&addr) &&
-                            let Some(code_hash) = account.bytecode_hash &&
-                            code_hash != alloy_consensus::constants::KECCAK_EMPTY
+                        if let Ok(Some(account)) = provider.basic_account(&addr)
+                            && let Some(code_hash) = account.bytecode_hash
+                            && code_hash != alloy_consensus::constants::KECCAK_EMPTY
                         {
                             let _ = provider.bytecode_by_hash(&code_hash);
                         }

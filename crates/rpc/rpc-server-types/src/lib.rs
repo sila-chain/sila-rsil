@@ -14,8 +14,8 @@ pub mod result;
 
 mod module;
 pub use module::{
-    DefaultRpcModuleValidator, LenientRpcModuleValidator, RsilRpcModule, RpcModuleSelection,
-    RpcModuleValidator,
+    DefaultRpcModuleValidator, LenientRpcModuleValidator, RpcModuleSelection, RpcModuleValidator,
+    RsilRpcModule,
 };
 
 pub use result::ToRpcResult;

@@ -19,20 +19,20 @@ use crate::{
     session::{
         conn::SilRlpxConnection,
         handle::{ActiveSessionMessage, SessionCommand},
-        BlockRangeInfo, SilVersion, SessionId,
+        BlockRangeInfo, SessionId, SilVersion,
     },
 };
 use alloy_eips::merge::EPOCH_SLOTS;
 use alloy_primitives::Sealable;
 use futures::{stream::Fuse, SinkExt, StreamExt};
 use metrics::{Counter, Gauge};
-use rsil_eth_wire::{
+use rsil_sil_wire::{
     errors::{SilHandshakeError, SilStreamError},
-    message::{SilBroadcastMessage, MessageError},
-    Capabilities, DisconnectP2P, DisconnectReason, SilMessage, SilSnapMessage, NetworkPrimitives,
-    NewBlockPayload,
+    message::{MessageError, SilBroadcastMessage},
+    Capabilities, DisconnectP2P, DisconnectReason, NetworkPrimitives, NewBlockPayload, SilMessage,
+    SilSnapMessage,
 };
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     message::RequestPair, snap::SnapProtocolMessage, NewPooledTransactionHashes,
     RawCapabilityMessage,
 };
@@ -444,13 +444,13 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
                     request: msg,
                     response: tx,
                 }))
-                .into()
+                .into();
         }
 
         let Some(req) = self.inflight_requests.remove(&request_id) else {
             trace!(target: "net::session", ?request_id, remote_peer_id=?self.remote_peer_id, "received snap response to unknown request");
             self.on_bad_message();
-            return OnIncomingMessageOutcome::Ok
+            return OnIncomingMessageOutcome::Ok;
         };
 
         match req.request {
@@ -459,7 +459,7 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
                     debug!(target: "net::session", ?request_id, msg_id=?msg.message_id(), remote_peer_id=?self.remote_peer_id, "received snap response of wrong type");
                     self.on_bad_message();
                     let _ = response.send(Err(RequestError::BadResponse));
-                    return OnIncomingMessageOutcome::Ok
+                    return OnIncomingMessageOutcome::Ok;
                 }
                 // Restore the caller's original request id, not the wire-assigned one.
                 msg.set_request_id(request.request_id());
@@ -525,7 +525,7 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
 
     #[inline]
     fn is_request_supported_for_version(request: &PeerRequest<N>, version: SilVersion) -> bool {
-        request.is_supported_by_eth_version(version)
+        request.is_supported_by_sil_version(version)
     }
 
     /// Handle a message received from the internal network
@@ -568,8 +568,8 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
 
     /// Returns the deadline timestamp at which the request times out
     fn request_deadline(&self) -> Instant {
-        Instant::now() +
-            Duration::from_millis(self.internal_request_timeout.load(Ordering::Relaxed))
+        Instant::now()
+            + Duration::from_millis(self.internal_request_timeout.load(Ordering::Relaxed))
     }
 
     /// Handle a Response to the peer
@@ -717,7 +717,7 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
                     debug!(target: "net::session", ?id, remote_peer_id=?self.remote_peer_id, "timed out outgoing request");
                     req.timeout();
                 } else if now - req.timestamp > self.protocol_breach_request_timeout {
-                    return true
+                    return true;
                 }
             }
         }
@@ -741,7 +741,7 @@ impl<N: NetworkPrimitives> ActiveSession<N> {
         match tx.poll_reserve(cx) {
             Poll::Pending => {
                 self.terminate_message = Some((tx, msg));
-                return Some(Poll::Pending)
+                return Some(Poll::Pending);
             }
             Poll::Ready(Ok(())) => {
                 let _ = tx.send_item(msg);
@@ -763,11 +763,11 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
 
         // if the session is terminate we have to send the termination message before we can close
         if let Some(terminate) = this.poll_terminate_message(cx) {
-            return terminate
+            return terminate;
         }
 
         if this.is_disconnecting() {
-            return this.poll_disconnect(cx)
+            return this.poll_disconnect(cx);
         }
 
         // The receive loop can be CPU intensive since it involves message decoding which could take
@@ -789,7 +789,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                     Poll::Ready(None) => {
                         // this is only possible when the manager was dropped, in which case we also
                         // terminate this session
-                        return Poll::Ready(())
+                        return Poll::Ready(());
                     }
                     Poll::Ready(Some(cmd)) => {
                         progress = true;
@@ -804,7 +804,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                                 let reason =
                                     reason.unwrap_or(DisconnectReason::DisconnectRequested);
 
-                                return this.try_disconnect(reason, cx)
+                                return this.try_disconnect(reason, cx);
                             }
                             SessionCommand::Message(msg) => {
                                 this.on_internal_peer_message(msg);
@@ -860,7 +860,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                 Err(err) => {
                     debug!(target: "net::session", %err, remote_peer_id=?this.remote_peer_id, "failed to send message");
                     // notify the manager
-                    return this.close_on_error(err, cx)
+                    return this.close_on_error(err, cx);
                 }
             }
 
@@ -871,7 +871,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                 if budget == 0 {
                     // make sure we're woken up again
                     cx.waker().wake_by_ref();
-                    break 'main
+                    break 'main;
                 }
 
                 // try to resend the pending message that we could not send because the channel was
@@ -885,7 +885,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                         Poll::Ready(Err(_)) => return Poll::Ready(()),
                         Poll::Pending => {
                             this.pending_message_to_session = Some(msg);
-                            break 'receive
+                            break 'receive;
                         }
                     };
                 }
@@ -897,7 +897,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                     //
                     // Note: we don't need to register the waker here because we polled the requests
                     // above
-                    break 'receive
+                    break 'receive;
                 }
 
                 // we also need to check if we have multiple responses queued up
@@ -908,20 +908,20 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                     // Note: we don't need to register the waker here because we still have
                     // queued messages and the sink impl registered the waker because we've
                     // already advanced it to `Pending` earlier
-                    break 'receive
+                    break 'receive;
                 }
 
                 match this.conn.poll_next_unpin(cx) {
                     Poll::Pending => {
                         receive_pending = true;
-                        break
+                        break;
                     }
                     Poll::Ready(None) => {
                         if this.is_disconnecting() {
-                            break
+                            break;
                         }
                         debug!(target: "net::session", remote_peer_id=?this.remote_peer_id, "sil stream completed");
-                        return this.emit_disconnect(cx)
+                        return this.emit_disconnect(cx);
                     }
                     Poll::Ready(Some(res)) => {
                         match res {
@@ -943,7 +943,7 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                                         debug!(target: "net::session", %error, msg=?message, remote_peer_id=?this.remote_peer_id, "received invalid protocol message");
                                         this.on_bad_message();
                                         return this
-                                            .try_disconnect(DisconnectReason::ProtocolBreach, cx)
+                                            .try_disconnect(DisconnectReason::ProtocolBreach, cx);
                                     }
                                     OnIncomingMessageOutcome::NoCapacity(msg) => {
                                         // failed to send due to lack of capacity
@@ -955,9 +955,10 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
                                 debug!(target: "net::session", %err, remote_peer_id=?this.remote_peer_id, "failed to receive message");
                                 if err.is_protocol_breach() {
                                     this.on_bad_message();
-                                    return this.try_disconnect(DisconnectReason::ProtocolBreach, cx)
+                                    return this
+                                        .try_disconnect(DisconnectReason::ProtocolBreach, cx);
                                 }
-                                return this.close_on_error(err, cx)
+                                return this.close_on_error(err, cx);
                             }
                         }
                     }
@@ -966,16 +967,16 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
 
             // Avoid one extra empty outer-loop pass after the wire is pending, unless the receive
             // pass produced work that should be driven immediately.
-            if receive_pending &&
-                this.queued_outgoing.is_empty() &&
-                this.pending_message_to_session.is_none() &&
-                this.received_requests_from_remote.is_empty()
+            if receive_pending
+                && this.queued_outgoing.is_empty()
+                && this.pending_message_to_session.is_none()
+                && this.received_requests_from_remote.is_empty()
             {
-                break 'main
+                break 'main;
             }
 
             if !progress {
-                break 'main
+                break 'main;
             }
         }
 
@@ -1002,8 +1003,8 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
         if !this.inflight_requests.is_empty() {
             while this.internal_request_timeout_interval.poll_tick(cx).is_ready() {
                 // check for timed out requests
-                if this.check_timed_out_requests(Instant::now()) &&
-                    let Poll::Ready(Ok(_)) = this.to_session_manager.poll_reserve(cx)
+                if this.check_timed_out_requests(Instant::now())
+                    && let Poll::Ready(Ok(_)) = this.to_session_manager.poll_reserve(cx)
                 {
                     let msg = ActiveSessionMessage::ProtocolBreach { peer_id: this.remote_peer_id };
                     this.pending_message_to_session = Some(msg);
@@ -1016,13 +1017,13 @@ impl<N: NetworkPrimitives> Future for ActiveSession<N> {
         // on an earlier poll; a no-op if nothing is buffered.
         if let Err(err) = this.poll_send_queued(cx) {
             debug!(target: "net::session", %err, remote_peer_id=?this.remote_peer_id, "failed to send message");
-            return this.close_on_error(err, cx)
+            return this.close_on_error(err, cx);
         }
         match this.conn.poll_flush_unpin(cx) {
             Poll::Pending | Poll::Ready(Ok(())) => {}
             Poll::Ready(Err(err)) => {
                 debug!(target: "net::session", %err, remote_peer_id=?this.remote_peer_id, "failed to flush connection");
-                return this.close_on_error(err, cx)
+                return this.close_on_error(err, cx);
             }
         }
 
@@ -1310,28 +1311,28 @@ impl<N: NetworkPrimitives> Drop for QueuedOutgoingMessages<N> {
 mod tests {
     use super::*;
     use crate::session::{handle::PendingSessionEvent, start_pending_incoming_session};
-    use alloy_eips::sip2124::ForkFilter;
+    use alloy_eips::eip2124::ForkFilter;
     use alloy_primitives::B256;
     use futures::task::noop_waker;
     use rsil_chainspec::SILA_MAINNET;
     use rsil_ecies::stream::ECIESStream;
-    use rsil_eth_wire::{
-        handshake::SilHandshake, protocol::Protocol, SilNetworkPrimitives, SilStream,
-        GetBlockAccessLists, GetBlockBodies, HelloMessageWithProtocols, P2PStream, StatusBuilder,
-        UnauthedEthStream, UnauthedP2PStream, UnifiedStatus,
+    use rsil_sil_wire::{
+        handshake::SilHandshake, protocol::Protocol, GetBlockAccessLists, GetBlockBodies,
+        HelloMessageWithProtocols, P2PStream, SilNetworkPrimitives, SilStream, StatusBuilder,
+        UnauthedSilStream, UnauthedP2PStream, UnifiedStatus,
     };
-    use rsil_eth_wire_types::{
+    use rsil_sil_wire_types::{
         message::MAX_MESSAGE_SIZE,
         snap::{
             AccountRangeMessage, BlockAccessListsMessage, GetAccountRangeMessage,
             GetBlockAccessListsMessage,
         },
-        BlockAccessLists, SilMessageID, NewPooledTransactionHashes72,
+        BlockAccessLists, NewPooledTransactionHashes72, SilMessageID,
     };
-    use rsil_sila_forks::SilaHardfork;
     use rsil_network_p2p::error::RequestResult;
     use rsil_network_peers::pk2id;
     use rsil_network_types::session::config::PROTOCOL_BREACH_REQUEST_TIMEOUT;
+    use rsil_sila_forks::SilaHardfork;
     use secp256k1::{SecretKey, SECP256K1};
     use tokio::{
         net::{TcpListener, TcpStream},
@@ -1339,7 +1340,7 @@ mod tests {
     };
 
     /// Returns a testing `HelloMessage` and new secretkey
-    fn eth_hello(server_key: &SecretKey) -> HelloMessageWithProtocols {
+    fn sil_hello(server_key: &SecretKey) -> HelloMessageWithProtocols {
         HelloMessageWithProtocols::builder(pk2id(&server_key.public_key(SECP256K1))).build()
     }
 
@@ -1385,10 +1386,10 @@ mod tests {
 
                 let (p2p_stream, _) = UnauthedP2PStream::new(sink).handshake(hello).await.unwrap();
 
-                let eth_version = p2p_stream.shared_capabilities().eth_version().unwrap();
-                status.set_eth_version(eth_version);
+                let sil_version = p2p_stream.shared_capabilities().sil_version().unwrap();
+                status.set_sil_version(sil_version);
 
-                let (client_stream, _) = UnauthedEthStream::new(p2p_stream)
+                let (client_stream, _) = UnauthedSilStream::new(p2p_stream)
                     .handshake(status, fork_filter)
                     .await
                     .unwrap();
@@ -1495,7 +1496,7 @@ mod tests {
                 active_session_tx,
                 active_session_rx: ReceiverStream::new(active_session_rx),
                 to_sessions: vec![],
-                hello: eth_hello(&secret_key),
+                hello: sil_hello(&secret_key),
                 secret_key,
                 local_peer_id,
                 status: StatusBuilder::default().build(),
@@ -1507,7 +1508,7 @@ mod tests {
     }
 
     /// Returns a [`SessionBuilder`] whose hello also advertises `snap/2`, so the negotiated
-    /// session ends up on an [`SilSnapStream`](rsil_eth_wire::SilSnapStream) connection instead
+    /// session ends up on an [`SilSnapStream`](rsil_sil_wire::SilSnapStream) connection instead
     /// of a plain `sil`-only one.
     fn snap_session_builder() -> SessionBuilder {
         let mut builder = SessionBuilder::default();
@@ -2030,7 +2031,7 @@ mod tests {
                 .try_send(ActiveSessionMessage::ProtocolBreach { peer_id: PeerId::random() })
                 .is_err()
             {
-                break
+                break;
             }
             num_fill_messages += 1;
         }

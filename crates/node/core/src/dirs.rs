@@ -405,14 +405,14 @@ mod tests {
     #[test]
     fn test_maybe_data_dir_path() {
         let path = MaybePlatformPath::<DataDirPath>::default();
-        let path = path.unwrap_or_chain_default(Chain::sila-mainnet(), DatadirArgs::default());
+        let path = path.unwrap_or_chain_default(Chain::sila_mainnet(), DatadirArgs::default());
         assert!(path.as_ref().ends_with("rsil/sila-mainnet"), "{path:?}");
 
         let db_path = path.db();
         assert!(db_path.ends_with("rsil/sila-mainnet/db"), "{db_path:?}");
 
         let path = MaybePlatformPath::<DataDirPath>::from_str("my/path/to/datadir").unwrap();
-        let path = path.unwrap_or_chain_default(Chain::sila-mainnet(), DatadirArgs::default());
+        let path = path.unwrap_or_chain_default(Chain::sila_mainnet(), DatadirArgs::default());
         assert!(path.as_ref().ends_with("my/path/to/datadir"), "{path:?}");
     }
 

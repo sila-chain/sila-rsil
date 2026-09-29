@@ -1,11 +1,11 @@
 use alloy_primitives::{map::B256Map, B256};
-use rsil_sila_primitives::BlockBody;
 use rsil_network_p2p::{
     bodies::client::{BodiesClient, BodiesFut},
     download::DownloadClient,
     priority::Priority,
 };
 use rsil_network_peers::PeerId;
+use rsil_sila_primitives::BlockBody;
 use std::{
     fmt::Debug,
     ops::RangeInclusive,
@@ -96,7 +96,7 @@ impl BodiesClient for TestBodiesClient {
 
         Box::pin(async move {
             if should_respond_empty {
-                return Ok((PeerId::default(), vec![]).into())
+                return Ok((PeerId::default(), vec![]).into());
             }
 
             if should_delay {

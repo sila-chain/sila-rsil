@@ -5,7 +5,7 @@ use example_bsc_p2p::{
 use rsil_chainspec::NamedChain;
 use rsil_discv4::Discv4ConfigBuilder;
 use rsil_network::{
-    SilNetworkPrimitives, NetworkConfig, NetworkEvent, NetworkEventListenerProvider, NetworkManager,
+    NetworkConfig, NetworkEvent, NetworkEventListenerProvider, NetworkManager, SilNetworkPrimitives,
 };
 use rsil_provider::noop::NoopProvider;
 use rsil_tasks::Runtime;
@@ -31,7 +31,7 @@ async fn can_connect() {
         .set_head(head())
         .with_pow()
         .listener_addr(local_addr)
-        .eth_rlpx_handshake(Arc::new(BscHandshake::default()))
+        .sil_rlpx_handshake(Arc::new(BscHandshake::default()))
         .build(NoopProvider::sil(bsc_chain_spec()));
 
     let net_cfg = net_cfg.set_discovery_v4(

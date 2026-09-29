@@ -1,6 +1,7 @@
 use super::ExecutedBlock;
 use alloy_consensus::BlockHeader;
 use alloy_primitives::{keccak256, Address, BlockNumber, Bytes, StorageKey, StorageValue, B256};
+use revm::database::BundleState;
 use rsil_errors::ProviderResult;
 use rsil_primitives_traits::{Account, Bytecode, NodePrimitives};
 use rsil_storage_api::{
@@ -11,7 +12,6 @@ use rsil_trie::{
     updates::TrieUpdates, AccountProof, HashedPostState, HashedStorage, MultiProof,
     MultiProofTargets, StorageMultiProof, TrieInput,
 };
-use revm::database::BundleState;
 use std::{borrow::Cow, sync::OnceLock};
 
 /// A state provider that stores references to in-memory blocks along with their state as well as a

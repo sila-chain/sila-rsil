@@ -1,30 +1,30 @@
 //! Loads a pending block from database. Helper trait for `eth_` call and trace RPC methods.
 
 use super::{Call, LoadBlock, LoadState, LoadTransaction};
-use crate::{FromEthApiError, FromEvmError};
+use crate::{FromSilApiError, FromEvmError};
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
 use alloy_primitives::B256;
 use alloy_rpc_types_eth::{BlockId, TransactionInfo};
 use futures::Future;
+use revm::{context::Block, context_interface::result::ResultAndState};
+use revm_inspectors::tracing::{TracingInspector, TracingInspectorConfig};
 use rsil_errors::{ProviderError, RsilError};
-use rsil_evm::{
-    block::BlockExecutor, savm::SavmFactoryExt, tracing::TracingCtx, ConfigureEvm, Database, Savm,
-    SavmEnvFor, SavmFor, HaltReasonFor, InspectorFor, TxEnvFor,
+use rsil_savm::{
+    block::BlockExecutor, savm::SavmFactoryExt, tracing::TracingCtx, ConfigureEvm, Database,
+    HaltReasonFor, InspectorFor, Savm, SavmEnvFor, SavmFor, TxEnvFor,
 };
 use rsil_primitives_traits::{BlockBody, Recovered, RecoveredBlock};
 use rsil_revm::{
     database::StateProviderDatabase,
-    db::{bal::SavmDatabaseError, State},
+    db::{bal::EvmDatabaseError, State},
 };
-use rsil_rpc_eth_types::cache::db::StateCacheDb;
+use rsil_rpc_sil_types::cache::db::StateCacheDb;
 use rsil_storage_api::{ProviderBlock, ProviderTx};
-use revm::{context::Block, context_interface::result::ResultAndState};
-use revm_inspectors::tracing::{TracingInspector, TracingInspectorConfig};
 use std::sync::Arc;
 
 /// Executes CPU heavy tasks.
 pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
-    /// Executes the [`TxEnvFor`] with [`rsil_evm::SavmEnv`] against the given [Database] without
+    /// Executes the [`TxEnvFor`] with [`rsil_savm::SavmEnv`] against the given [Database] without
     /// committing state changes.
     fn inspect<DB, I>(
         &self,
@@ -34,7 +34,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
         inspector: I,
     ) -> Result<ResultAndState<HaltReasonFor<Self::Savm>>, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>>,
+        DB: Database<Error = EvmDatabaseError<ProviderError>>,
         I: InspectorFor<Self::Savm, DB>,
     {
         let mut savm = self.evm_config().evm_with_env_and_inspector(db, evm_env, inspector);
@@ -45,7 +45,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
     /// config.
     ///
     /// The callback is then called with the [`TracingInspector`] and the [`ResultAndState`] after
-    /// the configured [`rsil_evm::SavmEnv`] was inspected.
+    /// the configured [`rsil_savm::SavmEnv`] was inspected.
     ///
     /// Caution: this is blocking
     fn trace_at<F, R>(
@@ -79,7 +79,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
     /// config.
     ///
     /// The callback is then called with the [`TracingInspector`] and the [`ResultAndState`] after
-    /// the configured [`rsil_evm::SavmEnv`] was inspected.
+    /// the configured [`rsil_savm::SavmEnv`] was inspected.
     fn spawn_trace_at_with_state<F, R>(
         &self,
         evm_env: SavmEnvFor<Self::Savm>,
@@ -273,7 +273,7 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
 
             if block.body().transactions().is_empty() {
                 // nothing to trace
-                return Ok(Some(Vec::new()))
+                return Ok(Some(Vec::new()));
             }
 
             // replay all transactions of the block
@@ -416,9 +416,9 @@ pub trait Trace: LoadState<Error: FromEvmError<Self::Savm>> + Call {
         self.evm_config()
             .executor_for_block(db, block.sealed_block())
             .map_err(RsilError::other)
-            .map_err(Self::Error::from_eth_err)?
+            .map_err(Self::Error::from_sil_err)?
             .apply_pre_execution_changes()
-            .map_err(Self::Error::from_eth_err)?;
+            .map_err(Self::Error::from_sil_err)?;
         Ok(())
     }
 }

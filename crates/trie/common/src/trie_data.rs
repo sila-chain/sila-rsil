@@ -295,8 +295,8 @@ mod tests {
 
     use super::*;
     use alloy_primitives::{B256, U256};
-    use rsil_primitives_traits::Account;
     use revm::primitives::B256Map;
+    use rsil_primitives_traits::Account;
     use std::{
         thread,
         time::{Duration, Instant},

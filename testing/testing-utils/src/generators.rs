@@ -4,18 +4,18 @@
 
 use alloy_consensus::{Header, SignableTransaction, Transaction as _, TxLegacy};
 use alloy_eips::{
-    sip1898::BlockWithParent,
-    sip4895::{Withdrawal, Withdrawals},
+    eip1898::BlockWithParent,
+    eip4895::{Withdrawal, Withdrawals},
     NumHash,
 };
 use alloy_primitives::{Address, BlockNumber, Bytes, TxKind, B256, B64, U256};
 pub use rand::Rng;
 use rand::{distr::uniform::SampleRange, rngs::StdRng, SeedableRng};
-use rsil_sila_primitives::{Block, BlockBody, Receipt, Transaction, TransactionSigned};
 use rsil_primitives_traits::{
     crypto::secp256k1::sign_message, proofs, Account, Block as _, Log, SealedBlock, SealedHeader,
     StorageEntry,
 };
+use rsil_sila_primitives::{Block, BlockBody, Receipt, Transaction, TransactionSigned};
 use secp256k1::{Keypair, Secp256k1};
 use std::{
     cmp::{max, min},
@@ -345,7 +345,7 @@ where
                 let old = if entry.value.is_zero() {
                     let old = storage.remove(&entry.key);
                     if matches!(old, Some(U256::ZERO)) {
-                        return None
+                        return None;
                     }
                     old
                 } else {

@@ -176,9 +176,9 @@ wait_for_snapshot_pipeline() {
 
   while [ "$SECONDS" -lt "$deadline" ]; do
     local sync_response block_response block_hex block_dec
-    sync_response="$(rpc_call eth_syncing 2>/dev/null || true)"
+    sync_response="$(rpc_call sil_syncing 2>/dev/null || true)"
     if jq -e '.result == false' <<< "$sync_response" >/dev/null 2>&1; then
-      block_response="$(rpc_call eth_blockNumber 2>/dev/null || true)"
+      block_response="$(rpc_call sil_blockNumber 2>/dev/null || true)"
       block_hex="$(jq -er '.result' <<< "$block_response" 2>/dev/null || true)"
       if [[ "$block_hex" =~ ^0x[0-9a-fA-F]+$ ]]; then
         block_dec=$(( 16#${block_hex#0x} ))
@@ -212,9 +212,9 @@ prerun_head_file() {
 write_prerun_head_marker() {
   local marker head_hex head_dec block_hash
   marker="$(prerun_head_file)"
-  head_hex="$(rpc_call eth_blockNumber | jq -er '.result')"
+  head_hex="$(rpc_call sil_blockNumber | jq -er '.result')"
   head_dec=$(( 16#${head_hex#0x} ))
-  block_hash="$(rpc_call eth_getBlockByNumber "[\"${head_hex}\",false]" | jq -er '.result.hash')"
+  block_hash="$(rpc_call sil_getBlockByNumber "[\"${head_hex}\",false]" | jq -er '.result.hash')"
   mkdir -p "$(dirname "$marker")"
   jq -n \
     --argjson number "$head_dec" \

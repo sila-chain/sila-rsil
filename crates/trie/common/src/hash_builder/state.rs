@@ -10,7 +10,7 @@ use nybbles::Nibbles;
 #[cfg_attr(
     feature = "arbitrary",
     derive(arbitrary::Arbitrary),
-    rsil_codecs::add_arbitrary_tests(compact)
+    reth_codecs::add_arbitrary_tests(compact)
 )]
 pub struct HashBuilderState {
     /// The current key.
@@ -63,7 +63,7 @@ impl From<HashBuilder> for HashBuilderState {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for HashBuilderState {
+impl reth_codecs::Compact for HashBuilderState {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -152,7 +152,7 @@ impl rsil_codecs::Compact for HashBuilderState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rsil_codecs::Compact;
+    use reth_codecs::Compact;
 
     #[test]
     fn hash_builder_state_regression() {

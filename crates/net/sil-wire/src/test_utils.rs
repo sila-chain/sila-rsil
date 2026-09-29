@@ -3,13 +3,13 @@
 #![allow(missing_docs)]
 
 use crate::{
-    hello::DEFAULT_TCP_PORT, SilVersion, HelloMessageWithProtocols, P2PStream, ProtocolVersion,
+    hello::DEFAULT_TCP_PORT, HelloMessageWithProtocols, P2PStream, ProtocolVersion, SilVersion,
     Status, StatusMessage, UnauthedP2PStream, UnifiedStatus,
 };
 use alloy_chains::Chain;
 use alloy_primitives::{B256, U256};
-use rsil_sila_forks::{ForkFilter, Head};
 use rsil_network_peers::pk2id;
+use rsil_sila_forks::{ForkFilter, Head};
 use secp256k1::{SecretKey, SECP256K1};
 use std::net::SocketAddr;
 use tokio::net::TcpStream;
@@ -18,7 +18,7 @@ use tokio_util::codec::{Decoder, Framed, LengthDelimitedCodec};
 pub type P2pPassthroughTcpStream = P2PStream<Framed<TcpStream, LengthDelimitedCodec>>;
 
 /// Returns a new testing `HelloMessage` and new secretkey
-pub fn eth_hello() -> (HelloMessageWithProtocols, SecretKey) {
+pub fn sil_hello() -> (HelloMessageWithProtocols, SecretKey) {
     let server_key = SecretKey::new(&mut rand_08::thread_rng());
     let protocols = vec![SilVersion::Sil67.into()];
     let hello = HelloMessageWithProtocols {
@@ -32,13 +32,13 @@ pub fn eth_hello() -> (HelloMessageWithProtocols, SecretKey) {
 }
 
 /// Returns testing sil handshake status and fork filter.
-pub fn eth_handshake() -> (UnifiedStatus, ForkFilter) {
+pub fn sil_handshake() -> (UnifiedStatus, ForkFilter) {
     let genesis = B256::random();
     let fork_filter = ForkFilter::new(Head::default(), genesis, 0, Vec::new());
 
     let status = Status {
         version: SilVersion::Sil67,
-        chain: Chain::sila-mainnet(),
+        chain: Chain::mainnet(),
         total_difficulty: U256::ZERO,
         blockhash: B256::random(),
         genesis,
@@ -70,7 +70,7 @@ pub mod proto {
 
     /// Returns a new testing `HelloMessage` with sil and the test protocol
     pub fn test_hello() -> (HelloMessageWithProtocols, SecretKey) {
-        let mut handshake = eth_hello();
+        let mut handshake = sil_hello();
         handshake.0.protocols.push(TestProtoMessage::protocol());
         handshake
     }
@@ -142,7 +142,7 @@ pub mod proto {
         /// Decodes a `TestProtoMessage` from the given message buffer.
         pub fn decode_message(buf: &mut &[u8]) -> Option<Self> {
             if buf.is_empty() {
-                return None
+                return None;
             }
             let id = buf[0];
             buf.advance(1);

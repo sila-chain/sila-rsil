@@ -2,11 +2,11 @@
 
 use crate::SilApi;
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
-    helpers::{SilState, LoadPendingBlock, LoadState},
+use rsil_rpc_sil_api::{
+    helpers::{LoadPendingBlock, LoadState, SilState},
     RpcNodeCore,
 };
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_types::SilApiError;
 
 impl<N, Rpc> SilState for SilApi<N, Rpc>
 where
@@ -15,7 +15,7 @@ where
     Self: LoadPendingBlock,
 {
     fn max_proof_window(&self) -> u64 {
-        self.inner.eth_proof_window()
+        self.inner.sil_proof_window()
     }
 }
 
@@ -40,31 +40,31 @@ mod tests {
     use rsil_evm_sila::SilEvmConfig;
     use rsil_network_api::noop::NoopNetwork;
     use rsil_provider::{
-        test_utils::{ExtendedAccount, MockEthProvider, NoopProvider},
+        test_utils::{ExtendedAccount, MockSilProvider, NoopProvider},
         ChainSpecProvider,
     };
-    use rsil_rpc_eth_api::{helpers::SilState, node::RpcNodeCoreAdapter};
+    use rsil_rpc_sil_api::{helpers::SilState, node::RpcNodeCoreAdapter};
     use rsil_transaction_pool::test_utils::{testing_pool, TestPool};
 
-    fn noop_eth_api() -> SilApi<
+    fn noop_sil_api() -> SilApi<
         RpcNodeCoreAdapter<NoopProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
         let provider = NoopProvider::default();
         let pool = testing_pool();
-        let evm_config = SilEvmConfig::sila-mainnet();
+        let evm_config = SilEvmConfig::sila_mainnet();
 
         SilApi::builder(provider, pool, NoopNetwork::default(), evm_config).build()
     }
 
-    fn mock_eth_api(
+    fn mock_sil_api(
         accounts: AddressMap<ExtendedAccount>,
     ) -> SilApi<
-        RpcNodeCoreAdapter<MockEthProvider, TestPool, NoopNetwork, SilEvmConfig>,
+        RpcNodeCoreAdapter<MockSilProvider, TestPool, NoopNetwork, SilEvmConfig>,
         SilRpcConverter<ChainSpec>,
     > {
         let pool = testing_pool();
-        let mock_provider = MockEthProvider::default();
+        let mock_provider = MockSilProvider::default();
 
         let evm_config = SilEvmConfig::new(mock_provider.chain_spec());
         mock_provider.extend_accounts(accounts);
@@ -75,9 +75,9 @@ mod tests {
     #[tokio::test]
     async fn test_storage() {
         // === Noop ===
-        let eth_api = noop_eth_api();
+        let sil_api = noop_sil_api();
         let address = Address::random();
-        let storage = eth_api.storage_at(address, U256::ZERO.into(), None).await.unwrap();
+        let storage = sil_api.storage_at(address, U256::ZERO.into(), None).await.unwrap();
         assert_eq!(storage, U256::ZERO.to_be_bytes());
 
         // === Mock ===
@@ -89,18 +89,18 @@ mod tests {
             address,
             ExtendedAccount::new(0, U256::ZERO).extend_storage(storage),
         )]);
-        let eth_api = mock_eth_api(accounts);
+        let sil_api = mock_sil_api(accounts);
 
         let storage_key: U256 = storage_key.into();
-        let storage = eth_api.storage_at(address, storage_key.into(), None).await.unwrap();
+        let storage = sil_api.storage_at(address, storage_key.into(), None).await.unwrap();
         assert_eq!(storage, storage_value.to_be_bytes());
     }
 
     #[tokio::test]
     async fn test_get_account_missing() {
-        let eth_api = noop_eth_api();
+        let sil_api = noop_sil_api();
         let address = Address::random();
-        let account = eth_api.get_account(address, Default::default()).await.unwrap();
+        let account = sil_api.get_account(address, Default::default()).await.unwrap();
         assert!(account.is_none());
     }
 }

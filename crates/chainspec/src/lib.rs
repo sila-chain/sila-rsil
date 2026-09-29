@@ -25,7 +25,7 @@ pub use alloy_chains::{Chain, ChainKind, NamedChain};
 /// Re-export for convenience
 pub use rsil_sila_forks::*;
 
-pub use alloy_evm::SavmLimitParams;
+pub use alloy_savm::EvmLimitParams as SavmLimitParams;
 pub use api::SilChainSpec;
 pub use info::ChainInfo;
 #[cfg(any(test, feature = "test-utils"))]
@@ -33,7 +33,7 @@ pub use spec::test_fork_ids;
 pub use spec::{
     blob_params_to_schedule, create_chain_config, mainnet_chain_config, make_genesis_header,
     BaseFeeParams, BaseFeeParamsKind, ChainSpec, ChainSpecBuilder, ChainSpecProvider,
-    DepositContract, ForkBaseFeeParams, DEV, HOLESKY, HOODI, SILA_MAINNET, SEPOLIA,
+    DepositContract, ForkBaseFeeParams, DEV, HOLESKY, HOODI, SEPOLIA, SILA_MAINNET,
 };
 
 #[cfg(test)]
@@ -51,13 +51,13 @@ mod tests {
 
     #[test]
     fn test_named_id() {
-        let chain = Chain::from_named(NamedChain::SilaHolesky);
+        let chain = Chain::from_named(NamedChain::Holesky);
         assert_eq!(chain.id(), 17000);
     }
 
     #[test]
     fn test_display_named_chain() {
-        let chain = Chain::from_named(NamedChain::SilaMainnet);
+        let chain = Chain::from_named(NamedChain::Mainnet);
         assert_eq!(format!("{chain}"), "sila-mainnet");
     }
 
@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn test_into_u256() {
-        let chain = Chain::from_named(NamedChain::SilaHolesky);
+        let chain = Chain::from_named(NamedChain::Holesky);
         let n: U256 = U256::from(chain.id());
         let expected = U256::from(17000);
 
@@ -88,7 +88,7 @@ mod tests {
     #[test]
     fn test_from_str_named_chain() {
         let result = Chain::from_str("sila-mainnet");
-        let expected = Chain::from_named(NamedChain::SilaMainnet);
+        let expected = Chain::from_named(NamedChain::Mainnet);
 
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -113,7 +113,7 @@ mod tests {
     #[test]
     fn test_default() {
         let default = Chain::default();
-        let expected = Chain::from_named(NamedChain::SilaMainnet);
+        let expected = Chain::from_named(NamedChain::Mainnet);
 
         assert_eq!(default, expected);
     }
@@ -128,14 +128,14 @@ mod tests {
     #[test]
     fn test_dns_main_network() {
         let s = "enrtree://AKA3AM6LPBYEUDMVNU3BSVQJ5AD45Y7YPOHJLEF6W26QOE4VTUDPE@all.sila-mainnet.ethdisco.net";
-        let chain: Chain = NamedChain::SilaMainnet.into();
+        let chain: Chain = NamedChain::Mainnet.into();
         assert_eq!(s, chain.public_dns_network_protocol().unwrap().as_str());
     }
 
     #[test]
     fn test_dns_holesky_network() {
         let s = "enrtree://AKA3AM6LPBYEUDMVNU3BSVQJ5AD45Y7YPOHJLEF6W26QOE4VTUDPE@all.holesky.ethdisco.net";
-        let chain: Chain = NamedChain::SilaHolesky.into();
+        let chain: Chain = NamedChain::Holesky.into();
         assert_eq!(s, chain.public_dns_network_protocol().unwrap().as_str());
     }
 
@@ -143,7 +143,7 @@ mod tests {
     fn test_centralized_base_fee_calculation() {
         use crate::{ChainSpec, SilChainSpec};
         use alloy_consensus::Header;
-        use alloy_eips::sip1559::INITIAL_BASE_FEE;
+        use alloy_sips::eip1559::INITIAL_BASE_FEE;
 
         fn parent_header() -> Header {
             Header {

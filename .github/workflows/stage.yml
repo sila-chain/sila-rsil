@@ -25,7 +25,7 @@ jobs:
     name: stage-run-test
     # Only run stage commands test in merge groups
     if: github.event_name == 'merge_group'
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     env:

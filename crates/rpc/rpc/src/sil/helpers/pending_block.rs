@@ -2,11 +2,11 @@
 
 use crate::SilApi;
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{pending_block::PendingEnvBuilder, LoadPendingBlock},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::{builder::config::PendingBlockKind, SilApiError, PendingBlock};
+use rsil_rpc_sil_types::{builder::config::PendingBlockKind, PendingBlock, SilApiError};
 
 impl<N, Rpc> LoadPendingBlock for SilApi<N, Rpc>
 where

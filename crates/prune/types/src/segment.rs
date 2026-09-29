@@ -12,8 +12,8 @@ use thiserror::Error;
 /// when writing to the `PruneCheckpoint` table, so changing the order here will corrupt the table.
 #[derive(Debug, Display, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash, EnumIter)]
 #[cfg_attr(test, derive(arbitrary::Arbitrary))]
-#[cfg_attr(any(test, feature = "rsil-codec"), derive(rsil_codecs::Compact))]
-#[cfg_attr(any(test, feature = "rsil-codec"), rsil_codecs::add_arbitrary_tests(compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), derive(reth_codecs::Compact))]
+#[cfg_attr(any(test, feature = "rsil-codec"), reth_codecs::add_arbitrary_tests(compact))]
 #[cfg_attr(any(test, feature = "serde"), derive(serde::Serialize, serde::Deserialize))]
 pub enum PruneSegment {
     /// Prune segment responsible for the `TransactionSenders` table.

@@ -43,7 +43,8 @@ rsil-engine-primitives.workspace = true
 alloy-primitives.workspace = true
 alloy-rpc-types-engine = { workspace = true, features = ["std", "jwt-aws-lc-rs"] }
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
+alloy-hardforks.workspace = true
 
 # misc
 eyre.workspace = true

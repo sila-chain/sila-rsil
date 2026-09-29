@@ -6,7 +6,7 @@ use crate::{
     traits::{PoolTransaction, TransactionOrigin},
     PriceBumpConfig,
 };
-use alloy_eips::{sip7594::BlobTransactionSidecarVariant, sip7702::SignedAuthorization};
+use alloy_sips::{eip7594::BlobTransactionSidecarVariant, eip7702::SignedAuthorization};
 use alloy_primitives::{Address, TxHash, B256, U256};
 use futures_util::future::Either;
 use rsil_primitives_traits::{Block, Recovered, SealedBlock};
@@ -471,7 +471,7 @@ impl<T: PoolTransaction> ValidPoolTransaction<T> {
 
         // Check if the max fee per gas is underpriced.
         if maybe_replacement.max_fee_per_gas() < required_bumped_fee(self.max_fee_per_gas()) {
-            return true
+            return true;
         }
 
         let existing_max_priority_fee_per_gas =
@@ -480,12 +480,12 @@ impl<T: PoolTransaction> ValidPoolTransaction<T> {
             maybe_replacement.transaction.max_priority_fee_per_gas().unwrap_or_default();
 
         // Check max priority fee per gas (relevant for SIP-1559 transactions only)
-        if existing_max_priority_fee_per_gas != 0 &&
-            replacement_max_priority_fee_per_gas != 0 &&
-            replacement_max_priority_fee_per_gas <
-                required_bumped_fee(existing_max_priority_fee_per_gas)
+        if existing_max_priority_fee_per_gas != 0
+            && replacement_max_priority_fee_per_gas != 0
+            && replacement_max_priority_fee_per_gas
+                < required_bumped_fee(existing_max_priority_fee_per_gas)
         {
-            return true
+            return true;
         }
 
         // Check max blob fee per gas
@@ -495,7 +495,7 @@ impl<T: PoolTransaction> ValidPoolTransaction<T> {
                 maybe_replacement.transaction.max_fee_per_blob_gas().unwrap_or_default();
             if replacement_max_blob_fee_per_gas < required_bumped_fee(existing_max_blob_fee_per_gas)
             {
-                return true
+                return true;
             }
         }
 

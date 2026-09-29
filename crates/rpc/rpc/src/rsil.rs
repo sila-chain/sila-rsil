@@ -15,7 +15,7 @@ use rsil_evm::{execute::Executor, ConfigureEvm};
 use rsil_execution_types::ExecutionOutcome;
 use rsil_primitives_traits::{NodePrimitives, SealedHeader};
 use rsil_rpc_api::{RsilApiServer, RsilJitAction};
-use rsil_rpc_eth_types::{SilApiError, SilResult};
+use rsil_rpc_sil_types::{SilApiError, SilResult};
 use rsil_storage_api::{
     BlockReader, BlockReaderIdExt, ChangeSetReader, StateProviderFactory, TransactionVariant,
 };
@@ -75,7 +75,7 @@ where
             let res = f.await;
             let _ = tx.send(res);
         });
-        rx.await.map_err(|_| SilApiError::InternalEthError)?
+        rx.await.map_err(|_| SilApiError::InternalSilError)?
     }
 
     /// Returns a map of addresses to changed account balanced for a particular block.
@@ -85,7 +85,7 @@ where
 
     fn try_balance_changes_in_block(&self, block_id: BlockId) -> SilResult<AddressMap<U256>> {
         let Some(block_number) = self.provider().block_number_for_id(block_id)? else {
-            return Err(SilApiError::HeaderNotFound(block_id))
+            return Err(SilApiError::HeaderNotFound(block_id));
         };
 
         let state = self.provider().state_by_block_id(block_id)?;
@@ -128,7 +128,7 @@ where
         if block_count == 0 || block_count > MAX_BLOCK_COUNT {
             return Err(SilApiError::InvalidParams(format!(
                 "block count must be between 1 and {MAX_BLOCK_COUNT}, got {block_count}"
-            )))
+            )));
         }
 
         let permit = self
@@ -137,7 +137,7 @@ where
             .clone()
             .acquire_owned()
             .await
-            .map_err(|_| SilApiError::InternalEthError)?;
+            .map_err(|_| SilApiError::InternalSilError)?;
         self.on_blocking_task(async move |this| {
             let _permit = permit;
             this.try_block_execution_outcome(block_id, block_count)
@@ -151,11 +151,11 @@ where
         block_count: u64,
     ) -> SilResult<Option<ExecutionOutcome<N::Receipt>>> {
         let Some(start_block) = self.provider().block_number_for_id(block_id)? else {
-            return Ok(None)
+            return Ok(None);
         };
 
         if start_block == 0 {
-            return Ok(Some(ExecutionOutcome::default()))
+            return Ok(Some(ExecutionOutcome::default()));
         }
 
         let state_provider = self.provider().history_by_block_number(start_block - 1)?;
@@ -168,7 +168,7 @@ where
                 .recovered_block(block_number.into(), TransactionVariant::WithHash)?
             else {
                 if block_number == start_block {
-                    return Ok(None)
+                    return Ok(None);
                 }
                 break;
             };

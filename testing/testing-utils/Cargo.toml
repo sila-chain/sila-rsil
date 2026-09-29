@@ -17,7 +17,7 @@ rsil-primitives-traits = { workspace = true, features = ["secp256k1", "arbitrary
 alloy-genesis.workspace = true
 alloy-primitives = { workspace = true, features = ["rand"] }
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 
 rand.workspace = true
 secp256k1 = { workspace = true, features = ["rand"] }

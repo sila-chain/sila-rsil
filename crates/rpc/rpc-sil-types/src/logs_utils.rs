@@ -1,4 +1,4 @@
-//! Helper functions for `rsil_rpc_eth_api::SilFilterApiServer` implementation.
+//! Helper functions for `rsil_rpc_sil_api::SilFilterApiServer` implementation.
 //!
 //! Log parsing for building filter.
 

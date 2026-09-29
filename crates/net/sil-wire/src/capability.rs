@@ -58,7 +58,7 @@ impl SharedCapability {
         messages: u8,
     ) -> Result<Self, SharedCapabilityError> {
         if offset <= MAX_RESERVED_MESSAGE_ID {
-            return Err(SharedCapabilityError::ReservedMessageIdOffset(offset))
+            return Err(SharedCapabilityError::ReservedMessageIdOffset(offset));
         }
 
         match name {
@@ -95,7 +95,7 @@ impl SharedCapability {
 
     /// Returns true if the capability is sil.
     #[inline]
-    pub const fn is_eth(&self) -> bool {
+    pub const fn is_sil(&self) -> bool {
         matches!(self, Self::Sil { .. })
     }
 
@@ -108,7 +108,7 @@ impl SharedCapability {
     }
 
     /// Returns the sil version if it's the `sil` capability.
-    pub const fn eth_version(&self) -> Option<SilVersion> {
+    pub const fn sil_version(&self) -> Option<SilVersion> {
         match self {
             Self::Sil { version, .. } => Some(*version),
             _ => None,
@@ -165,21 +165,21 @@ impl SharedCapabilities {
     /// Returns the sil capability if it is shared.
     #[inline]
     pub fn sil(&self) -> Result<&SharedCapability, P2PStreamError> {
-        self.iter_caps().find(|c| c.is_eth()).ok_or(P2PStreamError::CapabilityNotShared)
+        self.iter_caps().find(|c| c.is_sil()).ok_or(P2PStreamError::CapabilityNotShared)
     }
 
     /// Returns the negotiated sil version if it is shared.
     #[inline]
-    pub fn eth_version(&self) -> Result<SilVersion, P2PStreamError> {
+    pub fn sil_version(&self) -> Result<SilVersion, P2PStreamError> {
         self.iter_caps()
-            .find_map(SharedCapability::eth_version)
+            .find_map(SharedCapability::sil_version)
             .ok_or(P2PStreamError::CapabilityNotShared)
     }
 
     /// Returns `true` if the shared capabilities are exactly `sil` and `snap/2` (SIP-8189), the
     /// layout handled by the dedicated [`SilSnapStream`](crate::SilSnapStream).
     #[inline]
-    pub fn is_exact_eth_snap_v2(&self) -> bool {
+    pub fn is_exact_sil_snap_v2(&self) -> bool {
         self.len() == 2 && self.ensure_matching_capability(&Capability::snap_2()).is_ok()
     }
 
@@ -204,7 +204,7 @@ impl SharedCapabilities {
     pub fn relative_message_id(&self, cap: &Capability, message_id: u8) -> Option<u8> {
         let shared = self.find(cap)?;
         if message_id >= shared.num_messages() {
-            return None
+            return None;
         }
 
         shared.relative_message_id_offset().checked_add(message_id)
@@ -249,12 +249,12 @@ impl SharedCapabilities {
         let mut cap = iter.next()?;
         if offset < cap.message_id_offset() {
             // reserved message id space
-            return None
+            return None;
         }
 
         for next in iter {
             if offset < next.message_id_offset() {
-                return Some(cap)
+                return Some(cap);
             }
             cap = next
         }
@@ -304,8 +304,8 @@ pub fn shared_capability_offsets(
     // map of capability name to version
     let mut shared_capabilities: HashMap<_, ProtoVersion> = HashMap::default();
 
-    // The `Ord` implementation for capability names should be equivalent to geth (and every other
-    // client), since geth uses golang's default string comparison, which orders strings
+    // The `Ord` implementation for capability names should be equivalent to go-sila (and every other
+    // client), since go-sila uses golang's default string comparison, which orders strings
     // lexicographically.
     // https://golang.org/pkg/strings/#Compare
     //
@@ -338,7 +338,7 @@ pub fn shared_capability_offsets(
 
     // disconnect if we don't share any capabilities
     if shared_capabilities.is_empty() {
-        return Err(P2PStreamError::HandshakeError(P2PHandshakeError::NoSharedCapabilities))
+        return Err(P2PStreamError::HandshakeError(P2PHandshakeError::NoSharedCapabilities));
     }
 
     // order versions based on capability name (alphabetical) and select offsets based on
@@ -362,7 +362,7 @@ pub fn shared_capability_offsets(
     }
 
     if shared_with_offsets.is_empty() {
-        return Err(P2PStreamError::HandshakeError(P2PHandshakeError::NoSharedCapabilities))
+        return Err(P2PStreamError::HandshakeError(P2PHandshakeError::NoSharedCapabilities));
     }
 
     Ok(shared_with_offsets)
@@ -400,10 +400,10 @@ mod tests {
     use crate::{Capabilities, Capability, SnapVersion};
     use alloy_primitives::bytes::Bytes;
     use alloy_rlp::{Decodable, Encodable};
-    use rsil_eth_wire_types::RawCapabilityMessage;
+    use rsil_sil_wire_types::RawCapabilityMessage;
 
     #[test]
-    fn from_eth_68() {
+    fn from_sil_68() {
         let capability = SharedCapability::new("sil", 68, MAX_RESERVED_MESSAGE_ID + 1, 13).unwrap();
 
         assert_eq!(capability.name(), "sil");
@@ -418,7 +418,7 @@ mod tests {
     }
 
     #[test]
-    fn from_eth_67() {
+    fn from_sil_67() {
         let capability = SharedCapability::new("sil", 67, MAX_RESERVED_MESSAGE_ID + 1, 13).unwrap();
 
         assert_eq!(capability.name(), "sil");
@@ -433,7 +433,7 @@ mod tests {
     }
 
     #[test]
-    fn from_eth_66() {
+    fn from_sil_66() {
         let capability = SharedCapability::new("sil", 66, MAX_RESERVED_MESSAGE_ID + 1, 15).unwrap();
 
         assert_eq!(capability.name(), "sil");
@@ -448,7 +448,7 @@ mod tests {
     }
 
     #[test]
-    fn capabilities_supports_eth() {
+    fn capabilities_supports_sil() {
         let capabilities: Capabilities = vec![
             Capability::new_static("sil", 66),
             Capability::new_static("sil", 67),
@@ -458,12 +458,12 @@ mod tests {
         ]
         .into();
 
-        assert!(capabilities.supports_eth());
-        assert!(capabilities.supports_eth_v66());
-        assert!(capabilities.supports_eth_v67());
-        assert!(capabilities.supports_eth_v68());
-        assert!(capabilities.supports_eth_v69());
-        assert!(capabilities.supports_eth_v70());
+        assert!(capabilities.supports_sil());
+        assert!(capabilities.supports_sil_v66());
+        assert!(capabilities.supports_sil_v67());
+        assert!(capabilities.supports_sil_v68());
+        assert!(capabilities.supports_sil_v69());
+        assert!(capabilities.supports_sil_v70());
     }
 
     #[test]
@@ -529,11 +529,11 @@ mod tests {
 
         let shared = SharedCapabilities::try_new(local_capabilities, peer_capabilities).unwrap();
 
-        let shared_eth = shared.find_by_relative_offset(0).unwrap();
-        assert_eq!(shared_eth.name(), "sil");
+        let shared_capability = shared.find_by_relative_offset(0).unwrap();
+        assert_eq!(shared_capability.name(), "sil");
 
-        let shared_eth = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
-        assert_eq!(shared_eth.name(), "sil");
+        let shared_capability = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
+        assert_eq!(shared_capability.name(), "sil");
 
         // reserved message id space
         assert!(shared.find_by_offset(MAX_RESERVED_MESSAGE_ID).is_none());
@@ -548,21 +548,21 @@ mod tests {
 
         let shared = SharedCapabilities::try_new(local_capabilities, peer_capabilities).unwrap();
 
-        let shared_eth = shared.find_by_relative_offset(0).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
+        let shared_capability = shared.find_by_relative_offset(0).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
 
-        let shared_eth = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
+        let shared_capability = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 1).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
 
         // the 5th shared message (0,1,2,3,4) is the last message of the aaa capability
-        let shared_eth = shared.find_by_relative_offset(4).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
-        let shared_eth = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 5).unwrap();
-        assert_eq!(shared_eth.name(), proto.cap.name);
+        let shared_capability = shared.find_by_relative_offset(4).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
+        let shared_capability = shared.find_by_offset(MAX_RESERVED_MESSAGE_ID + 5).unwrap();
+        assert_eq!(shared_capability.name(), proto.cap.name);
 
         // the 6th shared message is the first message of the sil capability
-        let shared_eth = shared.find_by_relative_offset(1 + proto.messages()).unwrap();
-        assert_eq!(shared_eth.name(), "sil");
+        let shared_capability = shared.find_by_relative_offset(1 + proto.messages()).unwrap();
+        assert_eq!(shared_capability.name(), "sil");
     }
 
     #[test]
@@ -615,27 +615,27 @@ mod tests {
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_accepts_eth_and_snap() {
+    fn is_exact_sil_snap_v2_accepts_sil_and_snap() {
         let shared = SharedCapabilities::try_new(
             vec![SilVersion::Sil68.into(), Protocol::snap_2()],
             vec![SilVersion::Sil68.into(), Capability::snap_2()],
         )
         .unwrap();
-        assert!(shared.is_exact_eth_snap_v2());
+        assert!(shared.is_exact_sil_snap_v2());
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_rejects_eth_only() {
+    fn is_exact_sil_snap_v2_rejects_sil_only() {
         let shared = SharedCapabilities::try_new(
             vec![SilVersion::Sil68.into()],
             vec![SilVersion::Sil68.into()],
         )
         .unwrap();
-        assert!(!shared.is_exact_eth_snap_v2());
+        assert!(!shared.is_exact_sil_snap_v2());
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_rejects_eth_without_snap() {
+    fn is_exact_sil_snap_v2_rejects_sil_without_snap() {
         // sil + a non-snap capability is not the dedicated layout.
         let cap = Capability::new_static("les", 1);
         let shared = SharedCapabilities::try_new(
@@ -643,11 +643,11 @@ mod tests {
             vec![SilVersion::Sil68.into(), cap],
         )
         .unwrap();
-        assert!(!shared.is_exact_eth_snap_v2());
+        assert!(!shared.is_exact_sil_snap_v2());
     }
 
     #[test]
-    fn is_exact_eth_snap_v2_rejects_eth_snap_plus_extra() {
+    fn is_exact_sil_snap_v2_rejects_sil_snap_plus_extra() {
         // sil + snap/2 + another capability belongs on the general satellite multiplexer.
         let cap = Capability::new_static("les", 1);
         let shared = SharedCapabilities::try_new(
@@ -655,6 +655,6 @@ mod tests {
             vec![SilVersion::Sil68.into(), Capability::snap_2(), cap],
         )
         .unwrap();
-        assert!(!shared.is_exact_eth_snap_v2());
+        assert!(!shared.is_exact_sil_snap_v2());
     }
 }

@@ -33,16 +33,16 @@ rsil-trie-common = { workspace = true, features = ["sip1186"] }
 rsil-prune-types.workspace = true
 
 # sila
-alloy-savm = { workspace = true, features = ["overrides", "call-util"] }
+alloy-evm = { version = "0.37.0", default-features = false, features = ["overrides", "call-util"] }
 alloy-rlp.workspace = true
 alloy-serde.workspace = true
-alloy-sips.workspace = true
-alloy-sip7928 = { workspace = true, features = ["rlp"] }
-alloy-dyn-abi = { workspace = true, features = ["sip712"] }
+alloy-eips = { version = "2.1.1", default-features = false }
+alloy-eip7928 = { version = "0.4.5", default-features = false, features = ["rlp"] }
+alloy-dyn-abi = { workspace = true, features = ["eip712"] }
 alloy-json-rpc.workspace = true
 alloy-network.workspace = true
 alloy-primitives.workspace = true
-alloy-rpc-types-sil.workspace = true
+alloy-rpc-types-eth = { version = "2.1.1", default-features = false }
 alloy-rpc-types-mev.workspace = true
 alloy-consensus.workspace = true
 

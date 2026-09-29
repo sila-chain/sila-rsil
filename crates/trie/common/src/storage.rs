@@ -25,7 +25,7 @@ impl ValueWithSubKey for StorageTrieEntry {
 // and compress second part of the value. If we have compression
 // over whole value (Even SubKey) that would mess up fetching of values with seek_by_key_subkey
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for StorageTrieEntry {
+impl reth_codecs::Compact for StorageTrieEntry {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -44,7 +44,7 @@ impl rsil_codecs::Compact for StorageTrieEntry {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(StorageTrieEntry);
+reth_codecs::impl_compression_for_compact!(StorageTrieEntry);
 
 /// Account storage trie node with packed nibble encoding (storage v2).
 ///
@@ -68,7 +68,7 @@ impl ValueWithSubKey for PackedStorageTrieEntry {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-impl rsil_codecs::Compact for PackedStorageTrieEntry {
+impl reth_codecs::Compact for PackedStorageTrieEntry {
     fn to_compact<B>(&self, buf: &mut B) -> usize
     where
         B: bytes::BufMut + AsMut<[u8]>,
@@ -86,4 +86,4 @@ impl rsil_codecs::Compact for PackedStorageTrieEntry {
 }
 
 #[cfg(any(test, feature = "rsil-codec"))]
-rsil_codecs::impl_compression_for_compact!(PackedStorageTrieEntry);
+reth_codecs::impl_compression_for_compact!(PackedStorageTrieEntry);

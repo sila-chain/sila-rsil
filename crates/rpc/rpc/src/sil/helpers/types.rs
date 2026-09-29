@@ -1,9 +1,9 @@
 //! L1 `sil` API types.
 
 use alloy_network::Sila;
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_rpc_convert::RpcConverter;
-use rsil_rpc_eth_types::receipt::SilReceiptConverter;
+use rsil_rpc_sil_types::receipt::SilReceiptConverter;
 
 /// An [`RpcConverter`] with its generics set to Sila specific.
 pub type SilRpcConverter<ChainSpec> =
@@ -15,9 +15,9 @@ mod tests {
     use super::*;
     use alloy_consensus::{Transaction, TxType};
     use alloy_rpc_types_eth::TransactionRequest;
-    use rsil_chainspec::SILA_MAINNET;
-    use rsil_rpc_eth_types::simulate::resolve_transaction;
     use revm::database::CacheDB;
+    use rsil_chainspec::SILA_MAINNET;
+    use rsil_rpc_sil_types::simulate::resolve_transaction;
 
     #[test]
     fn test_resolve_transaction_empty_request() {

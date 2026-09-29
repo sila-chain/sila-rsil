@@ -3,7 +3,7 @@ use crate::block_import::parlia::{ParliaConsensus, ParliaConsensusErr};
 use alloy_rpc_types::engine::{ForkchoiceState, PayloadStatusEnum};
 use futures::{future::Either, stream::FuturesUnordered, StreamExt};
 use rsil_engine_primitives::{ConsensusEngineHandle, EngineTypes};
-use rsil_eth_wire::NewBlock;
+use rsil_sil_wire::NewBlock;
 use rsil_network::{
     import::{BlockImportError, BlockImportEvent, BlockImportOutcome, BlockValidation},
     message::NewBlockMessage,
@@ -227,10 +227,10 @@ mod tests {
     use alloy_rpc_types::engine::PayloadStatus;
     use rsil_chainspec::ChainInfo;
     use rsil_engine_primitives::{BeaconEngineMessage, OnForkChoiceUpdated};
-    use rsil_eth_wire::NewBlock;
-    use rsil_sila_primitives::Block;
+    use rsil_sil_wire::NewBlock;
     use rsil_node_sila::SilEngineTypes;
     use rsil_provider::ProviderError;
+    use rsil_sila_primitives::Block;
     use std::{
         sync::Arc,
         task::{Context, Poll},

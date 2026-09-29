@@ -1,7 +1,7 @@
 use alloy_eips::{BlockId, BlockNumberOrTag};
 use alloy_primitives::{Address, Bytes, B256, U256, U64};
 use alloy_rpc_types_eth::{
-    state::StateOverride, BlockOverrides, SIP1186AccountProofResponse, Filter, Log, SyncStatus,
+    state::StateOverride, BlockOverrides, Filter, Log, SIP1186AccountProofResponse, SyncStatus,
 };
 use alloy_serde::JsonStorageKey;
 use jsonrpsee::core::RpcResult as Result;
@@ -10,7 +10,7 @@ use rsil_rpc_api::{EngineEthApiServer, SilApiServer};
 use rsil_rpc_convert::RpcTxReq;
 /// Re-export for convenience
 pub use rsil_rpc_engine_api::EngineApi;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     EngineEthFilter, FullEthApiTypes, QueryLimits, RpcBlock, RpcHeader, RpcReceipt, RpcTransaction,
 };
 use serde_json::Value;
@@ -27,13 +27,13 @@ macro_rules! engine_span {
 #[derive(Debug, Clone)]
 pub struct EngineEthApi<Sil, SilFilter> {
     sil: Sil,
-    eth_filter: SilFilter,
+    sil_filter: SilFilter,
 }
 
 impl<Sil, SilFilter> EngineEthApi<Sil, SilFilter> {
     /// Create a new `EngineEthApi` instance.
-    pub const fn new(sil: Sil, eth_filter: SilFilter) -> Self {
-        Self { sil, eth_filter }
+    pub const fn new(sil: Sil, sil_filter: SilFilter) -> Self {
+        Self { sil, sil_filter }
     }
 }
 
@@ -134,7 +134,7 @@ where
 
     /// Handler for `eth_getLogs`
     async fn logs(&self, filter: Filter) -> Result<Vec<Log>> {
-        self.eth_filter.logs(filter, QueryLimits::no_limits()).instrument(engine_span!()).await
+        self.sil_filter.logs(filter, QueryLimits::no_limits()).instrument(engine_span!()).await
     }
 
     /// Handler for `eth_getProof`

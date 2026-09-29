@@ -5,10 +5,10 @@ use core::fmt;
 
 use super::{LoadBlock, LoadPendingBlock, LoadState, LoadTransaction, SpawnBlocking, Trace};
 use crate::{
-    helpers::estimate::EstimateCall, FromEvmError, FullEthApiTypes, RpcBlock, RpcNodeCore,
+    helpers::estimate::EstimateCall, FromEvmError, FullSilApiTypes, RpcBlock, RpcNodeCore,
 };
 use alloy_consensus::{transaction::TxHashRef, BlockHeader};
-use alloy_eips::sip2930::AccessListResult;
+use alloy_eips::eip2930::AccessListResult;
 use alloy_evm::overrides::{apply_block_overrides, apply_state_overrides, OverrideBlockHashes};
 use alloy_network::TransactionBuilder;
 use alloy_primitives::{Bytes, B256, U256};
@@ -18,33 +18,33 @@ use alloy_rpc_types_eth::{
     BlockId, Bundle, SilCallResponse, StateContext, TransactionInfo,
 };
 use futures::Future;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
-use rsil_errors::{ProviderError, RsilError};
-use rsil_evm::{
-    block::BlockExecutor, env::BlockEnvironment, execute::BlockBuilder, ConfigureEvm, Savm,
-    SavmEnvFor, HaltReasonFor, InspectorFor, TransactionEnvMut, TxEnvFor,
-};
-use rsil_node_api::BlockBody;
-use rsil_primitives_traits::Recovered;
-use rsil_revm::{
-    cancelled::CancelOnDrop,
-    database::StateProviderDatabase,
-    db::{bal::SavmDatabaseError, State},
-};
-use rsil_rpc_convert::{RpcConvert, RpcTxReq};
-use rsil_rpc_eth_types::{
-    cache::db::StateProviderTraitObjWrapper,
-    error::{AsEthApiError, FromEthApiError},
-    simulate::{self, SilSimulateError},
-    SilApiError, StateCacheDb,
-};
-use rsil_storage_api::{BlockIdReader, ProviderTx, StateProviderBox};
 use revm::{
     context::Block,
     context_interface::{result::ResultAndState, Transaction},
     Database, DatabaseCommit,
 };
 use revm_inspectors::{access_list::AccessListInspector, transfer::TransferInspector};
+use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
+use rsil_errors::{ProviderError, RsilError};
+use rsil_savm::{
+    block::BlockExecutor, env::BlockEnvironment, execute::BlockBuilder, ConfigureEvm,
+    HaltReasonFor, InspectorFor, Savm, SavmEnvFor, TransactionEnvMut, TxEnvFor,
+};
+use rsil_node_api::BlockBody;
+use rsil_primitives_traits::Recovered;
+use rsil_revm::{
+    cancelled::CancelOnDrop,
+    database::StateProviderDatabase,
+    db::{bal::EvmDatabaseError, State},
+};
+use rsil_rpc_convert::{RpcConvert, RpcTxReq};
+use rsil_rpc_sil_types::{
+    cache::db::StateProviderTraitObjWrapper,
+    error::{AsSilApiError, FromSilApiError},
+    simulate::{self, SilSimulateError},
+    SilApiError, StateCacheDb,
+};
+use rsil_storage_api::{BlockIdReader, ProviderTx, StateProviderBox};
 use std::collections::BTreeMap;
 use tracing::{trace, warn};
 
@@ -53,7 +53,7 @@ pub type SimulatedBlocksResult<N, E> = Result<Vec<SimulatedBlock<RpcBlock<N>>>, 
 
 /// Execution related functions for the [`SilApiServer`](crate::SilApiServer) trait in
 /// the `eth_` namespace.
-pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthApiTypes {
+pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullSilApiTypes {
     /// Estimate gas needed for execution of the `request` at the [`BlockId`].
     fn estimate_gas_at(
         &self,
@@ -75,7 +75,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
     ) -> impl Future<Output = SimulatedBlocksResult<Self::NetworkTypes, Self::Error>> + Send {
         async move {
             if payload.block_state_calls.len() > self.max_simulate_blocks() as usize {
-                return Err(SilApiError::other(SilSimulateError::TooManyBlocks).into())
+                return Err(SilApiError::other(SilSimulateError::TooManyBlocks).into());
             }
 
             let block = block.unwrap_or_default();
@@ -88,7 +88,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
             } = payload;
 
             if block_state_calls.is_empty() {
-                return Err(SilApiError::InvalidParams(String::from("calls are empty.")).into())
+                return Err(SilApiError::InvalidParams(String::from("calls are empty.")).into());
             }
 
             let _permit = self.acquire_owned_blocking_io().await;
@@ -133,13 +133,13 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                     let attributes = this
                         .pending_env_builder()
                         .pending_env_attributes(&parent, block_overrides.as_ref())
-                        .map_err(Self::Error::from_eth_err)?;
+                        .map_err(Self::Error::from_sil_err)?;
 
                     let mut evm_env = this
                         .evm_config()
                         .next_evm_env(&parent, &attributes)
                         .map_err(RsilError::other)
-                        .map_err(Self::Error::from_eth_err)?;
+                        .map_err(Self::Error::from_sil_err)?;
 
                     // Always disable SIP-3607
                     evm_env.cfg_env.disable_eip3607 = true;
@@ -180,7 +180,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                     }
                     if let Some(ref state_overrides) = state_overrides {
                         apply_state_overrides(state_overrides.clone(), &mut db)
-                            .map_err(Self::Error::from_eth_err)?;
+                            .map_err(Self::Error::from_sil_err)?;
                     }
 
                     let chain_id = evm_env.cfg_env.chain_id;
@@ -189,11 +189,11 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                         .evm_config()
                         .context_for_next_block(&parent, attributes)
                         .map_err(RsilError::other)
-                        .map_err(Self::Error::from_eth_err)?;
+                        .map_err(Self::Error::from_sil_err)?;
                     let map_err = |e: SilApiError| -> Self::Error {
                         match e.as_simulate_error() {
-                            Some(sim_err) => Self::Error::from_eth_err(SilApiError::other(sim_err)),
-                            None => Self::Error::from_eth_err(e),
+                            Some(sim_err) => Self::Error::from_sil_err(SilApiError::other(sim_err)),
+                            None => Self::Error::from_sil_err(e),
                         }
                     };
 
@@ -211,7 +211,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                                 state_overrides,
                                 builder.evm_mut().precompiles_mut(),
                             )
-                            .map_err(|e| Self::Error::from_eth_err(SilApiError::other(e)))?;
+                            .map_err(|e| Self::Error::from_sil_err(SilApiError::other(e)))?;
                         }
 
                         simulate::execute_transactions(
@@ -233,7 +233,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                                 state_overrides,
                                 builder.evm_mut().precompiles_mut(),
                             )
-                            .map_err(|e| Self::Error::from_eth_err(SilApiError::other(e)))?;
+                            .map_err(|e| Self::Error::from_sil_err(SilApiError::other(e)))?;
                         }
 
                         simulate::execute_transactions(
@@ -316,9 +316,9 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                 let Some(block_hash) = self
                     .provider()
                     .block_hash_for_id(target_block)
-                    .map_err(Self::Error::from_eth_err::<ProviderError>)?
+                    .map_err(Self::Error::from_sil_err::<ProviderError>)?
                 else {
-                    return Err(SilApiError::HeaderNotFound(target_block).into())
+                    return Err(SilApiError::HeaderNotFound(target_block).into());
                 };
                 target_block = block_hash.into();
             }
@@ -352,10 +352,10 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                     let mut executor = RpcNodeCore::evm_config(&this)
                         .executor_for_block(&mut db, block.sealed_block())
                         .map_err(RsilError::other)
-                        .map_err(Self::Error::from_eth_err)?;
-                    executor.apply_pre_execution_changes().map_err(Self::Error::from_eth_err)?;
+                        .map_err(Self::Error::from_sil_err)?;
+                    executor.apply_pre_execution_changes().map_err(Self::Error::from_sil_err)?;
                     for tx in block.transactions_recovered().take(num_txs) {
-                        executor.execute_transaction(tx).map_err(Self::Error::from_eth_err)?;
+                        executor.execute_transaction(tx).map_err(Self::Error::from_sil_err)?;
                     }
                 }
 
@@ -380,7 +380,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                         let (current_evm_env, prepared_tx) = this
                             .prepare_call_env(evm_env.clone(), tx, &mut db, overrides)
                             .map_err(|err| {
-                                Self::Error::from_eth_err(SilApiError::call_many_error(
+                                Self::Error::from_sil_err(SilApiError::call_many_error(
                                     bundle_index,
                                     tx_index,
                                     err.into(),
@@ -388,7 +388,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
                             })?;
                         let res = this.transact(&mut db, current_evm_env, prepared_tx).map_err(
                             |err| {
-                                Self::Error::from_eth_err(SilApiError::call_many_error(
+                                Self::Error::from_sil_err(SilApiError::call_many_error(
                                     bundle_index,
                                     tx_index,
                                     err.into(),
@@ -463,7 +463,7 @@ pub trait SilCall: EstimateCall + Call + LoadPendingBlock + LoadBlock + FullEthA
 
             if let Some(state_overrides) = state_override {
                 apply_state_overrides(state_overrides, &mut db)
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
             }
 
             // Read fields from request before consuming it in create_txn_env
@@ -554,7 +554,7 @@ pub trait Call:
         _evm_env: &SavmEnvFor<Self::Savm>,
         tx_env: &TxEnvFor<Self::Savm>,
     ) -> Result<u64, Self::Error> {
-        alloy_evm::call::caller_gas_allowance(&mut db, tx_env).map_err(Self::Error::from_eth_err)
+        alloy_evm::call::caller_gas_allowance(&mut db, tx_env).map_err(Self::Error::from_sil_err)
     }
 
     /// Executes the closure with the state that corresponds to the given [`BlockId`].
@@ -582,7 +582,7 @@ pub trait Call:
         tx_env: TxEnvFor<Self::Savm>,
     ) -> Result<ResultAndState<HaltReasonFor<Self::Savm>>, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>> + fmt::Debug,
+        DB: Database<Error = EvmDatabaseError<ProviderError>> + fmt::Debug,
     {
         let mut savm = self.evm_config().evm_with_env(db, evm_env);
         let res = savm.transact(tx_env).map_err(Self::Error::from_evm_err)?;
@@ -590,7 +590,7 @@ pub trait Call:
         Ok(res)
     }
 
-    /// Executes the [`rsil_evm::SavmEnv`] against the given [Database] without committing state
+    /// Executes the [`rsil_savm::SavmEnv`] against the given [Database] without committing state
     /// changes.
     fn transact_with_inspector<DB, I>(
         &self,
@@ -600,7 +600,7 @@ pub trait Call:
         inspector: I,
     ) -> Result<ResultAndState<HaltReasonFor<Self::Savm>>, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>> + fmt::Debug,
+        DB: Database<Error = EvmDatabaseError<ProviderError>> + fmt::Debug,
         I: InspectorFor<Self::Savm, DB>,
     {
         let mut savm = self.evm_config().evm_with_env_and_inspector(db, evm_env, inspector);
@@ -633,7 +633,7 @@ pub trait Call:
                 .spawn_with_call_at(request, at, overrides, move |db, evm_env, tx_env| {
                     if cancel.is_cancelled() {
                         // callsite dropped the guard
-                        return Err(SilApiError::InternalEthError.into())
+                        return Err(SilApiError::InternalSilError.into());
                     }
                     this.transact(db, evm_env, tx_env)
                 })
@@ -666,7 +666,7 @@ pub trait Call:
     /// Prepares the state and env for the given [`RpcTxReq`] at the given [`BlockId`] and
     /// executes the closure on a new task returning the result of the closure.
     ///
-    /// This returns the configured [`rsil_evm::SavmEnv`] for the given [`RpcTxReq`] at
+    /// This returns the configured [`rsil_savm::SavmEnv`] for the given [`RpcTxReq`] at
     /// the given [`BlockId`] and with configured call settings: `prepare_call_env`.
     ///
     /// This is primarily used by `eth_call`.
@@ -750,15 +750,15 @@ pub trait Call:
                 let mut executor = RpcNodeCore::evm_config(&this)
                     .executor_for_block(&mut db, block.sealed_block())
                     .map_err(RsilError::other)
-                    .map_err(Self::Error::from_eth_err)?;
-                executor.apply_pre_execution_changes().map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
+                executor.apply_pre_execution_changes().map_err(Self::Error::from_sil_err)?;
 
                 // replay all transactions prior to the targeted transaction
                 for block_tx in block_txs {
                     if block_tx.tx_hash() == tx.tx_hash() {
                         break;
                     }
-                    executor.execute_transaction(block_tx).map_err(Self::Error::from_eth_err)?;
+                    executor.execute_transaction(block_tx).map_err(Self::Error::from_sil_err)?;
                 }
 
                 let tx_env = RpcNodeCore::evm_config(&this).tx_env(tx);
@@ -787,7 +787,7 @@ pub trait Call:
         target_tx_hash: B256,
     ) -> Result<usize, Self::Error>
     where
-        DB: Database<Error = SavmDatabaseError<ProviderError>> + DatabaseCommit + core::fmt::Debug,
+        DB: Database<Error = EvmDatabaseError<ProviderError>> + DatabaseCommit + core::fmt::Debug,
         I: IntoIterator<Item = Recovered<&'a ProviderTx<Self::Provider>>>,
     {
         let mut savm = self.evm_config().evm_with_env(db, evm_env);
@@ -795,7 +795,7 @@ pub trait Call:
         for tx in transactions {
             if *tx.tx_hash() == target_tx_hash {
                 // reached the target transaction
-                break
+                break;
             }
 
             let tx_env = self.evm_config().tx_env(tx);
@@ -807,7 +807,7 @@ pub trait Call:
 
     ///
     /// All `TxEnv` fields are derived from the given [`RpcTxReq`], if fields are
-    /// `None`, they fall back to the [`rsil_evm::SavmEnv`]'s settings.
+    /// `None`, they fall back to the [`rsil_savm::SavmEnv`]'s settings.
     fn create_txn_env(
         &self,
         evm_env: &SavmEnvFor<Self::Savm>,
@@ -826,7 +826,7 @@ pub trait Call:
         Ok(self.converter().tx_env(request, evm_env)?)
     }
 
-    /// Prepares the [`rsil_evm::SavmEnv`] for execution of calls.
+    /// Prepares the [`rsil_savm::SavmEnv`] for execution of calls.
     ///
     /// Does not commit any changes to the underlying database.
     ///

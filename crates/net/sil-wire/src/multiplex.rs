@@ -19,15 +19,15 @@ use std::{
 
 use crate::{
     capability::{SharedCapabilities, SharedCapability, UnsupportedCapabilityError},
-    errors::{SilStreamError, P2PStreamError},
+    errors::{P2PStreamError, SilStreamError},
     handshake::SilRlpxHandshake,
     p2pstream::DisconnectP2P,
-    CanDisconnect, Capability, DisconnectReason, SilStream, P2PStream, UnifiedStatus,
+    CanDisconnect, Capability, DisconnectReason, P2PStream, SilStream, UnifiedStatus,
     HANDSHAKE_TIMEOUT,
 };
 use bytes::{Bytes, BytesMut};
 use futures::{Sink, SinkExt, Stream, StreamExt, TryStream, TryStreamExt};
-use rsil_eth_wire_types::NetworkPrimitives;
+use rsil_sil_wire_types::NetworkPrimitives;
 use rsil_sila_forks::ForkFilter;
 use tokio::sync::{mpsc, mpsc::UnboundedSender};
 use tokio_stream::wrappers::UnboundedReceiverStream;
@@ -83,7 +83,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
     {
         let Ok(shared_cap) = self.shared_capabilities().ensure_matching_capability(cap).cloned()
         else {
-            return Err(P2PStreamError::CapabilityNotShared)
+            return Err(P2PStreamError::CapabilityNotShared);
         };
 
         let (to_primary, from_wire) = mpsc::unbounded_channel();
@@ -138,7 +138,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
     /// This accepts a closure that does a handshake with the remote peer and returns a tuple of the
     /// primary stream and extra data.
     ///
-    /// See also [`UnauthedEthStream::handshake`](crate::UnauthedEthStream)
+    /// See also [`UnauthedSilStream::handshake`](crate::UnauthedSilStream)
     pub async fn into_satellite_stream_with_tuple_handshake<F, Fut, Err, Primary, Extra>(
         mut self,
         cap: &Capability,
@@ -152,7 +152,7 @@ impl<St> RlpxProtocolMultiplexer<St> {
     {
         let Ok(shared_cap) = self.shared_capabilities().ensure_matching_capability(cap).cloned()
         else {
-            return Err(P2PStreamError::CapabilityNotShared.into())
+            return Err(P2PStreamError::CapabilityNotShared.into());
         };
 
         let (to_primary, from_wire) = mpsc::unbounded_channel();
@@ -218,31 +218,31 @@ impl<St> RlpxProtocolMultiplexer<St> {
 
     /// Converts this multiplexer into a [`RlpxSatelliteStream`] with sil protocol as the given
     /// primary protocol and the handshake implementation.
-    pub async fn into_eth_satellite_stream<N: NetworkPrimitives>(
+    pub async fn into_sil_satellite_stream<N: NetworkPrimitives>(
         self,
         status: UnifiedStatus,
         fork_filter: ForkFilter,
         handshake: Arc<dyn SilRlpxHandshake>,
-        eth_max_message_size: usize,
+        sil_max_message_size: usize,
     ) -> Result<(RlpxSatelliteStream<St, SilStream<ProtocolProxy, N>>, UnifiedStatus), SilStreamError>
     where
         St: Stream<Item = io::Result<BytesMut>> + Sink<Bytes, Error = io::Error> + Unpin,
     {
-        let eth_cap = self.inner.conn.shared_capabilities().eth_version()?;
+        let sil_cap = self.inner.conn.shared_capabilities().sil_version()?;
         self.into_satellite_stream_with_tuple_handshake(
-            &Capability::sil(eth_cap),
+            &Capability::sil(sil_cap),
             async move |proxy| {
                 let handshake = handshake.clone();
                 let mut unauth = UnauthProxy { inner: proxy };
                 let their_status = handshake
                     .handshake(&mut unauth, status, fork_filter, HANDSHAKE_TIMEOUT)
                     .await?;
-                let eth_stream = SilStream::with_max_message_size(
-                    eth_cap,
+                let sil_stream = SilStream::with_max_message_size(
+                    sil_cap,
                     unauth.into_inner(),
-                    eth_max_message_size,
+                    sil_max_message_size,
                 );
-                Ok((eth_stream, their_status))
+                Ok((sil_stream, their_status))
             },
         )
         .await
@@ -269,7 +269,7 @@ impl<St> MultiplexInner<St> {
         for proto in &self.protocols {
             if proto.shared_cap == *cap {
                 proto.send_raw(msg);
-                return true
+                return true;
             }
         }
         false
@@ -325,7 +325,7 @@ impl ProtocolProxy {
     fn try_send(&self, msg: Bytes) -> Result<(), io::Error> {
         if msg.is_empty() {
             // message must not be empty
-            return Err(io::ErrorKind::InvalidInput.into())
+            return Err(io::ErrorKind::InvalidInput.into());
         }
         self.to_wire.send(self.mask_msg_id(msg)?).map_err(|_| io::ErrorKind::BrokenPipe.into())
     }
@@ -335,7 +335,7 @@ impl ProtocolProxy {
     fn mask_msg_id(&self, msg: Bytes) -> Result<Bytes, io::Error> {
         if msg.is_empty() {
             // message must not be empty
-            return Err(io::ErrorKind::InvalidInput.into())
+            return Err(io::ErrorKind::InvalidInput.into());
         }
 
         let offset = self.shared_cap.relative_message_id_offset();
@@ -353,7 +353,7 @@ impl ProtocolProxy {
     fn unmask_id(&self, mut msg: BytesMut) -> Result<BytesMut, io::Error> {
         if msg.is_empty() {
             // message must not be empty
-            return Err(io::ErrorKind::InvalidInput.into())
+            return Err(io::ErrorKind::InvalidInput.into());
         }
         msg[0] = msg[0]
             .checked_sub(self.shared_cap.relative_message_id_offset())
@@ -535,7 +535,7 @@ impl<St, Primary> RlpxSatelliteStream<St, Primary> {
 
         while pending < producers {
             if self.inner.out_buffer.is_full() {
-                return Ok(ProducerPoll::Full)
+                return Ok(ProducerPoll::Full);
             }
 
             if self.next_outbound >= producers {
@@ -551,7 +551,7 @@ impl<St, Primary> RlpxSatelliteStream<St, Primary> {
                     Poll::Ready(None) => return Ok(ProducerPoll::Closed),
                     Poll::Pending => {
                         pending += 1;
-                        continue
+                        continue;
                     }
                 }
             } else {
@@ -565,7 +565,7 @@ impl<St, Primary> RlpxSatelliteStream<St, Primary> {
                     Poll::Ready(None) => return Ok(ProducerPoll::Closed),
                     Poll::Pending => {
                         pending += 1;
-                        continue
+                        continue;
                     }
                 }
             };
@@ -592,7 +592,7 @@ where
         loop {
             // first drain the primary stream
             if let Poll::Ready(Some(msg)) = this.primary.st.try_poll_next_unpin(cx) {
-                return Poll::Ready(Some(msg))
+                return Poll::Ready(Some(msg));
             }
 
             let mut conn_ready = true;
@@ -601,23 +601,23 @@ where
                     Poll::Ready(Ok(())) => {
                         if let Some(msg) = this.inner.out_buffer.pop_front() {
                             if let Err(err) = this.inner.conn.start_send_unpin(msg) {
-                                return Poll::Ready(Some(Err(err.into())))
+                                return Poll::Ready(Some(Err(err.into())));
                             }
                         } else {
-                            break
+                            break;
                         }
                     }
                     Poll::Ready(Err(err)) => {
                         if let Err(disconnect_err) =
                             this.inner.conn.start_disconnect(DisconnectReason::DisconnectRequested)
                         {
-                            return Poll::Ready(Some(Err(disconnect_err.into())))
+                            return Poll::Ready(Some(Err(disconnect_err.into())));
                         }
-                        return Poll::Ready(Some(Err(err.into())))
+                        return Poll::Ready(Some(Err(err.into())));
                     }
                     Poll::Pending => {
                         conn_ready = false;
-                        break
+                        break;
                     }
                 }
             }
@@ -648,7 +648,7 @@ where
                         let Some(offset) = msg.first().copied() else {
                             return Poll::Ready(Some(Err(
                                 P2PStreamError::EmptyProtocolMessage.into()
-                            )))
+                            )));
                         };
                         // delegate the multiplexed message to the correct protocol
                         if let Some(cap) =
@@ -662,28 +662,27 @@ where
                                 for proto in &this.inner.protocols {
                                     if proto.shared_cap == *cap {
                                         proto.send_raw(msg);
-                                        break
+                                        break;
                                     }
                                 }
                             }
                         } else {
-                            return Poll::Ready(Some(Err(P2PStreamError::UnknownReservedMessageId(
-                                offset,
-                            )
-                            .into())))
+                            return Poll::Ready(Some(Err(
+                                P2PStreamError::UnknownReservedMessageId(offset).into(),
+                            )));
                         }
                     }
                     Poll::Ready(Some(Err(err))) => return Poll::Ready(Some(Err(err.into()))),
                     Poll::Ready(None) => {
                         // connection closed
-                        return Poll::Ready(None)
+                        return Poll::Ready(None);
                     }
                     Poll::Pending => break,
                 }
             }
 
             if !conn_ready || (!delegated && this.inner.out_buffer.is_empty()) {
-                return Poll::Pending
+                return Poll::Pending;
             }
         }
     }
@@ -700,10 +699,10 @@ where
     fn poll_ready(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
         let this = self.get_mut();
         if let Err(err) = ready!(this.inner.conn.poll_ready_unpin(cx)) {
-            return Poll::Ready(Err(err.into()))
+            return Poll::Ready(Err(err.into()));
         }
         if let Err(err) = ready!(this.primary.st.poll_ready_unpin(cx)) {
-            return Poll::Ready(Err(err))
+            return Poll::Ready(Err(err));
         }
         Poll::Ready(Ok(()))
     }
@@ -735,7 +734,7 @@ impl ProtocolStream {
     fn mask_msg_id(&self, mut msg: BytesMut) -> Result<Bytes, io::Error> {
         if msg.is_empty() {
             // message must not be empty
-            return Err(io::ErrorKind::InvalidInput.into())
+            return Err(io::ErrorKind::InvalidInput.into());
         }
         msg[0] = msg[0]
             .checked_add(self.shared_cap.relative_message_id_offset())
@@ -748,7 +747,7 @@ impl ProtocolStream {
     fn unmask_id(&self, mut msg: BytesMut) -> Result<BytesMut, io::Error> {
         if msg.is_empty() {
             // message must not be empty
-            return Err(io::ErrorKind::InvalidInput.into())
+            return Err(io::ErrorKind::InvalidInput.into());
         }
         msg[0] = msg[0]
             .checked_sub(self.shared_cap.relative_message_id_offset())
@@ -799,7 +798,7 @@ impl<'a> Future for ProtocolsPoller<'a> {
             match proto.poll_next_unpin(cx) {
                 Poll::Ready(Some(Err(err))) => {
                     self.protocols.push_back(proto);
-                    return Poll::Ready(Err(P2PStreamError::from(err)))
+                    return Poll::Ready(Err(P2PStreamError::from(err)));
                 }
                 Poll::Ready(Some(Ok(msg))) => {
                     // Got a message, put protocol back and return the message
@@ -881,13 +880,13 @@ mod tests {
         message::MAX_MESSAGE_SIZE,
         protocol::Protocol,
         test_utils::{
-            connect_passthrough, eth_handshake, eth_hello,
+            connect_passthrough, sil_handshake, sil_hello,
             proto::{test_hello, TestProtoMessage},
         },
-        UnauthedEthStream, UnauthedP2PStream,
+        UnauthedSilStream, UnauthedP2PStream,
     };
     use futures::{stream, task::noop_waker_ref};
-    use rsil_eth_wire_types::SilNetworkPrimitives;
+    use rsil_sil_wire_types::SilNetworkPrimitives;
     use std::task::Poll;
     use tokio::{net::TcpListener, sync::oneshot};
     use tokio_util::codec::Decoder;
@@ -981,7 +980,7 @@ mod tests {
 
     #[tokio::test]
     async fn satellite_mux_round_robins_ready_protocols_when_out_buffer_fills() {
-        let (mut hello, _) = eth_hello();
+        let (mut hello, _) = sil_hello();
         let cap_a = Capability::new_static("aaa", 1);
         let cap_b = Capability::new_static("bbb", 1);
         hello.protocols.push(Protocol::new(cap_a.clone(), 1));
@@ -1028,17 +1027,17 @@ mod tests {
         rsil_tracing::init_test_tracing();
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let local_addr = listener.local_addr().unwrap();
-        let (status, fork_filter) = eth_handshake();
+        let (status, fork_filter) = sil_handshake();
         let other_status = status;
         let other_fork_filter = fork_filter.clone();
         let _handle = tokio::spawn(async move {
             let (incoming, _) = listener.accept().await.unwrap();
             let stream = crate::PassthroughCodec::default().framed(incoming);
-            let (server_hello, _) = eth_hello();
+            let (server_hello, _) = sil_hello();
             let (p2p_stream, _) =
                 UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
 
-            let (_eth_stream, _) = UnauthedEthStream::new(p2p_stream)
+            let (_sil_stream, _) = UnauthedSilStream::new(p2p_stream)
                 .handshake::<SilNetworkPrimitives>(other_status, other_fork_filter)
                 .await
                 .unwrap();
@@ -1046,13 +1045,13 @@ mod tests {
             tokio::time::sleep(std::time::Duration::from_millis(100)).await;
         });
 
-        let conn = connect_passthrough(local_addr, eth_hello().0).await;
+        let conn = connect_passthrough(local_addr, sil_hello().0).await;
         let sil = conn.shared_capabilities().sil().unwrap().clone();
 
         let multiplexer = RlpxProtocolMultiplexer::new(conn);
         let _satellite = multiplexer
             .into_satellite_stream_with_handshake(sil.capability().as_ref(), async move |proxy| {
-                UnauthedEthStream::new(proxy)
+                UnauthedSilStream::new(proxy)
                     .handshake::<SilNetworkPrimitives>(status, fork_filter)
                     .await
             })
@@ -1066,7 +1065,7 @@ mod tests {
         rsil_tracing::init_test_tracing();
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let local_addr = listener.local_addr().unwrap();
-        let (status, fork_filter) = eth_handshake();
+        let (status, fork_filter) = sil_handshake();
         let other_status = status;
         let other_fork_filter = fork_filter.clone();
         let _handle = tokio::spawn(async move {
@@ -1076,7 +1075,7 @@ mod tests {
             let (conn, _) = UnauthedP2PStream::new(stream).handshake(server_hello).await.unwrap();
 
             let (mut st, _their_status) = RlpxProtocolMultiplexer::new(conn)
-                .into_eth_satellite_stream::<SilNetworkPrimitives>(
+                .into_sil_satellite_stream::<SilNetworkPrimitives>(
                     other_status,
                     other_fork_filter,
                     Arc::new(SilHandshake::default()),
@@ -1112,7 +1111,7 @@ mod tests {
 
         let conn = connect_passthrough(local_addr, test_hello().0).await;
         let (mut st, _their_status) = RlpxProtocolMultiplexer::new(conn)
-            .into_eth_satellite_stream::<SilNetworkPrimitives>(
+            .into_sil_satellite_stream::<SilNetworkPrimitives>(
                 status,
                 fork_filter,
                 Arc::new(SilHandshake::default()),

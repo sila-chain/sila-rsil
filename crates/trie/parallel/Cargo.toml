@@ -21,15 +21,12 @@ rsil-tasks = { workspace = true, features = ["rayon"] }
 rsil-trie.workspace = true
 
 # alloy
-alloy-savm.workspace = true
+rsil-savm.workspace = true
 alloy-primitives.workspace = true
 alloy-rlp.workspace = true
 
 # tracing
 tracing.workspace = true
-
-# revm
-revm.workspace = true
 
 # misc
 thiserror.workspace = true
@@ -74,4 +71,5 @@ test-utils = [
     "rsil-chainspec/test-utils",
     "rsil-trie-sparse?/test-utils",
     "rsil-sila-primitives/test-utils",
+    "rsil-savm/test-utils",
 ]

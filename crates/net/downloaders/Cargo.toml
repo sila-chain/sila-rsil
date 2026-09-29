@@ -28,7 +28,7 @@ rsil-testing-utils = { workspace = true, optional = true }
 
 # sila
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-primitives.workspace = true
 alloy-rlp = { workspace = true, optional = true }
 

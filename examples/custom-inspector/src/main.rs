@@ -10,26 +10,26 @@
 
 #![warn(unused_crate_dependencies)]
 
-use alloy_eips::BlockNumberOrTag;
-use alloy_evm::Savm;
+use alloy_sips::BlockNumberOrTag;
+use alloy_savm::Evm as Savm;
 use alloy_primitives::Address;
-use alloy_rpc_types_eth::{state::SavmOverrides, TransactionRequest};
+use alloy_rpc_types_sil::{state::EvmOverrides as SavmOverrides, TransactionRequest};
 use clap::Parser;
 use futures_util::StreamExt;
 use rsil_sila::{
     cli::{chainspec::SilaChainSpecParser, interface::Cli},
+    node::{builder::FullNodeFor, SilaNode},
+    pool::TransactionPool,
+    rpc::api::sil::helpers::Call,
     savm::{
         primitives::ConfigureEvm,
         revm::revm::{
             bytecode::opcode::OpCode,
             context_interface::ContextTr,
             inspector::Inspector,
-            interpreter::{interpreter::SilInterpreter, interpreter_types::Jumps, Interpreter},
+            interpreter::{interpreter::EthInterpreter as SilInterpreter, interpreter_types::Jumps, Interpreter},
         },
     },
-    node::{builder::FullNodeFor, SilaNode},
-    pool::TransactionPool,
-    rpc::api::sil::helpers::Call,
 };
 
 fn main() {
@@ -45,7 +45,7 @@ fn main() {
             let mut pending_transactions = node.pool.new_pending_pool_transactions_listener();
 
             // get an instance of the `eth_` API handler
-            let eth_api = node.rpc_registry.eth_api().clone();
+            let sil_api = node.rpc_registry.sil_api().clone();
 
             println!("Spawning trace task!");
 
@@ -56,8 +56,8 @@ fn main() {
                     let tx = event.transaction;
                     println!("Transaction received: {tx:?}");
 
-                    if let Some(recipient) = tx.to() &&
-                        args.is_match(&recipient)
+                    if let Some(recipient) = tx.to()
+                        && args.is_match(&recipient)
                     {
                         // convert the pool transaction
                         let call_request =
@@ -65,7 +65,7 @@ fn main() {
 
                         let evm_config = node.evm_config.clone();
 
-                        let result = eth_api
+                        let result = sil_api
                             .spawn_with_call_at(
                                 call_request,
                                 BlockNumberOrTag::Latest.into(),

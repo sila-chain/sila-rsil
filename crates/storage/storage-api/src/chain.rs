@@ -3,7 +3,7 @@ use alloc::{vec, vec::Vec};
 use alloy_consensus::Header;
 use alloy_primitives::BlockNumber;
 use core::marker::PhantomData;
-use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
+use rsil_chainspec::{ChainSpecProvider, EthereumHardforks, SilaHardforks};
 use rsil_db_api::{
     cursor::{DbCursorRO, DbCursorRW},
     models::StoredBlockOmmers,
@@ -12,10 +12,10 @@ use rsil_db_api::{
     DbTxUnwindExt,
 };
 use rsil_db_models::StoredBlockWithdrawals;
-use rsil_sila_primitives::TransactionSigned;
 use rsil_primitives_traits::{
     Block, BlockBody, FullBlockHeader, NodePrimitives, SignedTransaction,
 };
+use rsil_sila_primitives::TransactionSigned;
 use rsil_storage_errors::provider::ProviderResult;
 
 /// Trait that implements how block bodies are written to the storage.
@@ -118,8 +118,8 @@ where
             }
 
             // Write withdrawals if any
-            if let Some(withdrawals) = body.withdrawals.clone() &&
-                !withdrawals.is_empty()
+            if let Some(withdrawals) = body.withdrawals.clone()
+                && !withdrawals.is_empty()
             {
                 withdrawals_cursor.append(block_number, &StoredBlockWithdrawals { withdrawals })?;
             }

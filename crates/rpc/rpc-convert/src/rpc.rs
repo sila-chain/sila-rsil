@@ -2,9 +2,9 @@ use std::fmt::Debug;
 
 use alloy_json_rpc::RpcObject;
 use alloy_network::{primitives::HeaderResponse, Network, ReceiptResponse, TransactionResponse};
-use alloy_rpc_types_eth::TransactionRequest;
+use alloy_rpc_types_sil::TransactionRequest;
 
-/// RPC types used by the `eth_` RPC API.
+/// RPC types used by the `sil_` RPC API.
 ///
 /// This is a subset of [`Network`] trait with only RPC response types kept.
 pub trait RpcTypes: Send + Sync + Clone + Unpin + Debug + 'static {
@@ -38,7 +38,7 @@ pub type RpcReceipt<T> = <T as RpcTypes>::Receipt;
 pub type RpcHeader<T> = <T as RpcTypes>::Header;
 
 /// Adapter for network specific block type.
-pub type RpcBlock<T> = alloy_rpc_types_eth::Block<RpcTransaction<T>, RpcHeader<T>>;
+pub type RpcBlock<T> = alloy_rpc_types_sil::Block<RpcTransaction<T>, RpcHeader<T>>;
 
 /// Adapter for network specific transaction request.
 pub type RpcTxReq<T> = <T as RpcTypes>::TransactionRequest;

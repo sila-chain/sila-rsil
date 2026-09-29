@@ -84,7 +84,7 @@ mod tests {
             Ok(NetworkStatus {
                 client_version: "test".to_string(),
                 protocol_version: 5,
-                eth_protocol_info: SilProtocolInfo {
+                sil_protocol_info: SilProtocolInfo {
                     network: 1,
                     difficulty: None,
                     genesis: Default::default(),

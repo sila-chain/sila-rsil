@@ -71,13 +71,13 @@ pub(crate) fn create_test_receipts() -> Vec<Receipt> {
         // Legacy transaction, successful, no logs
         create_test_receipt(TxType::Legacy, true, 21000, 0),
         // SIP-2930 transaction, failed, one log
-        create_test_receipt(TxType::Sip2930, false, 42000, 1),
+        create_test_receipt(TxType::Eip2930, false, 42000, 1),
         // SIP-1559 transaction, successful, multiple logs
-        create_test_receipt(TxType::Sip1559, true, 63000, 3),
+        create_test_receipt(TxType::Eip1559, true, 63000, 3),
         // SIP-4844 transaction, successful, two logs
-        create_test_receipt(TxType::Sip4844, true, 84000, 2),
+        create_test_receipt(TxType::Eip4844, true, 84000, 2),
         // SIP-7702 transaction, failed, no logs
-        create_test_receipt(TxType::Sip7702, false, 105000, 0),
+        create_test_receipt(TxType::Eip7702, false, 105000, 0),
     ]
 }
 
@@ -114,7 +114,7 @@ pub(crate) fn create_sample_block(data_size: usize) -> BlockTuple {
 // Helper function to create a test block with compressed data
 pub(crate) fn create_test_block_with_compressed_data(number: BlockNumber) -> BlockTuple {
     use alloy_consensus::{BlockBody, Header};
-    use alloy_eips::sip4895::Withdrawals;
+    use alloy_eips::eip4895::Withdrawals;
     use alloy_primitives::{Address, Bytes, B256, B64, U256};
 
     // Create test header
@@ -152,12 +152,8 @@ pub(crate) fn create_test_block_with_compressed_data(number: BlockNumber) -> Blo
     };
 
     // Create test receipt list with bloom
-    let receipts_list: Vec<ReceiptWithBloom> = vec![create_test_receipt_with_bloom(
-        rsil_sila_primitives::TxType::Legacy,
-        true,
-        21000,
-        0,
-    )];
+    let receipts_list: Vec<ReceiptWithBloom> =
+        vec![create_test_receipt_with_bloom(rsil_sila_primitives::TxType::Legacy, true, 21000, 0)];
 
     // Compressed test compressed
     let compressed_header = CompressedHeader::from_header(&header).unwrap();

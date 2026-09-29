@@ -13,12 +13,12 @@ workspace = true
 
 [dependencies]
 # rsil
-rsil-codecs = { workspace = true, optional = true }
+reth-codecs = { version = "0.5.0", default-features = false, optional = true }
 rsil-primitives-traits.workspace = true
 
 # sila
 alloy-primitives.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 
 # codecs
 modular-bitfield = { workspace = true, optional = true }
@@ -32,8 +32,8 @@ arbitrary = { workspace = true, features = ["derive"], optional = true }
 
 [dev-dependencies]
 # rsil
-rsil-primitives-traits = { workspace = true, features = ["arbitrary", "rsil-codec"] }
-rsil-codecs.workspace = true
+rsil-primitives-traits = { workspace = true, features = ["arbitrary", "reth-codec"] }
+reth-codecs = { version = "0.5.0", default-features = false }
 
 bytes.workspace = true
 arbitrary = { workspace = true, features = ["derive"] }
@@ -44,37 +44,37 @@ proptest-arbitrary-interop.workspace = true
 [features]
 default = ["std"]
 std = [
-    "alloy-sips/std",
+    "alloy-eips/std",
     "alloy-primitives/std",
     "rsil-primitives-traits/std",
     "bytes?/std",
     "serde?/std",
-    "rsil-codecs?/std",
+    "reth-codecs?/std",
 ]
 serde = [
     "dep:serde",
-    "alloy-sips/serde",
+    "alloy-eips/serde",
     "alloy-primitives/serde",
     "bytes?/serde",
-    "rsil-codecs?/serde",
+    "reth-codecs?/serde",
     "rsil-primitives-traits/serde",
 ]
 test-utils = [
     "rsil-primitives-traits/test-utils",
     "arbitrary",
-    "rsil-codecs?/test-utils",
+    "reth-codecs?/test-utils",
 ]
 arbitrary = [
     "std",
     "rsil-primitives-traits/arbitrary",
     "dep:arbitrary",
     "alloy-primitives/arbitrary",
-    "alloy-sips/arbitrary",
-    "rsil-codecs?/arbitrary",
+    "alloy-eips/arbitrary",
+    "reth-codecs?/arbitrary",
 ]
 rsil-codec = [
-    "dep:rsil-codecs",
+    "dep:reth-codecs",
     "dep:modular-bitfield",
     "dep:bytes",
-    "rsil-primitives-traits/rsil-codec",
+    "rsil-primitives-traits/reth-codec",
 ]

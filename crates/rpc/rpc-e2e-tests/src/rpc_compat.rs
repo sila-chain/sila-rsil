@@ -25,7 +25,7 @@ pub struct RpcTestCase {
 /// Action that runs RPC compatibility tests from execution-apis test data
 #[derive(Debug)]
 pub struct RunRpcCompatTests {
-    /// RPC methods to test (e.g. `eth_getLogs`)
+    /// RPC methods to test (e.g. `sil_getLogs`)
     pub methods: Vec<String>,
     /// Path to the execution-apis tests directory
     pub test_data_path: String,
@@ -142,7 +142,12 @@ impl RunRpcCompatTests {
                 // Direct value comparison
                 (a, b) => {
                     if a != b {
-                        return Err(eyre!("Value mismatch at {}: {:?} != {:?}", current_path, a, b));
+                        return Err(eyre!(
+                            "Value mismatch at {}: {:?} != {:?}",
+                            current_path,
+                            a,
+                            b
+                        ));
                     }
                 }
             }
@@ -226,7 +231,9 @@ impl RunRpcCompatTests {
                 } else if let Some(error) = actual_error {
                     return Err(eyre!("Expected success response but got error: {}", error));
                 } else {
-                    return Err(eyre!("Expected success response but got neither result nor error"));
+                    return Err(eyre!(
+                        "Expected success response but got neither result nor error"
+                    ));
                 }
             }
             (None, Some(_)) => {

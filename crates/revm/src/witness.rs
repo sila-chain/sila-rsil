@@ -1,7 +1,7 @@
 use alloc::vec::Vec;
 use alloy_primitives::{keccak256, Bytes, B256};
-use rsil_trie::{ExecutionWitnessMode, HashedPostState, HashedStorage};
 use revm::database::State;
+use rsil_trie::{ExecutionWitnessMode, HashedPostState, HashedStorage};
 
 /// Tracks state changes during execution.
 #[derive(Debug, Clone, Default)]

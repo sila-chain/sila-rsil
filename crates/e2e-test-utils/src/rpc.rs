@@ -1,13 +1,13 @@
-use alloy_consensus::{SilaTxEnvelope, TxEip4844Variant};
-use alloy_eips::sip7594::BlobTransactionSidecarVariant;
-use alloy_network::sip2718::Decodable2718;
+use alloy_consensus::{EthereumTxEnvelope as SilaTxEnvelope, TxEip4844Variant};
+use alloy_network::eip2718::Decodable2718;
 use alloy_primitives::{Bytes, B256};
+use alloy_sips::eip7594::BlobTransactionSidecarVariant;
 use rsil_chainspec::SilaHardforks;
 use rsil_node_api::{BlockTy, FullNodeComponents};
 use rsil_node_builder::{rpc::RpcRegistry, NodeTypes};
 use rsil_provider::BlockReader;
 use rsil_rpc_api::DebugApiServer;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{SilApiSpec, SilTransactions, TraceExt},
     SilApiTypes,
 };
@@ -26,8 +26,8 @@ where
 {
     /// Injects a raw transaction into the node tx pool via RPC server
     pub async fn inject_tx(&self, raw_tx: Bytes) -> Result<B256, SilApi::Error> {
-        let eth_api = self.inner.eth_api();
-        eth_api.send_raw_transaction(raw_tx).await
+        let sil_api = self.inner.sil_api();
+        sil_api.send_raw_transaction(raw_tx).await
     }
 
     /// Retrieves a transaction envelope by its hash

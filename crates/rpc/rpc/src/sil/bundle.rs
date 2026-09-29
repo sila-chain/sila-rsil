@@ -1,24 +1,24 @@
 //! `Sil` bundle implementation and helpers.
 
 use alloy_consensus::{transaction::TxHashRef, EnvKzgSettings, Transaction as _};
-use alloy_eips::sip7840::BlobParams;
+use alloy_eips::eip7840::BlobParams;
 use alloy_evm::env::BlockEnvironment;
 use alloy_primitives::{uint, Keccak256, U256};
 use alloy_rpc_types_mev::{SilCallBundle, SilCallBundleResponse, SilCallBundleTransactionResult};
 use jsonrpsee::core::RpcResult;
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
-use rsil_evm::{ConfigureEvm, Savm};
-use rsil_rpc_eth_api::{
-    helpers::{Call, SilTransactions, LoadPendingBlock},
-    SilCallBundleApiServer, FromEthApiError, FromEvmError,
-};
-use rsil_rpc_eth_types::{utils::recover_raw_transaction, SilApiError, RpcInvalidTransactionError};
-use rsil_tasks::pool::BlockingTaskGuard;
-use rsil_transaction_pool::{
-    SilBlobTransactionSidecar, SilPoolTransaction, PoolPooledTx, PoolTransaction, TransactionPool,
-};
 use revm::{
     context::Block, context_interface::result::ResultAndState, DatabaseCommit, DatabaseRef,
+};
+use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
+use rsil_savm::{ConfigureEvm, Savm};
+use rsil_rpc_sil_api::{
+    helpers::{Call, LoadPendingBlock, SilTransactions},
+    FromSilApiError, FromEvmError, SilCallBundleApiServer,
+};
+use rsil_rpc_sil_types::{utils::recover_raw_transaction, RpcInvalidTransactionError, SilApiError};
+use rsil_tasks::pool::BlockingTaskGuard;
+use rsil_transaction_pool::{
+    PoolPooledTx, PoolTransaction, SilBlobTransactionSidecar, SilPoolTransaction, TransactionPool,
 };
 use std::sync::Arc;
 
@@ -30,13 +30,13 @@ pub struct SilBundle<Sil> {
 
 impl<Sil> SilBundle<Sil> {
     /// Create a new `SilBundle` instance.
-    pub fn new(eth_api: Sil, blocking_task_guard: BlockingTaskGuard) -> Self {
-        Self { inner: Arc::new(SilBundleInner { eth_api, blocking_task_guard }) }
+    pub fn new(sil_api: Sil, blocking_task_guard: BlockingTaskGuard) -> Self {
+        Self { inner: Arc::new(SilBundleInner { sil_api, blocking_task_guard }) }
     }
 
     /// Access the underlying `Sil` API.
-    pub fn eth_api(&self) -> &Sil {
-        &self.inner.eth_api
+    pub fn sil_api(&self) -> &Sil {
+        &self.inner.sil_api
     }
 }
 
@@ -68,23 +68,23 @@ where
             return Err(SilApiError::InvalidParams(
                 SilBundleError::EmptyBundleTransactions.to_string(),
             )
-            .into())
+            .into());
         }
         if block_number == 0 {
             return Err(SilApiError::InvalidParams(
                 SilBundleError::BundleMissingBlockNumber.to_string(),
             )
-            .into())
+            .into());
         }
 
         // Validate gas limit against the configured call gas limit before any DB calls
-        let call_gas_limit = self.inner.eth_api.call_gas_limit();
-        if let Some(gas_limit) = gas_limit &&
-            gas_limit > call_gas_limit
+        let call_gas_limit = self.inner.sil_api.call_gas_limit();
+        if let Some(gas_limit) = gas_limit
+            && gas_limit > call_gas_limit
         {
             return Err(
                 SilApiError::InvalidTransaction(RpcInvalidTransactionError::GasTooHigh).into()
-            )
+            );
         }
 
         let transactions = txs
@@ -94,7 +94,7 @@ where
 
         let block_id: alloy_rpc_types_eth::BlockId = state_block_number.into();
         // Note: the block number is considered the `parent` block: <https://github.com/flashbots/mev-geth/blob/fddf97beec5877483f879a77b7dea2e58a58d653/internal/ethapi/api.go#L2104>
-        let (mut evm_env, at) = self.eth_api().evm_env_at(block_id).await?;
+        let (mut evm_env, at) = self.sil_api().evm_env_at(block_id).await?;
 
         if let Some(coinbase) = coinbase {
             evm_env.block_env.inner_mut().beneficiary = coinbase;
@@ -116,7 +116,7 @@ where
         let blob_gas_used = transactions.iter().filter_map(|tx| tx.blob_gas_used()).sum::<u64>();
         if blob_gas_used > 0 {
             let blob_params = self
-                .eth_api()
+                .sil_api()
                 .provider()
                 .chain_spec()
                 .blob_params_at_timestamp(evm_env.block_env.timestamp().saturating_to())
@@ -126,7 +126,7 @@ where
                     SilBundleError::Sip4844BlobGasExceeded(blob_params.max_blob_gas_per_block())
                         .to_string(),
                 )
-                .into())
+                .into());
             }
         }
 
@@ -141,14 +141,14 @@ where
         // use the block number of the request
         evm_env.block_env.inner_mut().number = U256::from(block_number);
 
-        self.eth_api()
-            .spawn_with_state_at_block(at, move |eth_api, db| {
+        self.sil_api()
+            .spawn_with_state_at_block(at, move |sil_api, db| {
                 let coinbase = evm_env.block_env.beneficiary();
                 let basefee = evm_env.block_env.basefee();
 
                 let initial_coinbase = db
                     .basic_ref(coinbase)
-                    .map_err(Sil::Error::from_eth_err)?
+                    .map_err(Sil::Error::from_sil_err)?
                     .map(|acc| acc.balance)
                     .unwrap_or_default();
                 let mut coinbase_balance_before_tx = initial_coinbase;
@@ -157,7 +157,7 @@ where
                 let mut total_gas_fees = U256::ZERO;
                 let mut hasher = Keccak256::new();
 
-                let mut savm = eth_api.evm_config().evm_with_env(db, evm_env);
+                let mut savm = sil_api.evm_config().evm_with_env(db, evm_env);
 
                 let mut results = Vec::with_capacity(transactions.len());
                 let mut transactions = transactions.into_iter().peekable();
@@ -170,7 +170,7 @@ where
                         if let SilBlobTransactionSidecar::Present(sidecar) = tx.take_blob() {
                             tx.validate_blob(&sidecar, EnvKzgSettings::Default.get()).map_err(
                                 |e| {
-                                    Sil::Error::from_eth_err(SilApiError::InvalidParams(
+                                    Sil::Error::from_sil_err(SilApiError::InvalidParams(
                                         e.to_string(),
                                     ))
                                 },
@@ -182,7 +182,7 @@ where
 
                     hasher.update(*tx.tx_hash());
                     let ResultAndState { result, state } = savm
-                        .transact(eth_api.evm_config().tx_env(&tx))
+                        .transact(sil_api.evm_config().tx_env(&tx))
                         .map_err(Sil::Error::from_evm_err)?;
 
                     let gas_price = tx
@@ -273,7 +273,7 @@ where
 #[derive(Debug)]
 struct SilBundleInner<Sil> {
     /// Access to commonly used code of the `sil` namespace
-    eth_api: Sil,
+    sil_api: Sil,
     // restrict the number of concurrent tracing calls.
     #[expect(dead_code)]
     blocking_task_guard: BlockingTaskGuard,

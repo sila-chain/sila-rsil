@@ -13,7 +13,7 @@ workspace = true
 
 [dependencies]
 # rsil
-rsil-codecs = { workspace = true, optional = true, features = ["alloy"] }
+reth-codecs = { version = "0.5.0", default-features = false, optional = true, features = ["alloy"] }
 rsil-primitives-traits.workspace = true
 
 # sila
@@ -31,7 +31,7 @@ proptest.workspace = true
 proptest-arbitrary-interop.workspace = true
 rand.workspace = true
 alloy-rlp.workspace = true
-rsil-codecs = { workspace = true, features = ["test-utils"] }
+reth-codecs = { version = "0.5.0", default-features = false, features = ["test-utils"] }
 rsil-zstd-compressors.workspace = true
 alloy-consensus = { workspace = true, features = ["serde", "arbitrary"] }
 serde_json.workspace = true
@@ -40,7 +40,7 @@ serde_with.workspace = true
 [features]
 default = ["std"]
 test-utils = [
-    "rsil-codecs?/test-utils",
+    "reth-codecs?/test-utils",
     "rsil-primitives-traits/test-utils",
 ]
 std = [
@@ -55,18 +55,18 @@ std = [
     "rsil-zstd-compressors/std",
     "serde_json/std",
     "serde_with/std",
-    "rsil-codecs?/std",
+    "reth-codecs?/std",
 ]
 rsil-codec = [
     "std",
-    "dep:rsil-codecs",
+    "dep:reth-codecs",
 ]
 arbitrary = [
     "std",
     "alloy-consensus/arbitrary",
     "alloy-consensus/k256",
     "alloy-primitives/arbitrary",
-    "rsil-codecs?/arbitrary",
+    "reth-codecs?/arbitrary",
     "rsil-primitives-traits/arbitrary",
     "alloy-sips/arbitrary",
     "alloy-rpc-types-sil?/arbitrary",
@@ -76,7 +76,7 @@ serde = [
     "alloy-consensus/serde",
     "alloy-sips/serde",
     "alloy-primitives/serde",
-    "rsil-codecs?/serde",
+    "reth-codecs?/serde",
     "rsil-primitives-traits/serde",
     "alloy-rpc-types-sil?/serde",
     "rand/serde",

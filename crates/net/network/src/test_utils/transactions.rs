@@ -15,8 +15,8 @@ use crate::{
     NetworkConfigBuilder, NetworkManager,
 };
 use alloy_primitives::TxHash;
-use rsil_eth_wire::SilVersion;
-use rsil_eth_wire_types::SilNetworkPrimitives;
+use rsil_sil_wire::SilVersion;
+use rsil_sil_wire_types::SilNetworkPrimitives;
 use rsil_network_api::{PeerKind, PeerRequest, PeerRequestSender};
 use rsil_network_peers::PeerId;
 use rsil_storage_api::noop::NoopProvider;

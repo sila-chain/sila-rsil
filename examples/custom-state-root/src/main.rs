@@ -31,6 +31,9 @@ use rsil_engine_tree::tree::{
     },
     BasicEngineValidator, TreeConfig,
 };
+use rsil_savm::{revm::context::Block as _, ConfigureEvm};
+use rsil_primitives_traits::{NodePrimitives, RecoveredBlock};
+use rsil_provider::{BlockExecutionOutput, ProviderResult};
 use rsil_sila::{
     chainspec::ChainSpec,
     node::{
@@ -42,14 +45,11 @@ use rsil_sila::{
             FullNodeComponents, NodeBuilder, NodeHandle,
         },
         core::{args::RpcServerArgs, node_config::NodeConfig},
-        SilaAddOns, SilaEngineValidatorBuilder, SilaEthApiBuilder, SilaNode,
+        SilaAddOns, SilaEngineValidatorBuilder, SilaSilApiBuilder, SilaNode,
     },
     tasks::Runtime,
     SilPrimitives,
 };
-use rsil_evm::{revm::context::Block as _, ConfigureEvm};
-use rsil_primitives_traits::{NodePrimitives, RecoveredBlock};
-use rsil_provider::{BlockExecutionOutput, ProviderResult};
 use rsil_trie::updates::TrieUpdates;
 
 /// Strategy that returns `B256::ZERO` as the state root from an activation timestamp on, and
@@ -74,7 +74,7 @@ where
     ) -> ProviderResult<PreparedStateRootJob<N>> {
         let timestamp: u64 = ctx.env().evm_env.block_env.timestamp().saturating_to();
         if timestamp < self.activation_timestamp {
-            return self.default.prepare(ctx)
+            return self.default.prepare(ctx);
         }
         Ok(PreparedStateRootJob::new(Box::new(ZeroStateRootJob), None))
     }
@@ -84,7 +84,7 @@ where
         ctx: PayloadStateRootJobContext<'_, N, P>,
     ) -> ProviderResult<Option<PayloadStateRootHandle>> {
         if ctx.timestamp() < self.activation_timestamp {
-            return self.default.prepare_payload_builder(ctx)
+            return self.default.prepare_payload_builder(ctx);
         }
         // Without a background task the payload builder computes the state root itself. A real
         // strategy would return a custom handle here so built headers match validation.
@@ -133,9 +133,7 @@ impl<N> EngineValidatorBuilder<N> for ZeroStateRootValidatorBuilder
 where
     N: FullNodeComponents<
         Types = SilaNode,
-        Savm: rsil_sila::node::builder::ConfigureEngineEvm<
-            alloy_rpc_types_engine::ExecutionData,
-        >,
+        Savm: rsil_sila::node::builder::ConfigureEngineEvm<alloy_rpc_types_engine::ExecutionData>,
     >,
 {
     type EngineValidator = BasicEngineValidator<
@@ -177,7 +175,7 @@ async fn main() -> eyre::Result<()> {
     // Build add-ons with our custom engine validator builder.
     let add_ons: SilaAddOns<_, _, _, _, ZeroStateRootValidatorBuilder> =
         SilaAddOns::new(RpcAddOns::new(
-            SilaEthApiBuilder::<alloy_network::Sila>::default(),
+            SilaSilApiBuilder::<alloy_network::Sila>::default(),
             SilaEngineValidatorBuilder::default(),
             BasicEngineApiBuilder::<SilaEngineValidatorBuilder>::default(),
             ZeroStateRootValidatorBuilder {

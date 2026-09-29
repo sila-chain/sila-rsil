@@ -11,7 +11,7 @@ use jsonrpsee::{
     Methods,
 };
 use rsil_rpc_api::servers::*;
-use rsil_rpc_eth_types::SilSubscriptionIdProvider;
+use rsil_rpc_sil_types::SilSubscriptionIdProvider;
 use rsil_rpc_layer::{
     secret_to_bearer_header, AuthClientLayer, AuthLayer, JwtAuthValidator, JwtSecret,
 };

@@ -64,7 +64,7 @@ impl BlobStoreCanonTracker {
             if *entry.key() <= finalized_block {
                 finalized.extend(entry.remove_entry().1);
             } else {
-                break
+                break;
             }
         }
 
@@ -90,9 +90,9 @@ mod tests {
     use super::*;
     use alloy_consensus::{Header, Signed};
     use alloy_primitives::Signature;
-    use rsil_sila_primitives::Transaction;
     use rsil_execution_types::Chain;
     use rsil_primitives_traits::{RecoveredBlock, SealedBlock, SealedHeader};
+    use rsil_sila_primitives::Transaction;
 
     #[test]
     fn test_finalized_tracker() {
@@ -118,11 +118,11 @@ mod tests {
         let mut tracker = BlobStoreCanonTracker::default();
         // Create sample transactions
         let tx1_signed = Signed::new_unhashed(
-            Transaction::Sip4844(Default::default()),
+            Transaction::Eip4844(Default::default()),
             Signature::test_signature(),
         ); // SIP-4844 transaction
         let tx2_signed = Signed::new_unhashed(
-            Transaction::Sip4844(Default::default()),
+            Transaction::Eip4844(Default::default()),
             Signature::test_signature(),
         ); // SIP-4844 transaction
 
@@ -138,7 +138,7 @@ mod tests {
                         tx2_signed.into(),
                         // Another transaction that is not SIP-4844
                         Signed::new_unhashed(
-                            Transaction::Sip7702(Default::default()),
+                            Transaction::Eip7702(Default::default()),
                             Signature::test_signature(),
                         )
                         .into(),
@@ -157,12 +157,12 @@ mod tests {
                 alloy_consensus::BlockBody {
                     transactions: vec![
                         Signed::new_unhashed(
-                            Transaction::Sip1559(Default::default()),
+                            Transaction::Eip1559(Default::default()),
                             Signature::test_signature(),
                         )
                         .into(),
                         Signed::new_unhashed(
-                            Transaction::Sip2930(Default::default()),
+                            Transaction::Eip2930(Default::default()),
                             Signature::test_signature(),
                         )
                         .into(),

@@ -1,11 +1,11 @@
 //! Contains RPC handler implementations specific to blocks.
 
 use rsil_rpc_convert::RpcConvert;
-use rsil_rpc_eth_api::{
-    helpers::{SilBlocks, LoadBlock, LoadPendingBlock},
+use rsil_rpc_sil_api::{
+    helpers::{LoadBlock, LoadPendingBlock, SilBlocks},
     FromEvmError, RpcNodeCore,
 };
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_types::SilApiError;
 
 use crate::SilApi;
 

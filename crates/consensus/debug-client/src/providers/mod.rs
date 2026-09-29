@@ -1,5 +1,5 @@
-mod silascan;
 mod rpc;
+mod silascan;
 
-pub use silascan::SilaScanBlockProvider;
 pub use rpc::RpcBlockProvider;
+pub use silascan::SilaScanBlockProvider;

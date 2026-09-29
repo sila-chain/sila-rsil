@@ -1,17 +1,17 @@
 //! Loads fee history from database. Helper trait for `eth_` fee and transaction RPC methods.
 
 use super::LoadBlock;
-use crate::FromEthApiError;
+use crate::FromSilApiError;
 use alloy_consensus::BlockHeader;
-use alloy_eips::sip7840::BlobParams;
+use alloy_eips::eip7840::BlobParams;
 use alloy_primitives::U256;
 use alloy_rpc_types_eth::{BlockNumberOrTag, FeeHistory};
 use futures::{Future, StreamExt};
 use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_primitives_traits::BlockBody;
-use rsil_rpc_eth_types::{
+use rsil_rpc_sil_types::{
     fee_history::calculate_reward_percentiles_for_block, utils::checked_blob_gas_used_ratio,
-    SilApiError, FeeHistoryCache, FeeHistoryEntry, GasPriceOracle, RpcInvalidTransactionError,
+    FeeHistoryCache, FeeHistoryEntry, GasPriceOracle, RpcInvalidTransactionError, SilApiError,
 };
 use rsil_storage_api::{
     BlockIdReader, BlockNumReader, BlockReaderIdExt, HeaderProvider, ProviderHeader,
@@ -71,25 +71,25 @@ pub trait SilFees:
     ) -> impl Future<Output = Result<FeeHistory, Self::Error>> + Send {
         async move {
             if block_count == 0 {
-                return Ok(FeeHistory::default())
+                return Ok(FeeHistory::default());
             }
 
             // ensure the given reward percentiles aren't excessive
-            if reward_percentiles.as_ref().map(|perc| perc.len() as u64) >
-                Some(self.gas_oracle().config().max_reward_percentile_count)
+            if reward_percentiles.as_ref().map(|perc| perc.len() as u64)
+                > Some(self.gas_oracle().config().max_reward_percentile_count)
             {
-                return Err(SilApiError::InvalidRewardPercentiles.into())
+                return Err(SilApiError::InvalidRewardPercentiles.into());
             }
 
             // If reward percentiles were specified, we
             // need to validate that they are monotonically
             // increasing and 0 <= p <= 100
             // Note: The types used ensure that the percentiles are never < 0
-            if let Some(percentiles) = &reward_percentiles &&
-                (percentiles.iter().any(|p| *p < 0.0 || *p > 100.0) ||
-                    percentiles.windows(2).any(|w| w[0] > w[1]))
+            if let Some(percentiles) = &reward_percentiles
+                && (percentiles.iter().any(|p| *p < 0.0 || *p > 100.0)
+                    || percentiles.windows(2).any(|w| w[0] > w[1]))
             {
-                return Err(SilApiError::InvalidRewardPercentiles.into())
+                return Err(SilApiError::InvalidRewardPercentiles.into());
             }
 
             // See https://github.com/sila-chain/go-sila/blob/2754b197c935ee63101cbbca2752338246384fec/sil/gasprice/feehistory.go#L218C8-L225
@@ -116,18 +116,18 @@ pub trait SilFees:
             // For explicit block numbers, validate against chain head before resolution
             if let BlockNumberOrTag::Number(requested) = newest_block {
                 let latest_block =
-                    self.provider().best_block_number().map_err(Self::Error::from_eth_err)?;
+                    self.provider().best_block_number().map_err(Self::Error::from_sil_err)?;
                 if requested > latest_block {
                     return Err(
                         SilApiError::RequestBeyondHead { requested, head: latest_block }.into()
-                    )
+                    );
                 }
             }
 
             let end_block = self
                 .provider()
                 .block_number_for_id(newest_block.into())
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .ok_or(SilApiError::HeaderNotFound(newest_block.into()))?;
 
             // need to add 1 to the end block to get the correct (inclusive) range
@@ -163,7 +163,7 @@ pub trait SilFees:
 
             if let Some(fee_entries) = fee_entries {
                 if fee_entries.len() != block_count as usize {
-                    return Err(SilApiError::InvalidBlockRange.into())
+                    return Err(SilApiError::InvalidBlockRange.into());
                 }
 
                 for entry in &fee_entries {
@@ -195,11 +195,12 @@ pub trait SilFees:
                 base_fee_per_blob_gas.push(last_entry.next_block_blob_fee().unwrap_or_default());
             } else {
                 // read the requested header range
-                let headers = self.provider()
+                let headers = self
+                    .provider()
                     .sealed_headers_range(start_block..=end_block)
-                    .map_err(Self::Error::from_eth_err)?;
+                    .map_err(Self::Error::from_sil_err)?;
                 if headers.len() != block_count as usize {
-                    return Err(SilApiError::InvalidBlockRange.into())
+                    return Err(SilApiError::InvalidBlockRange.into());
                 }
 
                 let chain_spec = self.provider().chain_spec();
@@ -220,16 +221,15 @@ pub trait SilFees:
 
                 if let Some(percentiles) = reward_percentiles.as_ref().filter(|p| !p.is_empty()) {
                     let hashes: Vec<_> = headers.iter().map(|h| h.hash()).collect();
-                    let mut stream =
-                        futures::stream::iter(hashes)
-                            .map(|hash| self.cache().get_block_and_receipts(hash))
-                            .buffered(4);
+                    let mut stream = futures::stream::iter(hashes)
+                        .map(|hash| self.cache().get_block_and_receipts(hash))
+                        .buffered(4);
                     let mut header_idx = 0;
                     while let Some(result) = stream.next().await {
                         let header = &headers[header_idx];
                         header_idx += 1;
                         let (block, receipts) = result
-                            .map_err(Self::Error::from_eth_err)?
+                            .map_err(Self::Error::from_sil_err)?
                             .ok_or(SilApiError::InvalidBlockRange)?;
                         rewards.push(
                             calculate_reward_percentiles_for_block(
@@ -258,9 +258,10 @@ pub trait SilFees:
                 // > "[..] includes the next block after the newest of the returned range, because this value can be derived from the newest block.
                 base_fee_per_blob_gas.push(
                     last_header
-                    .maybe_next_block_blob_fee(
-                        chain_spec.blob_params_at_timestamp(last_header.timestamp())
-                    ).unwrap_or_default()
+                        .maybe_next_block_blob_fee(
+                            chain_spec.blob_params_at_timestamp(last_header.timestamp()),
+                        )
+                        .unwrap_or_default(),
                 );
             };
 
@@ -345,7 +346,7 @@ where
                     let latest = self
                         .provider()
                         .latest_header()
-                        .map_err(Self::Error::from_eth_err)?
+                        .map_err(Self::Error::from_sil_err)?
                         .ok_or(SilApiError::HeaderNotFound(BlockNumberOrTag::Latest.into()))?;
                     let pending_base_fee = self
                         .provider()
@@ -384,7 +385,7 @@ where
     /// See also: <https://github.com/sila-chain/pm/issues/328#issuecomment-853234014>
     fn gas_price(&self) -> impl Future<Output = Result<U256, Self::Error>> + Send {
         async move {
-            let header = self.provider().latest_header().map_err(Self::Error::from_eth_err)?;
+            let header = self.provider().latest_header().map_err(Self::Error::from_sil_err)?;
             let suggested_tip = self.suggested_priority_fee().await?;
             let base_fee = header.and_then(|h| h.base_fee_per_gas()).unwrap_or_default();
             Ok(suggested_tip + U256::from(base_fee))
@@ -396,7 +397,7 @@ where
         async move {
             self.provider()
                 .latest_header()
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .and_then(|h| {
                     h.maybe_next_block_blob_fee(
                         self.provider().chain_spec().blob_params_at_timestamp(h.timestamp()),
@@ -413,7 +414,7 @@ where
             let header = self
                 .provider()
                 .latest_header()
-                .map_err(Self::Error::from_eth_err)?
+                .map_err(Self::Error::from_sil_err)?
                 .ok_or(SilApiError::HeaderNotFound(BlockNumberOrTag::Latest.into()))?;
             Ok(self
                 .provider()
@@ -428,6 +429,6 @@ where
     where
         Self: 'static,
     {
-        async move { self.gas_oracle().suggest_tip_cap().await.map_err(Self::Error::from_eth_err) }
+        async move { self.gas_oracle().suggest_tip_cap().await.map_err(Self::Error::from_sil_err) }
     }
 }

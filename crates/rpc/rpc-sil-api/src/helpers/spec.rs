@@ -8,14 +8,14 @@ use rsil_errors::{RsilError, RsilResult};
 use rsil_network_api::NetworkInfo;
 use rsil_prune_types::{PruneMode, PruneSegment};
 use rsil_rpc_convert::RpcTxReq;
-use rsil_rpc_eth_types::{SilCapabilities, SilCapabilitiesHead, SilCapabilitiesResource};
+use rsil_rpc_sil_types::{SilCapabilities, SilCapabilitiesHead, SilCapabilitiesResource};
 use rsil_storage_api::{
     BlockNumReader, PruneCheckpointReader, StageCheckpointReader, TransactionsProvider,
 };
 
 use crate::{
     helpers::{SilSigner, SilState},
-    SilApiTypes, RpcNodeCore,
+    RpcNodeCore, SilApiTypes,
 };
 
 /// `Sil` API trait.

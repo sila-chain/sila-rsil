@@ -2,32 +2,32 @@
 
 use alloy_consensus::{constants::ETH_TO_WEI, Header, TxLegacy};
 use alloy_eips::{
-    sip2935::{HISTORY_SERVE_WINDOW, HISTORY_STORAGE_ADDRESS, HISTORY_STORAGE_CODE},
-    sip4788::{BEACON_ROOTS_ADDRESS, BEACON_ROOTS_CODE, SYSTEM_ADDRESS},
-    sip4895::Withdrawal,
-    sip7002::{WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS, WITHDRAWAL_REQUEST_PREDEPLOY_CODE},
-    sip7685::EMPTY_REQUESTS_HASH,
+    eip2935::{HISTORY_SERVE_WINDOW, HISTORY_STORAGE_ADDRESS, HISTORY_STORAGE_CODE},
+    eip4788::{BEACON_ROOTS_ADDRESS, BEACON_ROOTS_CODE, SYSTEM_ADDRESS},
+    eip4895::Withdrawal,
+    eip7002::{WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS, WITHDRAWAL_REQUEST_PREDEPLOY_CODE},
+    eip7685::EMPTY_REQUESTS_HASH,
 };
-use alloy_evm::block::BlockValidationError;
+use alloy_savm::block::BlockValidationError;
 use alloy_primitives::{b256, fixed_bytes, keccak256, Bytes, TxKind, B256, U256};
-use rsil_chainspec::{ChainSpecBuilder, SilaHardfork, ForkCondition, SILA_MAINNET};
-use rsil_sila_primitives::{Block, BlockBody, Transaction};
-use rsil_evm::{
+use revm::{
+    database::{CacheDB, EmptyDB, TransitionState},
+    primitives::address,
+    state::{AccountInfo, Bytecode, EvmState},
+    Database,
+};
+use rsil_chainspec::{ChainSpecBuilder, ForkCondition, SilaHardfork, SILA_MAINNET};
+use rsil_savm::{
     execute::{BasicBlockExecutor, Executor},
     ConfigureEvm,
 };
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm_sila::SilEvmConfig;
 use rsil_execution_types::BlockExecutionResult;
 use rsil_primitives_traits::{
     crypto::secp256k1::public_key_to_address, Block as _, RecoveredBlock,
 };
+use rsil_sila_primitives::{Block, BlockBody, Transaction};
 use rsil_testing_utils::generators::{self, sign_tx_with_key_pair};
-use revm::{
-    database::{CacheDB, EmptyDB, TransitionState},
-    primitives::address,
-    state::{AccountInfo, Bytecode, SavmState},
-    Database,
-};
 use std::sync::{mpsc, Arc};
 
 fn create_database_with_beacon_root_contract() -> CacheDB<EmptyDB> {
@@ -75,7 +75,7 @@ fn sip_4788_non_genesis_call() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -155,7 +155,7 @@ fn sip_4788_no_code_cancun() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -187,7 +187,7 @@ fn sip_4788_empty_account_call() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -229,7 +229,7 @@ fn sip_4788_genesis_call() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(0))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(0))
             .build(),
     );
 
@@ -289,7 +289,7 @@ fn sip_4788_high_base_fee() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -355,7 +355,7 @@ fn sip_2935_pre_fork() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Never)
+            .with_fork(SilaHardfork::Prague, ForkCondition::Never)
             .build(),
     );
 
@@ -371,7 +371,9 @@ fn sip_2935_pre_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // ensure that the block hash was *not* written to storage, since this is before the fork
     // was activated
@@ -406,7 +408,9 @@ fn sip_2935_fork_activation_genesis() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // ensure that the block hash was *not* written to storage, since there are no blocks
     // preceding genesis
@@ -428,7 +432,7 @@ fn sip_2935_fork_activation_within_window_bounds() {
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
             .cancun_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -450,7 +454,9 @@ fn sip_2935_fork_activation_within_window_bounds() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the hash for the ancestor of the fork activation block should be present
     assert!(
@@ -479,7 +485,7 @@ fn sip_2935_fork_activation_outside_window_bounds() {
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
             .cancun_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(1))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(1))
             .build(),
     );
 
@@ -502,7 +508,9 @@ fn sip_2935_fork_activation_outside_window_bounds() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the hash for the ancestor of the fork activation block should be present
     assert!(
@@ -534,7 +542,9 @@ fn sip_2935_state_transition_inside_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // nothing should be written as the genesis has no ancestors
     //
@@ -562,7 +572,9 @@ fn sip_2935_state_transition_inside_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the block hash of genesis should now be in storage, but not block 1
     assert!(
@@ -593,7 +605,9 @@ fn sip_2935_state_transition_inside_fork() {
             Block { header, body: Default::default() },
             vec![],
         ))
-        .expect("Executing a block with no transactions while SilaPrague is active should not fail");
+        .expect(
+            "Executing a block with no transactions while SilaPrague is active should not fail",
+        );
 
     // the block hash of genesis and block 1 should now be in storage, but not block 2
     assert!(
@@ -689,7 +703,7 @@ fn block_gas_limit_error() {
     let chain_spec = Arc::new(
         ChainSpecBuilder::from(&*SILA_MAINNET)
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaPrague, ForkCondition::Timestamp(0))
+            .with_fork(SilaHardfork::Prague, ForkCondition::Timestamp(0))
             .build(),
     );
 
@@ -811,7 +825,7 @@ fn test_balance_increment_not_duplicated() {
     let tx_clone = tx.clone();
 
     let _output = executor
-        .execute_with_state_hook(block, move |state: SavmState| {
+        .execute_with_state_hook(block, move |state: EvmState| {
             if let Some(account) = state.get(&withdrawal_recipient) {
                 let _ = tx_clone.send(account.info.balance);
             }

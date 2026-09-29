@@ -98,10 +98,10 @@ pub trait DebugApi<TxReq: RpcObject> {
         opts: Option<GethDebugTracingOptions>,
     ) -> RpcResult<GethTrace>;
 
-    /// The `debug_traceCall` method lets you run an `eth_call` within the context of the given
+    /// The `debug_traceCall` method lets you run an `sil_call` within the context of the given
     /// block execution using the final state of parent block as the base.
     ///
-    /// The first argument (just as in `eth_call`) is a transaction request.
+    /// The first argument (just as in `sil_call`) is a transaction request.
     /// The block can optionally be specified either by hash or by number as
     /// the second argument.
     /// The trace can be configured similar to `debug_traceTransaction`,
@@ -115,7 +115,7 @@ pub trait DebugApi<TxReq: RpcObject> {
         opts: Option<GethDebugTracingCallOptions>,
     ) -> RpcResult<GethTrace>;
 
-    /// The `debug_traceCallMany` method lets you run an `eth_callMany` within the context of the
+    /// The `debug_traceCallMany` method lets you run an `sil_callMany` within the context of the
     /// given block execution using the final state of parent block as the base followed by n
     /// transactions.
     ///
@@ -127,7 +127,7 @@ pub trait DebugApi<TxReq: RpcObject> {
     /// The trace can be configured similar to `debug_traceTransaction`.
     /// State override apply to all bundles.
     ///
-    /// This methods is similar to many `eth_callMany`, hence this returns nested lists of traces.
+    /// This methods is similar to many `sil_callMany`, hence this returns nested lists of traces.
     /// Where the length of the outer list is the number of bundles and the length of the inner list
     /// (`Vec<GethTrace>`) is the number of transactions in the bundle.
     #[method(name = "traceCallMany")]

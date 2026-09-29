@@ -1,6 +1,6 @@
 //! Trait for specifying `sil` network dependent API types.
 
-use crate::{AsEthApiError, FromEthApiError, RpcNodeCore};
+use crate::{AsSilApiError, FromSilApiError, RpcNodeCore};
 use alloy_rpc_types_eth::Block;
 use rsil_rpc_convert::{RpcConvert, SignableTxRequest};
 pub use rsil_rpc_convert::{RpcTransaction, RpcTxReq, RpcTypes};
@@ -16,10 +16,10 @@ use std::error::Error;
 /// This type is stateful so that it can provide additional context if necessary, e.g. populating
 /// receipts with additional data.
 pub trait SilApiTypes: Send + Sync + Clone {
-    /// Extension of [`FromEthApiError`], with network specific errors.
+    /// Extension of [`FromSilApiError`], with network specific errors.
     type Error: Into<jsonrpsee_types::error::ErrorObject<'static>>
-        + FromEthApiError
-        + AsEthApiError
+        + FromSilApiError
+        + AsSilApiError
         + From<<Self::RpcConvert as RpcConvert>::Error>
         + Error
         + Send
@@ -46,7 +46,7 @@ pub type RpcHeader<T> = <T as RpcTypes>::Header;
 pub type RpcError<T> = <T as SilApiTypes>::Error;
 
 /// Helper trait holds necessary trait bounds on [`SilApiTypes`] to implement `sil` API.
-pub trait FullEthApiTypes
+pub trait FullSilApiTypes
 where
     Self: RpcNodeCore
         + SilApiTypes<
@@ -58,7 +58,7 @@ where
 {
 }
 
-impl<T> FullEthApiTypes for T where
+impl<T> FullSilApiTypes for T where
     T: RpcNodeCore
         + SilApiTypes<
             NetworkTypes: RpcTypes<

@@ -13,10 +13,10 @@ use crate::{
     NetworkEventListenerProvider, NetworkInfo, NetworkStatus, PeerId, PeerInfo, PeerRequest, Peers,
     PeersInfo,
 };
-use alloy_rpc_types_admin::SilProtocolInfo;
+use alloy_rpc_types_admin::EthProtocolInfo as SilProtocolInfo;
 use enr::{secp256k1::SecretKey, Enr};
-use rsil_eth_wire_types::{
-    DisconnectReason, SilNetworkPrimitives, NetworkPrimitives, ProtocolVersion,
+use rsil_sil_wire_types::{
+    DisconnectReason, NetworkPrimitives, ProtocolVersion, SilNetworkPrimitives,
 };
 use rsil_network_p2p::{sync::NetworkSyncUpdater, NoopFullBlockClient};
 use rsil_network_peers::NodeRecord;
@@ -76,7 +76,7 @@ where
         Ok(NetworkStatus {
             client_version: "rsil-test".to_string(),
             protocol_version: ProtocolVersion::V5 as u64,
-            eth_protocol_info: SilProtocolInfo {
+            sil_protocol_info: SilProtocolInfo {
                 network: 1,
                 difficulty: None,
                 genesis: Default::default(),
@@ -198,7 +198,7 @@ where
 
     fn update_sync_state(&self, _state: rsil_network_p2p::sync::SyncState) {}
 
-    fn update_block_range(&self, _: rsil_eth_wire_types::BlockRangeUpdate) {}
+    fn update_block_range(&self, _: rsil_sil_wire_types::BlockRangeUpdate) {}
 }
 
 impl<Net> NetworkEventListenerProvider for NoopNetwork<Net>

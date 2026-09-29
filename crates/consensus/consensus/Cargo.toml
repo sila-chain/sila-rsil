@@ -18,7 +18,7 @@ rsil-primitives-traits.workspace = true
 # sila
 alloy-primitives.workspace = true
 alloy-consensus.workspace = true
-alloy-sip7928.workspace = true
+alloy-eip7928.workspace = true
 
 # misc
 auto_impl.workspace = true
@@ -32,6 +32,6 @@ std = [
     "alloy-consensus/std",
     "rsil-execution-types/std",
     "thiserror/std",
-    "alloy-sip7928/std",
+    "alloy-eip7928/std",
 ]
 test-utils = ["rsil-primitives-traits/test-utils"]

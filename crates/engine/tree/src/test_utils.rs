@@ -1,12 +1,12 @@
 use alloy_primitives::B256;
 use rsil_chainspec::ChainSpec;
-use rsil_sila_primitives::BlockBody;
 use rsil_network_p2p::test_utils::TestFullBlockClient;
 use rsil_primitives_traits::SealedHeader;
 use rsil_provider::test_utils::{
     create_test_provider_factory_with_chain_spec, MockNodeTypesWithDB,
 };
 use rsil_prune_types::PruneModes;
+use rsil_sila_primitives::BlockBody;
 use rsil_stages::{test_utils::TestStages, ExecOutput, StageError};
 use rsil_stages_api::Pipeline;
 use rsil_static_file::StaticFileProducer;

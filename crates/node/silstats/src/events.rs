@@ -1,12 +1,12 @@
-//! Types for ethstats event reporting.
-//! These structures define the data format used to report blockchain events to ethstats servers.
+//! Types for silstats event reporting.
+//! These structures define the data format used to report blockchain events to silstats servers.
 
 use alloy_consensus::Header;
 use alloy_primitives::{Address, B256, U256};
 use serde::{Deserialize, Serialize};
 
 /// Collection of meta information about a node that is displayed on the monitoring page.
-/// This information is used to identify and display node details in the ethstats monitoring
+/// This information is used to identify and display node details in the silstats monitoring
 /// interface.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeInfo {
@@ -44,7 +44,7 @@ pub struct NodeInfo {
     pub history: bool,
 }
 
-/// Authentication message used to login to the ethstats monitoring server.
+/// Authentication message used to login to the silstats monitoring server.
 /// Contains node identification and authentication information.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AuthMsg {
@@ -59,7 +59,7 @@ pub struct AuthMsg {
 }
 
 impl AuthMsg {
-    /// Generate a login message for the ethstats monitoring server.
+    /// Generate a login message for the silstats monitoring server.
     pub fn generate_login_message(&self) -> String {
         serde_json::json!({
             "emit": ["hello", self]
@@ -132,7 +132,7 @@ pub struct BlockStats {
     pub uncles: UncleStats,
 }
 
-/// Message containing a block to be reported to the ethstats monitoring server.
+/// Message containing a block to be reported to the silstats monitoring server.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BlockMsg {
     /// The node's unique identifier
@@ -143,7 +143,7 @@ pub struct BlockMsg {
 }
 
 impl BlockMsg {
-    /// Generate a block message for the ethstats monitoring server.
+    /// Generate a block message for the silstats monitoring server.
     pub fn generate_block_message(&self) -> String {
         serde_json::json!({
             "emit": ["block", self]
@@ -152,7 +152,7 @@ impl BlockMsg {
     }
 }
 
-/// Message containing historical block data to be reported to the ethstats monitoring server.
+/// Message containing historical block data to be reported to the silstats monitoring server.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct HistoryMsg {
     /// The node's unique identifier
@@ -163,7 +163,7 @@ pub struct HistoryMsg {
 }
 
 impl HistoryMsg {
-    /// Generate a history message for the ethstats monitoring server.
+    /// Generate a history message for the silstats monitoring server.
     pub fn generate_history_message(&self) -> String {
         serde_json::json!({
             "emit": ["history", self]
@@ -172,7 +172,7 @@ impl HistoryMsg {
     }
 }
 
-/// Message containing pending transaction statistics to be reported to the ethstats monitoring
+/// Message containing pending transaction statistics to be reported to the silstats monitoring
 /// server.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PendingStats {
@@ -180,7 +180,7 @@ pub struct PendingStats {
     pub pending: u64,
 }
 
-/// Message containing pending transaction statistics to be reported to the ethstats monitoring
+/// Message containing pending transaction statistics to be reported to the silstats monitoring
 /// server.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PendingMsg {
@@ -192,7 +192,7 @@ pub struct PendingMsg {
 }
 
 impl PendingMsg {
-    /// Generate a pending message for the ethstats monitoring server.
+    /// Generate a pending message for the silstats monitoring server.
     pub fn generate_pending_message(&self) -> String {
         serde_json::json!({
             "emit": ["pending", self]
@@ -221,7 +221,7 @@ pub struct NodeStats {
     pub uptime: u64,
 }
 
-/// Message containing node statistics to be reported to the ethstats monitoring server.
+/// Message containing node statistics to be reported to the silstats monitoring server.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StatsMsg {
     /// The node's unique identifier
@@ -232,7 +232,7 @@ pub struct StatsMsg {
 }
 
 impl StatsMsg {
-    /// Generate a stats message for the ethstats monitoring server.
+    /// Generate a stats message for the silstats monitoring server.
     pub fn generate_stats_message(&self) -> String {
         serde_json::json!({
             "emit": ["stats", self]
@@ -241,7 +241,7 @@ impl StatsMsg {
     }
 }
 
-/// Latency report message used to report network latency to the ethstats monitoring server.
+/// Latency report message used to report network latency to the silstats monitoring server.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LatencyMsg {
     /// The node's unique identifier
@@ -252,7 +252,7 @@ pub struct LatencyMsg {
 }
 
 impl LatencyMsg {
-    /// Generate a latency message for the ethstats monitoring server.
+    /// Generate a latency message for the silstats monitoring server.
     pub fn generate_latency_message(&self) -> String {
         serde_json::json!({
             "emit": ["latency", self]
@@ -261,7 +261,7 @@ impl LatencyMsg {
     }
 }
 
-/// Ping message sent to the ethstats monitoring server to initiate latency measurement.
+/// Ping message sent to the silstats monitoring server to initiate latency measurement.
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PingMsg {
     /// The node's unique identifier
@@ -273,7 +273,7 @@ pub struct PingMsg {
 }
 
 impl PingMsg {
-    /// Generate a ping message for the ethstats monitoring server.
+    /// Generate a ping message for the silstats monitoring server.
     pub fn generate_ping_message(&self) -> String {
         serde_json::json!({
             "emit": ["node-ping", self]
@@ -296,7 +296,7 @@ pub struct PayloadStats {
     pub processing_time: u64,
 }
 
-/// Message containing new payload information to be reported to the ethstats monitoring server.
+/// Message containing new payload information to be reported to the silstats monitoring server.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PayloadMsg {
     /// The node's unique identifier
@@ -307,7 +307,7 @@ pub struct PayloadMsg {
 }
 
 impl PayloadMsg {
-    /// Generate a new payload message for the ethstats monitoring server.
+    /// Generate a new payload message for the silstats monitoring server.
     pub fn generate_new_payload_message(&self) -> String {
         serde_json::json!({
             "emit": ["new-payload", self]

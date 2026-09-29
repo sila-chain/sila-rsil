@@ -361,7 +361,7 @@ TAIL_PID=$!
 for i in $(seq 1 60); do
   if curl -sf http://127.0.0.1:8545 -X POST \
     -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
+    -d '{"jsonrpc":"2.0","method":"sil_blockNumber","params":[],"id":1}' \
     > /dev/null 2>&1; then
     echo "rsil (${LABEL}) RPC is up after ${i}s"
     break
@@ -378,7 +378,7 @@ if [ "$SYNC_STATE_IDLE" = "true" ]; then
   for i in $(seq 1 300); do
     SYNC_RESULT=$(curl -sf http://127.0.0.1:8545 -X POST \
       -H 'Content-Type: application/json' \
-      -d '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' 2>/dev/null || true)
+      -d '{"jsonrpc":"2.0","method":"sil_syncing","params":[],"id":1}' 2>/dev/null || true)
     if [ -n "$SYNC_RESULT" ] && jq -e '.result == false' <<< "$SYNC_RESULT" > /dev/null 2>&1; then
       echo "rsil (${LABEL}) pipeline finished after ${i}s, engine is live"
       break
@@ -442,7 +442,7 @@ else
   TXGEN_SILA="$(which txgen-sila)"
   HEAD_JSON=$(curl -sf http://127.0.0.1:8545 -X POST \
     -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
+    -d '{"jsonrpc":"2.0","method":"sil_blockNumber","params":[],"id":1}')
   HEAD_HEX=$(jq -r '.result' <<< "$HEAD_JSON")
   HEAD_DEC=$((16#${HEAD_HEX#0x}))
 

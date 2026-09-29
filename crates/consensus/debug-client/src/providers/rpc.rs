@@ -59,7 +59,7 @@ impl<N: Network, ExecutionData> RpcBlockProvider<N, ExecutionData> {
 
     /// Obtains a full block stream.
     ///
-    /// This first attempts to obtain an `eth_subscribe` subscription, if that fails because the
+    /// This first attempts to obtain an `sil_subscribe` subscription, if that fails because the
     /// connection is not a websocket, this falls back to poll based subscription.
     async fn full_block_stream(
         &self,
@@ -82,15 +82,15 @@ impl<N: Network, ExecutionData> RpcBlockProvider<N, ExecutionData> {
     /// Fetches optional payload side data for blocks that advertise a block access list hash.
     ///
     /// Block access lists are best effort here: RPC providers may not support
-    /// `eth_getBlockAccessListByHash`, so failed or missing responses fall back to empty extras.
+    /// `sil_getBlockAccessListRaw`, so failed or missing responses fall back to empty extras.
     async fn payload_extras(&self, header: &N::HeaderResponse) -> PayloadExtras {
         if !self.fetch_block_access_list {
-            return PayloadExtras::default()
+            return PayloadExtras::default();
         }
 
         let block_hash = header.hash();
         if header.block_access_list_hash().is_none() {
-            return PayloadExtras::default()
+            return PayloadExtras::default();
         };
 
         let block_access_list = self
@@ -135,7 +135,7 @@ where
                     return;
                 }
                 tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-                continue
+                continue;
             };
 
             while let Some(res) = stream.next().await {

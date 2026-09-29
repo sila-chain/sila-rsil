@@ -5,9 +5,9 @@ use std::{
 };
 
 use crate::wal::{WalError, WalResult};
-use rsil_sila_primitives::SilPrimitives;
 use rsil_exex_types::ExExNotification;
 use rsil_node_api::NodePrimitives;
+use rsil_sila_primitives::SilPrimitives;
 use rsil_tracing::tracing::debug;
 use tracing::instrument;
 
@@ -256,8 +256,8 @@ mod tests {
     /// Helper function to generate deterministic test data for WAL tests
     fn get_test_notification_data(
     ) -> eyre::Result<ExExNotification<rsil_sila_primitives::SilPrimitives>> {
-        use rsil_sila_primitives::Block;
         use rsil_primitives_traits::Block as _;
+        use rsil_sila_primitives::Block;
 
         // Create a block with a transaction
         let block = Block::default().seal_slow().try_recover()?;

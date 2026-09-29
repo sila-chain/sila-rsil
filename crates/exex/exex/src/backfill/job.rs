@@ -1,5 +1,5 @@
 use crate::StreamBackfillJob;
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use std::{
     collections::BTreeMap,
     ops::RangeInclusive,
@@ -8,8 +8,7 @@ use std::{
 
 use alloy_consensus::BlockHeader;
 use alloy_primitives::BlockNumber;
-use rsil_sila_primitives::Receipt;
-use rsil_evm::execute::{BlockExecutionError, BlockExecutionOutput, Executor};
+use rsil_savm::execute::{BlockExecutionError, BlockExecutionOutput, Executor};
 use rsil_node_api::{Block as _, BlockBody as _, NodePrimitives};
 use rsil_primitives_traits::{format_gas_throughput, RecoveredBlock, SignedTransaction};
 use rsil_provider::{
@@ -18,6 +17,7 @@ use rsil_provider::{
 };
 use rsil_prune_types::PruneModes;
 use rsil_revm::database::StateProviderDatabase;
+use rsil_sila_primitives::Receipt;
 use rsil_stages_api::ExecutionStageThresholds;
 use rsil_tracing::tracing::{debug, trace};
 
@@ -47,7 +47,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.range.is_empty() {
-            return None
+            return None;
         }
 
         Some(self.execute_range())
@@ -128,7 +128,7 @@ where
                 cumulative_gas,
                 batch_start.elapsed(),
             ) {
-                break
+                break;
             }
         }
 
@@ -250,7 +250,7 @@ mod tests {
     };
     use alloy_consensus::BlockHeader;
     use rsil_db_common::init::init_genesis;
-    use rsil_evm_sila::SilEvmConfig;
+    use rsil_savm_sila::SilEvmConfig;
     use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;
     use rsil_provider::{
         providers::BlockchainProvider, test_utils::create_test_provider_factory_with_chain_spec,

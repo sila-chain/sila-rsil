@@ -1,19 +1,19 @@
 //! API related to listening for network events.
 
-use rsil_eth_wire_types::{
+use rsil_sil_wire_types::{
     message::RequestPair, snap::SnapProtocolMessage, BlockAccessLists, BlockBodies, BlockHeaders,
-    Capabilities, Cells, DisconnectReason, SilMessage, SilNetworkPrimitives, SilVersion,
-    GetBlockAccessLists, GetBlockBodies, GetBlockHeaders, GetCells, GetNodeData,
-    GetPooledTransactions, GetReceipts, GetReceipts70, NetworkPrimitives, NodeData,
-    PooledTransactions, Receipts, Receipts69, Receipts70, UnifiedStatus,
+    Capabilities, Cells, DisconnectReason, GetBlockAccessLists, GetBlockBodies, GetBlockHeaders,
+    GetCells, GetNodeData, GetPooledTransactions, GetReceipts, GetReceipts70, NetworkPrimitives,
+    NodeData, PooledTransactions, Receipts, Receipts69, Receipts70, SilMessage,
+    SilNetworkPrimitives, SilVersion, UnifiedStatus,
 };
-use rsil_sila_forks::ForkId;
 use rsil_network_p2p::{
     error::{RequestError, RequestResult},
     snap::client::SnapResponse,
 };
 use rsil_network_peers::{NodeRecord, PeerId};
 use rsil_network_types::{PeerAddr, PeerKind};
+use rsil_sila_forks::ForkId;
 use rsil_tokio_util::EventStream;
 use std::{
     fmt,
@@ -321,7 +321,7 @@ impl<N: NetworkPrimitives> PeerRequest<N> {
 
     /// Returns true if this request is supported for the negotiated sil protocol version.
     #[inline]
-    pub fn is_supported_by_eth_version(&self, version: SilVersion) -> bool {
+    pub fn is_supported_by_sil_version(&self, version: SilVersion) -> bool {
         match self {
             Self::GetBlockAccessLists { .. } => version >= SilVersion::Sil71,
             Self::GetCells { .. } => version >= SilVersion::Sil72,
@@ -446,8 +446,8 @@ mod tests {
         let req: PeerRequest<SilNetworkPrimitives> =
             PeerRequest::GetBlockAccessLists { request: GetBlockAccessLists(vec![]), response: tx };
 
-        assert!(!req.is_supported_by_eth_version(SilVersion::Sil70));
-        assert!(req.is_supported_by_eth_version(SilVersion::Sil71));
+        assert!(!req.is_supported_by_sil_version(SilVersion::Sil70));
+        assert!(req.is_supported_by_sil_version(SilVersion::Sil71));
     }
 
     #[test]
@@ -456,7 +456,7 @@ mod tests {
         let req: PeerRequest<SilNetworkPrimitives> =
             PeerRequest::GetCells { request: GetCells::default(), response: tx };
 
-        assert!(!req.is_supported_by_eth_version(SilVersion::Sil71));
-        assert!(req.is_supported_by_eth_version(SilVersion::Sil72));
+        assert!(!req.is_supported_by_sil_version(SilVersion::Sil71));
+        assert!(req.is_supported_by_sil_version(SilVersion::Sil72));
     }
 }

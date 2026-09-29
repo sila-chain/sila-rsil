@@ -14,7 +14,7 @@ thiserror.workspace = true
 
 # alloy
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-primitives.workspace = true
 alloy-rlp = { workspace = true, features = ["derive"] }
 alloy-rpc-types-beacon = { workspace = true, features = ["ssz"] }
@@ -24,8 +24,8 @@ alloy-rpc-types-engine = { workspace = true, features = ["ssz"] }
 snap.workspace = true
 
 # ssz encoding and decoding
-sila_ssz.workspace = true
-sila_ssz_derive.workspace = true
+ethereum_ssz.workspace = true
+ethereum_ssz_derive.workspace = true
 sha2.workspace = true
 
 [dev-dependencies]

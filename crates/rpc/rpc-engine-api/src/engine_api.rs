@@ -643,9 +643,10 @@ where
             // > Client software MUST NOT return trailing null values if the request extends past the current latest known block.
             // truncate the end if it's greater than the last block
             if let Ok(best_block) = inner.provider.best_block_number()
-                && end > best_block {
-                    end = best_block;
-                }
+                && end > best_block
+            {
+                end = best_block;
+            }
 
             // Check if the requested range starts before the earliest available block due to pruning/expiry
             let earliest_block = inner.provider.earliest_block_number().unwrap_or(0);
@@ -918,9 +919,9 @@ where
             if let Err(err) = attr_validation_res {
                 let fcu_res = self.inner.beacon_consensus.fork_choice_updated(state, None).await?;
                 if fcu_res.is_invalid() || fcu_res.payload_status.is_syncing() {
-                    return Ok(fcu_res)
+                    return Ok(fcu_res);
                 }
-                return Err(err.into())
+                return Err(err.into());
             }
         }
 
@@ -934,7 +935,7 @@ where
 
     fn has_blobs(&self, versioned_hashes: Vec<B256>) -> EngineApiResult<Vec<bool>> {
         if versioned_hashes.len() > MAX_BLOB_LIMIT {
-            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() })
+            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() });
         }
 
         self.inner
@@ -965,7 +966,7 @@ where
         }
 
         if versioned_hashes.len() > MAX_BLOB_LIMIT {
-            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() })
+            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() });
         }
 
         self.inner
@@ -1009,7 +1010,7 @@ where
         }
 
         if versioned_hashes.len() > MAX_BLOB_LIMIT {
-            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() })
+            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() });
         }
 
         self.inner
@@ -1032,12 +1033,12 @@ where
         }
 
         if versioned_hashes.len() > MAX_BLOB_LIMIT {
-            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() })
+            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() });
         }
 
         // Spec requires returning `null` if syncing.
         if (*self.inner.is_syncing)() {
-            return Ok(None)
+            return Ok(None);
         }
 
         self.inner
@@ -1061,12 +1062,12 @@ where
         }
 
         if versioned_hashes.len() > MAX_BLOB_LIMIT {
-            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() })
+            return Err(EngineApiError::BlobRequestTooLarge { len: versioned_hashes.len() });
         }
 
         // Spec requires returning `null` if syncing.
         if (*self.inner.is_syncing)() {
-            return Ok(None)
+            return Ok(None);
         }
 
         self.inner
@@ -1610,14 +1611,14 @@ mod tests {
     use assert_matches::assert_matches;
     use rsil_chainspec::{ChainSpec, ChainSpecBuilder, SILA_MAINNET};
     use rsil_engine_primitives::{BeaconEngineMessage, OnForkChoiceUpdated};
-    use rsil_sila_engine_primitives::SilEngineTypes;
-    use rsil_sila_primitives::Block;
     use rsil_network_api::{
-        noop::NoopNetwork, SilProtocolInfo, NetworkError, NetworkInfo, NetworkStatus,
+        noop::NoopNetwork, NetworkError, NetworkInfo, NetworkStatus, SilProtocolInfo,
     };
     use rsil_node_sila::SilaEngineValidator;
     use rsil_payload_builder::test_utils::spawn_test_payload_service;
-    use rsil_provider::{test_utils::MockEthProvider, BalStoreHandle, InMemoryBalStore, RawBal};
+    use rsil_provider::{test_utils::MockSilProvider, BalStoreHandle, InMemoryBalStore, RawBal};
+    use rsil_sila_engine_primitives::SilEngineTypes;
+    use rsil_sila_primitives::Block;
     use rsil_tasks::Runtime;
     use rsil_transaction_pool::noop::NoopTransactionPool;
     use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver};
@@ -1625,7 +1626,7 @@ mod tests {
     fn setup_engine_api() -> (
         EngineApiTestHandle,
         EngineApi<
-            Arc<MockEthProvider>,
+            Arc<MockSilProvider>,
             SilEngineTypes,
             NoopTransactionPool,
             SilaEngineValidator,
@@ -1640,7 +1641,7 @@ mod tests {
         };
 
         let chain_spec: Arc<ChainSpec> = SILA_MAINNET.clone();
-        let provider = Arc::new(MockEthProvider::default());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service();
         let (to_engine, engine_rx) = unbounded_channel();
         let task_executor = Runtime::test();
@@ -1696,7 +1697,7 @@ mod tests {
     #[tokio::test]
     async fn get_payload_bodies_by_hash_v2_returns_block_access_list_from_store() {
         let bal_store = BalStoreHandle::new(InMemoryBalStore::default());
-        let mut provider = MockEthProvider::default();
+        let mut provider = MockSilProvider::default();
         provider.bal_store = bal_store.clone();
         let provider = Arc::new(provider);
 
@@ -1751,7 +1752,7 @@ mod tests {
     #[tokio::test]
     async fn get_payload_bodies_by_range_v2_returns_block_access_lists_from_store() {
         let bal_store = BalStoreHandle::new(InMemoryBalStore::default());
-        let mut provider = MockEthProvider::default();
+        let mut provider = MockSilProvider::default();
         provider.bal_store = bal_store.clone();
         let provider = Arc::new(provider);
 
@@ -1802,7 +1803,7 @@ mod tests {
     struct EngineApiTestHandle {
         #[allow(dead_code)]
         chain_spec: Arc<ChainSpec>,
-        provider: Arc<MockEthProvider>,
+        provider: Arc<MockSilProvider>,
         from_api: UnboundedReceiver<BeaconEngineMessage<SilEngineTypes>>,
     }
 
@@ -1824,8 +1825,8 @@ mod tests {
 
     #[tokio::test]
     async fn new_payload_v5_accepts_amsterdam_payloads() {
-        let chain_spec = Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+        let chain_spec = Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
 
@@ -1894,7 +1895,7 @@ mod tests {
             Ok(NetworkStatus {
                 client_version: "test".to_string(),
                 protocol_version: 5,
-                eth_protocol_info: SilProtocolInfo {
+                sil_protocol_info: SilProtocolInfo {
                     network: 1,
                     difficulty: None,
                     genesis: Default::default(),
@@ -1926,8 +1927,8 @@ mod tests {
     #[tokio::test]
     async fn get_blobs_v3_returns_null_when_syncing() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().osaka_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+            Arc::new(ChainSpecBuilder::sila_mainnet().osaka_activated().build());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, _engine_rx) = unbounded_channel::<BeaconEngineMessage<SilEngineTypes>>();
 
@@ -1957,8 +1958,8 @@ mod tests {
     #[tokio::test]
     async fn get_blobs_v4_returns_null_when_syncing() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+            Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, _engine_rx) = unbounded_channel::<BeaconEngineMessage<SilEngineTypes>>();
 
@@ -1988,8 +1989,8 @@ mod tests {
     #[tokio::test]
     async fn fcu_v4_updates_shared_cell_custody_before_forkchoice_result() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+            Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
         let network = NoopNetwork::default();
@@ -2054,8 +2055,8 @@ mod tests {
     #[tokio::test]
     async fn fcu_v4_updates_shared_cell_custody_when_payload_attrs_invalid() {
         let chain_spec: Arc<ChainSpec> =
-            Arc::new(ChainSpecBuilder::sila-mainnet().amsterdam_activated().build());
-        let provider = Arc::new(MockEthProvider::default());
+            Arc::new(ChainSpecBuilder::sila_mainnet().amsterdam_activated().build());
+        let provider = Arc::new(MockSilProvider::default());
         let payload_store = spawn_test_payload_service::<SilEngineTypes>();
         let (to_engine, mut engine_rx) = unbounded_channel();
         let network = NoopNetwork::default();
@@ -2323,8 +2324,8 @@ mod tests {
                 blocks
                     .iter()
                     .filter(|b| {
-                        !first_missing_range.contains(&b.number) &&
-                            !second_missing_range.contains(&b.number)
+                        !first_missing_range.contains(&b.number)
+                            && !second_missing_range.contains(&b.number)
                     })
                     .map(|b| (b.hash(), b.clone().into_block())),
             );
@@ -2353,8 +2354,8 @@ mod tests {
                 // ensure we still return trailing `None`s here because by-hash will not be aware
                 // of the missing block's number, and cannot compare it to the current best block
                 .map(|b| {
-                    if first_missing_range.contains(&b.number) ||
-                        second_missing_range.contains(&b.number)
+                    if first_missing_range.contains(&b.number)
+                        || second_missing_range.contains(&b.number)
                     {
                         None
                     } else {

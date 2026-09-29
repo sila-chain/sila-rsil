@@ -1,6 +1,6 @@
 use crate::segments::Segment;
 use alloy_primitives::BlockNumber;
-use rsil_codecs::Compact;
+use reth_codecs::Compact;
 use rsil_db_api::{cursor::DbCursorRO, table::Value, tables, transaction::DbTx};
 use rsil_primitives_traits::NodePrimitives;
 use rsil_provider::{BlockReader, DBProvider, StaticFileProviderFactory};

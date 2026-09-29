@@ -28,7 +28,7 @@ use rsil_sila::{
         ProviderFactory,
     },
     rpc::{
-        builder::{RsilRpcModule, RpcModuleBuilder, RpcServerConfig, TransportRpcModuleConfig},
+        builder::{RpcModuleBuilder, RpcServerConfig, RsilRpcModule, TransportRpcModuleConfig},
         SilApiBuilder,
     },
     tasks::Runtime,
@@ -48,7 +48,7 @@ async fn main() -> eyre::Result<()> {
         db_path.join("db").as_path(),
         DatabaseArguments::new(ClientVersion::default()),
     )?;
-    let spec = Arc::new(ChainSpecBuilder::sila-mainnet().build());
+    let spec = Arc::new(ChainSpecBuilder::sila_mainnet().build());
     let runtime = Runtime::test();
     let factory = ProviderFactory::<NodeTypesWithDBAdapter<SilaNode, DatabaseEnv>>::new(
         db.clone(),
@@ -72,18 +72,18 @@ async fn main() -> eyre::Result<()> {
         .with_evm_config(SilEvmConfig::new(spec.clone()))
         .with_consensus(SilBeaconConsensus::new(spec.clone()));
 
-    let eth_api = SilApiBuilder::new(
+    let sil_api = SilApiBuilder::new(
         provider.clone(),
         NoopTransactionPool::default(),
         NoopNetwork::default(),
-        SilEvmConfig::sila-mainnet(),
+        SilEvmConfig::sila_mainnet(),
     )
     .build();
 
     // Pick which namespaces to expose.
     let config = TransportRpcModuleConfig::default().with_http([RsilRpcModule::Sil]);
 
-    let mut server = rpc_builder.build(config, eth_api, Default::default());
+    let mut server = rpc_builder.build(config, sil_api, Default::default());
 
     // Add a custom rpc namespace
     let custom_rpc = MyRpcExt { provider };

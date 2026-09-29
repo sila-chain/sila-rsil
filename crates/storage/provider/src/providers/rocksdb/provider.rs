@@ -9,6 +9,12 @@ use itertools::Itertools;
 use metrics::Label;
 use parking_lot::Mutex;
 use rayon::prelude::*;
+use rocksdb::{
+    BlockBasedOptions, Cache, ColumnFamilyDescriptor, CompactionPri, DBCompressionType,
+    DBRawIteratorWithThreadMode, IteratorMode, OptimisticTransactionDB,
+    OptimisticTransactionOptions, Options, SnapshotWithThreadMode, Transaction,
+    WriteBatchWithTransaction, WriteBufferManager, WriteOptions, DB,
+};
 use rsil_chain_state::ExecutedBlock;
 use rsil_db_api::{
     database_metrics::DatabaseMetrics,
@@ -24,12 +30,6 @@ use rsil_prune_types::PruneMode;
 use rsil_storage_errors::{
     db::{DatabaseErrorInfo, DatabaseWriteError, DatabaseWriteOperation, LogLevel},
     provider::{ProviderError, ProviderResult},
-};
-use rocksdb::{
-    BlockBasedOptions, Cache, ColumnFamilyDescriptor, CompactionPri, DBCompressionType,
-    DBRawIteratorWithThreadMode, IteratorMode, OptimisticTransactionDB,
-    OptimisticTransactionOptions, Options, SnapshotWithThreadMode, Transaction,
-    WriteBatchWithTransaction, WriteBufferManager, WriteOptions, DB,
 };
 use std::{
     collections::BTreeMap,
@@ -665,8 +665,8 @@ impl Drop for RocksDBProviderInner {
                     tracing::warn!(target: "providers::rocksdb", ?e, "Failed to flush WAL on drop");
                 }
                 for cf_name in ROCKSDB_TABLES {
-                    if let Some(cf) = db.cf_handle(cf_name) &&
-                        let Err(e) = db.flush_cf(&cf)
+                    if let Some(cf) = db.cf_handle(cf_name)
+                        && let Err(e) = db.flush_cf(&cf)
                     {
                         tracing::warn!(target: "providers::rocksdb", cf = cf_name, ?e, "Failed to flush CF on drop");
                     }
@@ -1707,7 +1707,7 @@ impl<'db> RocksReadSnapshot<'db> {
             // later change. Without a previous shard for the same key, fall back to the existing
             // not-written / maybe-pruned result instead of routing into plain state.
             if found_block.is_none() && !has_prev {
-                return fallback()
+                return fallback();
             }
 
             !has_prev
@@ -1814,8 +1814,8 @@ impl<'a> RocksDBBatch<'a> {
     /// This is called after each `put` or `delete` operation to prevent unbounded memory growth.
     /// Returns immediately if auto-commit is disabled or threshold not reached.
     fn maybe_auto_commit(&mut self) -> ProviderResult<()> {
-        if let Some(threshold) = self.auto_commit_threshold &&
-            self.inner.size_in_bytes() >= threshold
+        if let Some(threshold) = self.auto_commit_threshold
+            && self.inner.size_in_bytes() >= threshold
         {
             tracing::debug!(
                 target: "providers::rocksdb",
@@ -2097,8 +2097,8 @@ impl<'a> RocksDBBatch<'a> {
             }
         }
 
-        if let Some((last_key, last_value)) = last_remaining &&
-            !is_sentinel(&last_key)
+        if let Some((last_key, last_value)) = last_remaining
+            && !is_sentinel(&last_key)
         {
             delete_shard(self, last_key)?;
             put_shard(self, create_sentinel(), &last_value)?;
@@ -2388,8 +2388,8 @@ impl<'a> RocksDBBatch<'a> {
         // Find the first shard that might contain blocks > keep_to.
         // A shard is affected if it's the sentinel (u64::MAX) or its highest_block_number > keep_to
         let boundary_idx = shards.iter().position(|(key, _)| {
-            key.sharded_key.highest_block_number == u64::MAX ||
-                key.sharded_key.highest_block_number > keep_to
+            key.sharded_key.highest_block_number == u64::MAX
+                || key.sharded_key.highest_block_number > keep_to
         });
 
         // Repair path: no shards affected means all blocks <= keep_to, just ensure sentinel exists

@@ -1,6 +1,7 @@
 //! Storage metadata models.
 
-use rsil_codecs::{add_arbitrary_tests, Compact};
+use bytes::{BufMut, BytesMut};
+use reth_codecs::{add_arbitrary_tests, Compact};
 use serde::{Deserialize, Serialize};
 
 /// Storage configuration settings for this node.
@@ -10,7 +11,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// These should be set during `init_genesis` or `init_db` depending on whether we want dictate
 /// behaviour of new or old nodes respectively.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Compact, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[cfg_attr(any(test, feature = "arbitrary"), derive(arbitrary::Arbitrary))]
 #[add_arbitrary_tests(compact)]
 pub struct StorageSettings {
@@ -24,6 +25,64 @@ pub struct StorageSettings {
     ///
     /// When `false`, uses v1/legacy layout (everything in MDBX).
     pub storage_v2: bool,
+}
+
+#[allow(dead_code, unreachable_pub)]
+mod storage_settings_flags {
+    use modular_bitfield::prelude::*;
+
+    #[bitfield]
+    #[derive(Clone, Copy, Debug, Default)]
+    pub(super) struct StorageSettingsFlags {
+        storage_v2_len: B1,
+        #[skip]
+        unused: B7,
+    }
+
+    impl StorageSettingsFlags {
+        pub(super) fn set_compact_len(&mut self, len: u8) {
+            self.set_storage_v2_len(len);
+        }
+
+        pub(super) fn compact_len(&self) -> u8 {
+            self.storage_v2_len()
+        }
+    }
+}
+use storage_settings_flags::StorageSettingsFlags;
+
+impl StorageSettings {
+    /// Used bytes by the compact bitfield.
+    pub const fn bitflag_encoded_bytes() -> usize {
+        1
+    }
+
+    /// Unused bits available in the compact bitfield.
+    pub const fn bitflag_unused_bits() -> usize {
+        7
+    }
+}
+
+impl Compact for StorageSettings {
+    fn to_compact<B>(&self, buf: &mut B) -> usize
+    where
+        B: BufMut + AsMut<[u8]>,
+    {
+        let mut payload = BytesMut::new();
+        let mut flags = StorageSettingsFlags::default();
+        flags.set_compact_len(self.storage_v2.to_compact(&mut payload) as u8);
+        buf.put_slice(&flags.into_bytes());
+        buf.put_slice(&payload);
+        1 + payload.len()
+    }
+
+    fn from_compact(buf: &[u8], _len: usize) -> (Self, &[u8]) {
+        let flags = StorageSettingsFlags::from_bytes([buf[0]]);
+        let payload = &buf[1..];
+        let (storage_v2, payload) =
+            bool::from_compact(payload, flags.compact_len() as usize);
+        (Self { storage_v2 }, payload)
+    }
 }
 
 impl StorageSettings {

@@ -9,13 +9,13 @@ use crate::{
 };
 use rsil_chainspec::SilChainSpec;
 use rsil_consensus::{noop::NoopConsensus, FullConsensus};
-use rsil_network::{types::NetPrimitivesFor, SilNetworkPrimitives, NetworkPrimitives};
+use rsil_network::{types::NetPrimitivesFor, NetworkPrimitives, SilNetworkPrimitives};
 use rsil_network_api::{noop::NoopNetwork, FullNetwork};
 use rsil_node_api::{BlockTy, BodyTy, HeaderTy, NodeTypes, PrimitivesTy, ReceiptTy, TxTy};
 use rsil_payload_builder::PayloadBuilderHandle;
 use rsil_transaction_pool::{
-    noop::NoopTransactionPool, SilPoolTransaction, SilPooledTransaction, PoolPooledTx,
-    PoolTransaction, TransactionPool,
+    noop::NoopTransactionPool, PoolPooledTx, PoolTransaction, SilPoolTransaction,
+    SilPooledTransaction, TransactionPool,
 };
 use std::{future::Future, marker::PhantomData};
 

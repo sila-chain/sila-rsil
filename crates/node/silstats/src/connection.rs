@@ -1,4 +1,4 @@
-/// Abstractions for managing `WebSocket` connections in the ethstats service.
+/// Abstractions for managing `WebSocket` connections in the silstats service.
 use crate::error::ConnectionError;
 use futures_util::{
     stream::{SplitSink, SplitStream},

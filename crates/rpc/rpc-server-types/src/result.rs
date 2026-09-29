@@ -2,7 +2,7 @@
 
 use std::fmt;
 
-use alloy_eips::BlockId;
+use alloy_sips::BlockId;
 use alloy_rpc_types_engine::PayloadError;
 use jsonrpsee_core::RpcResult;
 use rsil_errors::ConsensusError;

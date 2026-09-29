@@ -6,7 +6,7 @@ use alloy_rlp::{Decodable, Encodable, Error as RlpError};
 use bytes::BufMut;
 use core::{fmt, str::FromStr};
 use derive_more::Display;
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 
 /// Error thrown when failed to parse a valid [`SilVersion`].
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
@@ -53,47 +53,47 @@ impl SilVersion {
     pub const ALL_VERSIONS: &'static [Self] = &[Self::Sil69, Self::Sil68, Self::Sil67, Self::Sil66];
 
     /// Returns true if the version is sil/66
-    pub const fn is_eth66(&self) -> bool {
+    pub const fn is_sil66(&self) -> bool {
         matches!(self, Self::Sil66)
     }
 
     /// Returns true if the version is sil/67
-    pub const fn is_eth67(&self) -> bool {
+    pub const fn is_sil67(&self) -> bool {
         matches!(self, Self::Sil67)
     }
 
     /// Returns true if the version is sil/68
-    pub const fn is_eth68(&self) -> bool {
+    pub const fn is_sil68(&self) -> bool {
         matches!(self, Self::Sil68)
     }
 
     /// Returns true if the version carries sil/68 transaction announcement metadata.
-    pub const fn has_eth68_metadata(&self) -> bool {
+    pub const fn has_sil68_metadata(&self) -> bool {
         matches!(self, Self::Sil68 | Self::Sil69 | Self::Sil70 | Self::Sil71 | Self::Sil72)
     }
 
     /// Returns true if the version is sil/69
-    pub const fn is_eth69(&self) -> bool {
+    pub const fn is_sil69(&self) -> bool {
         matches!(self, Self::Sil69)
     }
 
     /// Returns true if the version is sil/70
-    pub const fn is_eth70(&self) -> bool {
+    pub const fn is_sil70(&self) -> bool {
         matches!(self, Self::Sil70)
     }
 
     /// Returns true if the version is sil/71
-    pub const fn is_eth71(&self) -> bool {
+    pub const fn is_sil71(&self) -> bool {
         matches!(self, Self::Sil71)
     }
 
     /// Returns true if the version is sil/72
-    pub const fn is_eth72(&self) -> bool {
+    pub const fn is_sil72(&self) -> bool {
         matches!(self, Self::Sil72)
     }
 
     /// Returns true if the version is sil/69 or newer.
-    pub const fn is_eth69_or_newer(&self) -> bool {
+    pub const fn is_sil69_or_newer(&self) -> bool {
         matches!(self, Self::Sil69 | Self::Sil70 | Self::Sil71 | Self::Sil72)
     }
 }
@@ -122,7 +122,7 @@ impl Decodable for SilVersion {
 ///
 /// # Example
 /// ```
-/// use rsil_eth_wire_types::SilVersion;
+/// use rsil_sil_wire_types::SilVersion;
 ///
 /// let version = SilVersion::try_from("67").unwrap();
 /// assert_eq!(version, SilVersion::Sil67);
@@ -149,7 +149,7 @@ impl TryFrom<&str> for SilVersion {
 ///
 /// # Example
 /// ```
-/// use rsil_eth_wire_types::SilVersion;
+/// use rsil_sil_wire_types::SilVersion;
 ///
 /// let version = SilVersion::try_from(67).unwrap();
 /// assert_eq!(version, SilVersion::Sil67);
@@ -250,7 +250,7 @@ mod tests {
     use bytes::BytesMut;
 
     #[test]
-    fn test_eth_version_try_from_str() {
+    fn test_sil_version_try_from_str() {
         assert_eq!(SilVersion::Sil66, SilVersion::try_from("66").unwrap());
         assert_eq!(SilVersion::Sil67, SilVersion::try_from("67").unwrap());
         assert_eq!(SilVersion::Sil68, SilVersion::try_from("68").unwrap());
@@ -261,7 +261,7 @@ mod tests {
     }
 
     #[test]
-    fn test_eth_version_from_str() {
+    fn test_sil_version_from_str() {
         assert_eq!(SilVersion::Sil66, "66".parse().unwrap());
         assert_eq!(SilVersion::Sil67, "67".parse().unwrap());
         assert_eq!(SilVersion::Sil68, "68".parse().unwrap());
@@ -272,18 +272,18 @@ mod tests {
     }
 
     #[test]
-    fn test_has_eth68_metadata() {
-        assert!(!SilVersion::Sil66.has_eth68_metadata());
-        assert!(!SilVersion::Sil67.has_eth68_metadata());
-        assert!(SilVersion::Sil68.has_eth68_metadata());
-        assert!(SilVersion::Sil69.has_eth68_metadata());
-        assert!(SilVersion::Sil70.has_eth68_metadata());
-        assert!(SilVersion::Sil71.has_eth68_metadata());
-        assert!(SilVersion::Sil72.has_eth68_metadata());
+    fn test_has_sil68_metadata() {
+        assert!(!SilVersion::Sil66.has_sil68_metadata());
+        assert!(!SilVersion::Sil67.has_sil68_metadata());
+        assert!(SilVersion::Sil68.has_sil68_metadata());
+        assert!(SilVersion::Sil69.has_sil68_metadata());
+        assert!(SilVersion::Sil70.has_sil68_metadata());
+        assert!(SilVersion::Sil71.has_sil68_metadata());
+        assert!(SilVersion::Sil72.has_sil68_metadata());
     }
 
     #[test]
-    fn test_eth_version_rlp_encode() {
+    fn test_sil_version_rlp_encode() {
         let versions = [
             SilVersion::Sil66,
             SilVersion::Sil67,
@@ -303,7 +303,7 @@ mod tests {
         }
     }
     #[test]
-    fn test_eth_version_rlp_decode() {
+    fn test_sil_version_rlp_decode() {
         let test_cases = [
             (66_u8, Ok(SilVersion::Sil66)),
             (67_u8, Ok(SilVersion::Sil67)),

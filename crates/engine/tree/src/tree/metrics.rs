@@ -2,7 +2,7 @@ use crate::tree::{error::InsertBlockFatalError, TreeOutcome};
 use alloy_rpc_types_engine::{PayloadStatus, PayloadStatusEnum};
 use rsil_engine_primitives::{ForkchoiceStatus, OnForkChoiceUpdated};
 use rsil_errors::ProviderError;
-use rsil_evm::metrics::ExecutorMetrics;
+use rsil_savm::metrics::ExecutorMetrics;
 use rsil_execution_types::BlockExecutionOutput;
 use rsil_metrics::{
     metrics::{Counter, Gauge, Histogram},
@@ -565,11 +565,11 @@ pub(crate) struct BlockBufferMetrics {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloy_eips::sip7685::Requests;
+    use alloy_sips::eip7685::Requests;
     use metrics_util::debugging::{DebuggingRecorder, Snapshotter};
-    use rsil_sila_primitives::Receipt;
     use rsil_execution_types::BlockExecutionResult;
     use rsil_revm::db::BundleState;
+    use rsil_sila_primitives::Receipt;
 
     fn setup_test_recorder() -> Snapshotter {
         let recorder = DebuggingRecorder::new();

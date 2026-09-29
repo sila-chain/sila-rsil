@@ -4,11 +4,11 @@ use alloy_consensus::{
     constants::{EMPTY_WITHDRAWALS, ETH_TO_WEI},
     Header, TxEip1559, TxReceipt,
 };
-use alloy_eips::sip1559::INITIAL_BASE_FEE;
+use alloy_sips::eip1559::INITIAL_BASE_FEE;
 use alloy_genesis::{Genesis, GenesisAccount};
 use alloy_primitives::{bytes, keccak256, Address, Bytes, TxKind, B256, U256};
 use rsil_chainspec::{
-    ChainSpecBuilder, ChainSpecProvider, SilaHardfork, ForkCondition, SILA_MAINNET,
+    ChainSpecBuilder, ChainSpecProvider, ForkCondition, SilaHardfork, SILA_MAINNET,
 };
 use rsil_config::config::StageConfig;
 use rsil_consensus::noop::NoopConsensus;
@@ -17,9 +17,8 @@ use rsil_downloaders::{
     bodies::bodies::BodiesDownloaderBuilder, file_client::FileClient,
     headers::reverse_headers::ReverseHeadersDownloaderBuilder,
 };
-use rsil_sila_primitives::{Block, BlockBody, Transaction, TransactionSigned};
-use rsil_evm::{execute::Executor, ConfigureEvm};
-use rsil_evm_sila::SilEvmConfig;
+use rsil_savm::{execute::Executor, ConfigureEvm};
+use rsil_savm_sila::SilEvmConfig;
 use rsil_libmdbx::{Environment, EnvironmentFlags, Mode};
 use rsil_network_p2p::{
     bodies::downloader::BodyDownloader,
@@ -36,6 +35,7 @@ use rsil_provider::{
 };
 use rsil_prune_types::PruneModes;
 use rsil_revm::database::StateProviderDatabase;
+use rsil_sila_primitives::{Block, BlockBody, Transaction, TransactionSigned};
 use rsil_stages::{
     sets::{ExecutionStages, HashingStages, OnlineStages},
     stages::FinishStage,
@@ -118,7 +118,10 @@ async fn test_pipeline_v2_selfdestruct_changesets_use_plain_slots() -> eyre::Res
     // Phase 2 (pre-SilaCancun selfdestruct): changeset keys for destroyed account must be plain slots.
     let provider = pipeline_provider_factory.provider()?;
     assert_eq!(provider.last_block_number()?, 2, "pipeline should sync block 2");
-    assert!(preimage_path.exists(), "preimage dir should still exist after second pre-SilaCancun run");
+    assert!(
+        preimage_path.exists(),
+        "preimage dir should still exist after second pre-SilaCancun run"
+    );
     assert_preimage_rows(&preimage_path, &expected_slots)?;
     assert_destroyed_changeset_entries(&provider, scenario.selfdestruct_contract)?;
 
@@ -136,7 +139,10 @@ async fn test_pipeline_v2_selfdestruct_changesets_use_plain_slots() -> eyre::Res
     // Phase 3 (post-SilaCancun): execution path removes the now-unneeded preimage DB directory.
     let provider = pipeline_provider_factory.provider()?;
     assert_eq!(provider.last_block_number()?, 3, "pipeline should sync block 3");
-    assert!(!preimage_path.exists(), "preimage dir should be removed after post-SilaCancun execution");
+    assert!(
+        !preimage_path.exists(),
+        "preimage dir should be removed after post-SilaCancun execution"
+    );
 
     Ok(())
 }
@@ -493,7 +499,7 @@ fn setup_reverted_slot_selfdestruct_scenario() -> eyre::Result<RevertedSlotSelfd
                 ..SILA_MAINNET.genesis.clone()
             })
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(30))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(30))
             .build(),
     );
 
@@ -582,7 +588,7 @@ fn setup_same_address_double_wipe_scenario() -> eyre::Result<SameAddressDoubleWi
                 ..SILA_MAINNET.genesis.clone()
             })
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(30))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(30))
             .build(),
     );
 
@@ -678,7 +684,7 @@ fn setup_same_address_recreate_and_write_same_block_then_wipe_scenario(
                 ..SILA_MAINNET.genesis.clone()
             })
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(30))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(30))
             .build(),
     );
 
@@ -829,7 +835,7 @@ fn setup_intra_block_and_intra_tx_selfdestruct_scenario(
                 ..SILA_MAINNET.genesis.clone()
             })
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(30))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(30))
             .build(),
     );
 
@@ -1024,7 +1030,7 @@ fn build_selfdestruct_chain_spec(
                 ..SILA_MAINNET.genesis.clone()
             })
             .shanghai_activated()
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(30))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(30))
             .build(),
     )
 }

@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::{
-    validate::ValidTransaction, SilPooledTransaction, PoolTransaction, TransactionOrigin,
+    validate::ValidTransaction, PoolTransaction, SilPooledTransaction, TransactionOrigin,
     TransactionValidationOutcome, TransactionValidator,
 };
 use rsil_sila_primitives::Block;

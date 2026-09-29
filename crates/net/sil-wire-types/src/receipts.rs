@@ -5,7 +5,7 @@ use alloy_consensus::{ReceiptWithBloom, RlpDecodableReceipt, RlpEncodableReceipt
 use alloy_primitives::B256;
 use alloy_rlp::{RlpDecodableWrapper, RlpEncodableWrapper};
 use derive_more::{Deref, IntoIterator};
-use rsil_codecs_derive::add_arbitrary_tests;
+use reth_codecs_derive::add_arbitrary_tests;
 use rsil_sila_primitives::Receipt;
 
 /// A request for transaction receipts from the given block hashes.
@@ -202,7 +202,7 @@ mod tests {
     #[test]
     fn roundtrip_eip1559() {
         let receipts = Receipts(vec![vec![ReceiptWithBloom {
-            receipt: Receipt { tx_type: TxType::Sip1559, ..Default::default() },
+            receipt: Receipt { tx_type: TxType::Eip1559, ..Default::default() },
             logs_bloom: Default::default(),
         }]]);
 
@@ -331,7 +331,7 @@ mod tests {
         assert_eq!(
             request.message.0[0][0],
             Receipt {
-                tx_type: TxType::Sip1559,
+                tx_type: TxType::Eip1559,
                 success: true,
                 cumulative_gas_used: 26000,
                 logs: vec![],

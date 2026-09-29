@@ -3,7 +3,7 @@
 //! This module tests the scenario where a node receives invalid payloads (e.g., with modified
 //! state roots) before receiving valid ones, ensuring the node can recover and continue.
 
-use crate::utils::eth_payload_attributes;
+use crate::utils::sil_payload_attributes;
 use alloy_primitives::B256;
 use alloy_rpc_types_engine::{ExecutionPayloadV3, PayloadStatusEnum};
 use rand::{rngs::StdRng, Rng, SeedableRng};
@@ -42,7 +42,7 @@ async fn can_handle_invalid_payload_then_valid() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -159,7 +159,7 @@ async fn can_handle_multiple_invalid_payloads() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 
@@ -260,7 +260,7 @@ async fn can_handle_invalid_payload_with_transactions() -> eyre::Result<()> {
         chain_spec.clone(),
         false,
         Default::default(),
-        eth_payload_attributes,
+        sil_payload_attributes,
     )
     .await?;
 

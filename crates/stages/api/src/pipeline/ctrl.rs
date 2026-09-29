@@ -1,4 +1,4 @@
-use alloy_eips::sip1898::BlockWithParent;
+use alloy_eips::eip1898::BlockWithParent;
 use alloy_primitives::BlockNumber;
 
 /// Determines the control flow during pipeline execution.

@@ -3,12 +3,13 @@
 //! This demonstrates how to build a `ChainSpec` with custom hardforks,
 //! implementing required traits for integration with Rsil's chain management.
 
-use alloy_eips::sip7840::BlobParams;
+use alloy_hardforks::{EthereumHardfork, EthereumHardforks};
+use alloy_sips::eip7840::BlobParams;
 use alloy_genesis::Genesis;
 use alloy_primitives::{B256, U256};
 use rsil_chainspec::{
-    hardfork, BaseFeeParams, Chain, ChainSpec, DepositContract, SilChainSpec, SilaHardfork,
-    SilaHardforks, ForkCondition, Hardfork, Hardforks,
+    hardfork, BaseFeeParams, Chain, ChainSpec, DepositContract, ForkCondition, Hardfork, Hardforks,
+    SilChainSpec,
 };
 use rsil_network_peers::NodeRecord;
 use serde::{Deserialize, Serialize};
@@ -141,9 +142,9 @@ impl SilChainSpec for CustomChainSpec {
     }
 }
 
-// Implement `SilaHardforks` to support Sila hardfork queries.
-impl SilaHardforks for CustomChainSpec {
-    fn sila_fork_activation(&self, fork: SilaHardfork) -> ForkCondition {
-        self.inner.sila_fork_activation(fork)
+// Implement the external hardfork authority required by the wrapped chain specification.
+impl EthereumHardforks for CustomChainSpec {
+    fn ethereum_fork_activation(&self, fork: EthereumHardfork) -> ForkCondition {
+        self.inner.ethereum_fork_activation(fork)
     }
 }

@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
     name: run kurtosis
-    runs-on: ${{ github.repository == 'sila-chain/sila-rsil' && 'depot-ubuntu-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     needs:

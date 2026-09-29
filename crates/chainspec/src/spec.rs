@@ -1,13 +1,13 @@
-pub use alloy_eips::sip1559::BaseFeeParams;
-use alloy_evm::sil::spec::SilExecutorSpec;
+use alloy_savm::eth::spec::EthExecutorSpec as SilExecutorSpec;
+pub use alloy_sips::eip1559::BaseFeeParams;
 
 use crate::{
     constants::{MAINNET_DEPOSIT_CONTRACT, MAINNET_PRUNE_DELETE_LIMIT},
-    sila::SEPOLIA_PARIS_TTD,
-    holesky, hoodi, sila-mainnet,
-    sila-mainnet::{MAINNET_PARIS_BLOCK, MAINNET_PARIS_TTD},
-    sepolia,
+    holesky, hoodi, sepolia,
     sepolia::SEPOLIA_PARIS_BLOCK,
+    sila::SEPOLIA_PARIS_TTD,
+    sila_mainnet,
+    sila_mainnet::{MAINNET_PARIS_BLOCK, MAINNET_PARIS_TTD},
     SilChainSpec,
 };
 use alloc::{
@@ -26,21 +26,21 @@ use alloy_consensus::{
     },
     Header,
 };
-use alloy_eips::{
-    sip1559::INITIAL_BASE_FEE, sip7685::EMPTY_REQUESTS_HASH, sip7840::BlobParams,
-    sip7892::BlobScheduleBlobParams, sip7928::EMPTY_BLOCK_ACCESS_LIST_HASH,
-};
 use alloy_genesis::{ChainConfig, Genesis};
 use alloy_primitives::{address, b256, Address, BlockNumber, B256, U256};
+use alloy_sips::{
+    eip1559::INITIAL_BASE_FEE, eip7685::EMPTY_REQUESTS_HASH, eip7840::BlobParams,
+    eip7892::BlobScheduleBlobParams, eip7928::EMPTY_BLOCK_ACCESS_LIST_HASH,
+};
 use alloy_trie::root::state_root_ref_unhashed;
 use core::fmt::Debug;
 use derive_more::From;
-use rsil_sila_forks::{
-    ChainHardforks, DisplayHardforks, SilaHardfork, SilaHardforks, ForkCondition,
-    ForkFilter, ForkFilterKey, ForkHash, ForkId, Hardfork, Hardforks, Head, DEV_HARDFORKS,
-};
 use rsil_network_peers::{holesky_nodes, hoodi_nodes, mainnet_nodes, sepolia_nodes, NodeRecord};
 use rsil_primitives_traits::{sync::LazyLock, BlockHeader, SealedHeader};
+use rsil_sila_forks::{
+    ChainHardforks, DisplayHardforks, EthereumHardforks, ForkCondition, ForkFilter, ForkFilterKey,
+    ForkHash, ForkId, Hardfork, Hardforks, Head, SilaHardfork, DEV_HARDFORKS,
+};
 
 /// Helper method building a [`Header`] given [`Genesis`] and [`ChainHardforks`].
 pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Header {
@@ -53,7 +53,7 @@ pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Hea
     // If shanghai is activated, initialize the header with an empty withdrawals hash, and
     // empty withdrawals list.
     let withdrawals_root = hardforks
-        .fork(SilaHardfork::SilaShanghai)
+        .fork(SilaHardfork::Shanghai)
         .active_at_timestamp(genesis.timestamp)
         .then_some(EMPTY_WITHDRAWALS);
 
@@ -62,7 +62,7 @@ pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Hea
     // * blob gas used to provided genesis or 0x0
     // * excess blob gas to provided genesis or 0x0
     let (parent_beacon_block_root, blob_gas_used, excess_blob_gas) =
-        if hardforks.fork(SilaHardfork::SilaCancun).active_at_timestamp(genesis.timestamp) {
+        if hardforks.fork(SilaHardfork::Cancun).active_at_timestamp(genesis.timestamp) {
             let blob_gas_used = genesis.blob_gas_used.unwrap_or(0);
             let excess_blob_gas = genesis.excess_blob_gas.unwrap_or(0);
             (Some(B256::ZERO), Some(blob_gas_used), Some(excess_blob_gas))
@@ -72,21 +72,19 @@ pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Hea
 
     // If SilaPrague is activated at genesis we set requests root to an empty trie root.
     let requests_hash = hardforks
-        .fork(SilaHardfork::SilaPrague)
+        .fork(SilaHardfork::Prague)
         .active_at_timestamp(genesis.timestamp)
         .then_some(EMPTY_REQUESTS_HASH);
 
     // If SilaAmsterdam is activated at genesis we set block access list hash to an empty bal hash
     let block_access_list_hash = hardforks
-        .fork(SilaHardfork::SilaAmsterdam)
+        .fork(SilaHardfork::Amsterdam)
         .active_at_timestamp(genesis.timestamp)
         .then_some(EMPTY_BLOCK_ACCESS_LIST_HASH);
 
     // If SilaAmsterdam is activated at genesis we set slot number to 0
-    let slot_number = hardforks
-        .fork(SilaHardfork::SilaAmsterdam)
-        .active_at_timestamp(genesis.timestamp)
-        .then_some(0);
+    let slot_number =
+        hardforks.fork(SilaHardfork::Amsterdam).active_at_timestamp(genesis.timestamp).then_some(0);
 
     Header {
         number: genesis.number.unwrap_or_default(),
@@ -115,9 +113,9 @@ pub fn make_genesis_header(genesis: &Genesis, hardforks: &ChainHardforks) -> Hea
 pub static SILA_MAINNET: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     let genesis = serde_json::from_str(include_str!("../res/genesis/sila-mainnet.json"))
         .expect("Can't deserialize SilaMainnet genesis json");
-    let hardforks = SilaHardfork::sila-mainnet().into();
+    let hardforks = SilaHardfork::mainnet().into();
     let mut spec = ChainSpec {
-        chain: Chain::sila-mainnet(),
+        chain: Chain::mainnet(),
         genesis_header: SealedHeader::new(
             make_genesis_header(&genesis, &hardforks),
             MAINNET_GENESIS_HASH,
@@ -131,18 +129,18 @@ pub static SILA_MAINNET: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
         hardforks,
         // https://silascan.io/tx/0xe75fb554e433e03763a1560646ee22dcb74e5274b34c5ad644e7c0f619a7e1d0
         deposit_contract: Some(MAINNET_DEPOSIT_CONTRACT),
-        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
+        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::ethereum()),
         prune_delete_limit: MAINNET_PRUNE_DELETE_LIMIT,
         blob_params: BlobScheduleBlobParams::default().with_scheduled([
-            (sila-mainnet::MAINNET_BPO1_TIMESTAMP, BlobParams::bpo1()),
-            (sila-mainnet::MAINNET_BPO2_TIMESTAMP, BlobParams::bpo2()),
+            (sila_mainnet::MAINNET_BPO1_TIMESTAMP, BlobParams::bpo1()),
+            (sila_mainnet::MAINNET_BPO2_TIMESTAMP, BlobParams::bpo2()),
         ]),
     };
     spec.genesis.config.dao_fork_support = true;
     spec.into()
 });
 
-/// The SilaSepolia spec
+/// The `SilaSepolia` spec
 pub static SEPOLIA: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     let genesis = serde_json::from_str(include_str!("../res/genesis/sepolia.json"))
         .expect("Can't deserialize SilaSepolia genesis json");
@@ -166,7 +164,7 @@ pub static SEPOLIA: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
             1273020,
             b256!("0x649bbc62d0e31342afea4e5cd82d4049e7e1ee912fc0889aa790803be39038c5"),
         )),
-        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
+        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::ethereum()),
         prune_delete_limit: 10000,
         blob_params: BlobScheduleBlobParams::default().with_scheduled([
             (sepolia::SEPOLIA_BPO1_TIMESTAMP, BlobParams::bpo1()),
@@ -177,7 +175,7 @@ pub static SEPOLIA: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     spec.into()
 });
 
-/// The SilaHolesky spec
+/// The `SilaHolesky` spec
 pub static HOLESKY: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
     let genesis = serde_json::from_str(include_str!("../res/genesis/holesky.json"))
         .expect("Can't deserialize SilaHolesky genesis json");
@@ -196,7 +194,7 @@ pub static HOLESKY: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
             0,
             b256!("0x649bbc62d0e31342afea4e5cd82d4049e7e1ee912fc0889aa790803be39038c5"),
         )),
-        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
+        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::ethereum()),
         prune_delete_limit: 10000,
         blob_params: BlobScheduleBlobParams::default().with_scheduled([
             (holesky::HOLESKY_BPO1_TIMESTAMP, BlobParams::bpo1()),
@@ -228,7 +226,7 @@ pub static HOODI: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
             0,
             b256!("0x649bbc62d0e31342afea4e5cd82d4049e7e1ee912fc0889aa790803be39038c5"),
         )),
-        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
+        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::ethereum()),
         prune_delete_limit: 10000,
         blob_params: BlobScheduleBlobParams::default().with_scheduled([
             (hoodi::HOODI_BPO1_TIMESTAMP, BlobParams::bpo1()),
@@ -253,7 +251,7 @@ pub static DEV: LazyLock<Arc<ChainSpec>> = LazyLock::new(|| {
         genesis,
         paris_block_and_final_difficulty: Some((0, U256::from(0))),
         hardforks,
-        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
+        base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::ethereum()),
         deposit_contract: None, // TODO: do we even have?
         ..Default::default()
     }
@@ -281,7 +279,7 @@ pub fn create_chain_config(
 
     // Extract TTD from SilaParis fork
     let (terminal_total_difficulty, terminal_total_difficulty_passed) =
-        match hardforks.fork(SilaHardfork::SilaParis) {
+        match hardforks.fork(SilaHardfork::Paris) {
             ForkCondition::TTD { total_difficulty, .. } => (Some(total_difficulty), true),
             _ => (None, false),
         };
@@ -294,9 +292,9 @@ pub fn create_chain_config(
         homestead_block: block_num(SilaHardfork::Homestead),
         dao_fork_block: block_num(SilaHardfork::Dao),
         dao_fork_support,
-        sip150_block: block_num(SilaHardfork::Tangerine),
-        sip155_block: block_num(SilaHardfork::SpuriousDragon),
-        sip158_block: block_num(SilaHardfork::SpuriousDragon),
+        eip150_block: block_num(SilaHardfork::Tangerine),
+        eip155_block: block_num(SilaHardfork::SpuriousDragon),
+        eip158_block: block_num(SilaHardfork::SpuriousDragon),
         byzantium_block: block_num(SilaHardfork::Byzantium),
         constantinople_block: block_num(SilaHardfork::Constantinople),
         petersburg_block: block_num(SilaHardfork::Petersburg),
@@ -307,11 +305,11 @@ pub fn create_chain_config(
         arrow_glacier_block: block_num(SilaHardfork::ArrowGlacier),
         gray_glacier_block: block_num(SilaHardfork::GrayGlacier),
         merge_netsplit_block: None,
-        shanghai_time: timestamp(SilaHardfork::SilaShanghai),
-        cancun_time: timestamp(SilaHardfork::SilaCancun),
-        prague_time: timestamp(SilaHardfork::SilaPrague),
-        osaka_time: timestamp(SilaHardfork::SilaOsaka),
-        amsterdam_time: timestamp(SilaHardfork::SilaAmsterdam),
+        shanghai_time: timestamp(SilaHardfork::Shanghai),
+        cancun_time: timestamp(SilaHardfork::Cancun),
+        prague_time: timestamp(SilaHardfork::Prague),
+        osaka_time: timestamp(SilaHardfork::Osaka),
+        amsterdam_time: timestamp(SilaHardfork::Amsterdam),
         bpo1_time: timestamp(SilaHardfork::Bpo1),
         bpo2_time: timestamp(SilaHardfork::Bpo2),
         bpo3_time: timestamp(SilaHardfork::Bpo3),
@@ -327,10 +325,10 @@ pub fn create_chain_config(
 
 /// Returns a [`ChainConfig`] for the current Sila sila-mainnet chain.
 pub fn mainnet_chain_config() -> ChainConfig {
-    let hardforks: ChainHardforks = SilaHardfork::sila-mainnet().into();
+    let hardforks: ChainHardforks = SilaHardfork::mainnet().into();
     let blob_schedule = blob_params_to_schedule(&SILA_MAINNET.blob_params, &hardforks);
     create_chain_config(
-        Some(Chain::sila-mainnet()),
+        Some(Chain::mainnet()),
         &hardforks,
         Some(MAINNET_DEPOSIT_CONTRACT.address),
         blob_schedule,
@@ -351,8 +349,8 @@ pub fn blob_params_to_schedule(
     let bpo_forks = SilaHardfork::bpo_variants();
     for (timestamp, blob_params) in &params.scheduled {
         for bpo_fork in bpo_forks {
-            if let ForkCondition::Timestamp(fork_ts) = hardforks.fork(bpo_fork) &&
-                fork_ts == *timestamp
+            if let ForkCondition::Timestamp(fork_ts) = hardforks.fork(bpo_fork)
+                && fork_ts == *timestamp
             {
                 schedule.insert(bpo_fork.name().to_lowercase(), *blob_params);
                 break;
@@ -376,7 +374,7 @@ pub enum BaseFeeParamsKind {
 
 impl Default for BaseFeeParamsKind {
     fn default() -> Self {
-        BaseFeeParams::sila().into()
+        BaseFeeParams::ethereum().into()
     }
 }
 
@@ -423,7 +421,7 @@ pub struct ChainSpec<H: BlockHeader = Header> {
     /// The header corresponding to the genesis block.
     pub genesis_header: SealedHeader<H>,
 
-    /// The block at which [`SilaHardfork::SilaParis`] was activated and the final difficulty at
+    /// The block at which [`SilaHardfork::Paris`] was activated and the final difficulty at
     /// this block.
     pub paris_block_and_final_difficulty: Option<(u64, U256)>,
 
@@ -452,7 +450,7 @@ impl<H: BlockHeader> Default for ChainSpec<H> {
             paris_block_and_final_difficulty: Default::default(),
             hardforks: Default::default(),
             deposit_contract: Default::default(),
-            base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::sila()),
+            base_fee_params: BaseFeeParamsKind::Constant(BaseFeeParams::ethereum()),
             prune_delete_limit: MAINNET_PRUNE_DELETE_LIMIT,
             blob_params: Default::default(),
         }
@@ -473,9 +471,9 @@ impl ChainSpec {
     /// Map a chain ID to a known chain spec, if available.
     pub fn from_chain_id(chain_id: u64) -> Option<Arc<Self>> {
         match NamedChain::try_from(chain_id).ok()? {
-            NamedChain::SilaMainnet => Some(SILA_MAINNET.clone()),
-            NamedChain::SilaSepolia => Some(SEPOLIA.clone()),
-            NamedChain::SilaHolesky => Some(HOLESKY.clone()),
+            NamedChain::Mainnet => Some(SILA_MAINNET.clone()),
+            NamedChain::Sepolia => Some(SEPOLIA.clone()),
+            NamedChain::Holesky => Some(HOLESKY.clone()),
             NamedChain::Hoodi => Some(HOODI.clone()),
             NamedChain::Dev => Some(DEV.clone()),
             _ => None,
@@ -492,7 +490,7 @@ impl<H: BlockHeader> ChainSpec<H> {
     /// Returns `true` if this chain contains Sila configuration.
     #[inline]
     pub const fn is_sila(&self) -> bool {
-        self.chain.is_sila()
+        self.chain.is_ethereum()
     }
 
     /// Returns `true` if this chain is Optimism sila-mainnet.
@@ -544,11 +542,11 @@ impl<H: BlockHeader> ChainSpec<H> {
                 // given timestamp.
                 for (fork, params) in bf_params.iter().rev() {
                     if self.hardforks.is_fork_active_at_timestamp(fork.clone(), timestamp) {
-                        return *params
+                        return *params;
                     }
                 }
 
-                bf_params.first().map(|(_, params)| *params).unwrap_or_else(BaseFeeParams::sila)
+                bf_params.first().map(|(_, params)| *params).unwrap_or_else(BaseFeeParams::ethereum)
             }
         }
     }
@@ -563,7 +561,7 @@ impl<H: BlockHeader> ChainSpec<H> {
         self.genesis.timestamp
     }
 
-    /// Returns the final total difficulty if the SilaParis hardfork is known.
+    /// Returns the final total difficulty if the `SilaParis` hardfork is known.
     pub fn get_final_paris_total_difficulty(&self) -> Option<U256> {
         self.paris_block_and_final_difficulty.map(|(_, final_difficulty)| final_difficulty)
     }
@@ -610,18 +608,18 @@ impl<H: BlockHeader> ChainSpec<H> {
         }
     }
 
-    /// Convenience method to get the fork id for [`SilaHardfork::SilaShanghai`] from a given
+    /// Convenience method to get the fork id for [`SilaHardfork::Shanghai`] from a given
     /// chainspec.
     #[inline]
     pub fn shanghai_fork_id(&self) -> Option<ForkId> {
-        self.hardfork_fork_id(SilaHardfork::SilaShanghai)
+        self.hardfork_fork_id(SilaHardfork::Shanghai)
     }
 
-    /// Convenience method to get the fork id for [`SilaHardfork::SilaCancun`] from a given
+    /// Convenience method to get the fork id for [`SilaHardfork::Cancun`] from a given
     /// chainspec.
     #[inline]
     pub fn cancun_fork_id(&self) -> Option<ForkId> {
-        self.hardfork_fork_id(SilaHardfork::SilaCancun)
+        self.hardfork_fork_id(SilaHardfork::Cancun)
     }
 
     /// Convenience method to get the latest fork id from the chainspec. Panics if chainspec has no
@@ -637,8 +635,8 @@ impl<H: BlockHeader> ChainSpec<H> {
             // We filter out TTD-based forks w/o a pre-known block since those do not show up in
             // the fork filter.
             Some(match condition {
-                ForkCondition::Block(block) |
-                ForkCondition::TTD { fork_block: Some(block), .. } => ForkFilterKey::Block(block),
+                ForkCondition::Block(block)
+                | ForkCondition::TTD { fork_block: Some(block), .. } => ForkFilterKey::Block(block),
                 ForkCondition::Timestamp(time) => ForkFilterKey::Time(time),
                 _ => return None,
             })
@@ -672,8 +670,8 @@ impl<H: BlockHeader> ChainSpec<H> {
         for (_, cond) in self.hardforks.forks_iter() {
             // handle block based forks and the sepolia merge netsplit block edge case (TTD
             // ForkCondition with Some(block))
-            if let ForkCondition::Block(block) |
-            ForkCondition::TTD { fork_block: Some(block), .. } = cond
+            if let ForkCondition::Block(block)
+            | ForkCondition::TTD { fork_block: Some(block), .. } = cond
             {
                 if head.number >= block {
                     // skip duplicated hardforks: hardforks enabled at genesis block
@@ -684,7 +682,7 @@ impl<H: BlockHeader> ChainSpec<H> {
                 } else {
                     // we can return here because this block fork is not active, so we set the
                     // `next` value
-                    return ForkId { hash: forkhash, next: block }
+                    return ForkId { hash: forkhash, next: block };
                 }
             }
         }
@@ -706,7 +704,7 @@ impl<H: BlockHeader> ChainSpec<H> {
                 // can safely return here because we have already handled all block forks and
                 // have handled all active timestamp forks, and set the next value to the
                 // timestamp that is known but not active yet
-                return ForkId { hash: forkhash, next: timestamp }
+                return ForkId { hash: forkhash, next: timestamp };
             }
         }
 
@@ -783,9 +781,9 @@ impl<H: BlockHeader> ChainSpec<H> {
         use NamedChain as C;
 
         match self.chain.try_into().ok()? {
-            C::SilaMainnet => Some(mainnet_nodes()),
-            C::SilaSepolia => Some(sepolia_nodes()),
-            C::SilaHolesky => Some(holesky_nodes()),
+            C::Mainnet => Some(mainnet_nodes()),
+            C::Sepolia => Some(sepolia_nodes()),
+            C::Holesky => Some(holesky_nodes()),
             C::Hoodi => Some(hoodi_nodes()),
             _ => None,
         }
@@ -825,8 +823,8 @@ impl From<Genesis> for ChainSpec {
             (SilaHardfork::Frontier.boxed(), Some(0)),
             (SilaHardfork::Homestead.boxed(), genesis.config.homestead_block),
             (SilaHardfork::Dao.boxed(), genesis.config.dao_fork_block),
-            (SilaHardfork::Tangerine.boxed(), genesis.config.sip150_block),
-            (SilaHardfork::SpuriousDragon.boxed(), genesis.config.sip155_block),
+            (SilaHardfork::Tangerine.boxed(), genesis.config.eip150_block),
+            (SilaHardfork::SpuriousDragon.boxed(), genesis.config.eip155_block),
             (SilaHardfork::Byzantium.boxed(), genesis.config.byzantium_block),
             (SilaHardfork::Constantinople.boxed(), genesis.config.constantinople_block),
             (SilaHardfork::Petersburg.boxed(), genesis.config.petersburg_block),
@@ -849,7 +847,7 @@ impl From<Genesis> for ChainSpec {
             genesis.config.terminal_total_difficulty
         {
             hardforks.push((
-                SilaHardfork::SilaParis.boxed(),
+                SilaHardfork::Paris.boxed(),
                 ForkCondition::TTD {
                     // NOTE: this will not work properly if the merge is not activated at
                     // genesis, and there is no merge netsplit block
@@ -886,16 +884,16 @@ impl From<Genesis> for ChainSpec {
 
         // Time-based hardforks
         let time_hardfork_opts = [
-            (SilaHardfork::SilaShanghai.boxed(), genesis.config.shanghai_time),
-            (SilaHardfork::SilaCancun.boxed(), genesis.config.cancun_time),
-            (SilaHardfork::SilaPrague.boxed(), genesis.config.prague_time),
-            (SilaHardfork::SilaOsaka.boxed(), genesis.config.osaka_time),
+            (SilaHardfork::Shanghai.boxed(), genesis.config.shanghai_time),
+            (SilaHardfork::Cancun.boxed(), genesis.config.cancun_time),
+            (SilaHardfork::Prague.boxed(), genesis.config.prague_time),
+            (SilaHardfork::Osaka.boxed(), genesis.config.osaka_time),
             (SilaHardfork::Bpo1.boxed(), genesis.config.bpo1_time),
             (SilaHardfork::Bpo2.boxed(), genesis.config.bpo2_time),
             (SilaHardfork::Bpo3.boxed(), genesis.config.bpo3_time),
             (SilaHardfork::Bpo4.boxed(), genesis.config.bpo4_time),
             (SilaHardfork::Bpo5.boxed(), genesis.config.bpo5_time),
-            (SilaHardfork::SilaAmsterdam.boxed(), genesis.config.amsterdam_time),
+            (SilaHardfork::Amsterdam.boxed(), genesis.config.amsterdam_time),
         ];
 
         let mut time_hardforks = time_hardfork_opts
@@ -908,7 +906,7 @@ impl From<Genesis> for ChainSpec {
         hardforks.append(&mut time_hardforks);
 
         // Ordered Hardforks
-        let mainnet_hardforks: ChainHardforks = SilaHardfork::sila-mainnet().into();
+        let mainnet_hardforks: ChainHardforks = SilaHardfork::mainnet().into();
         let mainnet_order = mainnet_hardforks.forks_iter();
 
         let mut ordered_hardforks = Vec::with_capacity(hardforks.len());
@@ -969,8 +967,8 @@ impl<H: BlockHeader> Hardforks for ChainSpec<H> {
     }
 }
 
-impl<H: BlockHeader> SilaHardforks for ChainSpec<H> {
-    fn sila_fork_activation(&self, fork: SilaHardfork) -> ForkCondition {
+impl<H: BlockHeader> EthereumHardforks for ChainSpec<H> {
+    fn ethereum_fork_activation(&self, fork: SilaHardfork) -> ForkCondition {
         self.fork(fork)
     }
 }
@@ -995,7 +993,7 @@ pub struct ChainSpecBuilder {
 
 impl ChainSpecBuilder {
     /// Construct a new builder from the sila-mainnet chain spec.
-    pub fn sila-mainnet() -> Self {
+    pub fn sila_mainnet() -> Self {
         Self {
             chain: Some(SILA_MAINNET.chain),
             genesis: Some(SILA_MAINNET.genesis.clone()),
@@ -1041,12 +1039,12 @@ impl ChainSpecBuilder {
         self
     }
 
-    /// Enable the SilaParis hardfork at the given TTD.
+    /// Enable the `SilaParis` hardfork at the given TTD.
     ///
     /// Does not set the merge netsplit block.
     pub fn paris_at_ttd(self, ttd: U256, activation_block_number: BlockNumber) -> Self {
         self.with_fork(
-            SilaHardfork::SilaParis,
+            SilaHardfork::Paris,
             ForkCondition::TTD { activation_block_number, total_difficulty: ttd, fork_block: None },
         )
     }
@@ -1148,11 +1146,11 @@ impl ChainSpecBuilder {
         self
     }
 
-    /// Enable SilaParis at genesis.
+    /// Enable `SilaParis` at genesis.
     pub fn paris_activated(mut self) -> Self {
         self = self.grayglacier_activated();
         self.hardforks.insert(
-            SilaHardfork::SilaParis,
+            SilaHardfork::Paris,
             ForkCondition::TTD {
                 activation_block_number: 0,
                 total_difficulty: U256::ZERO,
@@ -1162,56 +1160,56 @@ impl ChainSpecBuilder {
         self
     }
 
-    /// Enable SilaShanghai at genesis.
+    /// Enable `SilaShanghai` at genesis.
     pub fn shanghai_activated(mut self) -> Self {
         self = self.paris_activated();
-        self.hardforks.insert(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(0));
+        self.hardforks.insert(SilaHardfork::Shanghai, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaCancun at genesis.
+    /// Enable `SilaCancun` at genesis.
     pub fn cancun_activated(mut self) -> Self {
         self = self.shanghai_activated();
-        self.hardforks.insert(SilaHardfork::SilaCancun, ForkCondition::Timestamp(0));
+        self.hardforks.insert(SilaHardfork::Cancun, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaPrague at genesis.
+    /// Enable `SilaPrague` at genesis.
     pub fn prague_activated(mut self) -> Self {
         self = self.cancun_activated();
-        self.hardforks.insert(SilaHardfork::SilaPrague, ForkCondition::Timestamp(0));
+        self.hardforks.insert(SilaHardfork::Prague, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaPrague at the given timestamp.
+    /// Enable `SilaPrague` at the given timestamp.
     pub fn with_prague_at(mut self, timestamp: u64) -> Self {
-        self.hardforks.insert(SilaHardfork::SilaPrague, ForkCondition::Timestamp(timestamp));
+        self.hardforks.insert(SilaHardfork::Prague, ForkCondition::Timestamp(timestamp));
         self
     }
 
-    /// Enable SilaOsaka at genesis.
+    /// Enable `SilaOsaka` at genesis.
     pub fn osaka_activated(mut self) -> Self {
         self = self.prague_activated();
-        self.hardforks.insert(SilaHardfork::SilaOsaka, ForkCondition::Timestamp(0));
+        self.hardforks.insert(SilaHardfork::Osaka, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaOsaka at the given timestamp.
+    /// Enable `SilaOsaka` at the given timestamp.
     pub fn with_osaka_at(mut self, timestamp: u64) -> Self {
-        self.hardforks.insert(SilaHardfork::SilaOsaka, ForkCondition::Timestamp(timestamp));
+        self.hardforks.insert(SilaHardfork::Osaka, ForkCondition::Timestamp(timestamp));
         self
     }
 
-    /// Enable SilaAmsterdam at genesis.
+    /// Enable `SilaAmsterdam` at genesis.
     pub fn amsterdam_activated(mut self) -> Self {
         self = self.osaka_activated();
-        self.hardforks.insert(SilaHardfork::SilaAmsterdam, ForkCondition::Timestamp(0));
+        self.hardforks.insert(SilaHardfork::Amsterdam, ForkCondition::Timestamp(0));
         self
     }
 
-    /// Enable SilaAmsterdam at the given timestamp.
+    /// Enable `SilaAmsterdam` at the given timestamp.
     pub fn with_amsterdam_at(mut self, timestamp: u64) -> Self {
-        self.hardforks.insert(SilaHardfork::SilaAmsterdam, ForkCondition::Timestamp(timestamp));
+        self.hardforks.insert(SilaHardfork::Amsterdam, ForkCondition::Timestamp(timestamp));
         self
     }
 
@@ -1223,7 +1221,7 @@ impl ChainSpecBuilder {
     /// [`Self::genesis`])
     pub fn build(self) -> ChainSpec {
         let paris_block_and_final_difficulty = {
-            self.hardforks.get(SilaHardfork::SilaParis).and_then(|cond| {
+            self.hardforks.get(SilaHardfork::Paris).and_then(|cond| {
                 if let ForkCondition::TTD { total_difficulty, activation_block_number, .. } = cond {
                     Some((activation_block_number, total_difficulty))
                 } else {
@@ -1299,10 +1297,10 @@ mod tests {
     use super::*;
     use alloy_chains::Chain;
     use alloy_consensus::constants::ETH_TO_WEI;
-    use alloy_eips::{sip4844::BLOB_TX_MIN_BLOB_GASPRICE, sip7840::BlobParams};
-    use alloy_evm::block::calc::{base_block_reward, block_reward};
     use alloy_genesis::{ChainConfig, GenesisAccount};
     use alloy_primitives::{b256, hex};
+    use alloy_savm::block::calc::{base_block_reward, block_reward};
+    use alloy_sips::{eip4844::BLOB_TX_MIN_BLOB_GASPRICE, eip7840::BlobParams};
     use alloy_trie::{TrieAccount, EMPTY_ROOT_HASH};
     use core::ops::Deref;
     use rsil_sila_forks::{ForkCondition, ForkHash, ForkId, Head};
@@ -1315,7 +1313,7 @@ mod tests {
                     expected_id, &computed_id,
                     "Expected fork ID {expected_id:?}, computed fork ID {computed_id:?} for hardfork {hardfork}"
                 );
-                if matches!(hardfork, SilaHardfork::SilaShanghai) {
+                if matches!(hardfork, SilaHardfork::Shanghai) {
                     if let Some(shanghai_id) = spec.shanghai_fork_id() {
                         assert_eq!(
                             expected_id, &shanghai_id,
@@ -1363,10 +1361,10 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn test_hardfork_list_ignores_disabled_forks() {
         let spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(Genesis::default())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
-            .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Never)
+            .with_fork(SilaHardfork::Shanghai, ForkCondition::Never)
             .build();
         assert_eq!(
             spec.display_hardforks().to_string(),
@@ -1379,7 +1377,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn ignores_genesis_fork_blocks() {
         let spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(Genesis::default())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(0))
@@ -1407,14 +1405,14 @@ Post-merge hard forks (timestamp based):
     fn ignores_duplicate_fork_blocks() {
         let empty_genesis = Genesis::default();
         let unique_spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(1))
             .build();
 
         let duplicate_spec = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis)
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(1))
@@ -1433,11 +1431,11 @@ Post-merge hard forks (timestamp based):
         let empty_genesis = Genesis::default();
         // happy path test case
         let happy_path_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
-            .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(11313123))
+            .with_fork(SilaHardfork::Shanghai, ForkCondition::Timestamp(11313123))
             .build();
         let happy_path_head = happy_path_case.satisfy(ForkCondition::Timestamp(11313123));
         let happy_path_expected = Head { number: 73, timestamp: 11313123, ..Default::default() };
@@ -1447,12 +1445,12 @@ Post-merge hard forks (timestamp based):
         );
         // multiple timestamp test case (i.e SilaShanghai -> SilaCancun)
         let multiple_timestamp_fork_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
-            .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(11313123))
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(11313398))
+            .with_fork(SilaHardfork::Shanghai, ForkCondition::Timestamp(11313123))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(11313398))
             .build();
         let multi_timestamp_head =
             multiple_timestamp_fork_case.satisfy(ForkCondition::Timestamp(11313398));
@@ -1464,9 +1462,9 @@ Post-merge hard forks (timestamp based):
         );
         // no ForkCondition::Block test case
         let no_block_fork_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis.clone())
-            .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(11313123))
+            .with_fork(SilaHardfork::Shanghai, ForkCondition::Timestamp(11313123))
             .build();
         let no_block_fork_head = no_block_fork_case.satisfy(ForkCondition::Timestamp(11313123));
         let no_block_fork_expected = Head { number: 0, timestamp: 11313123, ..Default::default() };
@@ -1476,19 +1474,19 @@ Post-merge hard forks (timestamp based):
         );
         // spec w/ ForkCondition::TTD with block_num test case (SilaSepolia merge netsplit edge case)
         let fork_cond_ttd_blocknum_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis.clone())
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
             .with_fork(
-                SilaHardfork::SilaParis,
+                SilaHardfork::Paris,
                 ForkCondition::TTD {
                     activation_block_number: 101,
                     fork_block: Some(101),
                     total_difficulty: U256::from(10_790_000),
                 },
             )
-            .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(11313123))
+            .with_fork(SilaHardfork::Shanghai, ForkCondition::Timestamp(11313123))
             .build();
         let fork_cond_ttd_blocknum_head =
             fork_cond_ttd_blocknum_case.satisfy(ForkCondition::Timestamp(11313123));
@@ -1503,7 +1501,7 @@ Post-merge hard forks (timestamp based):
         // no regressions, for these ForkConditions(Block/TTD) - a separate chain spec definition is
         // technically unnecessary - but we include it here for thoroughness
         let fork_cond_block_only_case = ChainSpec::builder()
-            .chain(Chain::sila-mainnet())
+            .chain(Chain::mainnet())
             .genesis(empty_genesis)
             .with_fork(SilaHardfork::Frontier, ForkCondition::Block(0))
             .with_fork(SilaHardfork::Homestead, ForkCondition::Block(73))
@@ -1542,10 +1540,7 @@ Post-merge hard forks (timestamp based):
                     SilaHardfork::Homestead,
                     ForkId { hash: ForkHash(hex!("0x97c2c34c")), next: 1920000 },
                 ),
-                (
-                    SilaHardfork::Dao,
-                    ForkId { hash: ForkHash(hex!("0x91d1f948")), next: 2463000 },
-                ),
+                (SilaHardfork::Dao, ForkId { hash: ForkHash(hex!("0x91d1f948")), next: 2463000 }),
                 (
                     SilaHardfork::Tangerine,
                     ForkId { hash: ForkHash(hex!("0x7a64da13")), next: 2675000 },
@@ -1591,18 +1586,18 @@ Post-merge hard forks (timestamp based):
                     ForkId { hash: ForkHash(hex!("0xf0afd0e3")), next: 1681338455 },
                 ),
                 (
-                    SilaHardfork::SilaShanghai,
+                    SilaHardfork::Shanghai,
                     ForkId { hash: ForkHash(hex!("0xdce96c2d")), next: 1710338135 },
                 ),
                 (
-                    SilaHardfork::SilaCancun,
+                    SilaHardfork::Cancun,
                     ForkId { hash: ForkHash(hex!("0x9f3d2254")), next: 1746612311 },
                 ),
                 (
-                    SilaHardfork::SilaPrague,
+                    SilaHardfork::Prague,
                     ForkId {
                         hash: ForkHash(hex!("0xc376cf8b")),
-                        next: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                     },
                 ),
             ],
@@ -1655,19 +1650,19 @@ Post-merge hard forks (timestamp based):
                     ForkId { hash: ForkHash(hex!("0xfe3366e7")), next: 1735371 },
                 ),
                 (
-                    SilaHardfork::SilaParis,
+                    SilaHardfork::Paris,
                     ForkId { hash: ForkHash(hex!("0xb96cbd13")), next: 1677557088 },
                 ),
                 (
-                    SilaHardfork::SilaShanghai,
+                    SilaHardfork::Shanghai,
                     ForkId { hash: ForkHash(hex!("0xf7f9bc08")), next: 1706655072 },
                 ),
                 (
-                    SilaHardfork::SilaCancun,
+                    SilaHardfork::Cancun,
                     ForkId { hash: ForkHash(hex!("0x88cf81d9")), next: 1741159776 },
                 ),
                 (
-                    SilaHardfork::SilaPrague,
+                    SilaHardfork::Prague,
                     ForkId {
                         hash: ForkHash(hex!("0xed88b5fd")),
                         next: sepolia::SEPOLIA_OSAKA_TIMESTAMP,
@@ -1749,19 +1744,19 @@ Post-merge hard forks (timestamp based):
                     Head { number: 20000004, timestamp: 1746612311, ..Default::default() },
                     ForkId {
                         hash: ForkHash(hex!("0xc376cf8b")),
-                        next: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                     },
                 ),
                 // SilaOsaka block
                 (
                     Head {
                         number: 20000004,
-                        timestamp: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        timestamp: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                         ..Default::default()
                     },
                     ForkId {
                         hash: ForkHash(hex!("0x5167e2a6")),
-                        next: sila-mainnet::MAINNET_BPO1_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_BPO1_TIMESTAMP,
                     },
                 ),
             ],
@@ -1945,7 +1940,7 @@ Post-merge hard forks (timestamp based):
     /// This is based off of the test vectors here: <https://github.com/sila-chain/go-sila/blob/5c8cc10d1e05c23ff1108022f4150749e73c0ca1/core/forkid/forkid_test.go#L155-L188>
     #[test]
     fn timestamped_forks() {
-        let mainnet_with_timestamps = ChainSpecBuilder::sila-mainnet().build();
+        let mainnet_with_timestamps = ChainSpecBuilder::sila_mainnet().build();
         test_fork_ids(
             &mainnet_with_timestamps,
             &[
@@ -2073,19 +2068,19 @@ Post-merge hard forks (timestamp based):
                     Head { number: 20000004, timestamp: 1746612311, ..Default::default() },
                     ForkId {
                         hash: ForkHash(hex!("0xc376cf8b")),
-                        next: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                     },
                 ),
                 // SilaOsaka block
                 (
                     Head {
                         number: 20000004,
-                        timestamp: sila-mainnet::MAINNET_OSAKA_TIMESTAMP,
+                        timestamp: sila_mainnet::MAINNET_OSAKA_TIMESTAMP,
                         ..Default::default()
                     },
                     ForkId {
                         hash: ForkHash(hex!("0x5167e2a6")),
-                        next: sila-mainnet::MAINNET_BPO1_TIMESTAMP,
+                        next: sila_mainnet::MAINNET_BPO1_TIMESTAMP,
                     },
                 ),
             ],
@@ -2100,8 +2095,8 @@ Post-merge hard forks (timestamp based):
         cancun_time: u64,
     ) -> ChainSpec {
         builder
-            .with_fork(SilaHardfork::SilaShanghai, ForkCondition::Timestamp(shanghai_time))
-            .with_fork(SilaHardfork::SilaCancun, ForkCondition::Timestamp(cancun_time))
+            .with_fork(SilaHardfork::Shanghai, ForkCondition::Timestamp(shanghai_time))
+            .with_fork(SilaHardfork::Cancun, ForkCondition::Timestamp(cancun_time))
             .build()
     }
 
@@ -2150,20 +2145,20 @@ Post-merge hard forks (timestamp based):
     /// Checks that the fork is not active at a terminal ttd block.
     #[test]
     fn check_terminal_ttd() {
-        let chainspec = ChainSpecBuilder::sila-mainnet().build();
+        let chainspec = ChainSpecBuilder::sila_mainnet().build();
 
         // Check that SilaParis is not active on terminal PoW block #15537393.
         let terminal_block_ttd = U256::from(58750003716598352816469_u128);
         let terminal_block_difficulty = U256::from(11055787484078698_u128);
         assert!(!chainspec
-            .fork(SilaHardfork::SilaParis)
+            .fork(SilaHardfork::Paris)
             .active_at_ttd(terminal_block_ttd, terminal_block_difficulty));
 
         // Check that SilaParis is active on first PoS block #15537394.
         let first_pos_block_ttd = U256::from(58750003716598352816469_u128);
         let first_pos_difficulty = U256::ZERO;
         assert!(chainspec
-            .fork(SilaHardfork::SilaParis)
+            .fork(SilaHardfork::Paris)
             .active_at_ttd(first_pos_block_ttd, first_pos_difficulty));
     }
 
@@ -2270,14 +2265,8 @@ Post-merge hard forks (timestamp based):
             chainspec.hardforks.get(SilaHardfork::MuirGlacier).unwrap(),
             ForkCondition::Block(0)
         );
-        assert_eq!(
-            chainspec.hardforks.get(SilaHardfork::Berlin).unwrap(),
-            ForkCondition::Block(0)
-        );
-        assert_eq!(
-            chainspec.hardforks.get(SilaHardfork::London).unwrap(),
-            ForkCondition::Block(0)
-        );
+        assert_eq!(chainspec.hardforks.get(SilaHardfork::Berlin).unwrap(), ForkCondition::Block(0));
+        assert_eq!(chainspec.hardforks.get(SilaHardfork::London).unwrap(), ForkCondition::Block(0));
         assert_eq!(
             chainspec.hardforks.get(SilaHardfork::ArrowGlacier).unwrap(),
             ForkCondition::Block(0)
@@ -2289,13 +2278,13 @@ Post-merge hard forks (timestamp based):
 
         // including time based hardforks
         assert_eq!(
-            chainspec.hardforks.get(SilaHardfork::SilaShanghai).unwrap(),
+            chainspec.hardforks.get(SilaHardfork::Shanghai).unwrap(),
             ForkCondition::Timestamp(0)
         );
 
         // including time based hardforks
         assert_eq!(
-            chainspec.hardforks.get(SilaHardfork::SilaCancun).unwrap(),
+            chainspec.hardforks.get(SilaHardfork::Cancun).unwrap(),
             ForkCondition::Timestamp(1)
         );
 
@@ -2659,7 +2648,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn holesky_paris_activated_at_genesis() {
         assert!(HOLESKY
-            .fork(SilaHardfork::SilaParis)
+            .fork(SilaHardfork::Paris)
             .active_at_ttd(HOLESKY.genesis.difficulty, HOLESKY.genesis.difficulty));
     }
 
@@ -2669,9 +2658,9 @@ Post-merge hard forks (timestamp based):
         let config = ChainConfig {
             chain_id: 2600,
             homestead_block: Some(0),
-            sip150_block: Some(0),
-            sip155_block: Some(0),
-            sip158_block: Some(0),
+            eip150_block: Some(0),
+            eip155_block: Some(0),
+            eip158_block: Some(0),
             byzantium_block: Some(0),
             constantinople_block: Some(0),
             petersburg_block: Some(0),
@@ -2710,7 +2699,7 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn check_fork_id_chainspec_with_fork_condition_never() {
         let spec: ChainSpec = ChainSpec {
-            chain: Chain::sila-mainnet(),
+            chain: Chain::mainnet(),
             genesis: Genesis::default(),
             hardforks: ChainHardforks::new(vec![(
                 SilaHardfork::Frontier.boxed(),
@@ -2727,10 +2716,10 @@ Post-merge hard forks (timestamp based):
     #[test]
     fn check_fork_filter_chainspec_with_fork_condition_never() {
         let spec: ChainSpec = ChainSpec {
-            chain: Chain::sila-mainnet(),
+            chain: Chain::mainnet(),
             genesis: Genesis::default(),
             hardforks: ChainHardforks::new(vec![(
-                SilaHardfork::SilaShanghai.boxed(),
+                SilaHardfork::Shanghai.boxed(),
                 ForkCondition::Never,
             )]),
             paris_block_and_final_difficulty: None,
@@ -2738,13 +2727,16 @@ Post-merge hard forks (timestamp based):
             ..Default::default()
         };
 
-        assert_eq!(spec.hardfork_fork_filter(SilaHardfork::SilaShanghai), None);
+        assert_eq!(spec.hardfork_fork_filter(SilaHardfork::Shanghai), None);
     }
 
     #[test]
     fn latest_eth_mainnet_fork_id() {
         // BPO2
-        assert_eq!(ForkId { hash: ForkHash(hex!("0x07c9462e")), next: 0 }, SILA_MAINNET.latest_fork_id())
+        assert_eq!(
+            ForkId { hash: ForkHash(hex!("0x07c9462e")), next: 0 },
+            SILA_MAINNET.latest_fork_id()
+        )
     }
 
     #[test]
@@ -2773,9 +2765,9 @@ Post-merge hard forks (timestamp based):
                 homestead_block: Some(0),
                 dao_fork_block: Some(0),
                 dao_fork_support: false,
-                sip150_block: Some(0),
-                sip155_block: Some(0),
-                sip158_block: Some(0),
+                eip150_block: Some(0),
+                eip155_block: Some(0),
+                eip158_block: Some(0),
                 byzantium_block: Some(0),
                 constantinople_block: Some(0),
                 petersburg_block: Some(0),
@@ -2812,9 +2804,9 @@ Post-merge hard forks (timestamp based):
             SilaHardfork::London.boxed(),
             SilaHardfork::ArrowGlacier.boxed(),
             SilaHardfork::GrayGlacier.boxed(),
-            SilaHardfork::SilaParis.boxed(),
-            SilaHardfork::SilaShanghai.boxed(),
-            SilaHardfork::SilaCancun.boxed(),
+            SilaHardfork::Paris.boxed(),
+            SilaHardfork::Shanghai.boxed(),
+            SilaHardfork::Cancun.boxed(),
         ];
 
         assert!(expected_hardforks
@@ -2956,7 +2948,7 @@ Post-merge hard forks (timestamp based):
 
         let genesis = serde_json::from_str::<Genesis>(s).unwrap();
         let chainspec = ChainSpec::from_genesis(genesis);
-        let activation = chainspec.hardforks.fork(SilaHardfork::SilaParis);
+        let activation = chainspec.hardforks.fork(SilaHardfork::Paris);
         assert_eq!(
             activation,
             ForkCondition::TTD {

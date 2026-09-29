@@ -1,8 +1,8 @@
-use crate::{Capability, SilVersion, ProtocolVersion};
+use crate::{Capability, ProtocolVersion, SilVersion};
 use alloy_rlp::{RlpDecodable, RlpEncodable};
-use rsil_codecs::add_arbitrary_tests;
+use reth_codecs::add_arbitrary_tests;
 use rsil_network_peers::PeerId;
-use rsil_primitives_traits::constants::RSIL_CLIENT_VERSION;
+const RSIL_CLIENT_VERSION: &str = concat!("rsil/v", env!("CARGO_PKG_VERSION"));
 
 /// The default tcp port for p2p.
 ///
@@ -44,7 +44,7 @@ impl HelloMessageWithProtocols {
     /// Starts a new `HelloMessageProtocolsBuilder`
     ///
     /// ```
-    /// use rsil_eth_wire::HelloMessageWithProtocols;
+    /// use rsil_sil_wire::HelloMessageWithProtocols;
     /// use rsil_network_peers::pk2id;
     /// use secp256k1::{SecretKey, SECP256K1};
     /// let secret_key = SecretKey::new(&mut rand_08::thread_rng());
@@ -140,7 +140,7 @@ impl HelloMessage {
     /// Starts a new `HelloMessageBuilder`
     ///
     /// ```
-    /// use rsil_eth_wire::HelloMessage;
+    /// use rsil_sil_wire::HelloMessage;
     /// use rsil_network_peers::pk2id;
     /// use secp256k1::{SecretKey, SECP256K1};
     /// let secret_key = SecretKey::new(&mut rand_08::thread_rng());
@@ -229,8 +229,8 @@ impl HelloMessageBuilder {
 #[cfg(test)]
 mod tests {
     use crate::{
-        p2pstream::P2PMessage, Capability, SilVersion, HelloMessage, HelloMessageWithProtocols,
-        ProtocolVersion,
+        p2pstream::P2PMessage, Capability, HelloMessage, HelloMessageWithProtocols,
+        ProtocolVersion, SilVersion,
     };
     use alloy_rlp::{Decodable, Encodable, EMPTY_STRING_CODE};
     use rsil_network_peers::pk2id;
@@ -273,20 +273,20 @@ mod tests {
 
         assert_eq!(hello_encoded.len(), hello.length());
     }
-    //TODO: add test for eth70 here once we have fully support it
+    //TODO: add test for sil70 here once we have fully support it
 
     #[test]
-    fn test_default_protocols_still_include_eth69() {
+    fn test_default_protocols_still_include_sil69() {
         // ensure that older sil/69 remains advertised for compatibility
         let secret_key = SecretKey::new(&mut rand_08::thread_rng());
         let id = pk2id(&secret_key.public_key(SECP256K1));
         let hello = HelloMessageWithProtocols::builder(id).build();
 
-        let has_eth69 = hello
+        let has_sil69 = hello
             .protocols
             .iter()
             .any(|p| p.cap.name == "sil" && p.cap.version == SilVersion::Sil69 as usize);
-        assert!(has_eth69, "Default protocols should include Sil69");
+        assert!(has_sil69, "Default protocols should include Sil69");
     }
 
     #[test]

@@ -3,25 +3,27 @@ use crate::{
     CanonStateSubscriptions,
 };
 use alloy_consensus::{Header, SignableTransaction, TxEip1559, TxReceipt, EMPTY_ROOT_HASH};
-use alloy_eips::sip1559::{SILA_BLOCK_GAS_LIMIT_30M, INITIAL_BASE_FEE};
 use alloy_primitives::{map::B256HashMap, Address, BlockNumber, B256, U256};
 use alloy_signer::SignerSync;
 use alloy_signer_local::PrivateKeySigner;
+use alloy_sips::eip1559::{
+    ETHEREUM_BLOCK_GAS_LIMIT_30M as SILA_BLOCK_GAS_LIMIT_30M, INITIAL_BASE_FEE,
+};
 use core::marker::PhantomData;
 use rand::Rng;
+use revm::{database::BundleState, state::AccountInfo};
 use rsil_chainspec::{ChainSpec, SilaHardfork, MIN_TRANSACTION_GAS};
-use rsil_sila_primitives::{
-    Block, BlockBody, SilPrimitives, Receipt, Transaction, TransactionSigned,
-};
 use rsil_execution_types::{BlockExecutionOutput, BlockExecutionResult, Chain, ExecutionOutcome};
 use rsil_primitives_traits::{
     proofs::{calculate_receipt_root, calculate_transaction_root, calculate_withdrawals_root},
     Account, NodePrimitives, Recovered, RecoveredBlock, SealedBlock, SealedHeader,
     SignedTransaction,
 };
+use rsil_sila_primitives::{
+    Block, BlockBody, Receipt, SilPrimitives, Transaction, TransactionSigned,
+};
 use rsil_storage_api::NodePrimitivesProvider;
 use rsil_trie::{root::state_root_unhashed, ComputedTrieData, SortedTrieData};
-use revm::{database::BundleState, state::AccountInfo};
 use std::{
     ops::Range,
     sync::{Arc, Mutex},
@@ -113,7 +115,7 @@ impl<N: NodePrimitives> TestBlockBuilder<N> {
         let mut rng = rand::rng();
 
         let mock_tx = |nonce: u64| -> Recovered<_> {
-            let tx = Transaction::Sip1559(TxEip1559 {
+            let tx = Transaction::Eip1559(TxEip1559 {
                 chain_id: self.chain_spec.chain.id(),
                 nonce,
                 gas_limit: MIN_TRANSACTION_GAS,
@@ -175,8 +177,8 @@ impl<N: NodePrimitives> TestBlockBuilder<N> {
                 .into_trie_account(EMPTY_ROOT_HASH),
             )]),
             // use the number as the timestamp so it is monotonically increasing
-            timestamp: number +
-                SilaHardfork::SilaCancun.activation_timestamp(self.chain_spec.chain).unwrap(),
+            timestamp: number
+                + SilaHardfork::Cancun.activation_timestamp(self.chain_spec.chain).unwrap(),
             withdrawals_root: Some(calculate_withdrawals_root(&[])),
             blob_gas_used: Some(0),
             excess_blob_gas: Some(0),
@@ -425,8 +427,7 @@ impl TestBlockBuilder {
 }
 /// A test `ChainEventSubscriptions`
 #[derive(Clone, Debug, Default)]
-pub struct TestCanonStateSubscriptions<N: NodePrimitives = rsil_sila_primitives::SilPrimitives>
-{
+pub struct TestCanonStateSubscriptions<N: NodePrimitives = rsil_sila_primitives::SilPrimitives> {
     canon_notif_tx: Arc<Mutex<Vec<Sender<CanonStateNotification<N>>>>>,
 }
 

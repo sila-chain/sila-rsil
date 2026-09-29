@@ -20,7 +20,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 use crate::{auth::AuthRpcModule, error::WsHttpSamePortError, metrics::RpcRequestMetrics};
-use alloy_network::{Sila, IntoWallet};
+use alloy_network::{Ethereum as Sila, IntoWallet};
 use alloy_provider::{fillers::RecommendedFillers, Provider, ProviderBuilder};
 use core::marker::PhantomData;
 use error::{ConflictingModules, RpcError, ServerKind};
@@ -33,26 +33,26 @@ use jsonrpsee::{
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_consensus::FullConsensus;
 use rsil_engine_primitives::{ConsensusEngineEvent, ConsensusEngineHandle};
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_network_api::{noop::NoopNetwork, NetworkInfo, Peers};
 use rsil_payload_primitives::PayloadTypes;
 use rsil_primitives_traits::{NodePrimitives, TxTy};
 use rsil_rpc::{
-    AdminApi, DebugApi, EngineEthApi, SilApi, SilApiBuilder, SilBundle, MinerApi, NetApi,
-    OtterscanApi, RPCApi, RsilApi, TraceApi, TxPoolApi, Web3Api,
+    AdminApi, DebugApi, EngineEthApi, MinerApi, NetApi, OtterscanApi, RPCApi, RsilApi, SilApi,
+    SilApiBuilder, SilBundle, TraceApi, TxPoolApi, Web3Api,
 };
 use rsil_rpc_api::servers::*;
 use rsil_rpc_engine_api::RsilEngineApi;
-use rsil_rpc_eth_api::{
+use rsil_rpc_sil_api::{
     helpers::{
-        pending_block::PendingEnvBuilder, Call, SilApiSpec, SilTransactions, LoadPendingBlock,
+        pending_block::PendingEnvBuilder, Call, LoadPendingBlock, SilApiSpec, SilTransactions,
         TraceExt,
     },
     node::RpcNodeCoreAdapter,
-    SilApiServer, SilApiTypes, FullEthApiServer, FullEthApiTypes, RpcBlock, RpcConvert,
-    RpcConverter, RpcHeader, RpcNodeCore, RpcReceipt, RpcTransaction, RpcTxReq,
+    FullSilApiServer, FullSilApiTypes, RpcBlock, RpcConvert, RpcConverter, RpcHeader, RpcNodeCore,
+    RpcReceipt, RpcTransaction, RpcTxReq, SilApiServer, SilApiTypes,
 };
-use rsil_rpc_eth_types::{receipt::SilReceiptConverter, SilConfig, SilSubscriptionIdProvider};
+use rsil_rpc_sil_types::{receipt::SilReceiptConverter, SilConfig, SilSubscriptionIdProvider};
 use rsil_rpc_layer::{AuthLayer, Claims, CompressionLayer, JwtAuthValidator, JwtSecret};
 pub use rsil_rpc_server_types::RsilRpcModule;
 use rsil_storage_api::{
@@ -260,7 +260,7 @@ impl<N, Provider, Pool, Network, SavmConfig, Consensus>
 
     /// Instantiates a new [`SilApiBuilder`] from the configured components.
     #[expect(clippy::type_complexity)]
-    pub fn eth_api_builder<ChainSpec>(
+    pub fn sil_api_builder<ChainSpec>(
         &self,
     ) -> SilApiBuilder<
         RpcNodeCoreAdapter<Provider, Pool, Network, SavmConfig>,
@@ -288,7 +288,7 @@ impl<N, Provider, Pool, Network, SavmConfig, Consensus>
     ///
     /// See also [`SilApiBuilder`].
     #[expect(clippy::type_complexity)]
-    pub fn bootstrap_eth_api<ChainSpec>(
+    pub fn bootstrap_sil_api<ChainSpec>(
         &self,
     ) -> SilApi<
         RpcNodeCoreAdapter<Provider, Pool, Network, SavmConfig>,
@@ -304,7 +304,7 @@ impl<N, Provider, Pool, Network, SavmConfig, Consensus>
         RpcConverter<Sila, SavmConfig, SilReceiptConverter<ChainSpec>>: RpcConvert,
         (): PendingEnvBuilder<SavmConfig>,
     {
-        self.eth_api_builder().build()
+        self.sil_api_builder().build()
     }
 }
 
@@ -342,7 +342,7 @@ where
         RpcRegistryInner<Provider, Pool, Network, SilApi, SavmConfig, Consensus>,
     )
     where
-        SilApi: FullEthApiServer<Provider = Provider, Pool = Pool>,
+        SilApi: FullSilApiServer<Provider = Provider, Pool = Pool>,
         Payload: PayloadTypes,
     {
         let config = module_config.config.clone().unwrap_or_default();
@@ -365,7 +365,7 @@ where
         engine_events: EventSender<ConsensusEngineEvent<N>>,
     ) -> RpcRegistryInner<Provider, Pool, Network, SilApi, SavmConfig, Consensus>
     where
-        SilApi: FullEthApiServer<Provider = Provider, Pool = Pool>,
+        SilApi: FullSilApiServer<Provider = Provider, Pool = Pool>,
     {
         let Self { provider, pool, network, executor, consensus, evm_config, .. } = self;
         let executor =
@@ -392,7 +392,7 @@ where
         engine_events: EventSender<ConsensusEngineEvent<N>>,
     ) -> TransportRpcModules<()>
     where
-        SilApi: FullEthApiServer<Provider = Provider, Pool = Pool>,
+        SilApi: FullSilApiServer<Provider = Provider, Pool = Pool>,
     {
         if module_config.is_empty() {
             TransportRpcModules::default()
@@ -522,7 +522,7 @@ where
         + 'static,
     Pool: Send + Sync + Clone + 'static,
     Network: Clone + 'static,
-    SilApi: FullEthApiTypes + 'static,
+    SilApi: FullSilApiTypes + 'static,
     SavmConfig: ConfigureEvm<Primitives = N>,
 {
     /// Creates a new, empty instance.
@@ -535,7 +535,7 @@ where
         consensus: Consensus,
         config: RpcModuleConfig,
         evm_config: SavmConfig,
-        eth_api: SilApi,
+        sil_api: SilApi,
         engine_events: EventSender<
             ConsensusEngineEvent<<SilApi::Provider as NodePrimitivesProvider>::Primitives>,
         >,
@@ -545,7 +545,7 @@ where
     {
         let blocking_pool_guard = BlockingTaskGuard::new(config.sil.max_tracing_requests);
 
-        let sil = SilHandlers::bootstrap(config.sil.clone(), executor.clone(), eth_api);
+        let sil = SilHandlers::bootstrap(config.sil.clone(), executor.clone(), sil_api);
 
         Self {
             provider,
@@ -569,12 +569,12 @@ where
     SilApi: SilApiTypes,
 {
     /// Returns a reference to the installed [`SilApi`].
-    pub const fn eth_api(&self) -> &SilApi {
+    pub const fn sil_api(&self) -> &SilApi {
         &self.sil.api
     }
 
     /// Returns a reference to the installed [`SilHandlers`].
-    pub const fn eth_handlers(&self) -> &SilHandlers<SilApi> {
+    pub const fn sil_handlers(&self) -> &SilHandlers<SilApi> {
         &self.sil
     }
 
@@ -683,10 +683,10 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn register_eth(&mut self) -> &mut Self {
-        let eth_api = self.eth_api().clone();
-        self.modules.insert(RsilRpcModule::Sil, eth_api.into_rpc().into());
+        let sil_api = self.sil_api().clone();
+        self.modules.insert(RsilRpcModule::Sil, sil_api.into_rpc().into());
         self
     }
 
@@ -694,7 +694,7 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn register_ots(&mut self) -> &mut Self
     where
         SilApi: TraceExt + SilTransactions<Primitives = N>,
@@ -708,7 +708,7 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn register_debug(&mut self) -> &mut Self
     where
         SilApi: SilTransactions + TraceExt,
@@ -722,7 +722,7 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn register_trace(&mut self) -> &mut Self
     where
         SilApi: TraceExt,
@@ -734,7 +734,7 @@ where
 
     /// Register Net Namespace
     ///
-    /// See also [`Self::eth_api`]
+    /// See also [`Self::sil_api`]
     ///
     /// # Panics
     ///
@@ -750,7 +750,7 @@ where
 
     /// Register Rsil namespace
     ///
-    /// See also [`Self::eth_api`]
+    /// See also [`Self::sil_api`]
     ///
     /// # Panics
     ///
@@ -765,10 +765,10 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn otterscan_api(&self) -> OtterscanApi<SilApi> {
-        let eth_api = self.eth_api().clone();
-        OtterscanApi::new(eth_api)
+        let sil_api = self.sil_api().clone();
+        OtterscanApi::new(sil_api)
     }
 }
 
@@ -791,10 +791,10 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn trace_api(&self) -> TraceApi<SilApi> {
         TraceApi::new(
-            self.eth_api().clone(),
+            self.sil_api().clone(),
             self.blocking_pool_guard.clone(),
             self.eth_config.clone(),
         )
@@ -804,26 +804,26 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn bundle_api(&self) -> SilBundle<SilApi>
     where
         SilApi: SilTransactions + LoadPendingBlock + Call,
     {
-        let eth_api = self.eth_api().clone();
-        SilBundle::new(eth_api, self.blocking_pool_guard.clone())
+        let sil_api = self.sil_api().clone();
+        SilBundle::new(sil_api, self.blocking_pool_guard.clone())
     }
 
     /// Instantiates `DebugApi`
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn debug_api(&self) -> DebugApi<SilApi>
     where
-        SilApi: FullEthApiTypes,
+        SilApi: FullSilApiTypes,
     {
         DebugApi::new(
-            self.eth_api().clone(),
+            self.sil_api().clone(),
             self.blocking_pool_guard.clone(),
             self.tasks(),
             self.engine_events.new_listener(),
@@ -834,13 +834,13 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn net_api(&self) -> NetApi<Network, SilApi>
     where
         SilApi: SilApiSpec + 'static,
     {
-        let eth_api = self.eth_api().clone();
-        NetApi::new(self.network.clone(), eth_api)
+        let sil_api = self.sil_api().clone();
+        NetApi::new(self.network.clone(), sil_api)
     }
 
     /// Instantiates `RsilApi`
@@ -866,7 +866,7 @@ where
         + ChangeSetReader,
     Pool: TransactionPool + Clone + 'static,
     Network: NetworkInfo + Peers + Clone + 'static,
-    SilApi: FullEthApiServer,
+    SilApi: FullSilApiServer,
     SavmConfig: ConfigureEvm<Primitives = N> + 'static,
     Consensus: FullConsensus<N> + Clone + 'static,
 {
@@ -893,8 +893,8 @@ where
             .expect("No conflicting methods");
 
         // also merge a subset of `eth_` handlers
-        let eth_handlers = self.eth_handlers();
-        let engine_eth = EngineEthApi::new(eth_handlers.api.clone(), eth_handlers.filter.clone());
+        let sil_handlers = self.sil_handlers();
+        let engine_eth = EngineEthApi::new(sil_handlers.api.clone(), sil_handlers.filter.clone());
 
         module.merge(engine_eth.into_rpc()).expect("No conflicting methods");
 
@@ -943,13 +943,13 @@ where
     ///
     /// # Panics
     ///
-    /// If called outside of the tokio runtime. See also [`Self::eth_api`]
+    /// If called outside of the tokio runtime. See also [`Self::sil_api`]
     pub fn rsil_methods(
         &mut self,
         namespaces: impl Iterator<Item = RsilRpcModule>,
     ) -> Vec<Methods> {
-        let SilHandlers { api: eth_api, filter: eth_filter, pubsub: eth_pubsub, .. } =
-            self.eth_handlers().clone();
+        let SilHandlers { api: sil_api, filter: sil_filter, pubsub: sil_pubsub, .. } =
+            self.sil_handlers().clone();
 
         // Create a copy, so we can list out all the methods for rpc_ api
         let namespaces: Vec<_> = namespaces.collect();
@@ -967,7 +967,7 @@ where
                         .into_rpc()
                         .into(),
                         RsilRpcModule::Debug => DebugApi::new(
-                            eth_api.clone(),
+                            sil_api.clone(),
                             self.blocking_pool_guard.clone(),
                             &self.executor,
                             self.engine_events.new_listener(),
@@ -976,13 +976,13 @@ where
                         .into(),
                         RsilRpcModule::Sil => {
                             // merge all sil handlers
-                            let mut module = eth_api.clone().into_rpc();
-                            module.merge(eth_filter.clone().into_rpc()).expect("No conflicts");
-                            module.merge(eth_pubsub.clone().into_rpc()).expect("No conflicts");
+                            let mut module = sil_api.clone().into_rpc();
+                            module.merge(sil_filter.clone().into_rpc()).expect("No conflicts");
+                            module.merge(sil_pubsub.clone().into_rpc()).expect("No conflicts");
                             module
                                 .merge(
                                     SilBundle::new(
-                                        eth_api.clone(),
+                                        sil_api.clone(),
                                         self.blocking_pool_guard.clone(),
                                     )
                                     .into_rpc(),
@@ -992,10 +992,10 @@ where
                             module.into()
                         }
                         RsilRpcModule::Net => {
-                            NetApi::new(self.network.clone(), eth_api.clone()).into_rpc().into()
+                            NetApi::new(self.network.clone(), sil_api.clone()).into_rpc().into()
                         }
                         RsilRpcModule::Trace => TraceApi::new(
-                            eth_api.clone(),
+                            sil_api.clone(),
                             self.blocking_pool_guard.clone(),
                             self.eth_config.clone(),
                         )
@@ -1016,7 +1016,7 @@ where
                         )
                         .into_rpc()
                         .into(),
-                        RsilRpcModule::Ots => OtterscanApi::new(eth_api.clone()).into_rpc().into(),
+                        RsilRpcModule::Ots => OtterscanApi::new(sil_api.clone()).into_rpc().into(),
                         RsilRpcModule::Rsil => RsilApi::new(
                             self.provider.clone(),
                             self.evm_config.clone(),
@@ -1027,16 +1027,16 @@ where
                         .into(),
                         RsilRpcModule::Miner => MinerApi::default().into_rpc().into(),
                         RsilRpcModule::Mev => {
-                            SilSimBundle::new(eth_api.clone(), self.blocking_pool_guard.clone())
+                            SilSimBundle::new(sil_api.clone(), self.blocking_pool_guard.clone())
                                 .into_rpc()
                                 .into()
                         }
                         // these are implementation specific and need to be handled during
                         // initialization and should be registered via extend_rpc_modules in the
                         // nodebuilder rpc addon stack
-                        RsilRpcModule::Flashbots |
-                        RsilRpcModule::Testing |
-                        RsilRpcModule::Other(_) => Default::default(),
+                        RsilRpcModule::Flashbots
+                        | RsilRpcModule::Testing
+                        | RsilRpcModule::Other(_) => Default::default(),
                     })
                     .clone()
             })
@@ -1298,9 +1298,9 @@ impl<RpcMiddleware> RpcServerConfig<RpcMiddleware> {
     ///
     /// If no server is configured, no server will be launched on [`RpcServerConfig::start`].
     pub const fn has_server(&self) -> bool {
-        self.http_server_config.is_some() ||
-            self.ws_server_config.is_some() ||
-            self.ipc_server_config.is_some()
+        self.http_server_config.is_some()
+            || self.ws_server_config.is_some()
+            || self.ipc_server_config.is_some()
     }
 
     /// Returns the [`SocketAddr`] of the http server
@@ -1384,9 +1384,9 @@ impl<RpcMiddleware> RpcServerConfig<RpcMiddleware> {
         }
 
         // If both are configured on the same port, we combine them into one server.
-        if self.http_addr == self.ws_addr &&
-            self.http_server_config.is_some() &&
-            self.ws_server_config.is_some()
+        if self.http_addr == self.ws_addr
+            && self.http_server_config.is_some()
+            && self.ws_server_config.is_some()
         {
             let cors = match (self.ws_cors_domains.as_ref(), self.http_cors_domains.as_ref()) {
                 (Some(ws_cors), Some(http_cors)) => {
@@ -1789,7 +1789,7 @@ impl TransportRpcModules {
     /// Returns [Ok(false)] if no http transport is configured.
     pub fn merge_http(&mut self, other: impl Into<Methods>) -> Result<bool, RegisterMethodError> {
         if let Some(ref mut http) = self.http {
-            return http.merge(other.into()).map(|_| true)
+            return http.merge(other.into()).map(|_| true);
         }
         Ok(false)
     }
@@ -1801,7 +1801,7 @@ impl TransportRpcModules {
     /// Returns [Ok(false)] if no ws transport is configured.
     pub fn merge_ws(&mut self, other: impl Into<Methods>) -> Result<bool, RegisterMethodError> {
         if let Some(ref mut ws) = self.ws {
-            return ws.merge(other.into()).map(|_| true)
+            return ws.merge(other.into()).map(|_| true);
         }
         Ok(false)
     }
@@ -1813,7 +1813,7 @@ impl TransportRpcModules {
     /// Returns [Ok(false)] if no ipc transport is configured.
     pub fn merge_ipc(&mut self, other: impl Into<Methods>) -> Result<bool, RegisterMethodError> {
         if let Some(ref mut ipc) = self.ipc {
-            return ipc.merge(other.into()).map(|_| true)
+            return ipc.merge(other.into()).map(|_| true);
         }
         Ok(false)
     }
@@ -2148,8 +2148,8 @@ impl RpcServerHandle {
                 "Bearer {}",
                 secret
                     .encode(&Claims {
-                        iat: (SystemTime::now().duration_since(UNIX_EPOCH).unwrap() +
-                            Duration::from_secs(60))
+                        iat: (SystemTime::now().duration_since(UNIX_EPOCH).unwrap()
+                            + Duration::from_secs(60))
                         .as_secs(),
                         exp: None,
                     })

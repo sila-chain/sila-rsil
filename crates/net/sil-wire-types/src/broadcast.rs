@@ -1,9 +1,8 @@
 //! Types for broadcasting new data.
 
-use crate::{SilMessage, SilVersion, NetworkPrimitives};
+use crate::{NetworkPrimitives, SilMessage, SilVersion};
 use alloc::{sync::Arc, vec::Vec};
 use alloy_consensus::transaction::TxHashRef;
-use alloy_eips::sip2718::Typed2718;
 use alloy_primitives::{
     bytes::BufMut,
     map::{B256Map, B256Set},
@@ -13,11 +12,12 @@ use alloy_rlp::{
     decode_append, Decodable, Encodable, Header, RlpDecodable, RlpDecodableWrapper, RlpEncodable,
     RlpEncodableWrapper,
 };
+use alloy_sips::eip2718::Typed2718;
 use core::{fmt::Debug, mem};
 use derive_more::{Constructor, Deref, DerefMut, From, IntoIterator};
-use rsil_codecs_derive::{add_arbitrary_tests, generate_tests};
-use rsil_sila_primitives::TransactionSigned;
+use reth_codecs_derive::{add_arbitrary_tests, generate_tests};
 use rsil_primitives_traits::{sync::OnceLock, Block, InMemorySize, SignedTransaction};
+use rsil_sila_primitives::TransactionSigned;
 
 /// Soft limit for the number of hashes in a
 /// [`NewPooledTransactionHashes`] broadcast message.
@@ -747,10 +747,10 @@ impl Decodable for NewPooledTransactionHashes68 {
     fn decode(buf: &mut &[u8]) -> alloy_rlp::Result<Self> {
         let Header { list, payload_length } = Header::decode(buf)?;
         if !list {
-            return Err(alloy_rlp::Error::UnexpectedString)
+            return Err(alloy_rlp::Error::UnexpectedString);
         }
         if buf.len() < payload_length {
-            return Err(alloy_rlp::Error::InputTooShort)
+            return Err(alloy_rlp::Error::InputTooShort);
         }
 
         let (mut payload, rest) = buf.split_at(payload_length);
@@ -760,7 +760,7 @@ impl Decodable for NewPooledTransactionHashes68 {
             return Err(alloy_rlp::Error::ListLengthMismatch {
                 expected: payload_length,
                 got: payload_length - payload.len(),
-            })
+            });
         }
 
         ensure_pooled_transaction_hashes_lengths(hashes.len(), types.len(), sizes.len())?;
@@ -883,10 +883,10 @@ impl NewPooledTransactionHashes72 {
     }
 
     fn payload_length(&self) -> usize {
-        self.types.as_slice().length() +
-            self.sizes.length() +
-            self.hashes.length() +
-            self.cell_mask.as_ref().map_or(1, Encodable::length)
+        self.types.as_slice().length()
+            + self.sizes.length()
+            + self.hashes.length()
+            + self.cell_mask.as_ref().map_or(1, Encodable::length)
     }
 }
 
@@ -912,16 +912,16 @@ impl Decodable for NewPooledTransactionHashes72 {
     fn decode(buf: &mut &[u8]) -> alloy_rlp::Result<Self> {
         let Header { list, payload_length } = Header::decode(buf)?;
         if !list {
-            return Err(alloy_rlp::Error::UnexpectedString)
+            return Err(alloy_rlp::Error::UnexpectedString);
         }
         if buf.len() < payload_length {
-            return Err(alloy_rlp::Error::InputTooShort)
+            return Err(alloy_rlp::Error::InputTooShort);
         }
 
         let (mut payload, rest) = buf.split_at(payload_length);
         let (types, sizes, hashes) = decode_pooled_transaction_hashes_payload(&mut payload)?;
         let Some(first_byte) = payload.first().copied() else {
-            return Err(alloy_rlp::Error::InputTooShort)
+            return Err(alloy_rlp::Error::InputTooShort);
         };
         let cell_mask = if first_byte == alloy_rlp::EMPTY_STRING_CODE {
             payload = &payload[1..];
@@ -934,7 +934,7 @@ impl Decodable for NewPooledTransactionHashes72 {
             return Err(alloy_rlp::Error::ListLengthMismatch {
                 expected: payload_length,
                 got: payload_length - payload.len(),
-            })
+            });
         }
 
         ensure_pooled_transaction_hashes_lengths(hashes.len(), types.len(), sizes.len())?;
@@ -975,10 +975,10 @@ const fn ensure_pooled_transaction_hashes_lengths(
     sizes_len: usize,
 ) -> alloy_rlp::Result<()> {
     if hashes_len != types_len {
-        return Err(alloy_rlp::Error::ListLengthMismatch { expected: hashes_len, got: types_len })
+        return Err(alloy_rlp::Error::ListLengthMismatch { expected: hashes_len, got: types_len });
     }
     if hashes_len != sizes_len {
-        return Err(alloy_rlp::Error::ListLengthMismatch { expected: hashes_len, got: sizes_len })
+        return Err(alloy_rlp::Error::ListLengthMismatch { expected: hashes_len, got: sizes_len });
     }
 
     Ok(())
@@ -1262,6 +1262,7 @@ impl HandleVersionedMempoolData for ValidAnnouncementData {
 }
 
 /// Hashes to request from a peer.
+#[allow(clippy::redundant_field_names)]
 #[derive(Debug, Default, Deref, DerefMut, IntoIterator, Constructor)]
 pub struct RequestTxHashes {
     #[deref]
@@ -1288,7 +1289,7 @@ impl RequestTxHashes {
     pub fn retain_count(&mut self, count: usize) -> Self {
         let rest_capacity = self.hashes.len().saturating_sub(count);
         if rest_capacity == 0 {
-            return Self::empty()
+            return Self::empty();
         }
         let mut rest = Self::with_capacity(rest_capacity);
 
@@ -1296,7 +1297,7 @@ impl RequestTxHashes {
         self.hashes.retain(|hash| {
             if i >= count {
                 rest.insert(*hash);
-                return false
+                return false;
             }
             i += 1;
 
@@ -1332,15 +1333,15 @@ impl InMemorySize for NewPooledTransactionHashes {
         match self {
             Self::Sil66(msg) => msg.0.len() * core::mem::size_of::<B256>(),
             Self::Sil68(msg) => {
-                msg.types.len() * core::mem::size_of::<u8>() +
-                    msg.sizes.len() * core::mem::size_of::<usize>() +
-                    msg.hashes.len() * core::mem::size_of::<B256>()
+                msg.types.len() * core::mem::size_of::<u8>()
+                    + msg.sizes.len() * core::mem::size_of::<usize>()
+                    + msg.hashes.len() * core::mem::size_of::<B256>()
             }
             Self::Sil72(msg) => {
-                msg.types.len() * core::mem::size_of::<u8>() +
-                    msg.sizes.len() * core::mem::size_of::<usize>() +
-                    msg.hashes.len() * core::mem::size_of::<B256>() +
-                    core::mem::size_of::<B128>()
+                msg.types.len() * core::mem::size_of::<u8>()
+                    + msg.sizes.len() * core::mem::size_of::<usize>()
+                    + msg.hashes.len() * core::mem::size_of::<B256>()
+                    + core::mem::size_of::<B128>()
             }
         }
     }
@@ -1350,9 +1351,9 @@ impl InMemorySize for NewPooledTransactionHashes {
 mod tests {
     use super::*;
     use alloy_consensus::{transaction::TxHashRef, Typed2718};
-    use alloy_eips::sip2718::Encodable2718;
     use alloy_primitives::{b256, hex, Bytes, Signature, U256};
     use alloy_rlp::{RlpDecodable, RlpEncodable};
+    use alloy_sips::eip2718::Encodable2718;
     use proptest::prelude::*;
     use rsil_sila_primitives::{Transaction, TransactionSigned};
     use std::str::FromStr;
@@ -1387,7 +1388,7 @@ mod tests {
 
     type NewPooledTransactionHashes68Fields = (Vec<u8>, Vec<usize>, Vec<B256>);
 
-    fn decode_eth68_hashes_derived(
+    fn decode_sil68_hashes_derived(
         buf: &mut &[u8],
     ) -> alloy_rlp::Result<NewPooledTransactionHashes68> {
         let encodable = EncodableNewPooledTransactionHashes68::decode(buf)?;
@@ -1406,7 +1407,7 @@ mod tests {
         Ok(msg)
     }
 
-    fn eth68_hash_fields_strategy() -> impl Strategy<Value = NewPooledTransactionHashes68Fields> {
+    fn sil68_hash_fields_strategy() -> impl Strategy<Value = NewPooledTransactionHashes68Fields> {
         (0usize..128, 0usize..128, 0usize..128).prop_flat_map(
             |(types_len, sizes_len, hashes_len)| {
                 (
@@ -1457,8 +1458,8 @@ mod tests {
         }
 
         #[test]
-        fn eth_68_handrolled_decode_matches_derived_implementation(
-            (types, sizes, hashes) in eth68_hash_fields_strategy()
+        fn sil_68_handrolled_decode_matches_derived_implementation(
+            (types, sizes, hashes) in sil68_hash_fields_strategy()
         ) {
             let encodable = EncodableNewPooledTransactionHashes68 {
                 types: Bytes::from(types),
@@ -1468,7 +1469,7 @@ mod tests {
             let encoded = encoded(&encodable);
 
             let mut derived_buf = encoded.as_slice();
-            let derived = decode_eth68_hashes_derived(&mut derived_buf);
+            let derived = decode_sil68_hashes_derived(&mut derived_buf);
 
             let mut handrolled_buf = encoded.as_slice();
             let handrolled = NewPooledTransactionHashes68::decode(&mut handrolled_buf);
@@ -1495,7 +1496,7 @@ mod tests {
     }
 
     #[test]
-    fn eth_68_tx_hash_roundtrip() {
+    fn sil_68_tx_hash_roundtrip() {
         let vectors = vec![
             (
                 NewPooledTransactionHashes68 { types: vec![], sizes: vec![], hashes: vec![] },
@@ -1634,7 +1635,7 @@ mod tests {
     }
 
     #[test]
-    fn eth_72_tx_hash_roundtrip() {
+    fn sil_72_tx_hash_roundtrip() {
         let vectors = vec![
             (
                 NewPooledTransactionHashes72 {
@@ -1662,10 +1663,10 @@ mod tests {
     }
 
     #[test]
-    fn eth_72_rejects_missing_cell_mask() {
-        let encoded_eth68_payload = hex!("c380c0c0");
+    fn sil_72_rejects_missing_cell_mask() {
+        let encoded_sil68_payload = hex!("c380c0c0");
 
-        let result = NewPooledTransactionHashes72::decode(&mut encoded_eth68_payload.as_ref());
+        let result = NewPooledTransactionHashes72::decode(&mut encoded_sil68_payload.as_ref());
 
         assert!(matches!(result, Err(alloy_rlp::Error::InputTooShort)));
     }

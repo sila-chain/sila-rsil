@@ -75,7 +75,7 @@ exclude_crates=(
   rsil-era-downloader # tokio
   rsil-era-utils # tokio
   rsil-tracing-otlp
-  rsil-node-ethstats
+  rsil-node-silstats
   # The following pull in C libraries (secp256k1-sys, zstd-sys) that cannot compile to wasm
   rsil-cli-util       # secp256k1-sys via enr
   rsil-db             # zstd-sys via rsil-nippy-jar

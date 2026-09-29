@@ -9,7 +9,7 @@ use std::{
 
 /// A single test case, capable of loading a JSON description of itself and running it.
 ///
-/// See <https://sila-tests.readthedocs.io/> for test specs.
+/// See <https://github.com/sila-chain/sila-tests> for test specs.
 pub trait Case: Debug + Send + Sync + Sized + 'static {
     /// A description of the test.
     fn description(&self) -> String {
@@ -18,7 +18,7 @@ pub trait Case: Debug + Send + Sync + Sized + 'static {
 
     /// Load the test from the given file path.
     ///
-    /// The file can be assumed to be a valid EF test case as described on <https://sila-tests.readthedocs.io/>.
+    /// The file can be assumed to be a valid EF test case as described on <https://github.com/sila-chain/sila-tests>.
     fn load(path: &Path) -> Result<Self, Error>;
 
     /// Run the test.

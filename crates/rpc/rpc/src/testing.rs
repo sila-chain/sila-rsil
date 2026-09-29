@@ -15,8 +15,8 @@
 //! on public-facing RPC endpoints without proper authentication.
 
 use alloy_consensus::{Header, Transaction};
-use alloy_eips::{sip1559::calculate_block_gas_limit, sip2718::Decodable2718};
-use alloy_evm::{Savm, RecoveredTx};
+use alloy_eips::{eip1559::calculate_block_gas_limit, eip2718::Decodable2718};
+use alloy_evm::{RecoveredTx, Savm};
 use alloy_primitives::{
     map::{DefaultHashBuilder, HashSet},
     Address, Bytes, B256, U256,
@@ -25,13 +25,12 @@ use alloy_rlp::Encodable;
 use alloy_rpc_types_engine::{ExecutionPayloadEnvelopeV5, ForkchoiceState, PayloadAttributes};
 use async_trait::async_trait;
 use jsonrpsee::core::RpcResult;
+use revm::context::Block;
 use rsil_chainspec::{ChainSpecProvider, SilaHardforks};
 use rsil_consensus_common::validation::MAX_RLP_BLOCK_SIZE;
 use rsil_engine_primitives::ConsensusEngineHandle;
 use rsil_errors::RsilError;
-use rsil_sila_engine_primitives::SilBuiltPayload;
-use rsil_sila_primitives::SilPrimitives;
-use rsil_evm::{execute::BlockBuilder, ConfigureEvm, NextBlockEnvAttributes};
+use rsil_savm::{execute::BlockBuilder, ConfigureEvm, NextBlockEnvAttributes};
 use rsil_payload_primitives::PayloadTypes;
 use rsil_primitives_traits::{
     transaction::{recover::try_recover_signers, signed::RecoveryError},
@@ -39,11 +38,12 @@ use rsil_primitives_traits::{
 };
 use rsil_revm::{database::StateProviderDatabase, db::State};
 use rsil_rpc_api::{TestingApiServer, TestingBuildBlockRequestV1};
-use rsil_rpc_eth_api::{helpers::Call, FromEthApiError};
-use rsil_rpc_eth_types::SilApiError;
+use rsil_rpc_sil_api::{helpers::Call, FromSilApiError};
+use rsil_rpc_sil_types::SilApiError;
+use rsil_sila_engine_primitives::SilBuiltPayload;
+use rsil_sila_primitives::SilPrimitives;
 use rsil_storage_api::{BlockReader, BlockReaderIdExt, HeaderProvider};
 use rsil_transaction_pool::{BestTransactionsAttributes, PoolTransaction, TransactionPool};
-use revm::context::Block;
 use std::sync::Arc;
 use tracing::debug;
 
@@ -54,7 +54,7 @@ pub struct TestingApi<
     Savm,
     Payload: PayloadTypes = rsil_sila_engine_primitives::SilEngineTypes,
 > {
-    eth_api: Sil,
+    sil_api: Sil,
     evm_config: Savm,
     /// Desired gas limit to move toward while respecting the consensus gas limit bounds.
     desired_gas_limit: u64,
@@ -68,13 +68,13 @@ pub struct TestingApi<
 impl<Sil, Savm, Payload: PayloadTypes> TestingApi<Sil, Savm, Payload> {
     /// Create a new testing API handler.
     pub const fn new(
-        eth_api: Sil,
+        sil_api: Sil,
         evm_config: Savm,
         desired_gas_limit: u64,
         engine_handle: ConsensusEngineHandle<Payload>,
     ) -> Self {
         Self {
-            eth_api,
+            sil_api,
             evm_config,
             desired_gas_limit,
             engine_handle,
@@ -120,17 +120,17 @@ where
         let evm_config = self.evm_config.clone();
         let desired_gas_limit = self.desired_gas_limit;
         let gas_limit_override = self.gas_limit_override;
-        self.eth_api
-            .spawn_with_state_at_block(request.parent_block_hash, move |eth_api, state| {
+        self.sil_api
+            .spawn_with_state_at_block(request.parent_block_hash, move |sil_api, state| {
                 let state = state.database.0;
-                let parent = eth_api
+                let parent = sil_api
                     .provider()
                     .sealed_header_by_hash(request.parent_block_hash)?
                     .ok_or_else(|| {
                     SilApiError::HeaderNotFound(request.parent_block_hash.into())
                 })?;
 
-                let chain_spec = eth_api.provider().chain_spec();
+                let chain_spec = sil_api.provider().chain_spec();
                 let is_amsterdam = chain_spec
                     .is_amsterdam_active_at_timestamp(request.payload_attributes.timestamp);
                 let is_osaka =
@@ -160,8 +160,8 @@ where
                 let mut builder = evm_config
                     .builder_for_next_block(&mut db, &parent, env_attrs)
                     .map_err(RsilError::other)
-                    .map_err(Sil::Error::from_eth_err)?;
-                builder.apply_pre_execution_changes().map_err(Sil::Error::from_eth_err)?;
+                    .map_err(Sil::Error::from_sil_err)?;
+                builder.apply_pre_execution_changes().map_err(Sil::Error::from_sil_err)?;
 
                 let mut total_fees = U256::ZERO;
                 let base_fee = builder.evm_mut().block().basefee();
@@ -171,7 +171,7 @@ where
 
                 // If no transactions are provided in the request, use transactions from the pool.
                 let recovered_txs = if use_pool_transactions {
-                    let mut best_txs = eth_api.pool().best_transactions_with_attributes(
+                    let mut best_txs = sil_api.pool().best_transactions_with_attributes(
                         BestTransactionsAttributes::new(
                             base_fee,
                             builder
@@ -204,10 +204,10 @@ where
                     let tx_rlp_len = tx.tx().length();
                     if is_osaka {
                         // 1KB overhead for block header
-                        let estimated_block_size = block_transactions_rlp_length +
-                            tx_rlp_len +
-                            withdrawals_rlp_length +
-                            1024;
+                        let estimated_block_size = block_transactions_rlp_length
+                            + tx_rlp_len
+                            + withdrawals_rlp_length
+                            + 1024;
                         if estimated_block_size > MAX_RLP_BLOCK_SIZE {
                             if allow_skip_invalid_transactions {
                                 debug!(
@@ -221,7 +221,7 @@ where
                                 invalid_senders.insert(signer);
                                 continue;
                             }
-                            return Err(Sil::Error::from_eth_err(SilApiError::InvalidParams(
+                            return Err(Sil::Error::from_sil_err(SilApiError::InvalidParams(
                                 format!(
                                     "transaction at index {} would exceed max block size: {} > {}",
                                     idx, estimated_block_size, MAX_RLP_BLOCK_SIZE
@@ -252,14 +252,14 @@ where
                                 error = ?err,
                                 "Transaction execution failed"
                             );
-                            return Err(Sil::Error::from_eth_err(err));
+                            return Err(Sil::Error::from_sil_err(err));
                         }
                     };
 
                     block_transactions_rlp_length += tx_rlp_len;
                     total_fees += U256::from(tip) * U256::from(gas_used);
                 }
-                let outcome = builder.finish(&state, None).map_err(Sil::Error::from_eth_err)?;
+                let outcome = builder.finish(&state, None).map_err(Sil::Error::from_sil_err)?;
 
                 let has_requests = outcome.block.requests_hash().is_some();
                 let requests = has_requests.then_some(outcome.execution_result.requests);
@@ -286,7 +286,7 @@ where
             .await?
             .try_into_v5()
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)
+            .map_err(Sil::Error::from_sil_err)
     }
 
     async fn commit_block_v1(
@@ -296,20 +296,20 @@ where
         extra_data: Option<Bytes>,
     ) -> Result<B256, Sil::Error> {
         let parent = self
-            .eth_api
+            .sil_api
             .provider()
             .latest_header()
             .map_err(SilApiError::from)?
             .ok_or_else(|| SilApiError::HeaderNotFound(alloy_eips::BlockId::latest()))?;
         let safe_block_hash = self
-            .eth_api
+            .sil_api
             .provider()
             .safe_header()
             .map_err(SilApiError::from)?
             .map(|header| header.hash())
             .unwrap_or_else(|| parent.hash());
         let finalized_block_hash = self
-            .eth_api
+            .sil_api
             .provider()
             .finalized_header()
             .map_err(SilApiError::from)?
@@ -337,9 +337,9 @@ where
             .new_payload(execution_data)
             .await
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
         if !status.is_valid() {
-            return Err(Sil::Error::from_eth_err(SilApiError::InvalidParams(format!(
+            return Err(Sil::Error::from_sil_err(SilApiError::InvalidParams(format!(
                 "new payload returned non-valid status: {:?}",
                 status.status
             ))));
@@ -357,9 +357,9 @@ where
             )
             .await
             .map_err(RsilError::other)
-            .map_err(Sil::Error::from_eth_err)?;
+            .map_err(Sil::Error::from_sil_err)?;
         if !fcu.is_valid() {
-            return Err(Sil::Error::from_eth_err(SilApiError::InvalidParams(format!(
+            return Err(Sil::Error::from_sil_err(SilApiError::InvalidParams(format!(
                 "forkchoice update returned non-valid status: {:?}",
                 fcu.payload_status.status
             ))));

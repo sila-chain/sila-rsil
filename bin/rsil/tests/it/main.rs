@@ -94,7 +94,7 @@ fn unknown_flag() {
 }
 
 #[tokio::test]
-async fn dev_node_eth_syncing() {
+async fn dev_node_sil_syncing() {
     use alloy_provider::{Provider, ProviderBuilder};
 
     let (rsil, _datadir) = spawn_dev();
@@ -102,7 +102,7 @@ async fn dev_node_eth_syncing() {
 
     tokio::time::sleep(std::time::Duration::from_secs(1)).await;
 
-    let _syncing = provider.syncing().await.expect("eth_syncing failed");
+    let _syncing = provider.syncing().await.expect("sil_syncing failed");
 }
 
 // ── Subcommand --help coverage ───────────────────────────────────────────────
@@ -297,7 +297,7 @@ async fn dev_node_send_tx_and_mine() {
     tokio::time::sleep(std::time::Duration::from_secs(1)).await;
 
     // Dev mode pre-funds the first dev account.
-    let accounts = provider.get_accounts().await.expect("eth_accounts failed");
+    let accounts = provider.get_accounts().await.expect("sil_accounts failed");
     assert!(!accounts.is_empty(), "dev node should expose at least one account");
 
     let sender = accounts[0];
@@ -305,7 +305,7 @@ async fn dev_node_send_tx_and_mine() {
 
     let tx = TransactionRequest::default().from(sender).to(recipient).value(U256::from(1_000_000));
 
-    let tx_hash = provider.send_transaction(tx).await.expect("eth_sendTransaction failed");
+    let tx_hash = provider.send_transaction(tx).await.expect("sil_sendTransaction failed");
 
     // In dev/instant-mine mode the node seals a block for each transaction, so
     // the receipt becomes available almost immediately.
@@ -316,7 +316,7 @@ async fn dev_node_send_tx_and_mine() {
     assert!(receipt.block_number.unwrap() > 0, "receipt should be in a mined block");
 
     // Verify the transfer actually mutated state.
-    let balance = provider.get_balance(recipient).await.expect("eth_getBalance failed");
+    let balance = provider.get_balance(recipient).await.expect("sil_getBalance failed");
     assert_eq!(balance, U256::from(1_000_000));
 }
 

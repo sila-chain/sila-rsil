@@ -190,9 +190,9 @@ pub struct MultiProof {
 impl MultiProof {
     /// Returns true if the multiproof is empty.
     pub fn is_empty(&self) -> bool {
-        self.account_subtree.is_empty() &&
-            self.branch_node_masks.is_empty() &&
-            self.storages.is_empty()
+        self.account_subtree.is_empty()
+            && self.branch_node_masks.is_empty()
+            && self.storages.is_empty()
     }
 
     /// Return the account proof nodes for the given account path.
@@ -239,16 +239,16 @@ impl MultiProof {
         // Inspect the last node in the proof. If it's a leaf node with matching suffix,
         // then the node contains the encoded trie account.
         let info = 'info: {
-            if let Some(last) = proof.last() &&
-                let TrieNode::Leaf(leaf) = TrieNode::decode(&mut &last[..])? &&
-                nibbles.ends_with(&leaf.key)
+            if let Some(last) = proof.last()
+                && let TrieNode::Leaf(leaf) = TrieNode::decode(&mut &last[..])?
+                && nibbles.ends_with(&leaf.key)
             {
                 let account = TrieAccount::decode(&mut &leaf.value[..])?;
                 break 'info Some(Account {
                     balance: account.balance,
                     nonce: account.nonce,
                     bytecode_hash: (account.code_hash != KECCAK_EMPTY).then_some(account.code_hash),
-                })
+                });
             }
             None
         };
@@ -320,9 +320,9 @@ pub struct DecodedMultiProof {
 impl DecodedMultiProof {
     /// Returns true if the multiproof is empty.
     pub fn is_empty(&self) -> bool {
-        self.account_subtree.is_empty() &&
-            self.branch_node_masks.is_empty() &&
-            self.storages.is_empty()
+        self.account_subtree.is_empty()
+            && self.branch_node_masks.is_empty()
+            && self.storages.is_empty()
     }
 
     /// Return the account proof nodes for the given account path.
@@ -369,15 +369,15 @@ impl DecodedMultiProof {
         // Inspect the last node in the proof. If it's a leaf node with matching suffix,
         // then the node contains the encoded trie account.
         let info = 'info: {
-            if let Some(TrieNode::Leaf(leaf)) = proof.last() &&
-                nibbles.ends_with(&leaf.key)
+            if let Some(TrieNode::Leaf(leaf)) = proof.last()
+                && nibbles.ends_with(&leaf.key)
             {
                 let account = TrieAccount::decode(&mut &leaf.value[..])?;
                 break 'info Some(Account {
                     balance: account.balance,
                     nonce: account.nonce,
                     bytecode_hash: (account.code_hash != KECCAK_EMPTY).then_some(account.code_hash),
-                })
+                });
             }
             None
         };
@@ -629,11 +629,11 @@ impl StorageMultiProof {
         // Inspect the last node in the proof. If it's a leaf node with matching suffix,
         // then the node contains the encoded slot value.
         let value = 'value: {
-            if let Some(last) = proof.last() &&
-                let TrieNode::Leaf(leaf) = TrieNode::decode(&mut &last[..])? &&
-                nibbles.ends_with(&leaf.key)
+            if let Some(last) = proof.last()
+                && let TrieNode::Leaf(leaf) = TrieNode::decode(&mut &last[..])?
+                && nibbles.ends_with(&leaf.key)
             {
-                break 'value U256::decode(&mut &leaf.value[..])?
+                break 'value U256::decode(&mut &leaf.value[..])?;
             }
             U256::ZERO
         };
@@ -679,10 +679,10 @@ impl DecodedStorageMultiProof {
         // Inspect the last node in the proof. If it's a leaf node with matching suffix,
         // then the node contains the encoded slot value.
         let value = 'value: {
-            if let Some(TrieNode::Leaf(leaf)) = proof.last() &&
-                nibbles.ends_with(&leaf.key)
+            if let Some(TrieNode::Leaf(leaf)) = proof.last()
+                && nibbles.ends_with(&leaf.key)
             {
-                break 'value U256::decode(&mut &leaf.value[..])?
+                break 'value U256::decode(&mut &leaf.value[..])?;
             }
             U256::ZERO
         };
@@ -750,7 +750,7 @@ impl AccountProof {
     pub fn into_eip1186_response(
         self,
         slots: Vec<alloy_serde::JsonStorageKey>,
-    ) -> alloy_rpc_types_eth::SIP1186AccountProofResponse {
+    ) -> alloy_rpc_types_sil::EIP1186AccountProofResponse {
         self.into_eip1186_response_with(slots, false)
     }
 
@@ -768,7 +768,7 @@ impl AccountProof {
         self,
         slots: Vec<alloy_serde::JsonStorageKey>,
         zero_empty_account: bool,
-    ) -> alloy_rpc_types_eth::SIP1186AccountProofResponse {
+    ) -> alloy_rpc_types_sil::EIP1186AccountProofResponse {
         let is_non_existent = self.info.is_none();
         let info = self.info.unwrap_or_default();
         let (code_hash, storage_hash) = if is_non_existent && zero_empty_account {
@@ -776,7 +776,7 @@ impl AccountProof {
         } else {
             (info.get_bytecode_hash(), self.storage_root)
         };
-        alloy_rpc_types_eth::SIP1186AccountProofResponse {
+        alloy_rpc_types_sil::EIP1186AccountProofResponse {
             address: self.address,
             balance: info.balance,
             code_hash,
@@ -795,12 +795,12 @@ impl AccountProof {
     }
 
     /// Converts an
-    /// [`SIP1186AccountProofResponse`](alloy_rpc_types_eth::SIP1186AccountProofResponse) to an
+    /// [`SIP1186AccountProofResponse`](alloy_rpc_types_sil::EIP1186AccountProofResponse) to an
     /// [`AccountProof`].
     ///
     /// This is the inverse of [`Self::into_eip1186_response`]
-    pub fn from_eip1186_proof(proof: alloy_rpc_types_eth::SIP1186AccountProofResponse) -> Self {
-        let alloy_rpc_types_eth::SIP1186AccountProofResponse {
+    pub fn from_eip1186_proof(proof: alloy_rpc_types_sil::EIP1186AccountProofResponse) -> Self {
+        let alloy_rpc_types_sil::EIP1186AccountProofResponse {
             nonce,
             address,
             balance,
@@ -812,10 +812,10 @@ impl AccountProof {
         } = proof;
         let storage_proofs = storage_proof.into_iter().map(Into::into).collect();
 
-        let (storage_root, info) = if nonce == 0 &&
-            balance.is_zero() &&
-            (storage_hash.is_zero() || storage_hash == EMPTY_ROOT_HASH) &&
-            (code_hash == KECCAK_EMPTY || code_hash.is_zero())
+        let (storage_root, info) = if nonce == 0
+            && balance.is_zero()
+            && (storage_hash.is_zero() || storage_hash == EMPTY_ROOT_HASH)
+            && (code_hash == KECCAK_EMPTY || code_hash.is_zero())
         {
             // Account does not exist in state. Return `None` here to prevent proof
             // verification.
@@ -835,8 +835,8 @@ impl AccountProof {
 }
 
 #[cfg(feature = "sip1186")]
-impl From<alloy_rpc_types_eth::SIP1186AccountProofResponse> for AccountProof {
-    fn from(proof: alloy_rpc_types_eth::SIP1186AccountProofResponse) -> Self {
+impl From<alloy_rpc_types_sil::EIP1186AccountProofResponse> for AccountProof {
+    fn from(proof: alloy_rpc_types_sil::EIP1186AccountProofResponse) -> Self {
         Self::from_eip1186_proof(proof)
     }
 }
@@ -966,8 +966,8 @@ impl StorageProof {
     pub fn into_eip1186_proof(
         self,
         slot: alloy_serde::JsonStorageKey,
-    ) -> alloy_rpc_types_eth::SIP1186StorageProof {
-        alloy_rpc_types_eth::SIP1186StorageProof {
+    ) -> alloy_rpc_types_sil::EIP1186StorageProof {
+        alloy_rpc_types_sil::EIP1186StorageProof {
             key: slot,
             value: self.value,
             proof: normalize_eip1186_empty_trie_proof(self.proof),
@@ -975,10 +975,10 @@ impl StorageProof {
     }
 
     /// Convert from an
-    /// [`SIP1186StorageProof`](alloy_rpc_types_eth::SIP1186StorageProof)
+    /// [`SIP1186StorageProof`](alloy_rpc_types_sil::EIP1186StorageProof)
     ///
     /// This is the inverse of [`Self::into_eip1186_proof`].
-    pub fn from_eip1186_proof(storage_proof: alloy_rpc_types_eth::SIP1186StorageProof) -> Self {
+    pub fn from_eip1186_proof(storage_proof: alloy_rpc_types_sil::EIP1186StorageProof) -> Self {
         Self {
             value: storage_proof.value,
             proof: storage_proof.proof,
@@ -988,8 +988,8 @@ impl StorageProof {
 }
 
 #[cfg(feature = "sip1186")]
-impl From<alloy_rpc_types_eth::SIP1186StorageProof> for StorageProof {
-    fn from(proof: alloy_rpc_types_eth::SIP1186StorageProof) -> Self {
+impl From<alloy_rpc_types_sil::EIP1186StorageProof> for StorageProof {
+    fn from(proof: alloy_rpc_types_sil::EIP1186StorageProof) -> Self {
         Self::from_eip1186_proof(proof)
     }
 }
@@ -1272,7 +1272,7 @@ mod tests {
         // in exclusion proofs for non-existent accounts, instead of
         // KECCAK_EMPTY / EMPTY_ROOT_HASH. Verify that from_eip1186_proof
         // correctly recognizes this format as a non-existent account.
-        let geth_proof = alloy_rpc_types_eth::SIP1186AccountProofResponse {
+        let geth_proof = alloy_rpc_types_sil::EIP1186AccountProofResponse {
             address: Address::random(),
             balance: U256::ZERO,
             code_hash: B256::ZERO,
@@ -1291,7 +1291,7 @@ mod tests {
     #[test]
     #[cfg(feature = "sip1186")]
     fn from_eip1186_proof_accepts_empty_hashes() {
-        let proof = alloy_rpc_types_eth::SIP1186AccountProofResponse {
+        let proof = alloy_rpc_types_sil::EIP1186AccountProofResponse {
             address: Address::random(),
             balance: U256::ZERO,
             code_hash: KECCAK_EMPTY,

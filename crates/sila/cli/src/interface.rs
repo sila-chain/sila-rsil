@@ -21,7 +21,7 @@ use rsil_node_core::{
     args::{LogArgs, OtlpInitStatus, OtlpLogsStatus, TraceArgs},
     version::version_metadata,
 };
-use rsil_rpc_server_types::{DefaultRpcModuleValidator, RsilRpcModule, RpcModuleValidator};
+use rsil_rpc_server_types::{DefaultRpcModuleValidator, RpcModuleValidator, RsilRpcModule};
 use rsil_tracing::{Layers, TracingGuards};
 use std::{ffi::OsString, fmt, future::Future, marker::PhantomData, sync::Arc};
 use tracing::{info, warn};

@@ -23,7 +23,7 @@ rsil-storage-errors.workspace = true
 
 # Alloy
 alloy-primitives.workspace = true
-alloy-eips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-savm.workspace = true
 alloy-consensus.workspace = true
 alloy-rpc-types-engine.workspace = true

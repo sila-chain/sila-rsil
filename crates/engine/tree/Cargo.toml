@@ -38,9 +38,9 @@ rsil-trie-common.workspace = true
 rsil-trie-db.workspace = true
 
 # alloy
-alloy-savm.workspace = true
+alloy-evm = { version = "0.37.0", default-features = false }
 alloy-consensus.workspace = true
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-eip7928 = { workspace = true, features = ["rlp"] }
 alloy-primitives.workspace = true
 alloy-rlp.workspace = true

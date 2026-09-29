@@ -354,7 +354,7 @@ impl<N: NodePrimitives> TreeState<N> {
     pub fn is_descendant(
         &self,
         first: BlockNumHash,
-        second: alloy_eips::sip1898::BlockWithParent,
+        second: alloy_eips::eip1898::BlockWithParent,
     ) -> bool {
         // If the second block's parent is the first block's hash, then it is a direct child
         // and we can return early.

@@ -2,10 +2,10 @@
 
 use crate::tree::error::InsertPayloadError;
 use alloy_eip7928::bal::{DecodedBal, RawBal};
-use alloy_eips::sip4895::Withdrawal;
+use alloy_eips::eip4895::Withdrawal;
 use alloy_primitives::B256;
 use rsil_chain_state::{ExecutedBlock, ExecutionTimingStats};
-use rsil_evm::{ConfigureEvm, SavmEnvFor};
+use rsil_savm::{ConfigureEvm, SavmEnvFor};
 use rsil_primitives_traits::{BlockTy, NodePrimitives};
 use std::sync::Arc;
 

@@ -37,6 +37,7 @@ revm.workspace = true
 
 # alloy
 alloy-eips = { version = "2.1.1", default-features = false }
+alloy-hardforks.workspace = true
 alloy-consensus.workspace = true
 alloy-primitives.workspace = true
 

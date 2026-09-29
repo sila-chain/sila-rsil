@@ -106,8 +106,7 @@ use crate::tree::{
 };
 use alloy_consensus::transaction::{Either, TxHashRef};
 use alloy_eip7928::{bal::DecodedBal, compute_block_access_list_hash, BlockAccessList};
-use alloy_eips::{sip1898::BlockWithParent, sip4895::Withdrawal, NumHash};
-use alloy_savm::Savm;
+use alloy_eips::{eip1898::BlockWithParent, eip4895::Withdrawal, NumHash};
 use alloy_primitives::{
     map::{AddressMap, B256Set},
     B256,
@@ -1199,8 +1198,8 @@ where
         has_bal: bool,
     ) -> Result<(E, Vec<Address>), BlockExecutionError>
     where
-        E: BlockExecutor<Receipt = N::Receipt, Savm: alloy_savm::Savm<DB = &'a mut State<DB>>>,
-        Tx: alloy_savm::block::ExecutableTx<E> + alloy_savm::RecoveredTx<InnerTx>,
+        E: BlockExecutor<Receipt = N::Receipt, Evm: alloy_evm::Evm<DB = &'a mut State<DB>>>,
+        Tx: alloy_evm::block::ExecutableTx<E> + alloy_evm::RecoveredTx<InnerTx>,
         InnerTx: TxHashRef,
         DB: revm::Database + 'a,
         Err: core::error::Error + Send + Sync + 'static,
@@ -1234,7 +1233,7 @@ where
             self.metrics.record_transaction_wait(wait_start.elapsed());
 
             let tx = tx_result.map_err(BlockExecutionError::other)?;
-            let tx_signer = *<Tx as alloy_savm::RecoveredTx<InnerTx>>::signer(&tx);
+            let tx_signer = *<Tx as alloy_evm::RecoveredTx<InnerTx>>::signer(&tx);
 
             senders.push(tx_signer);
 

@@ -49,10 +49,10 @@ pub trait DefaultEraHost {
 impl DefaultEraHost for ChainKind {
     fn default_era_host(&self) -> Option<Url> {
         Some(match self {
-            Self::Named(NamedChain::SilaMainnet) => {
+            Self::Named(NamedChain::Mainnet) => {
                 Url::parse("https://era.ithaca.xyz/era1/index.html").expect("URL should be valid")
             }
-            Self::Named(NamedChain::SilaSepolia) => {
+            Self::Named(NamedChain::Sepolia) => {
                 Url::parse("https://era.ithaca.xyz/sepolia-era1/index.html")
                     .expect("URL should be valid")
             }

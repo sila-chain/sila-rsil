@@ -17,7 +17,8 @@ use rsil_basic_payload_builder::{
     is_better_payload, BuildArguments, BuildOutcome, MissingPayloadBehaviour, PayloadBuilder,
     PayloadConfig,
 };
-use rsil_chainspec::{ChainSpecProvider, SilChainSpec, SilaHardforks};
+use alloy_hardforks::EthereumHardforks;
+use rsil_chainspec::{ChainSpecProvider, SilChainSpec};
 use rsil_consensus_common::validation::MAX_RLP_BLOCK_SIZE;
 use rsil_errors::{BlockExecutionError, BlockValidationError, ConsensusError};
 use rsil_savm::{

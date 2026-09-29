@@ -1,10 +1,7 @@
 use super::BalExecutionError;
 use alloy_consensus::Transaction;
 use alloy_eip7928::BlockAccessIndex;
-use alloy_savm::{
-    block::{BlockExecutionError, BlockExecutor, BlockExecutorFactory},
-    Savm,
-};
+use alloy_evm::block::{BlockExecutionError, BlockExecutor, BlockExecutorFactory};
 use alloy_primitives::Address;
 use crossbeam_channel::{Receiver, Sender};
 use revm::{database::State, state::bal::Bal as RevmBal};

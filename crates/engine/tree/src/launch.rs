@@ -16,7 +16,7 @@ use futures::Stream;
 use rsil_chain_state::StateTrieOverlayManager;
 use rsil_consensus::FullConsensus;
 use rsil_engine_primitives::BeaconEngineMessage;
-use rsil_evm::ConfigureEvm;
+use rsil_savm::ConfigureEvm;
 use rsil_network_p2p::BlockClient;
 use rsil_payload_builder::PayloadBuilderHandle;
 use rsil_primitives_traits::NodePrimitives;

@@ -43,9 +43,9 @@ pub trait PayloadBuilderConfig {
 
         match chain.kind() {
             ChainKind::Named(
-                NamedChain::SilaMainnet
-                | NamedChain::SilaSepolia
-                | NamedChain::SilaHolesky
+                NamedChain::Mainnet
+                | NamedChain::Sepolia
+                | NamedChain::Holesky
                 | NamedChain::Hoodi,
             ) => SILA_BLOCK_GAS_LIMIT_60M,
             _ => ETHEREUM_BLOCK_GAS_LIMIT_36M,

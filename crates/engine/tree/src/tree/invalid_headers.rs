@@ -1,4 +1,4 @@
-use alloy_eips::sip1898::BlockWithParent;
+use alloy_eips::eip1898::BlockWithParent;
 use alloy_primitives::B256;
 use rsil_metrics::{
     metrics::{Counter, Gauge},

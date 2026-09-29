@@ -19,10 +19,7 @@ use alloy_eip7928::{
     bal::{Bal as AlloyBal, DecodedBal},
     compute_block_access_list_hash, BlockAccessList,
 };
-use alloy_savm::{
-    block::{BlockExecutionError, BlockExecutor, BlockValidationError, TxResult},
-    Savm,
-};
+use alloy_evm::block::{BlockExecutionError, BlockExecutor, BlockValidationError, TxResult};
 use alloy_primitives::Address;
 use crossbeam_channel::{Receiver, Sender};
 use revm::{
@@ -375,7 +372,7 @@ mod tests {
             gas_limit,
             parent_beacon_block_root: Some(B256::ZERO),
             withdrawals_root: Some(alloy_consensus::EMPTY_ROOT_HASH),
-            requests_hash: Some(alloy_sips::eip7685::EMPTY_REQUESTS_HASH),
+            requests_hash: Some(alloy_eips::eip7685::EMPTY_REQUESTS_HASH),
             excess_blob_gas: Some(0),
             blob_gas_used: Some(0),
             block_access_list_hash: Some(header_bal_hash),
@@ -684,7 +681,7 @@ mod tests {
         bundle_state: BundleState,
         receipts: Vec<rsil_sila_primitives::Receipt>,
         gas_used: u64,
-        requests: alloy_sips::eip7685::Requests,
+        requests: alloy_eips::eip7685::Requests,
     }
 
     /// Runs the block through the serial path and captures its full output.
@@ -843,7 +840,7 @@ mod tests {
         // commit loop must still reject tx2 because tx1's committed gas leaves too little
         // block gas for tx2's gas limit.
         use alloy_consensus::TxLegacy;
-        use alloy_savm::block::BlockValidationError;
+        use alloy_evm::block::BlockValidationError;
         use alloy_primitives::TxKind;
         use rsil_chainspec::SILA_MAINNET;
         use rsil_primitives_traits::crypto::secp256k1::public_key_to_address;

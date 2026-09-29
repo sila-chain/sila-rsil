@@ -1,7 +1,7 @@
 //! Unified converter for RPC network responses to primitive types.
 
 use alloy_network::Network;
-use alloy_rpc_types::sil::{Block, Transaction, TransactionReceipt};
+use alloy_rpc_types::eth::{Block, Transaction, TransactionReceipt};
 use core::fmt::Debug;
 use rsil_sila_primitives::{Receipt, TransactionSigned};
 
@@ -50,7 +50,7 @@ pub trait RpcResponseConverter<N: Network>: Send + Sync + Debug + 'static {
 #[derive(Debug, Clone, Copy, Default)]
 pub struct SilRpcConverter;
 
-impl RpcResponseConverter<alloy_network::Sila> for SilRpcConverter {
+impl RpcResponseConverter<alloy_network::Ethereum> for SilRpcConverter {
     type Block = alloy_consensus::Block<TransactionSigned>;
     type Transaction = TransactionSigned;
     type Receipt = Receipt;

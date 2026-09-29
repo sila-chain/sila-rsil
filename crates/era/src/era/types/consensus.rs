@@ -37,7 +37,7 @@ use alloy_rpc_types_engine::{
     CancunPayloadFields, ExecutionPayload, ExecutionPayloadSidecar, ExecutionPayloadV1,
     ExecutionPayloadV2, ExecutionPayloadV3, PraguePayloadFields,
 };
-use alloy_sips::eip2718::Decodable2718;
+use alloy_eips::eip2718::Decodable2718;
 use snap::{read::FrameDecoder, write::FrameEncoder};
 use ssz::Decode;
 use std::io::{Read, Write};

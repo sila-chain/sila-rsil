@@ -115,37 +115,37 @@ pub enum VersionSpecificValidationError {
     #[error("withdrawals not supported in V1")]
     WithdrawalsNotSupportedInV1,
     /// Thrown if `engine_forkchoiceUpdated` or `engine_newPayload` contains no withdrawals after
-    /// SilaShanghai
+    /// `SilaShanghai`
     #[error("no withdrawals post-SilaShanghai")]
     NoWithdrawalsPostShanghai,
     /// Thrown if `engine_forkchoiceUpdated` or `engine_newPayload` contains withdrawals before
-    /// SilaShanghai
+    /// `SilaShanghai`
     #[error("withdrawals pre-SilaShanghai")]
     HasWithdrawalsPreShanghai,
     /// Thrown if the `PayloadAttributes` or `ExecutionPayload` contains no parent beacon block
-    /// root after SilaCancun
+    /// root after `SilaCancun`
     #[error("no parent beacon block root post-cancun")]
     NoParentBeaconBlockRootPostCancun,
     /// Thrown if the current engine method version does not support a block access list
     #[error("block access list not supported in this engine API version")]
     BlockAccessListNotSupported,
     /// Thrown if  `engine_newPayload` contains no block access list
-    /// after SilaAmsterdam
+    /// after `SilaAmsterdam`
     #[error("no block access list post-SilaAmsterdam")]
     NoBlockAccessListPostAmsterdam,
     /// Thrown if  `engine_newPayload` contains block access list
-    /// before SilaAmsterdam
+    /// before `SilaAmsterdam`
     #[error("block access list pre-SilaAmsterdam")]
     HasBlockAccessListPreAmsterdam,
     /// Thrown if the current engine method version does not support a slot number
     #[error("slot number not supported in this engine API version")]
     SlotNumberNotSupported,
     /// Thrown if  `engine_newPayload` contains no slot number
-    /// after SilaAmsterdam
+    /// after `SilaAmsterdam`
     #[error("no slot number post-SilaAmsterdam")]
     NoSlotNumberPostAmsterdam,
     /// Thrown if  `engine_newPayload` contains slot number
-    /// before SilaAmsterdam
+    /// before `SilaAmsterdam`
     #[error("slot number pre-SilaAmsterdam")]
     HasSlotNumberPreAmsterdam,
 }
@@ -174,7 +174,7 @@ impl NewPayloadError {
         matches!(self, Self::Sil(PayloadError::BlockHash { .. }))
     }
 
-    /// Returns `true` if the error is caused by invalid block hashes (SilaCancun).
+    /// Returns `true` if the error is caused by invalid block hashes (`SilaCancun`).
     #[inline]
     pub const fn is_invalid_versioned_hashes(&self) -> bool {
         matches!(self, Self::Sil(PayloadError::InvalidVersionedHashes))

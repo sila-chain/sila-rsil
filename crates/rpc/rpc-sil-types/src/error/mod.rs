@@ -4,7 +4,7 @@ pub mod api;
 use alloy_eips::BlockId;
 use alloy_evm::{call::CallError, overrides::StateOverrideError};
 use alloy_primitives::{Address, Bytes, B256, U256};
-use alloy_rpc_types_eth::{error::SilRpcErrorCode, request::TransactionInputError, BlockError};
+use alloy_rpc_types_eth::{error::EthRpcErrorCode, request::TransactionInputError, BlockError};
 use alloy_sol_types::{ContractError, RevertReason};
 use alloy_transport::{RpcError, TransportErrorKind};
 pub use api::{AsSilApiError, FromEvmError, FromSilApiError, IntoSilApiError};
@@ -110,7 +110,7 @@ pub enum SilApiError {
     /// An internal error where prevrandao is not set in the savm's environment
     #[error("prevrandao not in the SAVM's environment after merge")]
     PrevrandaoNotSet,
-    /// `excess_blob_gas` is not set for SilaCancun and above
+    /// `excess_blob_gas` is not set for `SilaCancun` and above
     #[error("excess blob gas missing in the SAVM's environment after SilaCancun")]
     ExcessBlobGasNotSet,
     /// Thrown when a call or transaction request (`sil_call`, `sil_estimateGas`,
@@ -207,7 +207,7 @@ pub enum SilApiError {
         /// The underlying error object
         error: jsonrpsee_types::ErrorObject<'static>,
     },
-    /// Error thrown when trying to access block access list for blocks before SilaAmsterdam
+    /// Error thrown when trying to access block access list for blocks before `SilaAmsterdam`
     #[error("Block access list not available for pre-SilaAmsterdam blocks")]
     BlockAccessListNotAvailablePreAmsterdam,
     /// Any other error
@@ -300,16 +300,16 @@ impl From<SilApiError> for jsonrpsee_types::error::ErrorObject<'static> {
             | SilApiError::Internal(_)
             | SilApiError::SavmCustom(_) => internal_rpc_err(error.to_string()),
             SilApiError::UnknownBlockOrTxIndex | SilApiError::TransactionNotFound => {
-                rpc_error_with_code(SilRpcErrorCode::ResourceNotFound.code(), error.to_string())
+                rpc_error_with_code(EthRpcErrorCode::ResourceNotFound.code(), error.to_string())
             }
             SilApiError::HeaderNotFound(id) | SilApiError::ReceiptsNotFound(id) => {
                 rpc_error_with_code(
-                    SilRpcErrorCode::ResourceNotFound.code(),
+                    EthRpcErrorCode::ResourceNotFound.code(),
                     format!("block not found: {}", block_id_to_str(id)),
                 )
             }
             SilApiError::HeaderRangeNotFound(start_id, end_id) => rpc_error_with_code(
-                SilRpcErrorCode::ResourceNotFound.code(),
+                EthRpcErrorCode::ResourceNotFound.code(),
                 format!(
                     "{error}: start block: {}, end block: {}",
                     block_id_to_str(start_id),
@@ -317,7 +317,7 @@ impl From<SilApiError> for jsonrpsee_types::error::ErrorObject<'static> {
                 ),
             ),
             err @ SilApiError::TransactionConfirmationTimeout { .. } => rpc_error_with_code(
-                SilRpcErrorCode::TransactionConfirmationTimeout.code(),
+                EthRpcErrorCode::TransactionConfirmationTimeout.code(),
                 err.to_string(),
             ),
             SilApiError::Unsupported(msg) => internal_rpc_err(msg),
@@ -486,7 +486,7 @@ impl From<BlockExecutionError> for SilApiError {
                     } else {
                         Self::InvalidTransaction(RpcInvalidTransactionError::other(
                             rpc_error_with_code(
-                                SilRpcErrorCode::TransactionRejected.code(),
+                                EthRpcErrorCode::TransactionRejected.code(),
                                 error.to_string(),
                             ),
                         ))
@@ -713,14 +713,14 @@ pub enum RpcInvalidTransactionError {
     /// The transaction is before Berlin and has access list
     #[error("transactions before Berlin should not have access list")]
     AccessListNotSupported,
-    /// `max_fee_per_blob_gas` is not supported for blocks before the SilaCancun hardfork.
+    /// `max_fee_per_blob_gas` is not supported for blocks before the `SilaCancun` hardfork.
     #[error("max_fee_per_blob_gas is not supported for blocks before the SilaCancun hardfork")]
     MaxFeePerBlobGasNotSupported,
-    /// `blob_hashes`/`blob_versioned_hashes` is not supported for blocks before the SilaCancun
+    /// `blob_hashes`/`blob_versioned_hashes` is not supported for blocks before the `SilaCancun`
     /// hardfork.
     #[error("blob_versioned_hashes is not supported for blocks before the SilaCancun hardfork")]
     BlobVersionedHashesNotSupported,
-    /// Block `blob_base_fee` is greater than tx-specified `max_fee_per_blob_gas` after SilaCancun.
+    /// Block `blob_base_fee` is greater than tx-specified `max_fee_per_blob_gas` after `SilaCancun`.
     #[error("max fee per blob gas less than block blob gas fee")]
     BlobFeeCapTooLow,
     /// Blob transaction has a versioned hash with an invalid blob
@@ -771,9 +771,9 @@ impl RpcInvalidTransactionError {
             | Self::NonceTooLow { .. }
             | Self::NonceTooHigh { .. }
             | Self::FeeCapTooLow
-            | Self::FeeCapVeryHigh => SilRpcErrorCode::InvalidInput.code(),
-            Self::Revert(_) => SilRpcErrorCode::ExecutionError.code(),
-            _ => SilRpcErrorCode::TransactionRejected.code(),
+            | Self::FeeCapVeryHigh => EthRpcErrorCode::InvalidInput.code(),
+            Self::Revert(_) => EthRpcErrorCode::ExecutionError.code(),
+            _ => EthRpcErrorCode::TransactionRejected.code(),
         }
     }
 
@@ -945,7 +945,7 @@ impl RevertError {
 
     /// Returns error code to return for this error.
     pub const fn error_code(&self) -> i32 {
-        SilRpcErrorCode::ExecutionError.code()
+        EthRpcErrorCode::ExecutionError.code()
     }
 }
 
@@ -1040,7 +1040,7 @@ impl From<RpcPoolError> for jsonrpsee_types::error::ErrorObject<'static> {
         match error {
             RpcPoolError::Invalid(err) => err.into(),
             RpcPoolError::TxPoolOverflow => {
-                rpc_error_with_code(SilRpcErrorCode::TransactionRejected.code(), error.to_string())
+                rpc_error_with_code(EthRpcErrorCode::TransactionRejected.code(), error.to_string())
             }
             RpcPoolError::AlreadyKnown
             | RpcPoolError::InvalidSender
@@ -1056,7 +1056,7 @@ impl From<RpcPoolError> for jsonrpsee_types::error::ErrorObject<'static> {
             | RpcPoolError::Sip4844(_)
             | RpcPoolError::Sip7702(_)
             | RpcPoolError::AddressAlreadyReserved => {
-                rpc_error_with_code(SilRpcErrorCode::InvalidInput.code(), error.to_string())
+                rpc_error_with_code(EthRpcErrorCode::InvalidInput.code(), error.to_string())
             }
             RpcPoolError::Other(other) => internal_rpc_err(other.to_string()),
         }
@@ -1210,7 +1210,7 @@ mod tests {
         );
         let err: jsonrpsee_types::error::ErrorObject<'static> =
             SilApiError::ReceiptsNotFound(BlockId::number(100000)).into();
-        assert_eq!(err.code(), SilRpcErrorCode::ResourceNotFound.code());
+        assert_eq!(err.code(), EthRpcErrorCode::ResourceNotFound.code());
         assert_eq!(err.message(), "block not found: 0x186a0");
         let err: jsonrpsee_types::error::ErrorObject<'static> =
             SilApiError::ReceiptsNotFound(BlockId::latest()).into();

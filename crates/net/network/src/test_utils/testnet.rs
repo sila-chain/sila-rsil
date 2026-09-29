@@ -6,7 +6,7 @@ use crate::{
     sil_requests::SilRequestHandler,
     protocol::IntoRlpxSubProtocol,
     transactions::{
-        config::{StrictEthAnnouncementFilter, TransactionPropagationKind},
+        config::{StrictSilAnnouncementFilter, TransactionPropagationKind},
         policy::NetworkPolicies,
         TransactionsHandle, TransactionsManager, TransactionsManagerConfig,
     },
@@ -549,7 +549,7 @@ where
         );
         network.set_transactions(tx);
 
-        let announcement_policy = StrictEthAnnouncementFilter::default();
+        let announcement_policy = StrictSilAnnouncementFilter::default();
         let policies = NetworkPolicies::new(policy, announcement_policy);
 
         let transactions_manager = TransactionsManager::with_policy(

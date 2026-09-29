@@ -169,7 +169,7 @@ pub trait Executor<DB: Database>: Sized {
 /// - `bundle_state`: Accumulated state changes from all transactions
 /// - `state_provider`: Access to the current state for additional lookups
 /// - `state_root`: The calculated state root after all changes
-/// - `block_access_list_hash`: Block access list hash (SIP-7928, SilaAmsterdam)
+/// - `block_access_list_hash`: Block access list hash (SIP-7928, `SilaAmsterdam`)
 ///
 /// # Usage
 ///
@@ -214,7 +214,7 @@ pub struct BlockAssemblerInput<'a, 'b, F: BlockExecutorFactory, H = Header> {
     pub state_provider: &'b dyn StateProvider,
     /// State root for this block.
     pub state_root: B256,
-    /// Block access list hash (SIP-7928, SilaAmsterdam).
+    /// Block access list hash (SIP-7928, `SilaAmsterdam`).
     pub block_access_list_hash: Option<B256>,
 }
 
@@ -314,7 +314,7 @@ pub struct BlockBuilderOutcome<N: NodePrimitives> {
     pub trie_updates: TrieUpdates,
     /// The built block.
     pub block: RecoveredBlock<N::Block>,
-    /// Block access list built during execution (SIP-7928, SilaAmsterdam).
+    /// Block access list built during execution (SIP-7928, `SilaAmsterdam`).
     pub block_access_list: Option<BlockAccessList>,
 }
 

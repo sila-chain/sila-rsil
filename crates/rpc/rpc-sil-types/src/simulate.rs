@@ -1,4 +1,4 @@
-//! Utilities for serving `eth_simulateV1`
+//! Utilities for serving `sil_simulateV1`
 
 use crate::{
     error::{api::FromSilApiError, FromEvmError, ToRpcError},
@@ -36,19 +36,19 @@ use rsil_storage_api::{noop::NoopProvider, StateProvider};
 /// hint provides a value.
 const SIMULATE_FALLBACK_TIMESTAMP_INCREMENT: u64 = 12;
 
-/// Error code for execution reverted in `eth_simulateV1`.
+/// Error code for execution reverted in `sil_simulateV1`.
 ///
-/// Consistent with `eth_call` revert error code.
+/// Consistent with `sil_call` revert error code.
 ///
 /// <https://github.com/sila-chain/execution-apis/pull/748>
 pub const SIMULATE_REVERT_CODE: i32 = 3;
 
-/// Error code for VM execution errors (e.g., out of gas) in `eth_simulateV1`.
+/// Error code for VM execution errors (e.g., out of gas) in `sil_simulateV1`.
 ///
 /// <https://github.com/sila-chain/execution-apis>
 pub const SIMULATE_VM_ERROR_CODE: i32 = -32015;
 
-/// Errors which may occur during `eth_simulateV1` execution.
+/// Errors which may occur during `sil_simulateV1` execution.
 #[derive(Debug, thiserror::Error)]
 pub enum SilSimulateError {
     /// Total gas limit of transactions for the block exceeds the block gas limit.
@@ -125,7 +125,7 @@ pub enum SilSimulateError {
 }
 
 impl SilSimulateError {
-    /// Returns the JSON-RPC error code for a `eth_simulateV1` error.
+    /// Returns the JSON-RPC error code for a `sil_simulateV1` error.
     pub const fn error_code(&self) -> i32 {
         match self {
             Self::NonceTooLow { .. } => -38010,
@@ -152,7 +152,7 @@ impl ToRpcError for SilSimulateError {
     }
 }
 
-/// Sanitizes and gap-fills the chain of [`SimBlock`]s for `eth_simulateV1`.
+/// Sanitizes and gap-fills the chain of [`SimBlock`]s for `sil_simulateV1`.
 ///
 /// Walks the provided block-state calls in order and:
 /// - validates that each block number and timestamp strictly increases relative to the parent and
@@ -310,12 +310,12 @@ pub fn execute_transactions<S, T>(
 ) -> Result<
     (
         BlockBuilderOutcome<S::Primitives>,
-        Vec<ExecutionResult<<<S::Executor as BlockExecutor>::Savm as Savm>::HaltReason>>,
+        Vec<ExecutionResult<<<S::Executor as BlockExecutor>::Evm as Savm>::HaltReason>>,
     ),
     SilApiError,
 >
 where
-    S: BlockBuilder<Executor: BlockExecutor<Savm: Savm<DB: Database<Error: Into<SilApiError>>>>>,
+    S: BlockBuilder<Executor: BlockExecutor<Evm: Savm<DB: Database<Error: Into<SilApiError>>>>>,
     T: RpcConvert<Primitives = S::Primitives>,
 {
     builder.apply_pre_execution_changes()?;
@@ -462,7 +462,7 @@ where
     //
     // Per the eth_simulateV1 spec, unspecified fee fields default to 0 (not the block base fee),
     // matching geth's `CallDefaults` behavior. This lets simulation behave like a free-gas
-    // `eth_call` when validation is off, and surfaces "max fee per gas less than block base fee"
+    // `sil_call` when validation is off, and surfaces "max fee per gas less than block base fee"
     // errors when validation is on with a real base fee.
     let _ = block_base_fee_per_gas;
     if tx.as_ref().output_tx_type_checked().is_none() {

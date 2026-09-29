@@ -59,13 +59,13 @@ pub trait PayloadTypes: Send + Sync + Unpin + core::fmt::Debug + Clone + 'static
 
 /// Validates the timestamp depending on the version called:
 ///
-/// * If V2, this ensures that the payload timestamp is pre-SilaCancun.
-/// * If V3, this ensures that the payload timestamp is within the SilaCancun timestamp.
-/// * If V4, this ensures that the payload timestamp is within the SilaPrague timestamp.
-/// * If V5, this ensures that the payload timestamp is within the SilaOsaka timestamp.
-/// * If V6, this ensures that the payload timestamp is within the SilaAmsterdam timestamp.
+/// * If V2, this ensures that the payload timestamp is pre-`SilaCancun`.
+/// * If V3, this ensures that the payload timestamp is within the `SilaCancun` timestamp.
+/// * If V4, this ensures that the payload timestamp is within the `SilaPrague` timestamp.
+/// * If V5, this ensures that the payload timestamp is within the `SilaOsaka` timestamp.
+/// * If V6, this ensures that the payload timestamp is within the `SilaAmsterdam` timestamp.
 ///
-/// Additionally, it ensures that `engine_getPayloadV4` is not used for an SilaOsaka payload and that
+/// Additionally, it ensures that `engine_getPayloadV4` is not used for an `SilaOsaka` payload and that
 /// staggered endpoint upgrades reject the next fork once a newer method version is required.
 ///
 /// Otherwise, this will return [`EngineObjectValidationError::UnsupportedFork`].
@@ -190,8 +190,8 @@ pub fn validate_payload_timestamp(
 }
 
 /// Validates the presence of the `block access lists` field according to the payload timestamp.
-/// After SilaAmsterdam, block access list field must be [Some].
-/// Before SilaAmsterdam, block access list field must be [None];
+/// After `SilaAmsterdam`, block access list field must be [Some].
+/// Before `SilaAmsterdam`, block access list field must be [None];
 pub fn validate_block_access_list_presence<T: SilaHardforks>(
     chain_spec: &T,
     version: EngineApiMessageVersion,
@@ -243,8 +243,8 @@ pub fn validate_block_access_list_presence<T: SilaHardforks>(
 }
 
 /// Validates the presence of the `slot number` field according to the payload timestamp.
-/// After SilaAmsterdam, slot number field must be [Some].
-/// Before SilaAmsterdam, slot number field must be [None];
+/// After `SilaAmsterdam`, slot number field must be [Some].
+/// Before `SilaAmsterdam`, slot number field must be [None];
 pub fn validate_slot_number_presence<T: SilaHardforks>(
     chain_spec: &T,
     version: EngineApiMessageVersion,
@@ -310,8 +310,8 @@ pub fn validate_slot_number_presence<T: SilaHardforks>(
 }
 
 /// Validates the presence of the `withdrawals` field according to the payload timestamp.
-/// After SilaShanghai, withdrawals field must be [Some].
-/// Before SilaShanghai, withdrawals field must be [None];
+/// After `SilaShanghai`, withdrawals field must be [Some].
+/// Before `SilaShanghai`, withdrawals field must be [None];
 pub fn validate_withdrawals_presence<T: SilaHardforks>(
     chain_spec: &T,
     version: EngineApiMessageVersion,
@@ -351,13 +351,13 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
 /// This method is meant to be used with either a `payloadAttributes` field or a full payload, with
 /// the `engine_forkchoiceUpdated` and `engine_newPayload` methods respectively.
 ///
-/// After SilaCancun, the `parentBeaconBlockRoot` field must be [Some].
-/// Before SilaCancun, the `parentBeaconBlockRoot` field must be [None].
+/// After `SilaCancun`, the `parentBeaconBlockRoot` field must be [Some].
+/// Before `SilaCancun`, the `parentBeaconBlockRoot` field must be [None].
 ///
-/// If the engine API message version is V1 or V2, and the timestamp is post-SilaCancun, then this will
+/// If the engine API message version is V1 or V2, and the timestamp is post-`SilaCancun`, then this will
 /// return [`EngineObjectValidationError::UnsupportedFork`].
 ///
-/// If the timestamp is before the SilaCancun fork and the engine API message version is V3, then this
+/// If the timestamp is before the `SilaCancun` fork and the engine API message version is V3, then this
 /// will return [`EngineObjectValidationError::UnsupportedFork`].
 ///
 /// If the engine API message version is V3, but the `parentBeaconBlockRoot` is [None], then
@@ -379,7 +379,7 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
 ///    sequence of checks that **MUST** be run over `payloadAttributes`:
 ///     1. `payloadAttributes` matches the `PayloadAttributesV3` structure, return `-38003: Invalid
 ///        payload attributes` on failure.
-///     2. `payloadAttributes.timestamp` falls within the time frame of the SilaCancun fork, return
+///     2. `payloadAttributes.timestamp` falls within the time frame of the `SilaCancun` fork, return
 ///        `-38005: Unsupported fork` on failure.
 ///     3. `payloadAttributes.timestamp` is greater than `timestamp` of a block referenced by
 ///        `forkchoiceState.headBlockHash`, return `-38003: Invalid payload attributes` on failure.
@@ -389,12 +389,12 @@ pub fn validate_withdrawals_presence<T: SilaHardforks>(
 /// For `engine_newPayloadV3`:
 ///
 /// 2. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of the
-///    payload does not fall within the time frame of the SilaCancun fork.
+///    payload does not fall within the time frame of the `SilaCancun` fork.
 ///
 /// For `engine_newPayloadV4`:
 ///
 /// 2. Client software **MUST** return `-38005: Unsupported fork` error if the `timestamp` of the
-///    payload does not fall within the time frame of the SilaPrague fork.
+///    payload does not fall within the time frame of the `SilaPrague` fork.
 ///
 /// Returning the right error code (ie, if the client should return `-38003: Invalid payload
 /// attributes` is handled by the `message_validation_kind` parameter. If the parameter is
@@ -551,24 +551,24 @@ pub enum EngineApiMessageVersion {
     V1 = 1,
     /// Version 2
     ///
-    /// Added in the SilaShanghai hardfork.
+    /// Added in the `SilaShanghai` hardfork.
     V2 = 2,
     /// Version 3
     ///
-    /// Added in the SilaCancun hardfork.
+    /// Added in the `SilaCancun` hardfork.
     V3 = 3,
     /// Version 4
     ///
-    /// Added in the SilaPrague hardfork.
+    /// Added in the `SilaPrague` hardfork.
     #[default]
     V4 = 4,
     /// Version 5
     ///
-    /// Added in the SilaOsaka hardfork.
+    /// Added in the `SilaOsaka` hardfork.
     V5 = 5,
     /// Version 6
     ///
-    /// Added in the SilaAmsterdam hardfork.
+    /// Added in the `SilaAmsterdam` hardfork.
     V6 = 6,
 }
 

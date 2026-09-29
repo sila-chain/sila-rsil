@@ -1,6 +1,6 @@
 //! Config traits for various node components.
 
-use alloy_eips::sip1559::SILA_BLOCK_GAS_LIMIT_36M;
+use alloy_eips::eip1559::ETHEREUM_BLOCK_GAS_LIMIT_36M;
 use alloy_primitives::Bytes;
 use rsil_chainspec::{Chain, ChainKind, NamedChain};
 use rsil_network::{protocol::IntoRlpxSubProtocol, NetworkPrimitives};
@@ -48,7 +48,7 @@ pub trait PayloadBuilderConfig {
                 | NamedChain::SilaHolesky
                 | NamedChain::Hoodi,
             ) => SILA_BLOCK_GAS_LIMIT_60M,
-            _ => SILA_BLOCK_GAS_LIMIT_36M,
+            _ => ETHEREUM_BLOCK_GAS_LIMIT_36M,
         }
     }
 }

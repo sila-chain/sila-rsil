@@ -36,7 +36,7 @@ alloy-rpc-types-engine.workspace = true
 revm.workspace = true
 
 # alloy
-alloy-sips.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-consensus.workspace = true
 alloy-primitives.workspace = true
 

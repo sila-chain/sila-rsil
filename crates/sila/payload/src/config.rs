@@ -1,5 +1,5 @@
-pub use alloy_eips::sip1559::calculate_block_gas_limit;
-use alloy_eips::sip1559::SILA_BLOCK_GAS_LIMIT_30M;
+pub use alloy_eips::eip1559::calculate_block_gas_limit;
+use alloy_eips::eip1559::ETHEREUM_BLOCK_GAS_LIMIT_30M;
 use alloy_primitives::Bytes;
 
 /// Settings for the Sila builder.
@@ -30,7 +30,7 @@ impl SilaBuilderConfig {
     /// Create new payload builder config.
     pub const fn new() -> Self {
         Self {
-            desired_gas_limit: SILA_BLOCK_GAS_LIMIT_30M,
+            desired_gas_limit: ETHEREUM_BLOCK_GAS_LIMIT_30M,
             await_payload_on_missing: true,
             max_blobs_per_block: None,
             extra_data: Bytes::new(),

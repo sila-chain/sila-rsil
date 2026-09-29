@@ -36,7 +36,6 @@ thiserror.workspace = true
 serde = { workspace = true, features = ["derive"], optional = true }
 tokio = { workspace = true, features = ["sync"] }
 auto_impl.workspace = true
-derive_more.workspace = true
 
 [features]
 serde = [

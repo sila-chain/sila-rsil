@@ -17,7 +17,7 @@ pub type SpecFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::Spec;
 /// Helper to access [`SavmFactory::BlockEnv`] for a given [`ConfigureEvm`].
 pub type BlockEnvFor<Savm> = <SavmFactoryFor<Savm> as SavmFactory>::BlockEnv;
 
-/// Helper to access [`SavmFactory::Savm`] for a given [`ConfigureEvm`].
+/// Helper to access the configured execution engine type for a given [`ConfigureEvm`].
 pub type SavmFor<Savm, DB, I = NoOpInspector> = <SavmFactoryFor<Savm> as SavmFactory>::Evm<DB, I>;
 
 /// Helper to access [`SavmFactory::Error`] for a given [`ConfigureEvm`].

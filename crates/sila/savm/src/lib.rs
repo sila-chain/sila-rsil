@@ -44,7 +44,7 @@ use rsil_savm::{ConfigureEngineEvm, ExecutableTxIterator};
 use {
     alloy_primitives::{Bytes, U256},
     alloy_rpc_types_engine::ExecutionData,
-    alloy_sips::Decodable2718,
+    alloy_eips::Decodable2718,
     revm::context::CfgEnv,
     revm::context_interface::block::BlobExcessGasAndPrice,
     rsil_chainspec::SilaHardforks,
@@ -373,7 +373,7 @@ mod tests {
         database_interface::EmptyDBTyped,
         inspector::NoOpInspector,
     };
-    use rsil_chainspec::{Chain, ChainSpec};
+    use rsil_chainspec::{ChainSpec, SILA_MAINNET};
     use rsil_savm::{execute::ProviderError, SavmEnv};
 
     #[test]
@@ -384,7 +384,7 @@ mod tests {
         // Build the ChainSpec for Sila sila-mainnet, activating London, SilaParis, and SilaShanghai
         // hardforks
         let chain_spec = ChainSpec::builder()
-            .chain(Chain::sila_mainnet())
+            .chain(SILA_MAINNET.chain)
             .genesis(Genesis::default())
             .london_activated()
             .paris_activated()

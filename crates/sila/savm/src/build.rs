@@ -5,7 +5,7 @@ use alloy_consensus::{
 };
 use alloy_primitives::{Bloom, B256};
 use alloy_savm::{block::BlockExecutorFactory, eth::EthBlockExecutionCtx as SilBlockExecutionCtx};
-use alloy_sips::{eip4895::Withdrawals, merge::BEACON_NONCE};
+use alloy_eips::{eip4895::Withdrawals, merge::BEACON_NONCE};
 use revm::context::Block as _;
 use rsil_chainspec::{SilChainSpec, SilaHardforks};
 use rsil_execution_types::BlockExecutionResult;
@@ -95,7 +95,7 @@ impl<ChainSpec: SilChainSpec + SilaHardforks> SilBlockAssembler<ChainSpec> {
                 // for the first post-fork block, both parent.blob_gas_used and
                 // parent.excess_blob_gas are evaluated as 0
                 Some(
-                    alloy_sips::eip7840::BlobParams::cancun()
+                    alloy_eips::eip7840::BlobParams::cancun()
                         .next_block_excess_blob_gas_osaka(0, 0, 0),
                 )
             };

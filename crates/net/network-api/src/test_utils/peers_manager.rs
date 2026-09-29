@@ -3,7 +3,6 @@
 
 use std::net::SocketAddr;
 
-use derive_more::Constructor;
 use rsil_network_peers::{NodeRecord, PeerId};
 use rsil_network_types::{Peer, ReputationChangeKind};
 use tokio::sync::{mpsc, oneshot};
@@ -18,7 +17,7 @@ pub trait PeersHandleProvider {
 }
 
 /// A communication channel to the `PeersManager` to apply manual changes to the peer set.
-#[derive(Clone, Debug, Constructor)]
+#[derive(Clone, Debug)]
 pub struct PeersHandle {
     /// Sender half of command channel back to the `PeersManager`
     manager_tx: mpsc::UnboundedSender<PeerCommand>,
@@ -27,6 +26,11 @@ pub struct PeersHandle {
 // === impl PeersHandle ===
 
 impl PeersHandle {
+    /// Creates a new peer handle backed by the given command sender.
+    pub fn new(manager_tx: mpsc::UnboundedSender<PeerCommand>) -> Self {
+        Self { manager_tx }
+    }
+
     fn send(&self, cmd: PeerCommand) {
         let _ = self.manager_tx.send(cmd);
     }

@@ -2,18 +2,18 @@
 
 use alloy_consensus::{constants::ETH_TO_WEI, Header, TxLegacy};
 use alloy_eips::{
-    sip2935::{HISTORY_SERVE_WINDOW, HISTORY_STORAGE_ADDRESS, HISTORY_STORAGE_CODE},
-    sip4788::{BEACON_ROOTS_ADDRESS, BEACON_ROOTS_CODE, SYSTEM_ADDRESS},
-    sip4895::Withdrawal,
-    sip7002::{WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS, WITHDRAWAL_REQUEST_PREDEPLOY_CODE},
-    sip7685::EMPTY_REQUESTS_HASH,
+    eip2935::{HISTORY_SERVE_WINDOW, HISTORY_STORAGE_ADDRESS, HISTORY_STORAGE_CODE},
+    eip4788::{BEACON_ROOTS_ADDRESS, BEACON_ROOTS_CODE, SYSTEM_ADDRESS},
+    eip4895::Withdrawal,
+    eip7002::{WITHDRAWAL_REQUEST_PREDEPLOY_ADDRESS, WITHDRAWAL_REQUEST_PREDEPLOY_CODE},
+    eip7685::EMPTY_REQUESTS_HASH,
 };
 use alloy_savm::block::BlockValidationError;
 use alloy_primitives::{b256, fixed_bytes, keccak256, Bytes, TxKind, B256, U256};
 use revm::{
     database::{CacheDB, EmptyDB, TransitionState},
     primitives::address,
-    state::{AccountInfo, Bytecode, SavmState},
+    state::{AccountInfo, Bytecode, EvmState},
     Database,
 };
 use rsil_chainspec::{ChainSpecBuilder, ForkCondition, SilaHardfork, SILA_MAINNET};
@@ -825,7 +825,7 @@ fn test_balance_increment_not_duplicated() {
     let tx_clone = tx.clone();
 
     let _output = executor
-        .execute_with_state_hook(block, move |state: SavmState| {
+        .execute_with_state_hook(block, move |state: EvmState| {
             if let Some(account) = state.get(&withdrawal_recipient) {
                 let _ = tx_clone.send(account.info.balance);
             }

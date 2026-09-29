@@ -123,7 +123,7 @@ pub struct SilTransactionValidator<Client, T, Savm> {
     other_tx_types: U256,
     /// Whether SIP-7594 blob sidecars are accepted.
     /// When false, SIP-7594 (v1) sidecars are always rejected and SIP-4844 (v0) sidecars
-    /// are always accepted, regardless of SilaOsaka fork activation.
+    /// are always accepted, regardless of `SilaOsaka` fork activation.
     sip7594: bool,
     /// Optional additional stateless validation check applied at the end of
     /// [`validate_stateless`](Self::validate_stateless).
@@ -1020,13 +1020,13 @@ pub struct SilTransactionValidatorBuilder<Client, Savm> {
     chain_id: u64,
     /// The SAVM configuration to use for validation.
     evm_config: Savm,
-    /// Fork indicator whether we are in the SilaShanghai stage.
+    /// Fork indicator whether we are in the `SilaShanghai` stage.
     shanghai: bool,
-    /// Fork indicator whether we are in the SilaCancun hardfork.
+    /// Fork indicator whether we are in the `SilaCancun` hardfork.
     cancun: bool,
-    /// Fork indicator whether we are in the SilaPrague hardfork.
+    /// Fork indicator whether we are in the `SilaPrague` hardfork.
     prague: bool,
-    /// Fork indicator whether we are in the SilaOsaka hardfork.
+    /// Fork indicator whether we are in the `SilaOsaka` hardfork.
     osaka: bool,
     /// Timestamp of the tip block.
     tip_timestamp: u64,
@@ -1069,7 +1069,7 @@ pub struct SilTransactionValidatorBuilder<Client, Savm> {
     tx_gas_limit_cap: u64,
     /// Whether SIP-7594 blob sidecars are accepted.
     /// When false, SIP-7594 (v1) sidecars are always rejected and SIP-4844 (v0) sidecars
-    /// are always accepted, regardless of SilaOsaka fork activation.
+    /// are always accepted, regardless of `SilaOsaka` fork activation.
     sip7594: bool,
 }
 
@@ -1146,7 +1146,7 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
         }
     }
 
-    /// Disables the SilaCancun fork.
+    /// Disables the `SilaCancun` fork.
     pub const fn no_cancun(self) -> Self {
         self.set_cancun(false)
     }
@@ -1160,40 +1160,40 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
         self
     }
 
-    /// Set the SilaCancun fork.
+    /// Set the `SilaCancun` fork.
     pub const fn set_cancun(mut self, cancun: bool) -> Self {
         self.cancun = cancun;
         self
     }
 
-    /// Disables the SilaShanghai fork.
+    /// Disables the `SilaShanghai` fork.
     pub const fn no_shanghai(self) -> Self {
         self.set_shanghai(false)
     }
 
-    /// Set the SilaShanghai fork.
+    /// Set the `SilaShanghai` fork.
     pub const fn set_shanghai(mut self, shanghai: bool) -> Self {
         self.shanghai = shanghai;
         self
     }
 
-    /// Disables the SilaPrague fork.
+    /// Disables the `SilaPrague` fork.
     pub const fn no_prague(self) -> Self {
         self.set_prague(false)
     }
 
-    /// Set the SilaPrague fork.
+    /// Set the `SilaPrague` fork.
     pub const fn set_prague(mut self, prague: bool) -> Self {
         self.prague = prague;
         self
     }
 
-    /// Disables the SilaOsaka fork.
+    /// Disables the `SilaOsaka` fork.
     pub const fn no_osaka(self) -> Self {
         self.set_osaka(false)
     }
 
-    /// Set the SilaOsaka fork.
+    /// Set the `SilaOsaka` fork.
     pub const fn set_osaka(mut self, osaka: bool) -> Self {
         self.osaka = osaka;
         self
@@ -1246,7 +1246,7 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
     /// Disables SIP-7594 blob sidecar support.
     ///
     /// When disabled, SIP-7594 (v1) blob sidecars are always rejected and SIP-4844 (v0)
-    /// sidecars are always accepted, regardless of SilaOsaka fork activation.
+    /// sidecars are always accepted, regardless of `SilaOsaka` fork activation.
     ///
     /// Use this for chains that do not adopt SIP-7594 (`SilaPeerDAS`).
     pub const fn no_eip7594(self) -> Self {
@@ -1255,8 +1255,8 @@ impl<Client, Savm> SilTransactionValidatorBuilder<Client, Savm> {
 
     /// Set SIP-7594 blob sidecar support.
     ///
-    /// When true (default), standard Sila behavior applies: v0 sidecars before SilaOsaka,
-    /// v1 sidecars after SilaOsaka. When false, v1 sidecars are always rejected.
+    /// When true (default), standard Sila behavior applies: v0 sidecars before `SilaOsaka`,
+    /// v1 sidecars after `SilaOsaka`. When false, v1 sidecars are always rejected.
     pub const fn set_eip7594(mut self, sip7594: bool) -> Self {
         self.sip7594 = sip7594;
         self
@@ -1434,22 +1434,22 @@ pub struct ForkTracker {
 }
 
 impl ForkTracker {
-    /// Returns `true` if SilaShanghai fork is activated.
+    /// Returns `true` if `SilaShanghai` fork is activated.
     pub fn is_shanghai_activated(&self) -> bool {
         self.shanghai.load(std::sync::atomic::Ordering::Relaxed)
     }
 
-    /// Returns `true` if SilaCancun fork is activated.
+    /// Returns `true` if `SilaCancun` fork is activated.
     pub fn is_cancun_activated(&self) -> bool {
         self.cancun.load(std::sync::atomic::Ordering::Relaxed)
     }
 
-    /// Returns `true` if SilaPrague fork is activated.
+    /// Returns `true` if `SilaPrague` fork is activated.
     pub fn is_prague_activated(&self) -> bool {
         self.prague.load(std::sync::atomic::Ordering::Relaxed)
     }
 
-    /// Returns `true` if SilaOsaka fork is activated.
+    /// Returns `true` if `SilaOsaka` fork is activated.
     pub fn is_osaka_activated(&self) -> bool {
         self.osaka.load(std::sync::atomic::Ordering::Relaxed)
     }

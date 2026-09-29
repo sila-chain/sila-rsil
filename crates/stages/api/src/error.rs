@@ -1,5 +1,5 @@
 use crate::PipelineEvent;
-use alloy_eips::sip1898::BlockWithParent;
+use alloy_eips::eip1898::BlockWithParent;
 use reth_codecs::DecompressError;
 use rsil_consensus::ConsensusError;
 use rsil_errors::{BlockExecutionError, DatabaseError, RsilError};

@@ -1034,7 +1034,7 @@ pub struct CanonicalStateUpdate<'a, B: Block> {
     pub pending_block_base_fee: u64,
     /// SIP-4844 blob fee of the _next_ (pending) block
     ///
-    /// Only after SilaCancun
+    /// Only after `SilaCancun`
     pub pending_block_blob_fee: Option<u128>,
     /// A set of changed accounts across a range of blocks.
     pub changed_accounts: Vec<ChangedAccount>,

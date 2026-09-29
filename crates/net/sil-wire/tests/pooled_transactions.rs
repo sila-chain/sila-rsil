@@ -9,7 +9,7 @@ use test_fuzz::test_fuzz;
 
 /// Pre-SilaOsaka pooled transaction type using SIP-4844 sidecar format.
 /// Test fixtures were generated with this format.
-type PreOsakaPooledTransaction = alloy_consensus::SilaTxEnvelope<
+type PreOsakaPooledTransaction = alloy_consensus::EthereumTxEnvelope<
     alloy_consensus::TxEip4844WithSidecar<alloy_sips::eip4844::BlobTransactionSidecar>,
 >;
 

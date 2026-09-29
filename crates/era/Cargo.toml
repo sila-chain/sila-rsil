@@ -14,6 +14,7 @@ thiserror.workspace = true
 
 # alloy
 alloy-consensus.workspace = true
+alloy-eips = { version = "2.1.1", default-features = false }
 alloy-sips.workspace = true
 alloy-primitives.workspace = true
 alloy-rlp = { workspace = true, features = ["derive"] }

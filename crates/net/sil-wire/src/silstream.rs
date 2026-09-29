@@ -385,7 +385,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil67,
-            chain: NamedChain::SilaMainnet.into(),
+            chain: NamedChain::Mainnet.into(),
             total_difficulty: U256::ZERO,
             blockhash: B256::random(),
             genesis,
@@ -435,7 +435,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil67,
-            chain: NamedChain::SilaMainnet.into(),
+            chain: NamedChain::Mainnet.into(),
             total_difficulty: U256::from(2).pow(U256::from(100)) - U256::from(1),
             blockhash: B256::random(),
             genesis,
@@ -485,7 +485,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil67,
-            chain: NamedChain::SilaMainnet.into(),
+            chain: NamedChain::Mainnet.into(),
             total_difficulty: U256::from(2).pow(U256::from(164)),
             blockhash: B256::random(),
             genesis,
@@ -630,7 +630,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil67,
-            chain: NamedChain::SilaMainnet.into(),
+            chain: NamedChain::Mainnet.into(),
             total_difficulty: U256::ZERO,
             blockhash: B256::random(),
             genesis,
@@ -704,7 +704,7 @@ mod tests {
 
         let status = Status {
             version: SilVersion::Sil67,
-            chain: NamedChain::SilaMainnet.into(),
+            chain: NamedChain::Mainnet.into(),
             total_difficulty: U256::ZERO,
             blockhash: B256::random(),
             genesis,
@@ -799,7 +799,7 @@ mod tests {
             // Try to send a Status message after handshake - this should trigger disconnect
             let status = Status {
                 version: SilVersion::Sil67,
-                chain: NamedChain::SilaMainnet.into(),
+                chain: NamedChain::Mainnet.into(),
                 total_difficulty: U256::ZERO,
                 blockhash: B256::random(),
                 genesis: B256::random(),

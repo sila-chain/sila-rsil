@@ -257,7 +257,7 @@ mod tests {
     use super::*;
     use alloy_primitives::B256;
     use alloy_rpc_types_beacon::{
-        block::{BeaconBlock, BeaconBlockBodyPhase0, SignedBeaconBlock, Sil1Data},
+        block::{BeaconBlock, BeaconBlockBodyPhase0, SignedBeaconBlock, Eth1Data},
         BlsSignature,
     };
     use rsil_sila_primitives::TransactionSigned;
@@ -344,7 +344,7 @@ mod tests {
                 state_root: B256::ZERO,
                 body: BeaconBlockBodyPhase0 {
                     randao_reveal: BlsSignature::ZERO,
-                    eth1_data: Sil1Data {
+                    eth1_data: Eth1Data {
                         deposit_root: B256::ZERO,
                         deposit_count: 0,
                         block_hash: B256::ZERO,

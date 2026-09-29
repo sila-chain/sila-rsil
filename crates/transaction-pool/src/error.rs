@@ -212,10 +212,10 @@ pub enum Sip4844PoolTransactionError {
     /// would introduce gap in the nonce sequence.
     #[error("nonce too high")]
     Sip4844NonceGap,
-    /// Thrown if blob transaction has an SIP-7594 style sidecar before SilaOsaka.
+    /// Thrown if blob transaction has an SIP-7594 style sidecar before `SilaOsaka`.
     #[error("unexpected sip-7594 sidecar before osaka")]
     UnexpectedEip7594SidecarBeforeOsaka,
-    /// Thrown if blob transaction has an SIP-4844 style sidecar after SilaOsaka.
+    /// Thrown if blob transaction has an SIP-4844 style sidecar after `SilaOsaka`.
     #[error("unexpected sip-4844 sidecar after osaka")]
     UnexpectedEip4844SidecarAfterOsaka,
     /// Thrown if blob transaction has an SIP-7594 style sidecar but SIP-7594 support is disabled.

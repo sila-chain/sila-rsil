@@ -38,7 +38,7 @@ pub fn sil_handshake() -> (UnifiedStatus, ForkFilter) {
 
     let status = Status {
         version: SilVersion::Sil67,
-        chain: Chain::sila_mainnet(),
+        chain: Chain::mainnet(),
         total_difficulty: U256::ZERO,
         blockhash: B256::random(),
         genesis,

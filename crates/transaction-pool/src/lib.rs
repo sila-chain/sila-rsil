@@ -78,7 +78,7 @@
 //!
 //! ### Stateful Checks
 //!
-//! 1. **Sender**: No bytecode (unless SIP-7702 delegated in SilaPrague)
+//! 1. **Sender**: No bytecode (unless SIP-7702 delegated in `SilaPrague`)
 //! 2. **Nonce**: ≥ account nonce
 //! 3. **Balance**: Covers value + (`gas_limit` × `max_fee_per_gas`)
 //!

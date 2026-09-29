@@ -627,7 +627,7 @@ impl BlockTuple {
 mod tests {
     use super::*;
     use crate::test_utils::{create_header, create_test_receipt, create_test_receipts};
-    use alloy_eips::sip4895::Withdrawals;
+    use alloy_eips::eip4895::Withdrawals;
     use alloy_primitives::{Bytes, U256};
     use rsil_sila_primitives::{Receipt, TxType};
 
@@ -740,7 +740,7 @@ mod tests {
 
     #[test]
     fn test_single_receipt_compression_roundtrip() {
-        let test_receipt = create_test_receipt(TxType::Sip1559, true, 21000, 2);
+        let test_receipt = create_test_receipt(TxType::Eip1559, true, 21000, 2);
 
         // Compress the receipt
         let compressed_receipts =

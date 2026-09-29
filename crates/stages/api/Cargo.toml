@@ -27,7 +27,6 @@ rsil-static-file-types.workspace = true
 # alloy
 alloy-primitives.workspace = true
 alloy-eips = { version = "2.1.1", default-features = false }
-alloy-sips.workspace = true
 
 # metrics
 rsil-metrics.workspace = true

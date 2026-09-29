@@ -1248,7 +1248,7 @@ mod tests {
     use super::*;
     use crate::headers::test_utils::child_header;
     use alloy_consensus::Header;
-    use alloy_eips::{sip1898::BlockWithParent, BlockNumHash};
+    use alloy_eips::{eip1898::BlockWithParent, BlockNumHash};
     use assert_matches::assert_matches;
     use rsil_consensus::test_utils::TestConsensus;
     use rsil_network_p2p::test_utils::TestHeadersClient;
